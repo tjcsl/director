@@ -1,0 +1,7 @@
+[Unit]
+Description=Conductor agent
+
+[Service]
+Type=simple
+ExecStart=/root/conductor-agent/start.sh
+Restart=no
