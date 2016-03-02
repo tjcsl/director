@@ -1,6 +1,8 @@
 import lxc
 from agent import rpc
 from random import choice
+import os
+import os.path
 import subprocess
 
 def make_random_chars(l=32, allowed="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"):
@@ -125,6 +127,15 @@ def container_dump_config(name):
         return 1, ""
     with open(container.config_file_name) as f:
         return 0, [[k.strip() for k in j.split("=")] for j in [i.strip() for i in f.readlines()] if not (j.startswith("#") or "=" not in j)]
+
+@rpc.method("container.management_actions")
+def management_actions(name):
+    rootfs = dict(container_dump_config(name)[1])["lxc.rootfs"]
+    p = os.path.join(rootfs, "conductor/actions")
+    if not os.path.exists(p):
+        return []
+    with open(p) as f:
+        return [i.strip() for i in f.readlines()]
 
 @rpc.method("container.list")
 def container_list():
