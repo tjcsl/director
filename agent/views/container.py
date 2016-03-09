@@ -137,6 +137,16 @@ def management_actions(name):
     with open(p) as f:
         return [i.strip() for i in f.readlines()]
 
+@rpc.method("container.run_action")
+def container_run_action(name, action):
+    rootfs = dict(container_dump_config(name)[1])["lxc.rootfs"]
+    p = os.path.join("/conductor/actions", action)
+    if not os.path.exists(p):
+        return None
+    if container.attach_wait(lxc.attach_run_command, ["/bin/sh", p]):
+        return True
+    return False
+
 @rpc.method("container.list")
 def container_list():
     return lxc.list_containers()
