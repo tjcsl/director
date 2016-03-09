@@ -141,6 +141,7 @@ def management_actions(name):
 def container_run_action(name, action):
     rootfs = dict(container_dump_config(name)[1])["lxc.rootfs"]
     p = os.path.join("/conductor/actions", action)
+    container = lxc.Container(name)
     if container.attach_wait(lxc.attach_run_command, ["/bin/sh", p]):
         return True
     return False
