@@ -135,7 +135,7 @@ def management_actions(name):
     if not os.path.exists(p):
         return []
     with open(p) as f:
-        return [i.strip() for i in f.readlines()]
+        return [i.strip() for i in f.readlines() if i.strip()]
 
 @rpc.method("container.run_action")
 def container_run_action(name, action):
