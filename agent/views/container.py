@@ -140,7 +140,7 @@ def management_actions(name):
 @rpc.method("container.run_action")
 def container_run_action(name, action):
     rootfs = dict(container_dump_config(name)[1])["lxc.rootfs"]
-    p = os.path.join("/conductor/actions", action)
+    p = os.path.join("/conductor/action", action)
     container = lxc.Container(name)
     if container.attach_wait(lxc.attach_run_command, ["/bin/sh", p]):
         return True
