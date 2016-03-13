@@ -1,12 +1,14 @@
-import lxc
-from agent import rpc
-from random import choice
 import os
 import os.path
 import subprocess
+from random import choice
+import lxc
+from agent import rpc
+
 
 def make_random_chars(l=32, allowed="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"):
     return "".join([choice(allowed) for i in range(l)])
+
 
 def replace_in_file(fn, find, replace):
     # Am I the worst or what
@@ -16,6 +18,7 @@ def replace_in_file(fn, find, replace):
     with open(fn, "w") as f:
         f.write(x)
 
+
 @rpc.method("container.create")
 def create_container(name, template="debian"):
     script_path = "/var/conductor/{}/create".format(template)
@@ -24,44 +27,47 @@ def create_container(name, template="debian"):
         return 2, ""
 
     proc = subprocess.Popen([script_path, name], stdout=subprocess.PIPE)
-    exit = proc.wait()
+    exit_code = proc.wait()
     uuid = proc.stdout.read().strip().decode()
-    if exit:
+    if exit_code:
         return 1, ""
 
     return 0, uuid
+
 
 @rpc.method("container.state")
 def container_state(name):
     container = lxc.Container(name)
     if not container.defined:
-        return 2 # Container does not exist
+        return 2  # Container does not exist
     if not container.running:
-        return 1 # Container is not running
-    return 0 # Container exists and is running
+        return 1  # Container is not running
+    return 0  # Container exists and is running
+
 
 @rpc.method("container.power")
-def container_power(name, state, timeout=5):
+def container_power(name, state, timeout=15):
     container = lxc.Container(name)
     if not container.defined:
-        return 2 # Container does not exist
-    if state == 0: # Power off the container
+        return 2  # Container does not exist
+    if state == 0:  # Power off the container
         if not container.running:
-            return 1 # Request already satisfied
+            return 1  # Request already satisfied
         result = container.attach_wait(lxc.attach_run_command, ["/conductor/power-off"])
         if not result:
-            if not container.shutdown(timeout=15):
+            if not container.shutdown(timeout):
                 container.stop()
         if result:
             container.stop()
-        return 0 # The container was stopped, somehow
-    if state == 1: # Power on the container
+        return 0  # The container was stopped, somehow
+    if state == 1:  # Power on the container
         if container.running:
-            return 1 # The container is already running
+            return 1  # The container is already running
         if container.start():
-            return 0 # The container has been started
+            return 0  # The container has been started
         else:
-            return -1 # There was a problem changing the container state
+            return -1  # There was a problem changing the container state
+
 
 @rpc.method("container.destroy")
 def container_destroy(name):
@@ -71,8 +77,9 @@ def container_destroy(name):
 
     container = lxc.Container(name)
     if not container.destroy():
-        return -1 # There was a problem changing the container state
-    return 0 # Container was destroyed
+        return -1  # There was a problem changing the container state
+    return 0  # Container was destroyed
+
 
 @rpc.method("container.ips")
 def container_ips(name):
@@ -86,6 +93,7 @@ def container_ips(name):
         return 1, []
     return 0, ips
 
+
 @rpc.method("container.set_hostname")
 def container_set_hostname(name, new_hostname):
     container = lxc.Container(name)
@@ -95,6 +103,7 @@ def container_set_hostname(name, new_hostname):
         return 1
     container.attach_wait(lxc.attach_run_command, ["/conductor/set-hostname", new_hostname])
     return 0
+
 
 @rpc.method("container.reset_root_password")
 def container_reset_root(name):
@@ -108,9 +117,10 @@ def container_reset_root(name):
         return 1, ""
     return 0, newpasswd
 
+
 @rpc.method("container.exec_shell")
 def container_execute_shell_command(name, command):
-    container = lxc.Container()
+    container = lxc.Container(name)
     if not container.defined:
         return 3, 255
     if not container.running:
@@ -120,6 +130,7 @@ def container_execute_shell_command(name, command):
         return 1, result
     return 0, 0
 
+
 @rpc.method("container.dump_config")
 def container_dump_config(name):
     container = lxc.Container(name)
@@ -127,6 +138,7 @@ def container_dump_config(name):
         return 1, ""
     with open(container.config_file_name) as f:
         return 0, [[k.strip() for k in j.split("=")] for j in [i.strip() for i in f.readlines()] if not (j.startswith("#") or "=" not in j)]
+
 
 @rpc.method("container.management_actions")
 def management_actions(name):
@@ -137,6 +149,7 @@ def management_actions(name):
     with open(p) as f:
         return [i.strip() for i in f.readlines() if i.strip()]
 
+
 @rpc.method("container.run_action")
 def container_run_action(name, action):
     p = os.path.join("/conductor/action", action)
@@ -144,6 +157,7 @@ def container_run_action(name, action):
     if container.attach_wait(lxc.attach_run_command, ["/bin/sh", "-c", p]):
         return False
     return True
+
 
 @rpc.method("container.list")
 def container_list():

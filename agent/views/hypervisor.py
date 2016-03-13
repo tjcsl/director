@@ -1,10 +1,13 @@
 from agent import rpc
 
 # parsing procfs is fun
+
+
 @rpc.method("hypervisor.load_average")
 def hypervisor_load_average():
     with open("/proc/loadavg") as f:
         return [float(i) for i in f.read().strip().split()[:3]]
+
 
 @rpc.method("hypervisor.memory")
 def hypervisor_memory():

@@ -1,5 +1,6 @@
-from agent import rpc
 import platform
+from agent import rpc
+
 
 @rpc.method("ping.ping")
 def ping():
@@ -8,6 +9,7 @@ def ping():
     Always responds with {"ok": True}, for testing purposes.
     """
     return dict(ok=True)
+
 
 @rpc.method("ping.os")
 def os():
