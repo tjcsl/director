@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'web3.apps.sites',
+    'web3.apps.users',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +77,12 @@ WSGI_APPLICATION = 'web3.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'web3',
+        'USER': 'web3',
+        'PASSWORD': os.getenv("WEB3_DATABASE_PASSWORD", ""),
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
