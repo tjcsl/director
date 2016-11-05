@@ -10,12 +10,12 @@ class Site(models.Model):
     id = models.PositiveIntegerField(primary_key=True, validators=[validators.MinValueValidator(1000)])
     name = models.CharField(max_length=32, unique=True)
     category = models.CharField(max_length=16, choices=(
-        ("legacy", "legacy"),
         ("static", "static"),
         ("php", "php"),
         ("dynamic", "dynamic")
     ))
     purpose = models.CharField(max_length=16, choices=(
+        ("legacy", "legacy"),
         ("user", "user"),
         ("activity", "activity")
     ))
