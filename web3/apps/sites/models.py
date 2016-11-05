@@ -6,7 +6,7 @@ from django.db import models
 from ..users.models import User, Group
 
 
-class Website(models.Model):
+class Site(models.Model):
     id = models.PositiveIntegerField(primary_key=True, validators=[validators.MinValueValidator(1000)])
     name = models.CharField(max_length=32, unique=True)
     category = models.CharField(max_length=16, choices=(
