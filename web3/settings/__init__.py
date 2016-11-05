@@ -17,6 +17,7 @@ try:
 except ImportError:
     pass
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -28,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 's-gh_-#s^oq^0*5=y8k&*^l8m9540mvo@m*tazzw%3*o7$y&m0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = DEBUG if "DEBUG" in globals() else True
 
 ALLOWED_HOSTS = []
 
@@ -81,16 +82,23 @@ WSGI_APPLICATION = 'web3.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+DATABASES = {}
+
+if DEBUG:
+    DATABASES["default"] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite',
+    }
+else:
+    DATABASES["default"] = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'web3',
         'USER': 'web3',
         'PASSWORD': DB_PASSWORD,
         'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'PORT': '5432'
     }
-}
+
 
 
 # Password validation

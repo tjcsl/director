@@ -1,5 +1,6 @@
 venv/
 secret.py
+db.sqlite
 *.pyc
 *.DS_Store
 .DS_STORE
