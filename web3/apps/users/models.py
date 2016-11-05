@@ -9,6 +9,7 @@ from django.contrib.auth.models import AbstractBaseUser
 
 class User(AbstractBaseUser):
     id = models.PositiveIntegerField(primary_key=True, validators=[validators.MinValueValidator(1000)])
+    service = models.BooleanField(default=False)
     username = models.CharField(max_length=32)
     superuser = models.BooleanField(default=False)
     USERNAME_FIELD = 'username'
@@ -17,5 +18,6 @@ class User(AbstractBaseUser):
 
 class Group(models.Model):
     id = models.PositiveIntegerField(primary_key=True, validators=[validators.MinValueValidator(1000)])
+    service = models.BooleanField(default=False)
     name = models.CharField(max_length=32)
     users = models.ManyToManyField(User, related_name='groups')
