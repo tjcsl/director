@@ -17,6 +17,6 @@ class User(AbstractBaseUser):
 
 
 class Group(models.Model):
-    gid = models.PositiveIntegerField(primary_key=True, validators=[MinValueValidator(1000)])
+    gid = models.PositiveIntegerField(primary_key=True, validators=[validators.MinValueValidator(1000)])
     groupname = models.CharField(max_length=32)
     users = models.ManyToManyField(User, related_name='groups')
