@@ -23,6 +23,15 @@
         <a class="navbar-brand" href="#">
             <i class="fa fa-cloud"></i> Web3
         </a>
+        {% if request.user.is_authenticated %}
+        <div class="dropdown pull-right">
+            <button class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ request.user.username }}</button>
+            <ul class="dropdown-menu">
+                <div class="arrow"></div>
+                <li><a href="{% url 'logout' %}"><i class="fa fa-fw fa-sign-out"></i> Logout</a></li>
+            </ul>
+        </div>
+        {% endif %}
     </div>
     <div class="main">
     {% block main %}
