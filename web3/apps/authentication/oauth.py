@@ -2,10 +2,19 @@ from social.backends.oauth import BaseOAuth2
 from social.pipeline.user import get_username as social_get_username
 
 from ...utils.tjldap import get_uid
+from ..users.models import Group
+
 
 def get_username(strategy, details, user=None, *args, **kwargs):
     result = social_get_username(strategy, details, user=user, *args, **kwargs)
     return result
+
+
+def create_user_group(strategy, details, user, *args, **kwargs):
+    group = Group.objects.create(id=user.id, service=user.service, name=user.username)
+    group.users.add(user.pk)
+    group.save()
+    return {"group": group}
 
 
 class IonOauth2(BaseOAuth2):

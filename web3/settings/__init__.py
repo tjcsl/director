@@ -167,6 +167,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',
     'social.pipeline.user.user_details',
+    'web3.apps.authentication.create_user_group',
 )
 
 AUTHENTICATION_BACKENDS = (
