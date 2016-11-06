@@ -217,7 +217,6 @@ body{margin-top:40px;padding:16px 26px 10px 26px}.header{position:absolute;top:0
 /* CSL-site specific */
 .header .logo {
     display: inline-block;
-    background-image: url(/tjstar/static/tjstar31.png);
     background-size: auto 42px;
     background-repeat: none;
     color: transparent;
