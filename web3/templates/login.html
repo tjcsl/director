@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block css %}
+    {{ block.super }}
+    <style type="text/css">
+    h1 {
+        margin: 6px 0;
+    }
+
+    .main {
+        width: 100%;
+        max-width: none;
+        position: initial;
+    }
+
+    .login-box {
+        background: white;
+        padding: 15px;
+        border: 1px solid #0048ab;
+        position: absolute;
+        left: 50%;
+        width: 438px;
+        margin-left: -219px;
+    }
+
+    .login-box p {
+        text-align: center;
+    }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="login-box">
+        <p><b>Log in with your Intranet account</b> to access the web3 management interface.</p>
+        <center>
+            <a href="{% url 'social:begin' 'ion' %}" class="button">
+                Log In with Ion
+            </a>
+        </center>
+    </div>
+{% endblock %}

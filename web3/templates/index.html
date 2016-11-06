@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block css %}
+    {{ block.super }}
+    <style type="text/css">
+    h1 {
+        margin: 6px 0;
+    }
+
+    .main {
+        width: 100%;
+        max-width: none;
+        position: initial;
+    }
+
+    .login-box {
+        background: white;
+        padding: 15px;
+        border: 1px solid #0048ab;
+        position: absolute;
+        left: 50%;
+        width: 438px;
+        margin-left: -219px;
+    }
+
+    .login-box p {
+        text-align: center;
+    }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="login-box">
+        {% if request.user.is_authenticated %}
+        <p><b>You are logged in as: {{ request.user.username }}</b></p>
+        {% else %}
+        <p><b>You are not logged in.</b></p>
+        {% endif %}
+    </div>
+{% endblock %}
