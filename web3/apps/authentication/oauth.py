@@ -1,6 +1,7 @@
 from social.backends.oauth import BaseOAuth2
 from social.pipeline.user import get_username as social_get_username
 
+from ...utils.tjldap import get_uid
 
 def get_username(strategy, details, user=None, *args, **kwargs):
     result = social_get_username(strategy, details, user=user, *args, **kwargs)
@@ -18,15 +19,16 @@ class IonOauth2(BaseOAuth2):
                                 params={'access_token': response['access_token']})
         is_admin = profile['is_eighth_admin']
         # fields used to populate/update User model
-        return {'username': profile['ion_username'],
-                'id': profile['id'],
-                'email': profile['tj_email'],
-                'service': False,
-                'superuser': is_admin,
-                'is_admin': is_admin,
-                'is_superuser': is_admin,
-                'is_staff': is_admin
-                }
+        return {
+            'username': profile['ion_username'],
+            'id': get_uid(profile['ion_username']),
+            'email': profile['tj_email'],
+            'service': False,
+            'superuser': is_admin,
+            'is_admin': is_admin,
+            'is_superuser': is_admin,
+            'is_staff': is_admin
+        }
 
     def get_user_id(self, details, response):
         return details['id']
