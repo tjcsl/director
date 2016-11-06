@@ -23,7 +23,7 @@ from .apps.users import views as user_views
 
 urlpatterns = [
     url('', include('social.apps.django_app.urls', namespace='social')),
-    url(r'$', auth_views.index_view, name='index'),
+    url(r'^$', auth_views.index_view, name='index'),
     url(r'^login/$', auth_views.login_view, name='login'),
     url(r'^logout/$', auth_views.logout_view, name='logout'),
     url(r'^admin/', admin.site.urls),
