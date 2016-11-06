@@ -16,9 +16,7 @@ class IonOauth2(BaseOAuth2):
     def get_user_details(self, response):
         profile = self.get_json('https://ion.tjhsst.edu/api/profile',
                                 params={'access_token': response['access_token']})
-
-        is_admin = profile['is_eighth_admin'] == "true"
-
+        is_admin = profile['is_eighth_admin']
         # fields used to populate/update User model
         return {'username': profile['ion_username'],
                 'id': profile['id'],
