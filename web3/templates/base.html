@@ -9,26 +9,20 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:100italic,400italic,700italic,100,400,700" />
     {% block css %}
-        <link rel="stylesheet" type="text/css" href="{% static 'css/compiled.css' %}" />
-        <link rel="stylesheet" type="text/css" href="{% static 'css/core.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-ion.css' %}" />
     {% endblock %}
 
     {% block js %}
         <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     {% endblock %}
 </head>
 <body{% block bodytag %}{% endblock %}>
-    <div class="nav-g"></div>
-    <div class="header">
-        <h1>
-            <a href="{% url 'index' %}">
-            <div class="logo">Web3</div>
-            </a>
-        </h1>
-        <ul class="right">
-        {% block right %}
-        {% endblock %}
-        </ul>
+    <div class="navbar navbar-light bg-faded">
+        <a class="navbar-brand" href="#">
+            <i class="fa fa-cloud"></i> Web3
+        </a>
     </div>
     <div class="main">
     {% block main %}
