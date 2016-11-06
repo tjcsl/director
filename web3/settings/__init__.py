@@ -12,11 +12,6 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-try:
-    from .secret import *
-except ImportError:
-    pass
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,10 +23,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 's-gh_-#s^oq^0*5=y8k&*^l8m9540mvo@m*tazzw%3*o7$y&m0'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = DEBUG if "DEBUG" in globals() else True
 
 ALLOWED_HOSTS = []
+
+try:
+    from .secret import *
+except ImportError:
+    pass
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = DEBUG if "DEBUG" in globals() else True
 
 
 # Application definition
@@ -98,7 +98,6 @@ else:
         'HOST': '127.0.0.1',
         'PORT': '5432'
     }
-
 
 
 # Password validation
