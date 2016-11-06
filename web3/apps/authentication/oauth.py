@@ -11,8 +11,11 @@ def get_username(strategy, details, user=None, *args, **kwargs):
 
 
 def create_user_group(strategy, details, user, *args, **kwargs):
-    group = Group.objects.create(id=user.id, service=user.service, name=user.username)
-    group.users.add(user.pk)
+    try:
+        group = Group.objects.get(id=user.id)
+    except Group.DoesNotExist:
+        group = Group.objects.create(id=user.id, service=user.service, name=user.username)
+        group.users.add(user.pk)
     group.save()
     return {"group": group}
 
