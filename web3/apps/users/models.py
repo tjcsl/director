@@ -46,3 +46,6 @@ class Group(models.Model):
     service = models.BooleanField(default=False)
     name = models.CharField(max_length=32)
     users = models.ManyToManyField(User, related_name='unix_groups')
+
+    def __str__(self):
+        return self.name
