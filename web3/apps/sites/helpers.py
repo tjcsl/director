@@ -1,3 +1,6 @@
+import os
+import stat
+
 from ..users.models import User, Group
 
 
@@ -17,3 +20,12 @@ def create_site_users(site):
 
 def get_next_id():
     return list(User.objects.filter(service=True).order_by('id'))[-1].id + 1
+
+
+def make_site_dirs(site):
+    for i in ["/web/{}", "/web/{}/public", "/web/{}/private"]:
+        os.mkdir(i.format(site.name))
+        os.chown(i.format(cn), site.user.id, site.group.id)
+        os.chmod(i.format(cn), stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
+                | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
+                | stat.S_ISGID)
