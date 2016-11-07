@@ -20,6 +20,8 @@ def create_site_users(site):
 
 
 def get_next_id():
+    if User.objects.filter(service=True).count() == 0:
+        return 10000
     return list(User.objects.filter(service=True).order_by('id'))[-1].id + 1
 
 
