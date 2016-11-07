@@ -18,6 +18,9 @@ def create_site_users(site):
         group = Group.objects.create(id=user.id, service=True, name="site_{}".format(site.name))
         group.users.add(user)
         group.save()
+    site.user = user
+    site.group = group
+    site.save()
     return (user, group)
 
 

@@ -7,7 +7,6 @@ from ..users.models import User, Group
 
 
 class Site(models.Model):
-    id = models.PositiveIntegerField(primary_key=True, validators=[validators.MinValueValidator(1000)])
     name = models.CharField(max_length=32, unique=True)
     category = models.CharField(max_length=16, choices=(
         ("static", "static"),
@@ -38,7 +37,16 @@ class Site(models.Model):
         else:
             return "/web/{}/".format(self.name)
 
+    def __str__(self):
+        return self.name
+
 
 class Process(models.Model):
     site = models.OneToOneField(Site)
     path = models.FilePathField(path="/web")
+
+    def __str__(self):
+        try:
+            return self.site.name
+        except:
+            return "Unknown Site"
