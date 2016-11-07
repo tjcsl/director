@@ -1,5 +1,6 @@
 import os
 import stat
+from subprocess import Popen
 
 from ..users.models import User, Group
 
@@ -23,9 +24,10 @@ def get_next_id():
 
 
 def make_site_dirs(site):
-    for i in ["/web/{}", "/web/{}/public", "/web/{}/private"]:
-        os.mkdir(i.format(site.name))
-        os.chown(i.format(site.name), site.user.id, site.group.id)
-        os.chmod(i.format(site.name), stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
-                | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
-                | stat.S_ISGID)
+    for i in ["{}", "{}/public", "{}/private"]:
+        os.mkdir(i.format(site.path))
+        os.chown(i.format(site.path), site.user.id, site.group.id)
+        os.chmod(i.format(site.path), stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
+                 | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
+                 | stat.S_ISGID)
+    Popen("/usr/bin/setfacl -Rdm g:{}:rwx {}".format(site.group.name, site.path).split())
