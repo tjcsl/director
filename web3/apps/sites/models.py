@@ -19,11 +19,13 @@ class Site(models.Model):
         ("user", "user"),
         ("activity", "activity")
     ))
-    domain = models.TextField()
+    domain = models.CharField(max_length=255)
     description = models.TextField()
 
-    user = models.ForeignKey(User)
-    group = models.ForeignKey(Group)
+    user = models.OneToOneField(User)
+    group = models.OneToOneField(Group)
+
+    custom_nginx = models.BooleanField(default=False)
 
     @property
     def path(self):
@@ -31,5 +33,12 @@ class Site(models.Model):
             return "/web/user/{}/".format(self.name)
         elif self.purpose == "activity":
             return "/web/activities/{}/".format(self.name)
+        elif self.purpose == "legacy":
+            return "/web/legacy/{}".format(self.name)
         else:
             return "/web/{}/".format(self.name)
+
+
+class Process(models.Model):
+    site = models.OneToOneField(Site)
+    path = models.FilePathField(path="/web")
