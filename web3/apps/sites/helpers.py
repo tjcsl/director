@@ -4,6 +4,8 @@ from subprocess import Popen
 
 from ..users.models import User, Group
 
+from django.template.loader import render_to_string
+
 
 def create_site_users(site):
     try:
@@ -33,3 +35,15 @@ def make_site_dirs(site):
                  | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
                  | stat.S_ISGID)
     Popen("/usr/bin/setfacl -Rdm g:{}:rwx {}".format(site.group.name, site.path).split())
+
+
+def create_config_files(site):
+    with open("/etc/nginx/director.d/{}.conf".format(site.name), "w+") as f:
+        f.write(render_to_string("config/nginx.conf", {"site": site}))
+    with open("/etc/php5/fpm/pool.d/{}.conf".format(site.name), "w+") as f:
+        f.write(render_to_string("config/phpfpm.conf", {"site": site}))
+
+
+def reload_services():
+    Popen("systemctl reload nginx.service".split())
+    Popen("systemctl restart php5-fpm.service".split())
