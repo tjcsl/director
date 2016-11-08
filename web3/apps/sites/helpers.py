@@ -31,7 +31,7 @@ def get_next_id():
 
 
 def make_site_dirs(site):
-    for i in ["{}", "{}/public", "{}/private"]:
+    for i in ["{}", "{}public", "{}private"]:
         os.mkdir(i.format(site.path))
         os.chown(i.format(site.path), site.user.id, site.group.id)
         os.chmod(i.format(site.path), stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
