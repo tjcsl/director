@@ -37,7 +37,7 @@ def make_site_dirs(site):
         os.chmod(i.format(site.path), stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
                  | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
                  | stat.S_ISGID)
-    Popen("/usr/bin/setfacl -Rdm g:{}:rwx {}".format(site.group.name, site.path).split())
+    Popen("/usr/bin/setfacl -Rm u:www-data:rx {}".format(site.group.name, site.path).split())
 
 
 def create_config_files(site):
