@@ -71,7 +71,7 @@ body {
     padding: 0;
     margin: 0;
 }
-.navbar .navbar-brand {
+.navbar .navbar-brand, .navbar .navbar-brand:hover, .navbar .navbar-brand:active {
     color: white;
     margin-left: 15px;
     padding: 0px;
