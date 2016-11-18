@@ -30,12 +30,17 @@
 {% endblock %}
 
 {% block main %}
-    <div class="login-box">
-        {% if request.user.is_authenticated %}
-        <p><b>You are logged in as: {{ request.user.username }}</b></p>
-        <p><a href="{% url 'logout' %}" class="btn btn-ion">Logout</a></p>
-        {% else %}
-        <p><b>You are not logged in.</b></p>
-        {% endif %}
-    </div>
+<h3>Your Sites</h3>
+<table class="table">
+    <thead>
+        <tr><th>Site Name</th><th>Type</th></tr>
+    </thead>
+    <tbody>
+    {% for site in sites %}
+    <tr><td>{{ site.name }}</td><td>{{ site.category }}</td></tr>
+    {% empty %}
+    <tr><td colspan="2">You don't have access to any sites!<td></tr>
+    {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
