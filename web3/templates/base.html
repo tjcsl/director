@@ -28,6 +28,7 @@
             <button class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ request.user.username }}</button>
             <ul class="dropdown-menu">
                 <div class="arrow"></div>
+                    <li><a href="{% url 'user_settings' %}"><i class="fa fa-fw fa-cog"></i> Settings</a></li>
                 {% if request.user.superuser %}
                     <li><a href="{% url 'admin:index' %}"><i class="fa fa-fw fa-star"></i> Admin</li>
                 {% endif %}
