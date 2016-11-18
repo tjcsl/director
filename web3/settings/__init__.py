@@ -88,6 +88,8 @@ TEMPLATES = [
 if DEBUG:
     INSTALLED_APPS += ('debug_toolbar',)
     MIDDLEWARE += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+else:
+    INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
 
 WSGI_APPLICATION = 'web3.wsgi.application'
 

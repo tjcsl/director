@@ -1,7 +1,9 @@
+contextlib2==0.5.4
 defusedxml==0.4.1
 Django==1.10.3
 django-debug-toolbar==1.6
 django-extensions==1.7.4
+ion-oauth==0.1
 ldap3==2.1.0
 oauthlib==2.0.0
 psycopg2==2.6.2
@@ -9,6 +11,7 @@ pyasn1==0.1.9
 PyJWT==1.4.2
 python-social-auth==0.2.21
 python3-openid==3.0.10
+raven==5.32.0
 requests==2.11.1
 requests-oauthlib==0.7.0
 six==1.10.0
