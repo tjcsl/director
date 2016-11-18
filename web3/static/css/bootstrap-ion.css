@@ -71,7 +71,7 @@ body {
     padding: 0;
     margin: 0;
 }
-.navbar .navbar-brand, .navbar .navbar-brand:hover, .navbar .navbar-brand:active {
+.navbar .navbar-brand, .navbar .navbar-brand:hover, .navbar .navbar-brand:active, .navbar .navbar-brand:focus {
     color: white;
     margin-left: 15px;
     padding: 0px;
