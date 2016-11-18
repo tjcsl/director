@@ -2,7 +2,7 @@
 <!doctype html>
 <html lang='en'>
 <head>
-    <title>{% block title %}Web3 Management System{% endblock %}</title>
+    <title>{% block title %}Director{% endblock %}</title>
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -21,7 +21,7 @@
 <body{% block bodytag %}{% endblock %}>
     <div class="navbar navbar-light bg-faded">
         <a class="navbar-brand" href="/">
-            <i class="fa fa-cloud"></i> Web3
+            <i class="fa fa-cloud"></i> Director
         </a>
         {% if request.user.is_authenticated %}
         <div class="dropdown pull-right">
