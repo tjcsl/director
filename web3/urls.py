@@ -21,7 +21,7 @@ from .apps.authentication import views as auth_views
 from .apps.sites import views as sites_views
 from .apps.users import views as user_views
 
-from .apps.error import (handle_404_view, handle_500_view, handle_503_view)
+from .apps.error.views import (handle_404_view, handle_500_view, handle_503_view)
 
 urlpatterns = [
     url('', include('social.apps.django_app.urls', namespace='social')),
