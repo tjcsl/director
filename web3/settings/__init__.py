@@ -180,7 +180,7 @@ AUTHENTICATION_BACKENDS = (
 
 AUTH_USER_MODEL = "users.User"
 
-SOCIAL_AUTH_USER_FIELDS = ['username', 'email', 'id', 'superuser']
+SOCIAL_AUTH_USER_FIELDS = ['username', 'email', 'id']
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
