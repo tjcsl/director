@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -71,6 +72,8 @@ def delete_view(request, site_id):
 @login_required
 def info_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
     context = {
         "site": site,
         "users": site.group.users.filter(service=False).order_by("username")
