@@ -27,9 +27,11 @@
     vertical-align: middle;
 }
 #select-site {
+    display: inline-block;
     font-family: "FontAwesome", "Open Sans", sans-serif;
     margin-top: -3px;
     padding: 0.25rem 0.50rem;
+    width: 300px;
 }
 .subheading {
     padding-top: 30px;
@@ -41,4 +43,16 @@
     font-size: 1.5rem;
     line-height: 34px;
     margin-bottom: 0px;
+}
+@media (max-width:576px) {
+    .main {
+        padding-top: 120px;
+    }
+    #select-site {
+        width: 100%;
+        margin:0;
+        border-radius:0px;
+        border-left:none;
+        border-right:none;
+    }
 }
