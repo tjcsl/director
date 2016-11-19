@@ -1,5 +1,7 @@
 .main {
-    padding-top: 55px;
+    padding-top: 40px;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 .navbar {
     position: fixed;
@@ -7,6 +9,9 @@
     left: 0;
     right: 0;
     z-index: 100;
+}
+#sites {
+    padding: 15px;
 }
 #sites .site {
     color: #484848;
@@ -21,9 +26,19 @@
     margin-right: 5px;
     vertical-align: middle;
 }
-#sites {
-    margin-bottom: 15px;
+#select-site {
+    font-family: "FontAwesome", "Open Sans", sans-serif;
+    margin-top: -3px;
+    padding: 0.25rem 0.50rem;
 }
-h3 {
-    font-size: 1.25rem;
+.subheading {
+    padding-top: 30px;
+    padding: 10px 20px;
+    background-color: #f8f8f8;
+    border-bottom:1px solid #ccc;
+}
+.subheading h3 {
+    font-size: 1.5rem;
+    line-height: 34px;
+    margin-bottom: 0px;
 }
