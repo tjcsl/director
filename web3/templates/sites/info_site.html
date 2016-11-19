@@ -3,7 +3,7 @@
 {% block main %}
 <h3>{{ site.name }}</h3>
 <p>
-    <b>Type:</b> {{ site.purpose }} - {{ site.category }}<br />
+    <b>Type:</b> {{ site.get_purpose_display }} - {{ site.get_category_display }}<br />
     <b>Description:</b> {{ site.description|default:"None" }}<br />
     <b>Site User:</b> {{ site.user.username }} ({{ site.user.id }})<br />
     <b>Site Group:</b> {{ site.group.name }} ({{ site.group.id }})<br />
