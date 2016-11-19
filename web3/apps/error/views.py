@@ -8,7 +8,7 @@ def handle_404_view(request):
 
 
 def handle_500_view(request):
-    return render(request, "error/500.html", {"public_dsn": settings.SENTRY_PUBLIC_DSN}, status=500)
+    return render(request, "error/500.html", status=500)
 
 
 def handle_503_view(request):
