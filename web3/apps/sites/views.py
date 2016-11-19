@@ -15,7 +15,8 @@ def create_view(request):
         form = SiteForm(request.POST)
         if form.is_valid():
             site = form.save()
-            reload_services()
+            if not settings.DEBUG:
+                reload_services()
             return redirect("index")
     else:
         form = SiteForm()
@@ -33,7 +34,8 @@ def edit_view(request, site_id):
         form = SiteForm(request.POST, instance=site)
         if form.is_valid():
             site = form.save()
-            reload_services()
+            if not settings.DEBUG:
+                reload_services()
             return redirect("index")
     else:
         form = SiteForm(instance=site)

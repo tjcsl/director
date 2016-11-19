@@ -39,3 +39,11 @@
     </div>
 </form>
 {% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#id_users").selectize();
+    });
+</script>
+{% endblock %}
