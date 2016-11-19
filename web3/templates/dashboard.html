@@ -3,45 +3,33 @@
 {% block css %}
     {{ block.super }}
     <style type="text/css">
-    h1 {
-        margin: 6px 0;
+    #sites .site {
+        padding: 5px;
+        background-color: rgba(0, 0, 0, 0.08);
     }
-
-    .main {
-        width: 100%;
-        max-width: none;
-        position: initial;
+    #sites .site .fa.pull-left {
+        padding: 8px;
+        margin-right: 5px;
+        vertical-align: middle;
     }
-
-    .login-box {
-        background: white;
-        padding: 15px;
-        border: 1px solid #0048ab;
-        position: absolute;
-        left: 50%;
-        width: 438px;
-        margin-left: -219px;
-    }
-
-    .login-box p {
-        text-align: center;
+    #sites {
+        margin-bottom: 15px;
     }
     </style>
 {% endblock %}
 
 {% block main %}
 <h3>Your Sites</h3>
-<table class="table">
-    <thead>
-        <tr><th>Site Name</th><th>Type</th></tr>
-    </thead>
-    <tbody>
-    {% for site in sites %}
-    <tr><td>{{ site.name }}</td><td>{{ site.category }}</td></tr>
-    {% empty %}
-    <tr><td colspan="2">You don't have access to any sites!<td></tr>
-    {% endfor %}
-    </tbody>
-</table>
+{% for site in sites %}
+<div id="sites">
+    <div class="site">
+        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
+        <b>{{ site.name }}</b><br />{{ site.category }} - {{ site.description }}
+    </div>
+</div>
+{% empty %}
+<p>You don't have access to any sites!</p>
+{% endfor %}
+
 <a href="{% url 'create_site' %}" class="btn btn-ion"><i class="fa fa-plus"></i> Create Site</a>
 {% endblock %}
