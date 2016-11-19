@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Site
 from .forms import SiteForm
-from .helpers import reload_services
+from .helpers import reload_services, delete_site_files
 
 from ..authentication.decorators import superuser_required
 
@@ -50,8 +50,14 @@ def edit_view(request, site_id):
 def delete_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if request.method == "POST":
-        # TODO: implement deletion
-        messages.error(request, "Not implemented!")
+        if not settings.DEBUG:
+            delete_site_files(site)
+            reload_services()
+
+        site.user.delete()
+        site.group.delete()
+        site.delete()
+        messages.success(request, "Site {} deleted!".format(site.name))
         return redirect("index")
     context = {
         "site": site
