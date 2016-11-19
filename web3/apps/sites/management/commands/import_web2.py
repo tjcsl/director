@@ -3,7 +3,7 @@
 from django.core.management.base import BaseCommand
 
 from web3.apps.sites.models import Site
-from web3.apps.sites.helpers import create_site_users, make_site_dirs, create_config_files, reload_services,
+from web3.apps.sites.helpers import create_site_users, make_site_dirs, create_config_files, reload_services
 
 import shutil
 import os
