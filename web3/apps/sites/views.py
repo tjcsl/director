@@ -47,6 +47,7 @@ def edit_view(request, site_id):
 def info_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     context = {
-        "site": site
+        "site": site,
+        "users": site.group.users.filter(service=False).order_by("username")
     }
     return render(request, "sites/info_site.html", context)
