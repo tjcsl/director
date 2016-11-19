@@ -3,12 +3,15 @@
 {% block main %}
 <h3>{{ site.name }}</h3>
 <p>
-    <b>Type:</b> {{ site.purpose }} - {{ site.category }}<br />
+    <b>Type:</b> {{ site.get_purpose_display }} - {{ site.get_category_display }}<br />
     <b>Description:</b> {{ site.description|default:"None" }}<br />
     <b>Site User:</b> {{ site.user.username }} ({{ site.user.id }})<br />
     <b>Site Group:</b> {{ site.group.name }} ({{ site.group.id }})<br />
     <b>Users:</b> {{ users|join:", "|default:"None" }}
 </p>
 
-<a href="{% url 'edit_site' site.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Edit Site</a> <a href="#" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Site</a>
+<a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+{% if request.user.is_superuser %}
+<a href="{% url 'edit_site' site.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Edit Site</a> <a href="{% url 'delete_site' site.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Site</a>
+{% endif %}
 {% endblock %}

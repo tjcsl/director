@@ -9,15 +9,15 @@ from ..users.models import User, Group
 class Site(models.Model):
     name = models.CharField(max_length=32, unique=True)
     category = models.CharField(max_length=16, choices=(
-        ("static", "static"),
-        ("php", "php"),
-        ("dynamic", "dynamic")
+        ("static", "Static"),
+        ("php", "PHP"),
+        ("dynamic", "Dynamic")
     ))
     purpose = models.CharField(max_length=16, choices=(
-        ("legacy", "legacy"),
-        ("user", "user"),
-        ("activity", "activity"),
-        ("other", "other")
+        ("legacy", "Legacy"),
+        ("user", "User"),
+        ("activity", "Activity"),
+        ("other", "Other")
     ))
     domain = models.CharField(max_length=255)
     description = models.TextField(blank=True)

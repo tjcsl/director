@@ -1,4 +1,5 @@
 import os
+import shutil
 import stat
 from subprocess import Popen
 
@@ -48,6 +49,15 @@ def create_config_files(site):
         f.write(render_to_string("config/nginx.conf", {"site": site}))
     with open("/etc/php5/fpm/pool.d/{}.conf".format(site.name), "w+") as f:
         f.write(render_to_string("config/phpfpm.conf", {"site": site}))
+
+
+def delete_site_files(site):
+    files = ["/etc/nginx/director.d/{}.conf", "/etc/php5/fpm/pool.d/{}.conf"]
+    files = [x.format(site.name) for x in files]
+    for f in files:
+        if os.path.isfile(f):
+            os.remove(f)
+    shutil.rmtree(site.path)
 
 
 def reload_services():

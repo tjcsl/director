@@ -19,7 +19,7 @@ class SiteForm(forms.ModelForm):
     category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic")),
                                  widget=forms.Select(attrs={"class": "form-control"}))
     purpose = forms.ChoiceField(choices=(("user", "User"), ("activity", "Activity"), ("other", "Other")), widget=forms.Select(attrs={"class": "form-control"}))
-    users = forms.ModelMultipleChoiceField(queryset=User.objects.filter(service=False), widget=forms.SelectMultiple(attrs={"class": "form-control"}))
+    users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
 
     def __init__(self, *args, **kwargs):
         if kwargs.get("instance"):

@@ -8,17 +8,38 @@
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:100italic,400italic,700italic,100,400,700" />
-    {% block css %}   
+
+    {% block css %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
         <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-ion.css' %}" />
         <link rel="stylesheet" type="text/css" href="{% static 'selectize/selectize.default.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/messenger.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/messenger-theme-future.css' %}" />
     {% endblock %}
 
-    {% block js %}       
+    {% block js %}
         <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/messenger.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/messenger-theme-future.js' %}"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.1/js/tether.min.js"></script>
         <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'selectize/selectize.js' %}"></script>
+
+        {% if messages %}
+        <script type="text/javascript">
+        window.addEventListener("load", function() {
+        {% for message in messages %}
+            {% if message.level >= 30 %}
+                Messenger().error("{{ message|escapejs }}");
+            {% elif message.level == 25 %}
+                Messenger().success("{{ message|escapejs }}");
+            {% else %}
+                Messenger().info("{{ message|escapejs }}");
+            {% endif %}
+        {% endfor %}
+        });
+        </script>
+        {% endif %}
     {% endblock %}
 </head>
 <body{% block bodytag %}{% endblock %}>
