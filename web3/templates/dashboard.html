@@ -17,7 +17,7 @@
 {% for site in sites %}
     <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.name }}">
         <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% else %}fa-cube{% endif %}"></i>
-        <b class="name">{{ site.name }}</b><br />{{ site.get_category_display }} - <span class="desc">{{ site.description|default:"No Description" }}</span>
+        <b class="name">{{ site.name }}</b><br /><span class="type">{{ site.get_category_display }}</span> - <span class="desc">{{ site.description|default:"No Description" }}</span>
     </a>
 {% endfor %}
 {% if other_sites %}
@@ -25,7 +25,7 @@
     <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.name }}">
         <span class="pull-right tag tag-warning">Superuser</span>
         <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
-        <b class="name">{{ site.name }}</b><br />{{ site.get_category_display }} - <span class="desc">{{ site.description|default:"No Description" }}</span>
+        <b class="name">{{ site.name }}</b><br /><span class="type">{{ site.get_category_display }}</span> - <span class="desc">{{ site.description|default:"No Description" }}</span>
     </a>
     {% endfor %}
 {% endif %}

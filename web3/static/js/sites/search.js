@@ -4,7 +4,8 @@ $(document).ready(function() {
         $("#sites .site").each(function(k, v) {
             var name = $(this).find(".name").text();
             var desc = $(this).find(".desc").text();
-            if (desc.toLowerCase().includes(val) || name.toLowerCase().includes(val)) {
+            var type = $(this).find(".type").text();
+            if (desc.toLowerCase().includes(val) || name.toLowerCase().includes(val) || type.toLowerCase().includes(val)) {
                 $(this).show();
             }
             else {
