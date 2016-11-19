@@ -24,6 +24,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
+    @property
+    def has_webdocs(self):
+        from ..sites.models import Site
+        return Site.objects.filter(name=self.username, purpose="user").count() > 0
+
     def get_short_name(self):
         return self.username
 
