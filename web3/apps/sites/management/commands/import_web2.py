@@ -15,23 +15,14 @@ class Command(BaseCommand):
     def handle(self, **options):
         mappings = {
             '2016fwilson': 'user',
-            '2017awang': 'user',
-            '2017jchen': 'user',
             '2017jstone': 'user',
             '2018nthistle': 'user',
             'crs': 'activity',
             'homecoming': 'other',
-            'quizbowl': 'activity',
             'techstrav': 'activity',
             'tmrudwick': 'user',
             '2016jwoglom': 'user',
-            '2017blyons': 'user',
-            '2017jhoughto': 'user',
-            '2017lwang': 'user',
-            '2018wzhang': 'user',
-            'botball': 'activity',
             'csc': 'activity',
-            'mun': 'activity',
             'sct': 'activity',
             'teknos': 'activity',
             'tutoring': 'other',
@@ -39,12 +30,8 @@ class Command(BaseCommand):
             '2017asumesh': 'user',
             '2017jschefer': 'user',
             '2017sdamashe': 'user',
-            'chemteam': 'activity',
-            'ghs': 'activity',
-            'nhs': 'activity',
             'smtorbert': 'user',
-            'tjstar': 'activity',
-            'twist': 'activity'
+            'tjstar': 'activity'
         }
         for name in mappings:
             s = Site(name=name, domain="{}.sites.tjhsst.edu".format(name), category="php", purpose=mappings[name])
