@@ -30,5 +30,9 @@
     {% endfor %}
 {% endif %}
 
+{% if request.user.is_superuser %}
 <a href="{% url 'create_site' %}" class="btn btn-ion"><i class="fa fa-plus"></i> Create Site</a>
+{% else %}
+If you want to create a new site, fill out a service request form and give it to a sysadmin in Room 200C.
+{% endif %}
 {% endblock %}
