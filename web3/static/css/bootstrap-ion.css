@@ -89,7 +89,7 @@ body {
     margin-right: 15px;
     padding: 3px 5px;
     height: 20px;
-    font-size: 15px;
+    font-size: 13px;
     border-radius: 3px;
     line-height: 14px;
 }
@@ -126,7 +126,7 @@ body {
     margin-left: 110px;
 }
 .dropdown-menu li {
-    padding: 5px;
+    padding: 8px;
     padding-left: 15px;
     font-size: 14px;
 }
