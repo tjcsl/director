@@ -35,7 +35,7 @@ def make_site_dirs(site):
     for i in ["{}", "{}public", "{}private"]:
         path = i.format(site.path)
         if not os.path.exists(path):
-            os.mkdir(path)
+            os.makedirs(path)
         os.chown(path, site.user.id, site.group.id)
         os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
                  | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
