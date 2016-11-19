@@ -16,7 +16,8 @@ class Site(models.Model):
     purpose = models.CharField(max_length=16, choices=(
         ("legacy", "legacy"),
         ("user", "user"),
-        ("activity", "activity")
+        ("activity", "activity"),
+        ("other", "other")
     ))
     domain = models.CharField(max_length=255)
     description = models.TextField(blank=True)
