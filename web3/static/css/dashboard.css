@@ -3,6 +3,7 @@
     display: block;
     text-decoration: none;
     padding: 5px;
+    margin-bottom: 5px;
     background-color: rgba(0, 0, 0, 0.08);
 }
 #sites .site .fa.pull-left {

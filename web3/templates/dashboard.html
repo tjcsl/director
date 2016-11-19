@@ -8,27 +8,23 @@
 
 {% block main %}
 <h3>Your Sites</h3>
-{% for site in sites %}
 <div id="sites">
+{% for site in sites %}
     <a href="{% url 'info_site' site.id %}" class="site">
         <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
         <b>{{ site.name }}</b><br />{{ site.get_category_display }} - {{ site.description|default:"No Description" }}
     </a>
-</div>
-{% empty %}
-<p>You don't have access to any sites!</p>
 {% endfor %}
 {% if other_sites %}
-<h3>Other Sites</h3>
     {% for site in other_sites %}
-    <div id="sites">
-        <a href="{% url 'info_site' site.id %}" class="site">
-            <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
-            <b>{{ site.name }}</b><br />{{ site.get_category_display }} - {{ site.description|default:"No Description" }}
-        </a>
-    </div>
+    <a href="{% url 'info_site' site.id %}" class="site">
+        <span class="pull-right tag tag-warning">Superuser</span>
+        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
+        <b>{{ site.name }}</b><br />{{ site.get_category_display }} - {{ site.description|default:"No Description" }}
+    </a>
     {% endfor %}
 {% endif %}
+</div>
 
 {% if request.user.is_superuser %}
 <a href="{% url 'create_site' %}" class="btn btn-ion"><i class="fa fa-plus"></i> Create Site</a>
