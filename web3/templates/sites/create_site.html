@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/sites/creation.js' %}"></script>
+{% endblock %}
 
 {% block main %}
 <h4>Create New Site</h4>
