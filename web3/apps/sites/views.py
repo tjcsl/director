@@ -50,6 +50,9 @@ def edit_view(request, site_id):
 def delete_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if request.method == "POST":
+        if not request.POST.get("confirm", None) == site.name:
+            messages.error(request, "Delete confirmation failed!")
+            return redirect("info_site", site_id=site_id)
         if not settings.DEBUG:
             delete_site_files(site)
             reload_services()
