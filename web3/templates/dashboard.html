@@ -11,7 +11,7 @@
 <div id="sites">
 {% for site in sites %}
     <a href="{% url 'info_site' site.id %}" class="site">
-        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
+        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% else %}fa-cube{% endif %}"></i>
         <b>{{ site.name }}</b><br />{{ site.get_category_display }} - {{ site.description|default:"No Description" }}
     </a>
 {% endfor %}
