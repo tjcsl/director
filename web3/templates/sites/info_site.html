@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+{% block css %}
+    {{ block.super }}
+    <style type="text/css">
+    .path {
+        font-family: monospace;
+    }
+    </style>
+{% endblock %}
+
 {% block main %}
 <h3>{{ site.name }}</h3>
 <p>
@@ -9,6 +18,8 @@
     <b>Site Group:</b> {{ site.group.name }} ({{ site.group.id }})<br />
     <b>Users:</b> {{ users|join:", "|default:"None" }}
 </p>
+
+<p>You can edit this site by connecting to <span class="path">remote.tjhsst.edu</span> and changing directories to <span class="path">{{ site.path }}</span>.</p>
 
 {% if site.custom_nginx %}
 <p><i class="fa fa-exclamation-triangle"></i> This site has a custom nginx configuration.</p>
