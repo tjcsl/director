@@ -10,10 +10,10 @@
 <h3>Your Sites</h3>
 {% for site in sites %}
 <div id="sites">
-    <div class="site">
+    <a href="{% url 'info_site' site.id %}" class="site">
         <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
         <b>{{ site.name }}</b><br />{{ site.category }} - {{ site.description }}
-    </div>
+    </a>
 </div>
 {% empty %}
 <p>You don't have access to any sites!</p>
