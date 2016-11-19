@@ -137,3 +137,8 @@ body {
 .control-group {
     margin-bottom: 10px;
 }
+.help-inline.danger {
+    font-size: 80%;
+    font-weight: 400;
+    color: red;
+}

@@ -6,7 +6,14 @@ from .forms import CreateSiteForm
 
 @login_required
 def create_view(request):
-    form = CreateSiteForm()
+    if request.method == "POST":
+        form = CreateSiteForm(request.POST)
+        if form.is_valid():
+            # TODO: process form
+            pass
+    else:
+        form = CreateSiteForm()
+
     context = {
         "form": form
     }

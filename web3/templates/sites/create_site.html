@@ -8,7 +8,8 @@
 
 {% block main %}
 <h4>Create New Site</h4>
-<form class="form-horizontal" method="post">{% csrf_token %}
+<form method="POST">
+    {% csrf_token %}
     <fieldset>
         <legend>{{ title }}</legend>
         {% for field in form %}
@@ -16,7 +17,7 @@
                 <div class="control-group error">
                     <label class="control-label">{{ field.label }}</label> 
                     <div class="controls">{{ field }}
-                        <span class="help-inline">
+                        <span class="danger help-inline">
                             {% for error in  field.errors %}{{ error }}{% endfor %}
                         </span>
                     </div>
