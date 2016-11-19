@@ -6,7 +6,10 @@ from .models import Site
 from .forms import CreateSiteForm
 from .helpers import create_site_users, make_site_dirs, create_config_files, reload_services
 
-@login_required
+from ..authentication.decorators import superuser_required
+
+
+@superuser_required
 def create_view(request):
     if request.method == "POST":
         form = CreateSiteForm(request.POST)
@@ -26,6 +29,7 @@ def create_view(request):
         "form": form
     }
     return render(request, "sites/create_site.html", context)
+
 
 @login_required
 def info_view(request, site_id):
