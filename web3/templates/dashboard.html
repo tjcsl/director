@@ -4,22 +4,25 @@
 {% block css %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}" />
-<link rel="stylesheet" type="text/css" href="{% static 'css/search.css' %}" />
 {% endblock %}
 
+{% block navbar %}
+<form class="form-inline float-xs-left">
+    <input class="form-control" id="select-site" type="text" placeholder="Search" />
+</form>
+{% endblock %}
 {% block main %}
-<select id="select-site" class="sites" placeholder="Select a site"></select>
 <h3>Your Sites</h3>
 <div id="sites">
 {% for site in sites %}
-    <a href="{% url 'info_site' site.id %}" class="site">
+    <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.name }}">
         <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% else %}fa-cube{% endif %}"></i>
         <b>{{ site.name }}</b><br />{{ site.get_category_display }} - {{ site.description|default:"No Description" }}
     </a>
 {% endfor %}
 {% if other_sites %}
     {% for site in other_sites %}
-    <a href="{% url 'info_site' site.id %}" class="site">
+    <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.name }}">
         <span class="pull-right tag tag-warning">Superuser</span>
         <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
         <b>{{ site.name }}</b><br />{{ site.get_category_display }} - {{ site.description|default:"No Description" }}

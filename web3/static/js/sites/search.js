@@ -1,44 +1,26 @@
 $(document).ready(function() {
-    $('#select-site').selectize({
-        valueField: 'url',
-        labelField: 'name',
-        searchField: 'name',
-        create: false,
-        render: {
-            option: function(item, escape) {
-                return '<div>' +
-                '<span class="title">' +
-                '<span class="name"><i class="fa ' + (item.purpose == 'user' ? 'fa-user' : 'fa-globe') + '"></i> ' + escape(item.name) + '</span>' +
-                '</span>' +
-                '<span class="description">' + escape(item.description) + '</span>' +
-                '<ul class="meta">' +
-                (item.category ? '<li class="language">' + escape(item.category) + '</li>' : '') +
-                '<li class="watchers"><span>' + escape(item.users) + '</span> users</li>' +
-                '</ul>' +
-                '</div>';
-            }
-        },
-        score: function(search) {
-            var score = this.getScoreFunction(search);
-            return function(item) {
-                return score(item) * (1 + Math.min(item.users / 100, 1));
-            };
-        },
-        load: function(query, callback) {
-            if (!query.length) return callback();
-            $.ajax({
-                url: "/site/all",
-                type: 'GET',
-                error: function() {
-                    callback();
-                },
-                success: function(res) {
-                    callback(res.sites);
-                }
-            });
-        }
+    $.ajax({
+            url: "/site/all",
+            type: 'GET',
+            error: function() {
+                site_list = []
+            },
+            success: function(res) {
+                site_list = res.sites
+            },
+            async: false
     });
-    $("#select-site").change(function(){
-        window.location.href = $("#select-site").val()
+    $("#select-site").on('input', function(){
+        val = $(this).val()
+        for(var i = 0; i < site_list.length; i++){
+            obj = site_list[i];
+            if(obj.name.includes(val) || obj.description.includes(val)){
+                console.log(obj);
+                $("#"+site_list[i].name).show();
+            }
+            else{
+                $("#"+site_list[i].name).hide();
+            }
+        }
     });
 });
