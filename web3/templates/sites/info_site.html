@@ -10,6 +10,10 @@
     <b>Users:</b> {{ users|join:", "|default:"None" }}
 </p>
 
+{% if site.custom_nginx %}
+<p><i class="fa fa-exclamation-triangle"></i> This site has a custom nginx configuration.</p>
+{% endif %}
+
 <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
 {% if request.user.is_superuser %}
 <a href="{% url 'edit_site' site.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Edit Site</a> <a href="{% url 'delete_site' site.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Site</a>
