@@ -19,7 +19,7 @@ class Site(models.Model):
         ("activity", "activity")
     ))
     domain = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(blank=True)
 
     user = models.OneToOneField(User)
     group = models.OneToOneField(Group)
