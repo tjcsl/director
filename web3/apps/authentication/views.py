@@ -7,7 +7,8 @@ from ..sites.models import Site
 def index_view(request):
     if request.user.is_authenticated():
         return render(request, "dashboard.html", {
-            "sites": Site.objects.filter(group__users__id=request.user.id).order_by("name") if not request.user.is_superuser else Site.objects.all()
+            "sites": Site.objects.filter(group__users__id=request.user.id).order_by("name"),
+            "other_sites": Site.objects.exclude(group__users__id=request.user.id).order_by("name") if request.user.is_superuser else None
         })
     else:
         return login_view(request)

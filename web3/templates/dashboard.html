@@ -18,6 +18,17 @@
 {% empty %}
 <p>You don't have access to any sites!</p>
 {% endfor %}
+{% if other_sites %}
+<h3>Other Sites</h3>
+    {% for site in other_sites %}
+    <div id="sites">
+        <a href="{% url 'info_site' site.id %}" class="site">
+            <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
+            <b>{{ site.name }}</b><br />{{ site.category }} - {{ site.description|default:"No Description" }}
+        </a>
+    </div>
+    {% endfor %}
+{% endif %}
 
 <a href="{% url 'create_site' %}" class="btn btn-ion"><i class="fa fa-plus"></i> Create Site</a>
 {% endblock %}
