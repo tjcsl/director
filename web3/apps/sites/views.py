@@ -111,22 +111,3 @@ def info_view(request, site_id):
         "users": site.group.users.filter(service=False).order_by("username")
     }
     return render(request, "sites/info_site.html", context)
-
-
-@login_required
-def all_sites_view(request):
-    if request.user.is_superuser:
-        sites = Site.objects.all()
-    else:
-        sites = Site.objects.filter(group__users__id=request.user.id).order_by("name")
-    resp = {"sites": []}
-    for site in sites:
-        resp["sites"].append({
-            "url": reverse("info_site", kwargs={"site_id": site.id}),
-            "name": site.name,
-            "description": site.description if site.description else "No Description",
-            "purpose": site.get_purpose_display(),
-            "category": site.get_category_display(),
-            "users": site.group.users.all().count()
-        })
-    return JsonResponse(resp)
