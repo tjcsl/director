@@ -4,7 +4,7 @@ $(document).ready(function() {
         var current_domain = $("#id_domain").val();
         if (!current_domain || current_domain.includes(".sites.tjhsst.edu")) {
             if (new_name) {
-                $("#id_domain").val(new_name.replace(" ", "-") + ".sites.tjhsst.edu");
+                $("#id_domain").val(new_name + ".sites.tjhsst.edu");
             }
             else {
                 $("#id_domain").val("");

@@ -9,12 +9,17 @@ from ..users.models import User, Group
 
 
 class SiteForm(forms.ModelForm):
+    name_validator = RegexValidator(r"^[0-9a-zA-Z_\-]*$", "Only alphanumeric characters, underscores, and dashes are allowed.")
     domain_validator = RegexValidator(r"^[0-9a-zA-Z_\- .]*$", "Only alphanumeric characters, underscores, dashes, and spaces are allowed.")
 
-    name = forms.CharField(max_length=32, widget=forms.TextInput(attrs={"class": "form-control"}))
-    domain = forms.CharField(max_length=255, widget=forms.TextInput(
-        attrs={"class": "form-control"}),
-        help_text="Can only contain A-Z, a-z, 0-9, dashes, and underscores. Separate multiple domains through spaces.", validators=[domain_validator])
+    name = forms.CharField(max_length=32,
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        help_text="Can only contain alphanumeric characters, underscores, and dashes.",
+        validators=[name_validator])
+    domain = forms.CharField(max_length=255,
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        help_text="Can only contain alphanumeric characters, underscores, and dashes. Separate multiple domains through spaces.",
+        validators=[domain_validator])
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
     category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic")),
                                  widget=forms.Select(attrs={"class": "form-control"}))
