@@ -3,8 +3,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
 from .models import Site
-from .forms import CreateSiteForm
-from .helpers import create_site_users, make_site_dirs, create_config_files, reload_services
+from .forms import SiteForm
+from .helpers import reload_services
 
 from ..authentication.decorators import superuser_required
 
@@ -12,19 +12,31 @@ from ..authentication.decorators import superuser_required
 @superuser_required
 def create_view(request):
     if request.method == "POST":
-        form = CreateSiteForm(request.POST)
+        form = SiteForm(request.POST)
         if form.is_valid():
-            site = form.save(commit=False)
-            user, group = create_site_users(site)
-            if not settings.DEBUG:
-                make_site_dirs(site)
-                create_config_files(site)
-                reload_services()
-            group.users.add(request.user)
+            site = form.save()
+            reload_services()
             return redirect("index")
     else:
-        form = CreateSiteForm()
+        form = SiteForm()
 
+    context = {
+        "form": form
+    }
+    return render(request, "sites/create_site.html", context)
+
+
+@superuser_required
+def edit_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if request.method == "POST":
+        form = SiteForm(request.POST, instance=site)
+        if form.is_valid():
+            site = form.save()
+            reload_services()
+            return redirect("index")
+    else:
+        form = SiteForm(instance=site)
     context = {
         "form": form
     }
