@@ -45,6 +45,15 @@ def edit_view(request, site_id):
     return render(request, "sites/create_site.html", context)
 
 
+@superuser_required
+def delete_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    context = {
+        "site": site
+    }
+    return render(request, "sites/delete_site.html", context)
+
+
 @login_required
 def info_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)

@@ -11,6 +11,6 @@
 </p>
 
 {% if request.user.is_superuser %}
-<a href="{% url 'edit_site' site.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Edit Site</a> <a href="#" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Site</a>
+<a href="{% url 'edit_site' site.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Edit Site</a> <a href="{% url 'delete_site' site.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Site</a>
 {% endif %}
 {% endblock %}
