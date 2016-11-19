@@ -42,6 +42,13 @@ body {
     -o-appearance: none;
     appearance: none;
 }
+.btn.btn-ion.btn-danger {
+    color: #c9302c;
+    border-color: #c12e2a;
+}
+.btn.btn-ion.btn-danger:hover {
+    color: #c12e2a;
+}
 .btn.btn-ion:hover {
     text-decoration: none;
     color: #484848;
