@@ -2,9 +2,13 @@
 
 {% block main %}
 <h3>{{ site.name }}</h3>
-<p><b>Type:</b> {{ site.purpose }} - {{ site.category }}<br />
-<b>Description:</b> {% if site.description %}{{ site.description }}{% else %}None{% endif %}<br />
-<b>Users:</b> {{ site.group.users.all|join:", " }}</p>
+<p>
+    <b>Type:</b> {{ site.purpose }} - {{ site.category }}<br />
+    <b>Description:</b> {% if site.description %}{{ site.description }}{% else %}None{% endif %}<br />
+    <b>Site User:</b> {{ site.user.username }} ({{ site.user.id }})<br />
+    <b>Site Group:</b> {{ site.group.name }} ({{ site.group.id }})<br />
+    <b>Users:</b> {{ site.group.users.all|join:", " }}
+</p>
 
 <a href="#" class="btn btn-ion"><i class="fa fa-pencil"></i> Edit Site</a> <a href="#" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Site</a>
 {% endblock %}
