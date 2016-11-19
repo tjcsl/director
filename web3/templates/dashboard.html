@@ -1,21 +1,9 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block css %}
     {{ block.super }}
-    <style type="text/css">
-    #sites .site {
-        padding: 5px;
-        background-color: rgba(0, 0, 0, 0.08);
-    }
-    #sites .site .fa.pull-left {
-        padding: 8px;
-        margin-right: 5px;
-        vertical-align: middle;
-    }
-    #sites {
-        margin-bottom: 15px;
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}" />
 {% endblock %}
 
 {% block main %}

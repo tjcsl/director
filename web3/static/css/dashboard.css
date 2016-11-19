@@ -1,0 +1,12 @@
+#sites .site {
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.08);
+}
+#sites .site .fa.pull-left {
+    padding: 8px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+#sites {
+    margin-bottom: 15px;
+}
