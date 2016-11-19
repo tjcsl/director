@@ -51,7 +51,7 @@ class Command(BaseCommand):
             create_site_users(s)
             make_site_dirs(s)
             create_config_files(s)
-            shutil.copytree("/web_old/{}/public/".format(s.name), "{}public".format(s.path))
+            shutil.move("/web_old/{}/public/".format(s.name), "{}public".format(s.path))
             os.system("chown -R {}:{} {}".format(s.user.username, s.group.name, s.path))
             self.stdout.write("Created Site: {}".format(s))
         reload_services()
