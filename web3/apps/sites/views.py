@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from .models import Site
@@ -48,6 +49,10 @@ def edit_view(request, site_id):
 @superuser_required
 def delete_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
+    if request.method == "POST":
+        # TODO: implement deletion
+        messages.error(request, "Not implemented!")
+        return redirect("index")
     context = {
         "site": site
     }
