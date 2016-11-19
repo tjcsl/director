@@ -14,7 +14,6 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         mappings = {
-            '2016fwilson': 'user',
             '2017jstone': 'user',
             '2018nthistle': 'user',
             'crs': 'activity',
