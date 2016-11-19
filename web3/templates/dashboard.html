@@ -2,11 +2,13 @@
 {% load staticfiles %}
 
 {% block css %}
-    {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}" />
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/search.css' %}" />
 {% endblock %}
 
 {% block main %}
+<select id="select-site" class="sites" placeholder="Select a site"></select>
 <h3>Your Sites</h3>
 <div id="sites">
 {% for site in sites %}
@@ -31,4 +33,8 @@
 {% else %}
 If you want to create a new site, fill out a service request form and give it to a sysadmin in Room 200C.
 {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'js/sites/search.js' %}"></script>
 {% endblock %}

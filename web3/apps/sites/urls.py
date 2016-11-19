@@ -9,4 +9,5 @@ urlpatterns = [
     url("^delete/(?P<site_id>\d+)$", views.delete_view, name="delete_site"),
     url("^action/permission/(?P<site_id>\d+)$", views.permission_view, name="permission_site"),
     url("^action/config/(?P<site_id>\d+)$", views.config_view, name="config_site")
+    url("^all$", views.all_sites_view, name="all_sites")
 ]
