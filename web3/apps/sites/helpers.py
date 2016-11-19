@@ -45,8 +45,9 @@ def make_site_dirs(site):
 
 
 def create_config_files(site):
-    with open("/etc/nginx/director.d/{}.conf".format(site.name), "w+") as f:
-        f.write(render_to_string("config/nginx.conf", {"site": site}))
+    if not site.custom_nginx:
+        with open("/etc/nginx/director.d/{}.conf".format(site.name), "w+") as f:
+            f.write(render_to_string("config/nginx.conf", {"site": site}))
     with open("/etc/php5/fpm/pool.d/{}.conf".format(site.name), "w+") as f:
         f.write(render_to_string("config/phpfpm.conf", {"site": site}))
 
