@@ -14,20 +14,6 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         mappings = {
-            '2017jstone': 'user',
-            '2018nthistle': 'user',
-            'crs': 'activity',
-            'homecoming': 'other',
-            'tmrudwick': 'user',
-            '2016jwoglom': 'user',
-            'csc': 'activity',
-            'sct': 'activity',
-            'teknos': 'activity',
-            'tutoring': 'other',
-            '2017jschefer': 'user',
-            '2017sdamashe': 'user',
-            'smtorbert': 'user',
-            'tjstar': 'activity'
         }
         for name in mappings:
             s = Site(name=name, domain="{}.sites.tjhsst.edu".format(name), category="php", purpose=mappings[name])
