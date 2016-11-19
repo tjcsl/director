@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block main %}
-<h4>User Information</h4>
+<h5>User Information</h5>
 <p>You are logged in as <b>{{ request.user.username }}</b>. Your user ID is <b>{{ request.user.id }}</b>.{% if request.user.is_superuser %} Your account is a superuser account.{% endif %}</p>
-<h4>Your Groups</h4>
+<h5>Your Groups</h5>
 {% for group in groups %}
     <div>{{ group.name }}</div>
 {% empty %}
