@@ -17,14 +17,18 @@
         background: white;
         padding: 15px;
         border: 1px solid #0048ab;
-        position: absolute;
-        left: 50%;
+        margin: 0 auto;
         width: 438px;
-        margin-left: -219px;
     }
 
     .login-box p {
         text-align: center;
+    }
+
+    @media (max-width:576px) {
+        .login-box {
+            width: 100%;
+        }
     }
     </style>
 {% endblock %}
