@@ -2,7 +2,7 @@
 
 {% block main %}
 <h4>User Information</h4>
-<p>You are logged in as <b>{{ request.user.username }}</b>. Your user ID is <b>{{ request.user.id }}</b>.</p>
+<p>You are logged in as <b>{{ request.user.username }}</b>. Your user ID is <b>{{ request.user.id }}</b>.{% if request.user.superuser %} Your account is a superuser account.{% endif %}</p>
 <h4>Your groups:</h4>
 {% for group in groups %}
     <div>{{ group.name }}</div>
