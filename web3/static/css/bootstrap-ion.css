@@ -134,3 +134,6 @@ body {
 .dropdown:hover {
     background-color: rgba(0,0,0,.2);
 }
+.control-group {
+    margin-bottom: 10px;
+}

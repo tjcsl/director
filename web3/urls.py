@@ -26,7 +26,8 @@ urlpatterns = [
     url(r'^$', auth_views.index_view, name='index'),
     url(r'^login/$', auth_views.login_view, name='login'),
     url(r'^logout/$', auth_views.logout_view, name='logout'),
-    url(r"^user", include("web3.apps.users.urls")),
+    url(r"^user/", include("web3.apps.users.urls")),
+    url(r"^site/", include("web3.apps.sites.urls")),
     url(r'^admin/', admin.site.urls),
 ]
 
