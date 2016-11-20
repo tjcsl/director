@@ -48,7 +48,6 @@ def edit_view(request, site_id):
         if form.is_valid():
             site = form.save()
             for user in site.group.users.filter(service=False).exclude(id__in=current_members):
-                print(user)
                 send_new_site_email(user, site)
             if not settings.DEBUG:
                 reload_services()
