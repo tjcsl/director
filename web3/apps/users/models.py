@@ -33,17 +33,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def full_name(self):
-        return self.get_full_name()
+        return self.username
 
     @property
     def short_name(self):
-        return self.get_short_name()
-
-    def get_short_name(self):
-        return self.api_request("api/profile", {})["short_name"]
-
-    def get_full_name(self):
-        return self.api_request("api/profile", {})["full_name"]
+        return self.username
 
     def get_social_auth(self):
         return self.social_auth.get(provider='ion')
