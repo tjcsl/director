@@ -57,7 +57,8 @@
                 <div class="arrow"></div>
                     <li><a href="{% url 'user_settings' %}"><i class="fa fa-fw fa-cog"></i> Settings</a></li>
                 {% if request.user.is_superuser %}
-                    <li><a href="{% url 'admin:index' %}"><i class="fa fa-fw fa-star"></i> Admin</li>
+                    <li><a href="{% url 'user_management' %}"><i class="fa fa-fw fa-users"></i> User Admin</a></li>
+                    <li><a href="{% url 'admin:index' %}"><i class="fa fa-fw fa-star"></i> Django Admin</li>
                 {% endif %}
                 <li><a href="{% url 'logout' %}"><i class="fa fa-fw fa-sign-out"></i> Logout</a></li>
             </ul>

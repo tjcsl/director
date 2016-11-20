@@ -30,3 +30,9 @@ def create_user_view(request):
         "form": form
     }
     return render(request, "users/create_user.html", context)
+
+@superuser_required
+def manage_user_view(request):
+    context = {
+    }
+    return render(request, "users/management.html", context)
