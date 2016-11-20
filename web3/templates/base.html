@@ -21,7 +21,7 @@
         <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/messenger.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/messenger-theme-future.js' %}"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.1/js/tether.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.1.0/js/tether.min.js"></script>
         <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'selectize/selectize.js' %}"></script>
 
@@ -76,6 +76,11 @@
         This application developed by <a href="mailto:2017ewang@tjhsst.edu">Eric Wang</a> and <a href="mailto:okulkarni@tjhsst.edu">Omkar Kulkarni</a>
     {% endblock %}
     </div>
+    <script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip(); 
+    });
+    </script>
     {% block scripts %}
     {% endblock %}
 </body>
