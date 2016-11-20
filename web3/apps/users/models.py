@@ -39,6 +39,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     def short_name(self):
         return self.username
 
+    def get_short_name(self):
+        return self.username
+
+    def get_full_name(self):
+        return self.username
+
     def get_social_auth(self):
         return self.social_auth.get(provider='ion')
 
