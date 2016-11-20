@@ -13,22 +13,25 @@ from .helpers import reload_services, delete_site_files, create_config_files, ma
 from ..authentication.decorators import superuser_required
 
 
-@superuser_required
+@login_required
 def create_view(request):
-    if request.method == "POST":
-        form = SiteForm(request.POST)
-        if form.is_valid():
-            site = form.save()
-            if not settings.DEBUG:
-                reload_services()
-            return redirect("index")
-    else:
-        form = SiteForm()
+    if request.user.is_superuser:
+        if request.method == "POST":
+            form = SiteForm(request.POST)
+            if form.is_valid():
+                site = form.save()
+                if not settings.DEBUG:
+                    reload_services()
+                return redirect("index")
+        else:
+            form = SiteForm()
 
-    context = {
-        "form": form
-    }
-    return render(request, "sites/create_site.html", context)
+        context = {
+            "form": form
+        }
+        return render(request, "sites/create_site.html", context)
+    else:
+        return render(request, "sites/create_info.html", {})
 
 
 @superuser_required

@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block main %}
-<h4>Create New Site</h4>
+<h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Site</h4>
 <form method="POST">
     {% csrf_token %}
     <fieldset>
