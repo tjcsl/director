@@ -43,11 +43,12 @@ def create_view(request):
 def edit_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if request.method == "POST":
-        current_members = site.group.users.filter(service=False).values_list('id', flat=True)
+        current_members = list(site.group.users.filter(service=False).values_list('id', flat=True))
         form = SiteForm(request.POST, instance=site)
         if form.is_valid():
             site = form.save()
-            for user in site.group.users.filter(service=False).filter(id__in=current_members):
+            for user in site.group.users.filter(service=False).exclude(id__in=current_members):
+                print(user)
                 send_new_site_email(user, site)
             if not settings.DEBUG:
                 reload_services()
