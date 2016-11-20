@@ -17,6 +17,14 @@
     <b>Site User:</b> {{ site.user.username }} ({{ site.user.id }})<br />
     <b>Site Group:</b> {{ site.group.name }} ({{ site.group.id }})<br />
     <b>Users:</b> {{ users|join:", "|default:"None" }}
+    {% if site.category == "dynamic" %}<br />
+    <b>Process:</b> {% if request.user.is_superuser %}<a href="{% url 'edit_process' site.id %}">{% endif %}{% if site.process %}<span class="path">{{ site.process.path }}</span>{% else %}None{% endif %}{% if request.user.is_superuser %}</a>{% endif %}<br />
+    {% if site.process %}<b>Process Status</b>: <span class="path">{{ status }}</span>
+    {% if request.user.is_superuser %}<br />
+    <a href="{% url 'delete_process' site.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Process</a>
+    {% endif %}
+    {% endif %}
+    {% endif %}
 </p>
 
 <p>You can edit this site by connecting to <span class="path">remote.tjhsst.edu</span> and changing directories to <span class="path">{{ site.path }}</span>.</p>
@@ -27,6 +35,9 @@
 <a href="{% url 'config_site' site.id %}" class="btn btn-ion"><i class="fa fa-refresh"></i> Rewrite Configuration</a>
 {% endif %}
 <a href="{% url 'permission_site' site.id %}" class="btn btn-ion"><i class="fa fa-wrench"></i> Reset Permissions</a>
+{% if site.process %}
+<a href="{% url 'restart_process' site.id %}" class="btn btn-ion"><i class="fa fa-retweet"></i> Restart Process</a>
+{% endif %}
 
 <br /><br />
 

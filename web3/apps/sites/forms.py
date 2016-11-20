@@ -2,7 +2,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.conf import settings
 
-from .models import Site
+from .models import Site, Process
 from .helpers import create_site_users, make_site_dirs, create_config_files
 
 from ..users.models import User, Group
@@ -13,17 +13,18 @@ class SiteForm(forms.ModelForm):
     domain_validator = RegexValidator(r"^[0-9a-zA-Z_\- .]*$", "Only alphanumeric characters, underscores, dashes, and spaces are allowed.")
 
     name = forms.CharField(max_length=32,
-        widget=forms.TextInput(attrs={"class": "form-control"}),
-        help_text="Can only contain alphanumeric characters, underscores, and dashes.",
-        validators=[name_validator])
+                           widget=forms.TextInput(attrs={"class": "form-control"}),
+                           help_text="Can only contain alphanumeric characters, underscores, and dashes.",
+                           validators=[name_validator])
     domain = forms.CharField(max_length=255,
-        widget=forms.TextInput(attrs={"class": "form-control"}),
-        help_text="Can only contain alphanumeric characters, underscores, and dashes. Separate multiple domains through spaces.",
-        validators=[domain_validator])
+                             widget=forms.TextInput(attrs={"class": "form-control"}),
+                             help_text="Can only contain alphanumeric characters, underscores, and dashes. Separate multiple domains through spaces.",
+                             validators=[domain_validator])
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
     category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic")),
                                  widget=forms.Select(attrs={"class": "form-control"}))
-    purpose = forms.ChoiceField(choices=(("user", "User"), ("activity", "Activity"), ("other", "Other")), widget=forms.Select(attrs={"class": "form-control"}))
+    purpose = forms.ChoiceField(choices=(("user", "User"), ("activity", "Activity"), ("other", "Other")),
+                                widget=forms.Select(attrs={"class": "form-control"}))
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
 
     def __init__(self, *args, **kwargs):
@@ -61,3 +62,18 @@ class SiteForm(forms.ModelForm):
     class Meta:
         model = Site
         fields = ["name", "domain", "description", "category", "purpose", "users"]
+
+
+class ProcessForm(forms.ModelForm):
+    path_validator = RegexValidator(r"^/web/.*$", "Please enter a valid path starting with /web.")
+
+    site = forms.ModelChoiceField(queryset=Site.objects.filter(category="dynamic"))
+
+    path = forms.CharField(max_length=255,
+                           widget=forms.TextInput(attrs={"class": "form-control"}),
+                           help_text="Enter a valid path starting with /web.",
+                           validators=[path_validator])
+
+    class Meta:
+        model = Process
+        fields = ["site", "path"]

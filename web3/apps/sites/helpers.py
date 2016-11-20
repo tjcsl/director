@@ -1,8 +1,9 @@
 import os
 import shutil
 import stat
-from subprocess import Popen
+from subprocess import Popen, check_output
 
+from .models import Site
 from ..users.models import User, Group
 
 from django.template.loader import render_to_string
@@ -62,6 +63,34 @@ def delete_site_files(site):
     shutil.rmtree(site.path)
 
 
+def create_process_config(process):
+    with open("/etc/supervisor/director.d/{}.conf".format(process.site.name), "w+") as f:
+        f.write(render_to_string("config/supervisor.conf", {"process": process}))
+
+
+def delete_process_config(process):
+    filename = "/etc/supervisor/director.d/{}.conf".format(process.site.name)
+    if os.path.isfile(filename):
+        os.remove(filename)
+
+
+def restart_supervisor(site):
+    try:
+        site.process
+        Popen("supervisorctl restart {}".format(site.name).split())
+    except Site.process.RelatedObjectDoesNotExist:
+        pass
+
+
+def get_supervisor_status(site):
+    try:
+        site.process
+        return check_output("supervisorctl status {}".format(site.name).split()).decode()
+    except Site.process.RelatedObjectDoesNotExist:
+        return "No Process"
+
+
 def reload_services():
     Popen("systemctl reload nginx.service".split())
     Popen("systemctl restart php5-fpm.service".split())
+    Popen("supervisorctl update".split())
