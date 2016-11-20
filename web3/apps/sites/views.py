@@ -88,7 +88,7 @@ def modify_process_view(request, site_id):
             if not settings.DEBUG:
                 create_process_config(proc)
                 reload_services()
-            messages.success(request, "Process created!")
+            messages.success(request, "Process modified!")
             return redirect("info_site", site_id=proc.site.id)
     else:
         try:
