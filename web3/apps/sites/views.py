@@ -13,6 +13,8 @@ from .helpers import (reload_services, delete_site_files, create_config_files,
 
 from ..authentication.decorators import superuser_required
 
+from ...utils.emails import send_new_site_email
+
 
 @login_required
 def create_view(request):
@@ -21,6 +23,8 @@ def create_view(request):
             form = SiteForm(request.POST)
             if form.is_valid():
                 site = form.save()
+                for user in site.group.users.filter(service=False):
+                    send_new_site_email(user, site)
                 if not settings.DEBUG:
                     reload_services()
                 return redirect("index")
@@ -39,9 +43,12 @@ def create_view(request):
 def edit_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if request.method == "POST":
+        current_members = site.group.users.filter(service=False).values_list('id', flat=True)
         form = SiteForm(request.POST, instance=site)
         if form.is_valid():
             site = form.save()
+            for user in site.group.users.filter(service=False).filter(id__in=current_members):
+                send_new_site_email(user, site)
             if not settings.DEBUG:
                 reload_services()
             return redirect("index")

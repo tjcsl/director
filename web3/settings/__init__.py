@@ -189,3 +189,10 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_ERROR_URL = '/login/'
 
 INTERNAL_IPS = ['127.0.0.1']
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "mail.tjhsst.edu"
+EMAIL_PORT = 25
+EMAIL_USE_TLS = False  # FIXME: use tls
+EMAIL_SUBJECT_PREFIX = "[Director Website Management]"
+EMAIL_FROM = "director-noreply@tjhsst.edu"

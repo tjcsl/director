@@ -35,7 +35,6 @@ class SiteForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
-        print(instance)
 
         old_save_m2m = self.save_m2m
 

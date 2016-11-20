@@ -5,6 +5,8 @@ from django.core import validators
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager as DjangoUserManager
 from django.utils import timezone
 
+import requests
+
 
 class UserManager(DjangoUserManager):
     pass
@@ -29,17 +31,26 @@ class User(AbstractBaseUser, PermissionsMixin):
         from ..sites.models import Site
         return Site.objects.filter(name=self.username, purpose="user").count() > 0
 
+    @property
+    def full_name(self):
+        return self.get_full_name()
+
+    @property
+    def short_name(self):
+        return self.get_short_name()
+
     def get_short_name(self):
-        return self.username
+        return self.api_request("api/profile", {})["short_name"]
 
     def get_full_name(self):
-        return self.username
+        return self.api_request("api/profile", {})["full_name"]
 
     def get_social_auth(self):
         return self.social_auth.get(provider='ion')
 
     def api_request(self, url, params):
         s = self.get_social_auth()
+        params.update({"format": "json"})
         params.update({"access_token": s.extra_data["access_token"]})
         r = requests.get("https://ion.tjhsst.edu/{}".format(url), params=params)
         return r.json()
