@@ -3,11 +3,11 @@
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="{% static 'js/sites/creation.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/users/creation.js' %}"></script>
 {% endblock %}
 
 {% block main %}
-<h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Site</h4>
+<h4>{% if "create" in request.path %}Create New{% else %}Edit{% endif %} User</h4>
 <form method="POST">
     {% csrf_token %}
     <fieldset>
@@ -34,15 +34,7 @@
         {% endfor %}
     </fieldset>
     <div class="form-actions">
-        <button type="submit" class="btn btn-ion">Submit</button>
+        <button type="submit" class="btn btn-ion">{% if "create" in request.path %}<i class="fa fa-user-plus"></i> Create User{% else %}<i class="fa fa-user"></i> Edit User{% endif %}</button>
     </div>
 </form>
-{% endblock %}
-
-{% block scripts %}
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#id_users").selectize();
-    });
-</script>
 {% endblock %}
