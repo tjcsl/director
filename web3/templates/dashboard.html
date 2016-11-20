@@ -35,4 +35,20 @@
 
 {% block scripts %}
 <script type="text/javascript" src="{% static 'js/sites/search.js' %}"></script>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        function checkWidth() {
+        var windowsize = $(window).width();
+        if(windowsize > 576){
+            $("#select-site").insertBefore("#user-dropdown");
+        }
+        else{
+            $("#user-dropdown").insertBefore("#select-site");
+        }
+    }
+    checkWidth();
+    $(window).resize(checkWidth())
+    });
+</script>
 {% endblock %}
