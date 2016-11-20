@@ -9,19 +9,14 @@
     right: 0;
     z-index: 100;
 }
-#sites {
+#users {
     padding: 15px;
 }
-#sites .site {
-    color: #484848;
+#users .user {
     display: block;
+    color: #484848;
     text-decoration: none;
     padding: 5px;
     margin-bottom: 5px;
     background-color: rgba(0, 0, 0, 0.08);
-}
-#sites .site .fa.pull-left {
-    padding: 8px;
-    margin-right: 5px;
-    vertical-align: middle;
 }

@@ -3,11 +3,12 @@
 
 {% block css %}
 {{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}" />
 {% endblock %}
 
 {% block navbar %}
-<input class="form-control" id="select-site" type="text" placeholder="&#xf002; Search Sites" />
+<input class="form-control search-box" id="select-site" type="text" placeholder="&#xf002; Search Sites" />
 {% endblock %}
 {% block main %}
 <div class="subheading clearfix">
@@ -33,27 +34,8 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script type="text/javascript" src="{% static 'js/sites/search.js' %}"></script>
-<script type="text/javascript">
-
-    $(document).ready(function() {
-        function checkWidth() {
-        var windowsize = $(window).width();
-        if(windowsize > 576){
-            $("#select-site").insertBefore("#user-dropdown");
-        }
-        else{
-            $("#user-dropdown").insertBefore("#select-site");
-        }
-        
-    }
-    checkWidth();
-    $(".main").css("padding-top", $(".navbar").height().toString() + "px");
-    $(window).resize(function(){
-        checkWidth();
-        $(".main").css("padding-top", $(".navbar").height().toString() + "px");
-    });
-    });
-</script>
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/sites/search.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/search-resize.js' %}"></script>
 {% endblock %}

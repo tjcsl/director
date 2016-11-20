@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import UserForm
 from ..authentication.decorators import superuser_required
 
-from .models import Group
+from .models import User, Group
 
 @login_required
 def settings_view(request):
@@ -34,5 +34,6 @@ def create_user_view(request):
 @superuser_required
 def manage_user_view(request):
     context = {
+        "users": User.objects.filter(service=False).order_by("username")
     }
     return render(request, "users/management.html", context)

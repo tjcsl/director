@@ -1,6 +1,30 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+
+{% block navbar %}
+<input class="form-control search-box" id="select-user" type="text" placeholder="&#xf002; Search Users" />
+{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/user_management.css' %}" />
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/search-resize.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/users/search.js' %}"></script>
+{% endblock %}
 
 {% block main %}
-<h5>User Management</h5>
-<a href="{% url 'create_user' %}" class="btn btn-ion"><i class="fa fa-user-plus"></i> Create User</a>
+<div class="subheading clearfix">
+    <h3 class="pull-left">User Admin</h3>
+    <a href="{% url 'create_user' %}" class="pull-right btn btn-ion"><i class="fa fa-user-plus"></i> Create User</a>
+</div>
+<div id="users">
+    {% for user in users %}
+        <a class="user"><span class="name"><i class="fa {% if user.is_active %}fa-user{% else %}fa-lock{% endif %}"></i> {{ user.username }}</span>{% if user.is_superuser %}<span class="pull-right tag tag-warning">Superuser</span>{% endif %}</a>
+    {% endfor %}
+</div>
 {% endblock %}
