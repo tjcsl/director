@@ -46,9 +46,14 @@
         else{
             $("#user-dropdown").insertBefore("#select-site");
         }
+        
     }
     checkWidth();
-    $(window).resize(checkWidth())
+    $(".main").css("padding-top", $(".navbar").height().toString() + "px");
+    $(window).resize(function(){
+        checkWidth();
+        $(".main").css("padding-top", $(".navbar").height().toString() + "px");
+    });
     });
 </script>
 {% endblock %}
