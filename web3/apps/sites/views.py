@@ -145,7 +145,7 @@ def permission_view(request, site_id):
                 os.chown(os.path.join(root, f), site.user.id, site.group.id)
 
     messages.success(request, "File permissions regenerated!")
-    return redirect("info_site", site_id=site_id)
+    return redirect("info_site", site_id=site.id)
 
 
 @login_required
