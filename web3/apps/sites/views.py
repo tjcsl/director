@@ -101,7 +101,7 @@ def modify_process_view(request, site_id):
         try:
             form = ProcessForm(instance=site.process)
         except Site.process.RelatedObjectDoesNotExist:
-            form = ProcessForm()
+            form = ProcessForm(initial={"site": site.id})
     context = {
         "form": form
     }
