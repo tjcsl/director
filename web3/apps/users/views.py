@@ -22,7 +22,7 @@ def create_user_view(request):
         if form.is_valid():
             user = form.save()
             messages.success(request, "User {} created!".format(user.username))
-            return redirect("index")
+            return redirect("user_management")
     else:
         form = UserForm()
 

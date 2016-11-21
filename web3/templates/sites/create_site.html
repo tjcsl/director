@@ -4,6 +4,11 @@
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="{% static 'js/sites/creation.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#id_users").selectize();
+        });
+    </script>
 {% endblock %}
 
 {% block main %}
@@ -37,12 +42,4 @@
         <button type="submit" class="btn btn-ion">Submit</button>
     </div>
 </form>
-{% endblock %}
-
-{% block scripts %}
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#id_users").selectize();
-    });
-</script>
 {% endblock %}
