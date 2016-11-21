@@ -39,6 +39,7 @@ def edit_view(request, user_id):
     if request.method == "POST":
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
+            user = form.save()
             messages.success(request, "User {} edited!".format(user.username))
             return redirect("user_management")
     else:
