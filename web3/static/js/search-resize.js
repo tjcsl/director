@@ -3,15 +3,15 @@ $(document).ready(function() {
         var windowsize = $(window).width();
         if(windowsize > 576) {
             $(".search-box").insertBefore("#user-dropdown");
+            $(".main").css("padding-top", "40px");
         }
         else {
             $("#user-dropdown").insertBefore(".search-box");
+            $(".main").css("padding-top", "80px");
         }
     }
     checkWidth();
-    $(".main").css("padding-top", $(".navbar").height().toString() + "px");
     $(window).resize(function() {
         checkWidth();
-        $(".main").css("padding-top", $(".navbar").height().toString() + "px");
     });
 });
