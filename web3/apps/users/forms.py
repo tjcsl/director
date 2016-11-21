@@ -24,6 +24,9 @@ class UserForm(forms.ModelForm):
     def clean_username(self):
         data = self.cleaned_data["username"].strip()
 
+        if self.instance.pk:
+            return data
+
         try:
             uid = get_uid(data)
         except IndexError:
@@ -34,7 +37,8 @@ class UserForm(forms.ModelForm):
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
 
-        instance.id = get_uid(instance.username)
+        if not self.instance.pk:
+            instance.id = get_uid(instance.username)
 
         instance.service = False
         instance.is_active = True
