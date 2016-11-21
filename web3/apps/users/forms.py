@@ -13,6 +13,12 @@ class UserForm(forms.ModelForm):
                             validators=[EmailValidator])
     is_superuser = forms.BooleanField(required=False, label="Superuser Account")
 
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, "instance", None)
+        if instance and instance.pk:
+            self.fields["username"].disabled = True
+
     def clean_username(self):
         data = self.cleaned_data["username"].strip()
 
