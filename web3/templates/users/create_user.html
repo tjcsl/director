@@ -13,32 +13,30 @@
     {% csrf_token %}
     <fieldset>
         {% for field in form %}
-            {% if field.errors %}
-                <div class="control-group error">
-                    <label class="control-label">{{ field.label }}</label> 
-                    <div class="controls">{{ field }}
-                        <span class="danger help-inline">
-                            {% for error in  field.errors %}{{ error }}{% endfor %}
-                        </span>
-                    </div>
-                </div>
-            {% else %}
-                {% if field|field_type == "CheckboxInput" %}
+            {% if field|field_type == "CheckboxInput" %}
                 <label class="custom-control custom-checkbox">
                     {{ field }}
                     <span class="custom-control-indicator"></span>
                     <span class="custom-control-description">{{ field.label }}</span>
                 </label>
-                {% else %}
+                {% if field.errors %}
+                    <span class="danger help-inline">
+                        {% for error in  field.errors %}{{ error }}{% endfor %}
+                    </span>
+                {% endif %}
+            {% else %}
                 <div class="control-group">
                     <label class="control-label">{{ field.label }}</label> 
                     <div class="controls">{{ field }}
-                        {% if field.help_text %}
+                        {% if field.errors %}
+                            <span class="danger help-inline">
+                                {% for error in  field.errors %}{{ error }}{% endfor %}
+                            </span>
+                        {% elif field.help_text %}
                             <p class="help-inline"><small>{{ field.help_text }}</small></p>
                         {% endif %}
                     </div>
                 </div>
-                {% endif %}
             {% endif %}
         {% endfor %}
     </fieldset>
