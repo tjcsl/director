@@ -51,7 +51,7 @@ def edit_view(request, site_id):
                 send_new_site_email(user, site)
             if not settings.DEBUG:
                 reload_services()
-            return redirect("index")
+            return redirect("info_site", site_id=site_id)
     else:
         form = SiteForm(instance=site)
     context = {

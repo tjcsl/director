@@ -26,6 +26,9 @@ class SiteForm(forms.ModelForm):
     purpose = forms.ChoiceField(choices=(("user", "User"), ("activity", "Activity"), ("other", "Other")),
                                 widget=forms.Select(attrs={"class": "form-control"}))
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
+    custom_nginx = forms.BooleanField(required=False,
+                                      label="Custom Nginx Configuration",
+                                      widget=forms.CheckboxInput(attrs={"class": "custom-control-input"}))
 
     def __init__(self, *args, **kwargs):
         if kwargs.get("instance"):
@@ -60,7 +63,7 @@ class SiteForm(forms.ModelForm):
 
     class Meta:
         model = Site
-        fields = ["name", "domain", "description", "category", "purpose", "users"]
+        fields = ["name", "domain", "description", "category", "purpose", "users", "custom_nginx"]
 
 
 class ProcessForm(forms.ModelForm):
