@@ -168,7 +168,6 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.create_user',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',
-    'social.pipeline.user.user_details',
     'web3.apps.authentication.oauth.create_user_group',
 )
 
@@ -180,7 +179,7 @@ AUTHENTICATION_BACKENDS = (
 
 AUTH_USER_MODEL = "users.User"
 
-SOCIAL_AUTH_USER_FIELDS = ['username', 'email', 'id']
+SOCIAL_AUTH_USER_FIELDS = ['username', 'email', 'id', 'is_superuser', 'is_staff', 'is_admin']
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
