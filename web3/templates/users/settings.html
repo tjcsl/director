@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 
 {% block main %}
-<h5>User Information - {{ request.user.full_name }}</h5>
-<p>You are logged in as <b>{{ request.user.username }}</b>. Your user ID is <b>{{ request.user.id }}</b>.{% if request.user.is_superuser %} Your account is a superuser account.{% endif %}</p>
+<h5>Your Information</h5>
+<p>
+    <b>Username:</b> {{ request.user.username }}<br />
+    <b>Email:</b> {{ request.user.email }}<br />
+    <b>User ID:</b> {{ request.user.id }}<br />
+    <b>Account Type:</b> {% if request.user.is_superuser %}Superuser{% elif request.user.is_staff %}Staff{% else %}Normal Account{% endif %}<br />
+</p>
 <h5>Your Groups</h5>
 {% for group in groups %}
     <div>{{ group.name }}</div>
