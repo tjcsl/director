@@ -7,11 +7,13 @@ from ...utils.tjldap import get_uid
 
 class UserForm(forms.ModelForm):
     username = forms.CharField(max_length=32,
-                           widget=forms.TextInput(attrs={"class": "form-control"}))
+                               widget=forms.TextInput(attrs={"class": "form-control"}))
     email = forms.CharField(max_length=100,
                             widget=forms.TextInput(attrs={"class": "form-control"}),
                             validators=[EmailValidator])
-    is_superuser = forms.BooleanField(required=False, label="Superuser Account")
+    is_superuser = forms.BooleanField(required=False,
+                                      label="Superuser Account",
+                                      widget=forms.CheckboxInput(attrs={"class": "custom-control-input"}))
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)

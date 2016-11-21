@@ -152,3 +152,6 @@ body {
 .path {
     font-family: monospace;
 }
+.custom-control-input:focus~.custom-control-indicator {
+    box-shadow: none;
+}

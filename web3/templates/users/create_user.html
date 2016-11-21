@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load formfilters %}
 
 {% block js %}
     {{ block.super }}
@@ -22,6 +23,13 @@
                     </div>
                 </div>
             {% else %}
+                {% if field|field_type == "CheckboxInput" %}
+                <label class="custom-control custom-checkbox">
+                    {{ field }}
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">{{ field.label }}</span>
+                </label>
+                {% else %}
                 <div class="control-group">
                     <label class="control-label">{{ field.label }}</label> 
                     <div class="controls">{{ field }}
@@ -30,6 +38,7 @@
                         {% endif %}
                     </div>
                 </div>
+                {% endif %}
             {% endif %}
         {% endfor %}
     </fieldset>
