@@ -178,6 +178,6 @@ def info_view(request, site_id):
     context = {
         "site": site,
         "users": site.group.users.filter(service=False).order_by("username"),
-        "status": get_supervisor_status(site)
+        "status": get_supervisor_status(site) if not settings.DEBUG else None
     }
     return render(request, "sites/info_site.html", context)

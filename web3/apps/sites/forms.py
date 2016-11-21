@@ -1,3 +1,5 @@
+import os
+
 from django import forms
 from django.core.validators import RegexValidator
 from django.conf import settings
@@ -75,6 +77,18 @@ class ProcessForm(forms.ModelForm):
                            widget=forms.TextInput(attrs={"class": "form-control"}),
                            help_text="Enter a valid path starting with /web.",
                            validators=[path_validator])
+
+    def clean_path(self):
+        value = self.cleaned_data["path"].strip()
+        root_path = self.cleaned_data["site"].path
+
+        if not settings.DEBUG and not os.path.isfile(value):
+            raise forms.ValidationError("The file you are trying to reference does not exist!")
+
+        if not value.startswith(root_path):
+            raise forms.ValidationError("The file you are trying to reference must be in the {} folder!".format(root_path))
+
+        return value
 
     class Meta:
         model = Process
