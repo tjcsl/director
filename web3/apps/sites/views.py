@@ -9,7 +9,7 @@ from .models import Site
 from .forms import SiteForm, ProcessForm
 from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
-                      get_supervisor_status, delete_process_config)
+                      get_supervisor_status, delete_process_config, write_new_index_file)
 
 from ..authentication.decorators import superuser_required
 
@@ -26,6 +26,8 @@ def create_view(request):
                 for user in site.group.users.filter(service=False):
                     send_new_site_email(user, site)
                 if not settings.DEBUG:
+                    if not site.category == "dynamic":
+                        write_new_index_file(site)
                     reload_services()
                 return redirect("index")
         else:

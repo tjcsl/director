@@ -54,8 +54,13 @@ def create_config_files(site):
             f.write(render_to_string("config/phpfpm.conf", {"site": site}))
 
 
+def write_new_index_file(site):
+    with open("{}public/index.html".format(site.path), "w+") as f:
+        f.write(render_to_string("config/index.html", {"site": site}))
+
+
 def delete_site_files(site):
-    files = ["/etc/nginx/director.d/{}.conf", "/etc/php5/fpm/pool.d/{}.conf"]
+    files = ["/etc/nginx/director.d/{}.conf", "/etc/php5/fpm/pool.d/{}.conf", "/etc/supervisor/director.d/{}.conf"]
     files = [x.format(site.name) for x in files]
     for f in files:
         if os.path.isfile(f):
