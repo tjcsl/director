@@ -159,10 +159,13 @@ def permission_view(request, site_id):
         make_site_dirs(site)
         for root, dirs, files in os.walk(site.path):
             for f in files + dirs:
-                os.chown(os.path.join(root, f), site.user.id, site.group.id)
-                os.chmod(os.path.join(root, f), stat.S_IRGRP | stat.S_IWGRP)
-            for f in dirs:
-                os.chmod(os.path.join(root, f), stat.S_IXGRP)
+                path = os.path.join(root, f)
+                st = os.stat(path)
+                os.chown(path, site.user.id, site.group.id)
+                if stat.S_ISDIR(st.st_mode):
+                    os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
+                else:
+                    os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
 
     messages.success(request, "File permissions regenerated!")
     return redirect("info_site", site_id=site.id)
