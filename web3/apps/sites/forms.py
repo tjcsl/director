@@ -79,14 +79,14 @@ class ProcessForm(forms.ModelForm):
                            validators=[path_validator])
 
     def clean_path(self):
-        value = self.cleaned_data["path"].strip()
+        value = os.path.abspath(self.cleaned_data["path"].strip())
         root_path = self.cleaned_data["site"].path
 
         if not settings.DEBUG and not os.path.isfile(value):
-            raise forms.ValidationError("The file you are trying to reference does not exist!")
+            raise forms.ValidationError("The script you are trying to reference does not exist!")
 
         if not value.startswith(root_path):
-            raise forms.ValidationError("The file you are trying to reference must be in the {} folder!".format(root_path))
+            raise forms.ValidationError("The script you are trying to reference must be in the {} folder!".format(root_path))
 
         return value
 
