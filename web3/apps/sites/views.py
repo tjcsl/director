@@ -157,6 +157,8 @@ def permission_view(request, site_id):
             for f in files + dirs:
                 os.chown(os.path.join(root, f), site.user.id, site.group.id)
                 os.chmod(os.path.join(root, f), stat.S_IRGRP | stat.S_IWGRP)
+            for f in dirs:
+                os.chmod(os.path.join(root, f), stat.S_IXGRP)
 
     messages.success(request, "File permissions regenerated!")
     return redirect("info_site", site_id=site.id)
