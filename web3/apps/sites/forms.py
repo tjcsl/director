@@ -71,7 +71,7 @@ class SiteForm(forms.ModelForm):
 class ProcessForm(forms.ModelForm):
     path_validator = RegexValidator(r"^/web/.*$", "Please enter a valid path starting with /web.")
 
-    site = forms.ModelChoiceField(queryset=Site.objects.filter(category="dynamic"))
+    site = forms.ModelChoiceField(queryset=Site.objects.filter(category="dynamic"), disabled=True)
 
     path = forms.CharField(max_length=255,
                            widget=forms.TextInput(attrs={"class": "form-control"}),
@@ -80,7 +80,10 @@ class ProcessForm(forms.ModelForm):
 
     def clean_path(self):
         value = os.path.abspath(self.cleaned_data["path"].strip())
-        root_path = self.cleaned_data["site"].path
+        if self.instance.pk:
+            root_path = self.instance.site.path
+        else:
+            root_path = Site.objects.get(id=self.initial["site"]).path
 
         if not settings.DEBUG and not os.path.isfile(value):
             raise forms.ValidationError("The script you are trying to reference does not exist!")

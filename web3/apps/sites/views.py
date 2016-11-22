@@ -86,14 +86,16 @@ def delete_view(request, site_id):
     return render(request, "sites/delete_site.html", context)
 
 
-@superuser_required
+@login_required
 def modify_process_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
     if request.method == "POST":
         try:
             form = ProcessForm(request.POST, instance=site.process)
         except Site.process.RelatedObjectDoesNotExist:
-            form = ProcessForm(request.POST)
+            form = ProcessForm(request.POST, initial={"site": site.id})
         if form.is_valid():
             proc = form.save()
             if not settings.DEBUG:
@@ -112,9 +114,11 @@ def modify_process_view(request, site_id):
     return render(request, "sites/create_process.html", context)
 
 
-@superuser_required
+@login_required
 def delete_process_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
     if request.method == "POST":
         try:
             site.process.delete()
