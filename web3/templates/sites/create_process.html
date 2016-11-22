@@ -13,6 +13,12 @@
 
 {% block main %}
 <h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Process</h4>
+<p>Before adding or editing a process, make sure that your script file:</p>
+<ul>
+    <li>Is marked as executable (<span class="path">chmod +x &lt;script&gt;</span>)</li>
+    <li>Contains a shebang (<span class="path">#!/bin/sh</span> or similar)</li>
+    <li>Runs the server on the correct port (use the <span class="path">$PORT</span> variable)</li>
+</ul>
 <form method="POST">
     {% csrf_token %}
     <fieldset>
