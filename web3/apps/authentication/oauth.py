@@ -36,7 +36,6 @@ class IonOauth2(BaseOAuth2):
             'id': get_uid(profile['ion_username']),
             'email': profile['tj_email'],
             'service': False,
-            'is_admin': is_admin,
             'is_superuser': is_admin,
             'is_staff': profile['is_teacher']
         }

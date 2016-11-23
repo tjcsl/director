@@ -44,7 +44,6 @@ class UserForm(forms.ModelForm):
         instance.is_active = True
 
         instance.is_staff = instance.is_superuser
-        instance.is_admin = instance.is_superuser
 
         if commit:
             instance.save()
