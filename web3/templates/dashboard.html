@@ -31,6 +31,9 @@
     </a>
     {% endfor %}
 {% endif %}
+{% if sites.count == 0 and other_sites.count == 0 %}
+<div style="text-align:center">You don't have any sites! Click <a href="{% url 'create_site' %}">here</a> to create a new site.</div>
+{% endif %}
 </div>
 {% endblock %}
 
