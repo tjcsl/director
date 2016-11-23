@@ -19,6 +19,10 @@
 
 <p>You can edit this site by connecting to <span class="path">remote.tjhsst.edu</span> and changing directories to <span class="path">{{ site.path }}</span>.</p>
 
+{% if site.has_repo %}
+<p><i class="fa fa-github"></i> This site uses Git for version control.</p>
+{% endif %}
+
 {% if site.custom_nginx %}
 <p><i class="fa fa-exclamation-triangle"></i> This site has a custom nginx configuration.</p>
 {% endif %}

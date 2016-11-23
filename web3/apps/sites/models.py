@@ -1,5 +1,8 @@
 from __future__ import unicode_literals
 
+import os
+
+from django.conf import settings
 from django.core import validators
 from django.db import models
 
@@ -34,9 +37,13 @@ class Site(models.Model):
         elif self.purpose == "activity":
             return "/web/activities/{}/".format(self.name)
         elif self.purpose == "legacy":
-            return "/web/legacy/{}".format(self.name)
+            return "/web/legacy/{}/".format(self.name)
         else:
             return "/web/{}/".format(self.name)
+
+    @property
+    def has_repo():
+        return not settings.DEBUG and os.path.isdir("{}public/.git".format(self.path)))
 
     def __str__(self):
         return self.name
