@@ -42,7 +42,7 @@ class Site(models.Model):
             return "/web/{}/".format(self.name)
 
     @property
-    def has_repo():
+    def has_repo(self):
         return not settings.DEBUG and os.path.isdir("{}public/.git".format(self.path)))
 
     def __str__(self):
