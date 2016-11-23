@@ -109,8 +109,8 @@ def flush_permissions():
     Popen("/usr/sbin/nscd -i passwd".split())
 
 
-def run_as_site(site, cmd, cwd=None):
-    proc = Popen(cmd.split(), preexec_fn=demote(site.user.id, site.group.id), cwd=cwd or site.path, stdout=PIPE, stderr=PIPE)
+def run_as_site(site, cmd, cwd=None, env=None):
+    proc = Popen(cmd.split(), preexec_fn=demote(site.user.id, site.group.id), cwd=cwd or site.path, env=env, stdout=PIPE, stderr=PIPE)
     out, err = proc.communicate()
     return (proc.returncode, out, err)
 
