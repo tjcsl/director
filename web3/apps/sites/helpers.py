@@ -1,6 +1,7 @@
 import os
 import shutil
 import stat
+import time
 from subprocess import Popen, check_output
 
 from .models import Site
@@ -99,3 +100,10 @@ def reload_services():
     Popen("systemctl reload nginx.service".split())
     Popen("systemctl restart php5-fpm.service".split())
     Popen("supervisorctl update".split())
+
+
+def flush_permissions():
+    with open("/proc/net/rpc/auth.unix.gid/flush", "w") as f:
+        f.write(str(int(time.time())))
+    Popen("nscd -i group")
+    Popen("nscd -i passwd")

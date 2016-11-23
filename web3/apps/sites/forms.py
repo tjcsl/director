@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from django.conf import settings
 
 from .models import Site, Process
-from .helpers import create_site_users, make_site_dirs, create_config_files
+from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions
 
 from ..users.models import User, Group
 
@@ -59,6 +59,7 @@ class SiteForm(forms.ModelForm):
             if not settings.DEBUG:
                 make_site_dirs(instance)
                 create_config_files(instance)
+                flush_permissions()
             instance.save()
             self.save_m2m()
         return instance
