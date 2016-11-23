@@ -24,7 +24,7 @@
 </div>
 <div id="users">
     {% for user in users %}
-        <a href="{% url 'edit_user' user.id %}" class="user"><span class="name"><i class="fa {% if user.is_active %}fa-user{% else %}fa-lock{% endif %}"></i> {{ user.username }}</span>{% if user.is_superuser %}<span class="pull-right tag tag-warning">Superuser</span>{% elif user.is_staff %}<span class="pull-right tag tag-success">Staff</span>{% endif %}</a>
+        <a href="{% url 'edit_user' user.id %}" class="user"><span class="name"><i class="fa {% if user.is_active %}fa-user{% else %}fa-lock{% endif %}"></i> {{ user.username }}</span>{% if user.is_superuser %}<span class="pull-right tag tag-warning">Superuser</span>{% endif %}{% if user.is_staff %}<span class="pull-right tag tag-success">Staff</span>{% endif %}</a>
     {% endfor %}
 </div>
 {% endblock %}
