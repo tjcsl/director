@@ -2,7 +2,7 @@ import os
 import shutil
 import stat
 import time
-from subprocess import Popen, check_output
+from subprocess import Popen, check_output, PIPE
 
 from .models import Site
 from ..users.models import User, Group
@@ -107,3 +107,16 @@ def flush_permissions():
         f.write(str(int(time.time())))
     Popen("/usr/sbin/nscd -i group".split())
     Popen("/usr/sbin/nscd -i passwd".split())
+
+
+def run_as_site(site, cmd, cwd=None):
+    proc = Popen(cmd.split(), preexec_fn=demote(uid, gid), cwd=cwd or site.path, stdout=PIPE, stderr=PIPE)
+    out, err = proc.communicate()
+    return (proc.returncode, out, err)
+
+
+def demote(uid, gid):
+    def result():
+        os.setuid(uid)
+        os.setgid(gid)
+    return result
