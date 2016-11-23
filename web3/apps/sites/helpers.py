@@ -117,6 +117,6 @@ def run_as_site(site, cmd, cwd=None):
 
 def demote(uid, gid):
     def result():
-        os.setuid(uid)
-        os.setgid(gid)
+        os.seteuid(uid)
+        os.setegid(gid)
     return result
