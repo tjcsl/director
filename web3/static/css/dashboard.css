@@ -18,6 +18,9 @@
     padding-right: 20px;
     border-bottom: 1px solid #ccc;
 }
+#sites .site .tag {
+    margin-left: 5px;
+}
 #sites .site:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }
