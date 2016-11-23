@@ -105,5 +105,5 @@ def reload_services():
 def flush_permissions():
     with open("/proc/net/rpc/auth.unix.gid/flush", "w") as f:
         f.write(str(int(time.time())))
-    Popen("nscd -i group")
-    Popen("nscd -i passwd")
+    Popen("/usr/sbin/nscd -i group")
+    Popen("/usr/sbin/nscd -i passwd")
