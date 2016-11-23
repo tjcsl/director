@@ -14,6 +14,9 @@ class UserForm(forms.ModelForm):
     is_superuser = forms.BooleanField(required=False,
                                       label="Superuser Account",
                                       widget=forms.CheckboxInput(attrs={"class": "custom-control-input"}))
+    is_staff = forms.BooleanField(required=False,
+                                  label="Staff Account",
+                                  widget=forms.CheckboxInput(attrs={"class": "custom-control-input"}))
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -43,8 +46,6 @@ class UserForm(forms.ModelForm):
         instance.service = False
         instance.is_active = True
 
-        instance.is_staff = instance.is_superuser
-
         if commit:
             instance.save()
             if not Group.objects.filter(id=instance.id).exists():
@@ -56,4 +57,4 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "email", "is_superuser"]
+        fields = ["username", "email", "is_superuser", "is_staff"]
