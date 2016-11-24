@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $("#git-pull").click(function() {
-        $.get("{% url 'git_pull' site.id %}", function(data) {
+        $.get(git_pull_endpoint, function(data) {
             $("#git-output").text("Process exited with return code " + data.ret + (data.out ? "\n\n" + data.out : "") + (data.err ? "\n\n" + data.err : "")).slideDown("fast");
         });
     });
