@@ -2,8 +2,11 @@ import os
 import shutil
 import stat
 import time
+import psycopg2
+
 from subprocess import Popen, check_output, PIPE
 
+from django.conf import settings
 from .models import Site
 from ..users.models import User, Group
 
@@ -143,3 +146,29 @@ def generate_ssh_key(site):
     os.chown(keypath + ".pub", site.user.id, site.group.id)
     os.chmod(keypath, stat.S_IRUSR | stat.S_IWUSR)
     os.chmod(keypath + ".pub", stat.S_IRUSR | stat.S_IWUSR)
+
+
+def create_postgres_database(database):
+    conn = psycopg2.connect("host = '{}' dbname='postgres', user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
+        cursor.execute("CREATE DATABASE {}".format(database.db_name))
+        cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
+        conn.close()
+        return True
+    except psycopg2.ProgrammingError:
+        # database already created
+        cursor.execute("ALTER USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
+        conn.close()
+        return False
+
+
+def delete_postgres_database(database):
+    conn = psycopg2.connect("host = '{}' dbname='postgres', user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    cursor = conn.cursor()
+    cursor.execute("DROP DATABASE IF EXISTS {}".format(database.db_name))
+    cursor.execute("DROP USER IF EXISTS {}".format(database.username))
+    conn.close()
