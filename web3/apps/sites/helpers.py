@@ -112,7 +112,7 @@ def flush_permissions():
 def run_as_site(site, cmd, cwd=None, env=None):
     proc = Popen(cmd.split(), preexec_fn=demote(site.user.id, site.group.id), cwd=cwd or site.path, env=env, stdout=PIPE, stderr=PIPE)
     out, err = proc.communicate()
-    return (proc.returncode, out, err)
+    return (proc.returncode, out.decode("utf-8"), err.decode("utf-8"))
 
 
 def demote(uid, gid):
