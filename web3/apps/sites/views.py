@@ -96,7 +96,7 @@ def modify_process_view(request, site_id):
         raise PermissionDenied
     if request.method == "POST":
         try:
-            form = ProcessForm(request.POST, instance=site.process)
+            form = ProcessForm(request.user, request.POST, instance=site.process)
         except Site.process.RelatedObjectDoesNotExist:
             form = ProcessForm(request.POST, initial={"site": site.id})
         if form.is_valid():
@@ -108,9 +108,9 @@ def modify_process_view(request, site_id):
             return redirect("info_site", site_id=proc.site.id)
     else:
         try:
-            form = ProcessForm(instance=site.process)
+            form = ProcessForm(request.user, instance=site.process)
         except Site.process.RelatedObjectDoesNotExist:
-            form = ProcessForm(initial={"site": site.id})
+            form = ProcessForm(request.user, initial={"site": site.id})
     context = {
         "form": form
     }
@@ -124,18 +124,18 @@ def modify_database_view(request, site_id):
         raise PermissionDenied
     if request.method == "POST":
         try:
-            form = DatabaseForm(request.POST, instance=site.database)
+            form = DatabaseForm(request.user, request.POST, instance=site.database)
         except Site.database.RelatedObjectDoesNotExist:
-            form = DatabaseForm(request.POST, initial={"site": site.id})
+            form = DatabaseForm(request.user, request.POST, initial={"site": site.id})
         if form.is_valid():
             form.save()
             messages.success(request, "New database created!")
             return redirect("info_site", site_id=site.id)
     else:
         try:
-            form = DatabaseForm(instance=site.database)
+            form = DatabaseForm(request.user, instance=site.database)
         except:
-            form = DatabaseForm(initial={"site": site.id})
+            form = DatabaseForm(request.user, initial={"site": site.id})
     context = {
         "form": form
     }
