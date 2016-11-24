@@ -168,6 +168,7 @@ def create_postgres_database(database):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     cursor.execute("GRANT ALL PRIVILEGES ON SCHEMA public TO {}".format(database.username))
+    cursor.execute("GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {}".format(database.username))
     conn.close()
 
 
