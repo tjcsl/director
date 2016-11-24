@@ -1,5 +1,4 @@
 #public-key, #git-output {
-    max-width: 600px;
     white-space: pre-wrap;
     word-wrap: break-word;
     background-color: white;
@@ -12,4 +11,7 @@
 }
 #generate-key, #git-pull {
     margin-bottom: 1rem;
+}
+#webhook-url {
+    background-color: white;
 }
