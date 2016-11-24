@@ -153,17 +153,18 @@ def create_postgres_database(database):
     conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
-    try:
-        cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
-        cursor.execute("CREATE DATABASE {}".format(database.db_name))
-        cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
-        conn.close()
-        return True
-    except psycopg2.ProgrammingError:
-        # database already created
-        cursor.execute("ALTER USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
-        conn.close()
-        return False
+    cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
+    cursor.execute("CREATE DATABASE {}".format(database.db_name))
+    cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
+    conn.close()
+
+
+def change_postgres_password(database):
+    conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    cursor = conn.cursor()
+    cursor.execute("ALTER USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
+    conn.close()
 
 
 def delete_postgres_database(database):
