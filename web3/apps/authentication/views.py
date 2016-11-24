@@ -8,8 +8,8 @@ from ..sites.models import Site
 def index_view(request):
     if request.user.is_authenticated():
         return render(request, "dashboard.html", {
-            "sites": Site.objects.filter(group__users__id=request.user.id).annotate(num_users=Count("group__users")).order_by("name"),
-            "other_sites": Site.objects.exclude(group__users__id=request.user.id).annotate(num_users=Count("group__users")).order_by("name") if request.user.is_superuser else None
+            "sites": Site.objects.annotate(num_users=Count("group__users")).filter(group__users=request.user).order_by("name"),
+            "other_sites": Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name") if request.user.is_superuser else None
         })
     else:
         return login_view(request)
