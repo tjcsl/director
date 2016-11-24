@@ -24,12 +24,6 @@
     margin-top: 0.2em;
 }
 #commit .path {
-    white-space: pre;
+    white-space: pre-wrap;
     overflow-x: auto;
-}
-#commit .path::first-line {
-    color: #C4A000;
-}
-#commit.error .path, #commit.error .path::first-line {
-    color: #CC0000;
 }

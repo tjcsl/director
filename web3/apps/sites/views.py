@@ -261,17 +261,11 @@ def info_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    if site.has_repo:
-        latest_commit, latest_commit_success = get_latest_commit(site)
-    else:
-        latest_commit, latest_commit_success = None, False
-
     context = {
         "site": site,
         "users": site.group.users.filter(service=False).order_by("username"),
         "status": get_supervisor_status(site) if not settings.DEBUG else None,
-        "latest_commit": latest_commit,
-        "latest_commit_success": latest_commit_success,
+        "latest_commit": get_latest_commit(site) if site.has_repo else None,
         "webhook_url": request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
     }
     return render(request, "sites/info_site.html", context)
