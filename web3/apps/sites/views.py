@@ -149,6 +149,9 @@ def delete_database_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
     if request.method == "POST":
+        if not request.POST.get("confirm", None) == site.name:
+            messages.error(request, "Delete confirmation failed!")
+            return redirect("info_site", site_id=site_id)
         if not settings.DEBUG:
             if site.database.category == "postgresql":
                 delete_postgres_database(site.database)

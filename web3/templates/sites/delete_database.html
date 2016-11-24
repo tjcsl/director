@@ -5,6 +5,10 @@
 <p>Are you sure you want to delete <b>{{ site.name }}</b>'s database? <span style="color:red">This action is permanant and irreversible!</span></p>
 <form method="POST">
     {% csrf_token %}
+    <div class="form-group">
+        <label for="confirm">Enter the site name below to confirm:</label>
+        <input type="text" placeholder="Site Name" id="confirm" name="confirm" class="form-control" autofocus />
+    </div>
     <a href="{% url 'info_site' site.id %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
     <button type="submit" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Database</button>
 </form>
