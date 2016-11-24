@@ -149,7 +149,7 @@ def generate_ssh_key(site):
 
 
 def create_postgres_database(database):
-    conn = psycopg2.connect("host = '{}' dbname='postgres', user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+    conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     try:
@@ -166,7 +166,7 @@ def create_postgres_database(database):
 
 
 def delete_postgres_database(database):
-    conn = psycopg2.connect("host = '{}' dbname='postgres', user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+    conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     cursor.execute("DROP DATABASE IF EXISTS {}".format(database.db_name))
