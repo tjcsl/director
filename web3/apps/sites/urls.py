@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     url("^create$", views.create_view, name="create_site"),
-    url("^(?P<site_id>\d+)/info$", views.info_view, name="info_site"),
+    url("^(?P<site_id>\d+)/$", views.info_view, name="info_site"),
     url("^(?P<site_id>\d+)/edit$", views.edit_view, name="edit_site"),
     url("^(?P<site_id>\d+)/delete$", views.delete_view, name="delete_site"),
     url("^(?P<site_id>\d+)/database/create$", views.modify_database_view, name="edit_database"),
