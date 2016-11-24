@@ -17,3 +17,12 @@
     border: none;
     border-radius: 0;
 }
+#commit {
+    margin-bottom: 15px;
+}
+#commit .fa {
+    margin-top: 0.2em;
+}
+#commit .path {
+    white-space: pre-wrap;
+}
