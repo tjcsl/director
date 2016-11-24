@@ -127,7 +127,7 @@ def generate_ssh_key(site):
 
     if os.path.isfile(keypath):
         os.remove(keypath)
-    if os.path.isfile(keypath + ".pub")
+    if os.path.isfile(keypath + ".pub"):
         os.remove(keypath + ".pub")
 
     Popen("/usr/bin/ssh-keygen -t rsa -b 4096 -N '' -f {}".format(keypath).split()).wait()
