@@ -161,6 +161,12 @@ def create_postgres_database(database):
     cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
     conn.close()
 
+    conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    cursor = conn.cursor()
+    cursor.execute("GRANT ALL PRIVILEGES ON SCHEMA public TO {}".format(database.username))
+    conn.close()
+
 
 def change_postgres_password(database):
     conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
