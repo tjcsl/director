@@ -221,7 +221,7 @@ def git_pull_view(request, site_id):
 
     if not settings.DEBUG:
         output = run_as_site(site, "git pull", cwd=site.public_path, env={
-            "GIT_SSH_COMMAND": "ssh -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
+            "GIT_SSH_COMMAND": "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
             "HOME": site.private_path
         })
     else:
