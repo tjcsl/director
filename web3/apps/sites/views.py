@@ -196,6 +196,7 @@ def info_view(request, site_id):
         "site": site,
         "users": site.group.users.filter(service=False).order_by("username"),
         "status": get_supervisor_status(site) if not settings.DEBUG else None,
+        "latest_commit": get_latest_commit(site) if site.has_repo else None,
         "webhook_url": request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id}))
     }
     return render(request, "sites/info_site.html", context)
@@ -223,6 +224,14 @@ def do_git_pull(site):
     else:
         output = (0, None, None)
     return output
+
+
+def get_latest_commit(site):
+    if not settings.DEBUG:
+        output = run_as_site(site, ["git", "show", "-s", "-format=%h %s", "HEAD"], cwd=site.public_path)
+        return output[1]
+    else:
+        return "abacada example commit"
 
 
 @login_required
