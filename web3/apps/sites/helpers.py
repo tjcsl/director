@@ -14,6 +14,8 @@ from ..users.models import User, Group
 
 from django.template.loader import render_to_string
 
+from raven.contrib.django.raven_compat.models import client
+
 
 def create_site_users(site):
     try:
@@ -161,6 +163,7 @@ def create_postgres_database(database):
         cursor.execute("CREATE DATABASE {}".format(database.db_name))
         cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
     except psycopg2.DatabaseError:
+        client.captureException()
         return False
     finally:
         conn.close()
@@ -174,6 +177,7 @@ def create_postgres_database(database):
         cursor.execute("GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {}".format(database.username))
         return True
     except psycopg2.DatabaseError:
+        client.captureException()
         return False
     finally:
         conn.close()
@@ -187,6 +191,7 @@ def change_postgres_password(database):
         cursor.execute("ALTER USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
         return True
     except psycopg2.DatabaseError:
+        client.captureException()
         return False
     finally:
         conn.close()
@@ -212,6 +217,7 @@ def create_mysql_database(database):
         conn.execute("FLUSH PRIVILEGES;")
         return True
     except MySQLProgrammingError:
+        client.captureException()
         return False
     finally:
         conn.close()
@@ -226,6 +232,7 @@ def change_mysql_password(database):
         conn.close()
         return True
     except MySQLProgrammingError:
+        client.captureException()
         conn.close()
         return False
 
