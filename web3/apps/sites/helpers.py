@@ -132,7 +132,7 @@ def generate_ssh_key(site):
     if os.path.isfile(keypath + ".pub"):
         os.remove(keypath + ".pub")
 
-    Popen(["/usr/bin/ssh-keygen", "-t", "rsa", "-b", "4096", "-N", "", "-f", keypath]).wait()
+    run_as_site(site, ["/usr/bin/ssh-keygen", "-t", "rsa", "-b", "4096", "-N", "", "-f", keypath])
 
     os.chown(keypath, site.user.id, site.group.id)
     os.chown(keypath + ".pub", site.user.id, site.group.id)
