@@ -123,6 +123,7 @@ class DatabaseForm(forms.ModelForm):
 
     def __init__(self, user, *args, **kwargs):
         super(DatabaseForm, self).__init__(*args, **kwargs)
+        self.initial["category"] = "postgresql"
         if not user.is_superuser:
             self.fields['site'].queryset = Site.objects.exclude(category="static").filter(group__users__id=user.id)
 
