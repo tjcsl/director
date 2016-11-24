@@ -156,7 +156,6 @@ def create_postgres_database(database):
     cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
     cursor.execute("CREATE DATABASE {}".format(database.db_name))
     cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
-    cursor.execute("GRANT SELECT ON ALL TABLES IN SCHEMA public TO {}".format(database.username))
     conn.close()
 
 
