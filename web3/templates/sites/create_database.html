@@ -41,6 +41,11 @@
                 </label>
                 {% endfor %}
                 </div>
+                {% if field.errors %}
+                    <span class="danger help-inline">
+                        {% for error in  field.errors %}{{ error }}{% endfor %}
+                    </span>
+                {% endif %}
             {% else %}
                 <div class="control-group">
                     <label class="control-label">{{ field.label }}</label>
