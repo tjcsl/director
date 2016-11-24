@@ -104,6 +104,16 @@ class DatabaseForm(forms.ModelForm):
     category = forms.ChoiceField(choices=(("postgresql", "PostgreSQL"), ("mysql", "MySQL")),
                                  widget=forms.RadioSelect(), label="Type")
 
+    def save(self, commit=True):
+        instance = forms.ModelForm.save(self, commit=False)
+
+        instance.password = User.objects.make_random_password(length=24)
+
+        if commit:
+            instance.save()
+
+        return instance
+
     class Meta:
         model = Database
         fields = ["site", "category"]
