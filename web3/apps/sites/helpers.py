@@ -3,6 +3,8 @@ import shutil
 import stat
 import time
 import psycopg2
+import MySQLdb
+from _mysql_exceptions import ProgrammingError as MySQLProgrammingError
 
 from subprocess import Popen, check_output, PIPE
 
@@ -150,7 +152,8 @@ def generate_ssh_key(site):
 
 
 def create_postgres_database(database):
-    conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+    conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(
+        settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
@@ -168,9 +171,57 @@ def change_postgres_password(database):
 
 
 def delete_postgres_database(database):
-    conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+    conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(
+        settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     cursor.execute("DROP DATABASE IF EXISTS {}".format(database.db_name))
     cursor.execute("DROP USER IF EXISTS {}".format(database.username))
     conn.close()
+
+
+def create_mysql_database(database):
+    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+    cursor = conn.cursor()
+    try:
+        conn.execute("CREATE USER {} IDENTIFIED BY '{}';".format(database.username, database.password))
+        conn.execute("CREATE DATABASE {};".format(database.db_name))
+        conn.execute("GRANT ALL ON {} . * TO {};".format(databae.db_name, database.username))
+        conn.execute("FLUSH PRIVILEGES;")
+        conn.close()
+        return True
+    except MySQLProgrammingError:
+        conn.close()
+        return False
+
+
+def delete_mysql_databse(database):
+    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+    cursor = conn.cursor()
+    cursor.execute("DROP DATABASE IF EXISTS {};".format(database.db_name))
+    cursor.execute("DROP USER {};".format(database.username))
+    conn.close()
+    return True
+
+
+def do_git_pull(site):
+    if not settings.DEBUG:
+        output = run_as_site(site, "git pull", cwd=site.public_path, env={
+            "GIT_SSH_COMMAND": "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
+            "HOME": site.private_path
+        })
+        if site.category == "dynamic":
+            restart_supervisor(site)
+    else:
+        output = (0, None, None)
+    return output
+
+
+def get_latest_commit(site):
+    if not settings.DEBUG:
+        output = run_as_site(site, ["git", "log", "-n", "1"], cwd=site.public_path)
+        if not output[0] == 0:
+            return "Error - {}".format(output[2].replace("\n", " ").replace("\r", ""))
+        return output[1]
+    else:
+        return "abacada example commit"

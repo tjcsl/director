@@ -14,7 +14,8 @@ from .forms import SiteForm, ProcessForm, DatabaseForm
 from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
                       get_supervisor_status, delete_process_config, write_new_index_file,
-                      generate_ssh_key, run_as_site, delete_postgres_database, change_postgres_password)
+                      generate_ssh_key, run_as_site, delete_postgres_database, create_postgres_database,
+                      do_git_pull, get_latest_commit)
 
 from ..authentication.decorators import superuser_required
 from ..users.models import User
@@ -182,6 +183,7 @@ def regenerate_database_view(request, site_id):
     messages.success(request, "Database credentials regenerated!")
     return redirect("info_site", site_id=site.id)
 
+
 @login_required
 def delete_process_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
@@ -279,29 +281,6 @@ def generate_key_view(request, site_id):
 
     messages.success(request, "Generated new RSA public private key-pair!")
     return redirect("info_site", site_id=site_id)
-
-
-def do_git_pull(site):
-    if not settings.DEBUG:
-        output = run_as_site(site, "git pull", cwd=site.public_path, env={
-            "GIT_SSH_COMMAND": "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
-            "HOME": site.private_path
-        })
-        if site.category == "dynamic":
-            restart_supervisor(site)
-    else:
-        output = (0, None, None)
-    return output
-
-
-def get_latest_commit(site):
-    if not settings.DEBUG:
-        output = run_as_site(site, ["git", "show", "-s", "--format=%h %s", "HEAD"], cwd=site.public_path)
-        if not output[0] == 0:
-            return "Error - {}".format(output[2].replace("\n", " ").replace("\r", ""))
-        return output[1]
-    else:
-        return "abacada example commit"
 
 
 @login_required
