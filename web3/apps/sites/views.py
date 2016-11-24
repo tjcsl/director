@@ -17,6 +17,7 @@ from .helpers import (reload_services, delete_site_files, create_config_files,
                       generate_ssh_key, run_as_site, delete_postgres_database, create_postgres_database)
 
 from ..authentication.decorators import superuser_required
+from ..users.models import User
 
 from ...utils.emails import send_new_site_email
 
@@ -164,7 +165,8 @@ def regenerate_database_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    site.database.update(password=User.objects.make_random_password(length=24))
+    site.database.password = User.objects.make_random_password(length=24)
+    site.database.save()
     if not settings.DEBUG:
         if site.database.category == "postgresql":
             create_postgres_database(site.database)
