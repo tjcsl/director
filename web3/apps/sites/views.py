@@ -47,9 +47,11 @@ def create_view(request):
         return render(request, "sites/create_info.html", {})
 
 
-@superuser_required
+@login_required
 def edit_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
     if request.method == "POST":
         current_members = list(site.group.users.filter(service=False).values_list('id', flat=True))
         form = SiteForm(request.POST, instance=site, user=request.user)
@@ -152,11 +154,14 @@ def delete_database_view(request, site_id):
         if not request.POST.get("confirm", None) == site.name:
             messages.error(request, "Delete confirmation failed!")
             return redirect("info_site", site_id=site_id)
-        if not settings.DEBUG:
-            if site.database.category == "postgresql":
-                delete_postgres_database(site.database)
-        site.database.delete()
-        messages.success(request, "Database deleted!")
+        if site.database:
+            if not settings.DEBUG:
+                if site.database.category == "postgresql":
+                    delete_postgres_database(site.database)
+            site.database.delete()
+            messages.success(request, "Database deleted!")
+        else:
+            messages.error(request, "Database doesn't exist!")
         return redirect("info_site", site_id=site.id)
     else:
         return render(request, "sites/delete_database.html", {"site": site})

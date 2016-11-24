@@ -35,7 +35,7 @@ class SiteForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         if kwargs.get("instance"):
             initial = kwargs.setdefault('initial', {})
-            initial["users"] = [u.pk for u in kwargs['instance'].group.users.all()]
+            initial["users"] = [u.pk for u in kwargs['instance'].group.users.filter(service=False)]
         if kwargs.get("user"):
             self._user = kwargs["user"]
             del kwargs["user"]
