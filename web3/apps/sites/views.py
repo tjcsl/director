@@ -157,10 +157,14 @@ def delete_database_view(request, site_id):
             return redirect("info_site", site_id=site_id)
         if site.database:
             if not settings.DEBUG:
+                flag = False
                 if site.database.category == "postgresql":
-                    delete_postgres_database(site.database)
+                    flag = delete_postgres_database(site.database)
                 elif site.database.category == "mysql":
-                    delete_mysql_database(site.database)
+                    flag = delete_mysql_database(site.database)
+                if not flag:
+                    messages.error(request, "Failed to delete database!")
+                    return redirect("info_site", site_id=site.id)
             site.database.delete()
             messages.success(request, "Database deleted!")
         else:
