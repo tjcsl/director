@@ -133,7 +133,10 @@ def generate_ssh_key(site):
     if os.path.isfile(keypath + ".pub"):
         os.remove(keypath + ".pub")
 
-    run_as_site(site, ["/usr/bin/ssh-keygen", "-t", "rsa", "-b", "4096", "-N", "", "-f", keypath])
+    output = run_as_site(site, ["/usr/bin/ssh-keygen", "-t", "rsa", "-b", "4096", "-N", "", "-f", keypath])
+
+    if not output[0] == 0:
+        raise IOError("Could not generate RSA keys ({}) - {} - {}".format(output[0], output[1], output[2]))
 
     os.chown(keypath, site.user.id, site.group.id)
     os.chown(keypath + ".pub", site.user.id, site.group.id)
