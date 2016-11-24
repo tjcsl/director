@@ -68,7 +68,7 @@
         {% endif %}
         {% if site.has_repo %}
         <h4><i class="fa fa-github"></i> GitHub Integration</h4>
-        <p><i class="fa fa-code-fork"></i> <span class="path">{{ latest_commit }}</span></p>
+        <p><i class="fa fa-code-fork"></i> <span class="path" style="white-space:pre-wrap;">{{ latest_commit }}</span></p>
         <p>Nice! This site uses Git for version control. You can set up your site to automatically update whenever you push to your GitHub repository.</p>
         <p>First, you'll have to add a deploy key to your repository. You can use the button below to generate a key.</p>
         {% if site.has_rsa_key %}
