@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load formfilters %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/sites/creation.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#id_site").selectize();
+        });
+    </script>
+{% endblock %}
+
+{% block main %}
+<h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Database</h4>
+<form method="POST">
+    {% csrf_token %}
+    <fieldset>
+        {% for field in form %}
+            {% if field|field_type == "CheckboxInput" %}
+                <label class="custom-control custom-checkbox">
+                    {{ field }}
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">{{ field.label }}</span>
+                </label>
+                {% if field.errors %}
+                    <span class="danger help-inline">
+                        {% for error in  field.errors %}{{ error }}{% endfor %}
+                    </span>
+                {% endif %}
+            {% elif field|field_type == "RadioSelect" %}
+                <label class="control-label">{{ field.label }}</label>
+                <div class="controls">
+                {% for radio in field %}
+                <label class="custom-control custom-radio">
+                    <input id="id_{{ radio.name }}_{{ radio.index }}" name="{{ radio.name }}" type="radio" value="{{ radio.value }}" class="custom-control-input" {% if radio.is_checked %}checked{% endif %} required>
+                    <input id="radio1" name="radio" type="radio" class="custom-control-input">
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">{{ radio.choice_label }}</span>
+                </label>
+                {% endfor %}
+                </div>
+            {% else %}
+                <div class="control-group">
+                    <label class="control-label">{{ field.label }}</label>
+                    <div class="controls">{{ field }}
+                        {% if field.errors %}
+                            <span class="danger help-inline">
+                                {% for error in  field.errors %}{{ error }}{% endfor %}
+                            </span>
+                        {% elif field.help_text %}
+                            <p class="help-inline"><small>{{ field.help_text }}</small></p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </fieldset>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-ion">Submit</button>
+    </div>
+</form>
+{% endblock %}

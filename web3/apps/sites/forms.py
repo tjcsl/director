@@ -4,7 +4,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.conf import settings
 
-from .models import Site, Process
+from .models import Site, Process, Database
 from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions
 
 from ..users.models import User, Group
@@ -97,3 +97,14 @@ class ProcessForm(forms.ModelForm):
     class Meta:
         model = Process
         fields = ["site", "path"]
+
+
+class DatabaseForm(forms.ModelForm):
+    site = forms.ModelChoiceField(queryset=Site.objects.all(), disabled=True)
+    category = forms.ChoiceField(choices=(("postgresql", "PostgreSQL"), ("mysql", "MySQL")),
+                                 widget=forms.RadioSelect(), label="Type")
+    password = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class": "form-control"}))
+
+    class Meta:
+        model = Database
+        fields = ["site", "category", "password"]

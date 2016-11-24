@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
 from .models import Site
-from .forms import SiteForm, ProcessForm
+from .forms import SiteForm, ProcessForm, DatabaseForm
 from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
                       get_supervisor_status, delete_process_config, write_new_index_file,
@@ -115,6 +115,20 @@ def modify_process_view(request, site_id):
     }
     return render(request, "sites/create_process.html", context)
 
+
+@login_required
+def modify_database_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+    try:
+        form = DatabaseForm(instance=site.database)
+    except:
+        form = DatabaseForm(initial={"site": site.id})
+    context = {
+        "form": form
+    }
+    return render(request, "sites/create_database.html", context)
 
 @login_required
 def delete_process_view(request, site_id):

@@ -53,7 +53,7 @@
     <div class="col-md-6">
         <h4><i class="fa fa-database"></i> Databases</h4>
         <p>This site has no databases associated with it.</p>
-        <a href="" class="btn btn-ion"><i class="fa fa-plus"></i> Add Database</a>
+        <a href="{% url 'edit_database' site.id %}" class="btn btn-ion"><i class="fa fa-plus"></i> Add Database</a>
         <br /><br />
         {% if site.has_repo %}
         <h4><i class="fa fa-github"></i> GitHub Integration</h4>

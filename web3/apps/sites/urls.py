@@ -7,6 +7,7 @@ urlpatterns = [
     url("^(?P<site_id>\d+)/info$", views.info_view, name="info_site"),
     url("^(?P<site_id>\d+)/edit$", views.edit_view, name="edit_site"),
     url("^(?P<site_id>\d+)/delete$", views.delete_view, name="delete_site"),
+    url("^(?P<site_id>\d+)/database/edit$", views.modify_database_view, name="edit_database"),
     url("^(?P<site_id>\d+)/process/edit$", views.modify_process_view, name="edit_process"),
     url("^(?P<site_id>\d+)/process/restart$", views.restart_process_view, name="restart_process"),
     url("^(?P<site_id>\d+)/process/delete$", views.delete_process_view, name="delete_process"),
