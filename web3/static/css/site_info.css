@@ -1,0 +1,13 @@
+#public-key, #git-output {
+    max-width: 600px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: white;
+    padding: 5px;
+}
+#git-output {
+    margin-top: 10px;
+    display: none;
+    height: 175px;
+    overflow-y: auto;
+}
