@@ -130,6 +130,10 @@ def generate_ssh_key(site):
     if os.path.isfile(keypath + ".pub"):
         os.remove(keypath + ".pub")
 
-    Popen("/usr/bin/ssh-keygen -t rsa -b 4096 -N '' -f {}".format(keypath).split()).wait()
+    proc = Popen("/usr/bin/ssh-keygen -t rsa -b 4096 -N '' -f {}".format(keypath).split(), stdout=PIPE, stderr=PIPE)
+    out, err = proc.communicate()
+    if proc.returncode != 0:
+        raise IOError("Error generating ssh keys: ({}) {} {}".format(proc.returncode, out, err))
+
     os.chown(keypath, site.user.id, site.group.id)
     os.chown(keypath + ".pub", site.user.id, site.group.id)
