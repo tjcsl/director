@@ -221,6 +221,8 @@ def do_git_pull(site):
             "GIT_SSH_COMMAND": "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
             "HOME": site.private_path
         })
+        if site.category == "dynamic":
+            restart_supervisor(site)
     else:
         output = (0, None, None)
     return output
