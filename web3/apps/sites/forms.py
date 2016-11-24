@@ -103,8 +103,7 @@ class DatabaseForm(forms.ModelForm):
     site = forms.ModelChoiceField(queryset=Site.objects.all(), disabled=True)
     category = forms.ChoiceField(choices=(("postgresql", "PostgreSQL"), ("mysql", "MySQL")),
                                  widget=forms.RadioSelect(), label="Type")
-    password = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class": "form-control"}))
 
     class Meta:
         model = Database
-        fields = ["site", "category", "password"]
+        fields = ["site", "category"]
