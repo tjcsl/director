@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Site
 from .forms import SiteForm, ProcessForm, DatabaseForm
@@ -235,7 +236,7 @@ def info_view(request, site_id):
         "users": site.group.users.filter(service=False).order_by("username"),
         "status": get_supervisor_status(site) if not settings.DEBUG else None,
         "latest_commit": get_latest_commit(site) if site.has_repo else None,
-        "webhook_url": request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id}))
+        "webhook_url": request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
     }
     return render(request, "sites/info_site.html", context)
 
@@ -287,6 +288,7 @@ def git_pull_view(request, site_id):
     return JsonResponse({"ret": output[0], "out": output[1], "err": output[2]})
 
 
+@csrf_exempt
 def webhook_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if request.method == "POST":
