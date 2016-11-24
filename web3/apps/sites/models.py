@@ -87,3 +87,21 @@ class Process(models.Model):
             return self.site.name
         except:
             return "Unknown Site"
+
+
+class Database(models.Model):
+    site = models.OneToOneField(Site)
+    category = models.CharField(max_length=16, choices=(
+        ("postgresql", "PostgreSQL"),
+        ("mysql", "MySQL")
+    ))
+    password = models.CharField(max_length=255)
+
+    @property
+    def db_name(self):
+        return "site_{}".format(self.site.name)
+
+
+    @property
+    def username(self):
+        return "site_{}".format(self.site.name)
