@@ -21,30 +21,7 @@
 </ul>
 <form method="POST">
     {% csrf_token %}
-    <fieldset>
-        <legend>{{ title }}</legend>
-        {% for field in form %}
-            {% if field.errors %}
-                <div class="control-group error">
-                    <label class="control-label">{{ field.label }}</label> 
-                    <div class="controls">{{ field }}
-                        <span class="danger help-inline">
-                            {% for error in  field.errors %}{{ error }}{% endfor %}
-                        </span>
-                    </div>
-                </div>
-            {% else %}
-                <div class="control-group">
-                    <label class="control-label">{{ field.label }}</label> 
-                    <div class="controls">{{ field }}
-                        {% if field.help_text %}
-                            <p class="help-inline"><small>{{ field.help_text }}</small></p>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-    </fieldset>
+    {% include "form.html" with form=form %}
     <div class="form-actions">
         <button type="submit" class="btn btn-ion">Submit</button>
     </div>

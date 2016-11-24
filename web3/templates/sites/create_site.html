@@ -16,35 +16,7 @@
 <h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Site</h4>
 <form method="POST">
     {% csrf_token %}
-    <fieldset>
-        {% for field in form %}
-            {% if field|field_type == "CheckboxInput" %}
-                <label class="custom-control custom-checkbox">
-                    {{ field }}
-                    <span class="custom-control-indicator"></span>
-                    <span class="custom-control-description">{{ field.label }}</span>
-                </label>
-                {% if field.errors %}
-                    <span class="danger help-inline">
-                        {% for error in  field.errors %}{{ error }}{% endfor %}
-                    </span>
-                {% endif %}
-            {% else %}
-                <div class="control-group">
-                    <label class="control-label">{{ field.label }}</label> 
-                    <div class="controls">{{ field }}
-                        {% if field.errors %}
-                            <span class="danger help-inline">
-                                {% for error in  field.errors %}{{ error }}{% endfor %}
-                            </span>
-                        {% elif field.help_text %}
-                            <p class="help-inline"><small>{{ field.help_text }}</small></p>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-    </fieldset>
+    {% include "form.html" with form=form %}
     <div class="form-actions">
         <button type="submit" class="btn btn-ion">Submit</button>
     </div>
