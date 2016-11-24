@@ -123,8 +123,10 @@ def demote(uid, gid):
 
 
 def generate_ssh_key(site):
-    keypath = os.path.join(site.private_path, "rsa.key")
-
+    sshpath = os.path.join(site.private_path, ".ssh")
+    keypath = os.path.join(sshpath, "rsa.key")
+    if not os.path.exists(sshpath):
+        os.makedirs(sshpath)
     if os.path.isfile(keypath):
         os.remove(keypath)
     if os.path.isfile(keypath + ".pub"):
@@ -134,3 +136,5 @@ def generate_ssh_key(site):
 
     os.chown(keypath, site.user.id, site.group.id)
     os.chown(keypath + ".pub", site.user.id, site.group.id)
+    os.chmod(keypath, stat.S_IRUSR | stat.S_IWUSR)
+    os.chmod(keypath + ".pub", stat.S_IRUSR | stat.S_IWUSR)

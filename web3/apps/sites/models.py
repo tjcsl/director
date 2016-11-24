@@ -59,7 +59,7 @@ class Site(models.Model):
 
     @property
     def public_key(self):
-        with open(os.path.join(self.private_path, "rsa.key.pub"), "r") as f:
+        with open(os.path.join(self.private_path, ".ssh/id_rsa.pub"), "r") as f:
             data = f.read()
         return data
 
@@ -68,7 +68,7 @@ class Site(models.Model):
     def has_rsa_key(self):
         if hasattr(self, "_has_rsa_key"):
             return self._has_rsa_key
-        self._has_rsa_key = not settings.DEBUG and os.path.isfile(os.path.join(self.private_path, "rsa.key"))
+        self._has_rsa_key = not settings.DEBUG and os.path.isfile(os.path.join(self.private_path, ".ssh/id_rsa"))
         return self._has_rsa_key
 
 

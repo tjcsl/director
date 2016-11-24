@@ -160,6 +160,7 @@ def permission_view(request, site_id):
     if not settings.DEBUG:
         make_site_dirs(site)
         for root, dirs, files in os.walk(site.path):
+            dirs[:] = [d for d in dirs if not d == ".ssh"]
             for f in files + dirs:
                 path = os.path.join(root, f)
                 st = os.stat(path)
@@ -219,7 +220,10 @@ def git_pull_view(request, site_id):
         raise PermissionDenied
 
     if not settings.DEBUG:
-        output = run_as_site(site, "git pull", cwd=site.public_path, env={"GIT_SSH_COMMAND": "ssh -i {}".format(os.path.join(site.private_path, "rsa.key.pub"))})
+        output = run_as_site(site, "git pull", cwd=site.public_path, env={
+            "GIT_SSH_COMMAND": "ssh -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa.pub")),
+            "HOME": site.private_path
+        })
     else:
         output = (0, None, None)
 

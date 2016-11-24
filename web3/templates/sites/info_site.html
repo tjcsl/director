@@ -1,12 +1,25 @@
 {% extends "base.html" %}
 
+{% block css %}
+    {{ block.super }}
+    <style type="text/css">
+    #public-key {
+        max-width: 600px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background-color: white;
+        padding: 5px;
+    }
+    </style>
+{% endblock %}
+
 {% block js %}
     {{ block.super }}
     <script type="text/javascript">
     $(document).ready(function() {
         $("#git-pull").click(function() {
             $.get("{% url 'git_pull' site.id %}", function(data) {
-                $("#git-output").text("Process exited with return code " + data.ret + "\n\n" + data.out + "\n\n" + data.err).slideDown();
+                $("#git-output").text("Process exited with return code " + data.ret + (data.out ? "\n\n" + data.out : "") + (data.err ? "\n\n" + data.err : "")).slideDown();
             });
         });
     });
@@ -36,7 +49,7 @@
 <p><i class="fa fa-github"></i> This site uses Git for version control.</p>
 {% if site.has_rsa_key %}
 <p><i class="fa fa-certificate"></i> This site has a RSA key-pair.</p>
-<pre>{{ site.public_key }}</pre>
+<pre id="public-key">{{ site.public_key }}</pre>
 <button id="git-pull" class="btn btn-ion"><i class="fa fa-github"></i> Git Pull</button>
 <pre style="display:none" id="git-output"></pre>
 {% else %}
