@@ -156,26 +156,40 @@ def create_postgres_database(database):
         settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
-    cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
-    cursor.execute("CREATE DATABASE {}".format(database.db_name))
-    cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
-    conn.close()
+    try:
+        cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
+        cursor.execute("CREATE DATABASE {}".format(database.db_name))
+        cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
+    except psycopg2.DatabaseError:
+        return False
+    finally:
+        conn.close()
 
     conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(
         settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
-    cursor.execute("GRANT ALL PRIVILEGES ON SCHEMA public TO {}".format(database.username))
-    cursor.execute("GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {}".format(database.username))
-    conn.close()
+    try:
+        cursor.execute("GRANT ALL PRIVILEGES ON SCHEMA public TO {}".format(database.username))
+        cursor.execute("GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {}".format(database.username))
+        return True
+    except psycopg2.DatabaseError:
+        return False
+    finally:
+        conn.close()
 
 
 def change_postgres_password(database):
     conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
-    cursor.execute("ALTER USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
-    conn.close()
+    try:
+        cursor.execute("ALTER USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
+        return True
+    except psycopg2.DatabaseError:
+        return False
+    finally:
+        conn.close()
 
 
 def delete_postgres_database(database):
@@ -196,11 +210,11 @@ def create_mysql_database(database):
         conn.execute("CREATE DATABASE {};".format(database.db_name))
         conn.execute("GRANT ALL ON {} . * TO {};".format(databae.db_name, database.username))
         conn.execute("FLUSH PRIVILEGES;")
-        conn.close()
         return True
     except MySQLProgrammingError:
-        conn.close()
         return False
+    finally:
+        conn.close()
 
 
 def change_mysql_password(database):
