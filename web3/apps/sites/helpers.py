@@ -127,6 +127,7 @@ def generate_ssh_key(site):
     keypath = os.path.join(sshpath, "id_rsa")
     if not os.path.exists(sshpath):
         os.makedirs(sshpath)
+        os.chown(sshpath, site.user.id, site.group.id)
     if os.path.isfile(keypath):
         os.remove(keypath)
     if os.path.isfile(keypath + ".pub"):
