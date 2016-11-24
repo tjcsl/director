@@ -227,7 +227,7 @@ def do_git_pull(site):
 
 def get_latest_commit(site):
     if not settings.DEBUG:
-        output = run_as_site(site, ["git", "show", "-s", "--format=%h %s (%aN, %aD)", "HEAD"], cwd=site.public_path)
+        output = run_as_site(site, ["git", "show", "-s", "--format=%h %s\n%aN, %aD", "HEAD"], cwd=site.public_path)
         if not output[0] == 0:
             return "Error - {}".format(output[2].replace("\n", " ").replace("\r", ""))
         return output[1]
