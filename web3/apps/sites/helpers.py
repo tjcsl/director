@@ -161,7 +161,8 @@ def create_postgres_database(database):
     cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
     conn.close()
 
-    conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+    conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(
+        settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     cursor.execute("GRANT ALL PRIVILEGES ON SCHEMA public TO {}".format(database.username))
@@ -226,7 +227,7 @@ def do_git_pull(site):
 
 def get_latest_commit(site):
     if not settings.DEBUG:
-        output = run_as_site(site, ["git", "log", "-n", "1"], cwd=site.public_path)
+        output = run_as_site(site, ["git", "show", "-s", "--format=%h %s (%An, %aD)", "HEAD"], cwd=site.public_path)
         if not output[0] == 0:
             return "Error - {}".format(output[2].replace("\n", " ").replace("\r", ""))
         return output[1]
