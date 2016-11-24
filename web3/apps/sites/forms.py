@@ -116,15 +116,16 @@ class ProcessForm(forms.ModelForm):
 
 
 class DatabaseForm(forms.ModelForm):
+    site = forms.ModelChoiceField(queryset=Site.objects.all(), disabled=True)
+    category = forms.ChoiceField(choices=(("postgresql", "PostgreSQL"), ("mysql", "MySQL")),
+                                 widget=forms.RadioSelect(), label="Type")
+
 
     def __init__(self, user, *args, **kwargs):
         super(DatabaseForm, self).__init__(*args, **kwargs)
         if not user.is_superuser:
-            self.fields['site'].queryset = Site.objects.filter(group__users__id=user.id).filter(category="dynamic")
+            self.fields['site'].queryset = Site.objects.exclude(category="static").filter(group__users__id=user.id)
 
-    site = forms.ModelChoiceField(queryset=Site.objects.all(), disabled=True)
-    category = forms.ChoiceField(choices=(("postgresql", "PostgreSQL"), ("mysql", "MySQL")),
-                                 widget=forms.RadioSelect(), label="Type")
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
