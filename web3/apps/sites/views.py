@@ -15,7 +15,7 @@ from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
                       get_supervisor_status, delete_process_config, write_new_index_file,
                       generate_ssh_key, run_as_site, delete_postgres_database, change_postgres_password,
-                      do_git_pull, get_latest_commit)
+                      do_git_pull, get_latest_commit, delete_mysql_database, change_mysql_password)
 
 from ..authentication.decorators import superuser_required
 from ..users.models import User
@@ -159,6 +159,8 @@ def delete_database_view(request, site_id):
             if not settings.DEBUG:
                 if site.database.category == "postgresql":
                     delete_postgres_database(site.database)
+                elif site.database.category == "mysql":
+                    delete_mysql_database(site.database)
             site.database.delete()
             messages.success(request, "Database deleted!")
         else:
@@ -179,6 +181,8 @@ def regenerate_database_view(request, site_id):
     if not settings.DEBUG:
         if site.database.category == "postgresql":
             change_postgres_password(site.database)
+        elif site.database.category == "mysql":
+            change_mysql_password(site.database)
 
     messages.success(request, "Database credentials regenerated!")
     return redirect("info_site", site_id=site.id)

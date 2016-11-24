@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from django.conf import settings
 
 from .models import Site, Process, Database
-from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, create_postgres_database
+from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, create_postgres_database, create_mysql_database
 
 from ..users.models import User, Group
 
@@ -138,6 +138,8 @@ class DatabaseForm(forms.ModelForm):
             if not settings.DEBUG:
                 if instance.category == "postgresql":
                     create_postgres_database(instance)
+                elif instance.category == "mysql":
+                    create_mysql_database(instance)
 
         return instance
 

@@ -203,6 +203,18 @@ def create_mysql_database(database):
         return False
 
 
+def change_mysql_password(database):
+    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+    cursor = conn.cursor()
+    try:
+        conn.execute("ALTER USER {} IDENTIFIED BY '{}';".format(databaser.username, database.password))
+        conn.close()
+        return True
+    except MySQLProgrammingError:
+        conn.close()
+        return False
+
+
 def delete_mysql_databse(database):
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
