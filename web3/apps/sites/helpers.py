@@ -215,7 +215,7 @@ def change_mysql_password(database):
         return False
 
 
-def delete_mysql_databse(database):
+def delete_mysql_database(database):
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     cursor.execute("DROP DATABASE IF EXISTS {};".format(database.db_name))
