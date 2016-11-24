@@ -195,7 +195,8 @@ def info_view(request, site_id):
     context = {
         "site": site,
         "users": site.group.users.filter(service=False).order_by("username"),
-        "status": get_supervisor_status(site) if not settings.DEBUG else None
+        "status": get_supervisor_status(site) if not settings.DEBUG else None,
+        "webhook_url": request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id}))
     }
     return render(request, "sites/info_site.html", context)
 
@@ -213,12 +214,7 @@ def generate_key_view(request, site_id):
     return redirect("info_site", site_id=site_id)
 
 
-@login_required
-def git_pull_view(request, site_id):
-    site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
-        raise PermissionDenied
-
+def do_git_pull(site):
     if not settings.DEBUG:
         output = run_as_site(site, "git pull", cwd=site.public_path, env={
             "GIT_SSH_COMMAND": "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
@@ -226,5 +222,30 @@ def git_pull_view(request, site_id):
         })
     else:
         output = (0, None, None)
+    return output
+
+
+@login_required
+def git_pull_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    output = do_git_pull(site)
 
     return JsonResponse({"ret": output[0], "out": output[1], "err": output[2]})
+
+
+def webhook_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if request.method == "POST":
+        if not request.META["HTTP_USER_AGENT"].startswith("GitHub-Hookshot/"):
+            return JsonResponse({"error": "Invalid user agent!"})
+        if request.META["HTTP_X_GITHUB_EVENT"] == "ping":
+            return JsonResponse({"success": True})
+        if not request.META["HTTP_X_GITHUB_EVENT"] == "push":
+            return JsonResponse({"error": "Only push events are supported at this time!"})
+        output = do_git_pull(site)
+        return JsonResponse({"success": bool(output[0] == 0)})
+    else:
+        return JsonResponse({"error": "Request method not allowed!"})

@@ -6,8 +6,10 @@
     padding: 5px;
 }
 #git-output {
-    margin-top: 10px;
     display: none;
     height: 175px;
     overflow-y: auto;
+}
+#generate-key, #git-pull {
+    margin-bottom: 1rem;
 }

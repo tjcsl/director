@@ -63,6 +63,11 @@
         <a id="generate-key" href="{% url 'generate_rsa_key' site.id %}" class="btn btn-ion"><i class="fa fa-key"></i> {% if site.has_rsa_key %}Regenerate{% else %}Generate{% endif %} Keys</a>
         {% endif %}
         <pre id="git-output"></pre>
+        <p>Once you have set up your deploy key, you will need to add a webhook so that Director knows when to pull your repository. You can use <a href="https://developer.github.com/webhooks/creating/">this guide</a> to learn how to set up a webhook.</p>
+        <div class="form-group">
+            <label>Webhook URL</label>
+            <input type="text" class="form-control" readonly value="{{ webhook_url }}" />
+        </div>
     </div>
 </div>
 {% endblock %}
