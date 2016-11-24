@@ -18,6 +18,7 @@
 <div id="sites">
 {% for site in sites %}
     <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.name }}">
+        {% if site.database %}<span class="pull-right tag tag-primary">{{ site.database.get_category_display }}</span>{% endif %}
         <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% else %}fa-cube{% endif %}"></i>
         <b class="name">{{ site.name }}</b><br /><span class="type">{{ site.get_category_display }}</span> - <span class="desc">{{ site.description|default:"No Description" }}</span> - <span class="users">{{ site.num_users|add:"-1" }} user{% if site.num_users != 2 %}s{% endif %}</span>
     </a>
@@ -27,6 +28,7 @@
     <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.name }}">
         <span data-toggle="tooltip"  data-placement="left" title="You can see this website because you are a superuser." class="pull-right tag tag-warning">Superuser</span>
         {% if site.num_users <= 1 %}<span data-toggle="tooltip" data-placement="left" title="There are no users, other than superusers, that can access this site." class="pull-right tag tag-danger">No Users</span>{% endif %}
+        {% if site.database %}<span class="pull-right tag tag-primary">{{ site.database.get_category_display }}</span>{% endif %}
         <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
         <b class="name">{{ site.name }}</b><br /><span class="type">{{ site.get_category_display }}</span> - <span class="desc">{{ site.description|default:"No Description" }}</span> - <span class="users">{{ site.num_users|add:"-1" }} user{% if site.num_users != 2 %}s{% endif %}</span>
     </a>
