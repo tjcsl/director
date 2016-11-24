@@ -36,10 +36,17 @@ class SiteForm(forms.ModelForm):
         if kwargs.get("instance"):
             initial = kwargs.setdefault('initial', {})
             initial["users"] = [u.pk for u in kwargs['instance'].group.users.all()]
+        if kwargs.get("user"):
+            self._user = kwargs["user"]
+            del kwargs["user"]
         forms.ModelForm.__init__(self, *args, **kwargs)
         instance = getattr(self, "instance", None)
         if instance and instance.pk:
             self.fields["name"].disabled = True
+            if hasattr(self, "_user") and not self._user.is_superuser and not self._user.is_staff:
+                for field in self.fields:
+                    self.fields[field].disabled = True
+                self.fields["category"].disabled = False
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)

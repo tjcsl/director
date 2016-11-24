@@ -26,7 +26,7 @@ from ...utils.emails import send_new_site_email
 def create_view(request):
     if request.user.is_superuser:
         if request.method == "POST":
-            form = SiteForm(request.POST)
+            form = SiteForm(request.POST, user=request.user)
             if form.is_valid():
                 site = form.save()
                 for user in site.group.users.filter(service=False):
@@ -37,7 +37,7 @@ def create_view(request):
                     reload_services()
                 return redirect("index")
         else:
-            form = SiteForm()
+            form = SiteForm(user=request.user)
 
         context = {
             "form": form
@@ -52,7 +52,7 @@ def edit_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if request.method == "POST":
         current_members = list(site.group.users.filter(service=False).values_list('id', flat=True))
-        form = SiteForm(request.POST, instance=site)
+        form = SiteForm(request.POST, instance=site, user=request.user)
         if form.is_valid():
             site = form.save()
             for user in site.group.users.filter(service=False).exclude(id__in=current_members):
@@ -61,7 +61,7 @@ def edit_view(request, site_id):
                 reload_services()
             return redirect("info_site", site_id=site_id)
     else:
-        form = SiteForm(instance=site)
+        form = SiteForm(instance=site, user=request.user)
     context = {
         "form": form
     }
@@ -99,7 +99,7 @@ def modify_process_view(request, site_id):
         try:
             form = ProcessForm(request.user, request.POST, instance=site.process)
         except Site.process.RelatedObjectDoesNotExist:
-            form = ProcessForm(request.POST, initial={"site": site.id})
+            form = ProcessForm(request.user, request.POST, initial={"site": site.id})
         if form.is_valid():
             proc = form.save()
             if not settings.DEBUG:
