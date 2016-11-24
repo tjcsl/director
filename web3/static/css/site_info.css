@@ -26,3 +26,6 @@
 #commit .path {
     white-space: pre-wrap;
 }
+#commit .path::first-line {
+    color: #C4A000;
+}
