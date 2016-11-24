@@ -120,3 +120,9 @@ def demote(uid, gid):
         os.setgid(gid)
         os.setuid(uid)
     return result
+
+
+def generate_ssh_key(site):
+    keypath = os.path.join(site.private_path, "rsa.key")
+    Popen("/usr/bin/ssh-keygen -t rsa -b 4096 -N '' -f {}".format(keypath).split())
+    os.chown(keypath, site.user.id, site.group.id)

@@ -41,9 +41,20 @@ class Site(models.Model):
         else:
             return "/web/{}/".format(self.name)
 
+
+    @property
+    def private_path(self):
+        return os.path.join(self.path, "private")
+
+
+    @property
+    def public_path(self):
+        return os.path.join(self.path, "public")
+
+
     @property
     def has_repo(self):
-        return not settings.DEBUG and os.path.isdir("{}public/.git".format(self.path))
+        return not settings.DEBUG and os.path.isdir(os.path.join(self.public_path, ".git"))
 
     def __str__(self):
         return self.name
