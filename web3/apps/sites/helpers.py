@@ -124,7 +124,7 @@ def demote(uid, gid):
 
 def generate_ssh_key(site):
     sshpath = os.path.join(site.private_path, ".ssh")
-    keypath = os.path.join(sshpath, "rsa.key")
+    keypath = os.path.join(sshpath, "id_rsa")
     if not os.path.exists(sshpath):
         os.makedirs(sshpath)
     if os.path.isfile(keypath):
