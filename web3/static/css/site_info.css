@@ -29,3 +29,6 @@
 #commit .path::first-line {
     color: #C4A000;
 }
+#commit.error .path::first-line {
+    color: #CC0000;
+}
