@@ -121,10 +121,19 @@ def modify_database_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
-    try:
-        form = DatabaseForm(instance=site.database)
-    except:
-        form = DatabaseForm(initial={"site": site.id})
+    if request.method == "POST":
+        try:
+            form = DatabaseForm(request.POST, instance=site.database)
+        except Site.database.RelatedObjectDoesNotExist:
+            form = DatabaseForm(request.POST, initial={"site": site.id})
+        if form.is_valid():
+            messages.error(request, "Database creation not implemented!")
+            return redirect("info_site", site_id=site.id)
+    else:
+        try:
+            form = DatabaseForm(instance=site.database)
+        except:
+            form = DatabaseForm(initial={"site": site.id})
     context = {
         "form": form
     }
