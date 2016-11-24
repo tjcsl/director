@@ -59,7 +59,7 @@ class Site(models.Model):
 
     @property
     def public_key(self):
-        with open(os.path.join(self.private_path, "rsa.key"), "r") as f:
+        with open(os.path.join(self.private_path, "rsa.key.pub"), "r") as f:
             data = f.read()
         return data
 
