@@ -43,6 +43,16 @@ class Site(models.Model):
 
 
     @property
+    def url(self):
+        if self.purpose == "user":
+            return "https://user.tjhsst.edu/{}/".format(self.name)
+        elif self.purpose == "activity":
+            return "https://activities.tjhsst.edu/{}/".format(self.name)
+        else:
+            return self.domain.split(" ")[0]
+
+
+    @property
     def private_path(self):
         return os.path.join(self.path, "private")
 
