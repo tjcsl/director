@@ -3,11 +3,8 @@ import shutil
 import stat
 import time
 import psycopg2
-try:
-    import MySQLdb
-    from _mysql_exceptions import ProgrammingError as MySQLProgrammingError
-except ImportError:
-    pass
+import MySQLdb
+from _mysql_exceptions import ProgrammingError as MySQLProgrammingError
 
 from subprocess import Popen, check_output, PIPE
 
