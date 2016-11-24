@@ -24,8 +24,7 @@
     margin-top: 0.2em;
 }
 #commit .path {
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
     width: 100%;
     width: calc(100% - 20px);
     overflow-x: auto;
