@@ -2,7 +2,7 @@
     white-space: pre-wrap;
     word-wrap: break-word;
     background-color: white;
-    padding: 5px;
+    padding: .5rem .75rem;
 }
 #git-output {
     display: none;
