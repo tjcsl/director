@@ -6,13 +6,14 @@ from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 from .models import Site
 from .forms import SiteForm, ProcessForm
 from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
                       get_supervisor_status, delete_process_config, write_new_index_file,
-                      generate_ssh_key)
+                      generate_ssh_key, run_as_site)
 
 from ..authentication.decorators import superuser_required
 
@@ -209,3 +210,17 @@ def generate_key_view(request, site_id):
 
     messages.success(request, "Generated new RSA public private key-pair!")
     return redirect("info_site", site_id=site_id)
+
+
+@login_required
+def git_pull_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    if not settings.DEBUG:
+        output = run_as_site(site, "git pull", cwd=site.public_path, env={"GIT_SSH_COMMAND": "ssh -i {}".format(os.path.join(site.private_path, "rsa.key.pub"))})
+    else:
+        output = (0, None, None)
+
+    return JsonResponse({"ret": output[0], "out": output[1], "err": output[2]})
