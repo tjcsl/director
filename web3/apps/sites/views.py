@@ -14,7 +14,7 @@ from .forms import SiteForm, ProcessForm, DatabaseForm
 from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
                       get_supervisor_status, delete_process_config, write_new_index_file,
-                      generate_ssh_key, run_as_site, delete_postgres_database)
+                      generate_ssh_key, run_as_site, delete_postgres_database, create_postgres_database)
 
 from ..authentication.decorators import superuser_required
 
@@ -148,14 +148,29 @@ def delete_database_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
     if request.method == "POST":
-        if site.database.category == "postgresql":
-            delete_postgres_database(site.database)
+        if not settings.DEBUG:
+            if site.database.category == "postgresql":
+                delete_postgres_database(site.database)
         site.database.delete()
         messages.success(request, "Database deleted!")
         return redirect("info_site", site_id=site.id)
     else:
         return render(request, "sites/delete_database.html", {"site": site})
 
+
+@login_required
+def regenerate_database_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    site.database.update(password=User.objects.make_random_password(length=24))
+    if not settings.DEBUG:
+        if site.database.category == "postgresql":
+            create_postgres_database(site.database)
+
+    messages.success(request, "Database credentials regenerated!")
+    return redirect("info_site", site_id=site.id)
 
 @login_required
 def delete_process_view(request, site_id):

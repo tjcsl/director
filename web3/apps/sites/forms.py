@@ -123,8 +123,9 @@ class DatabaseForm(forms.ModelForm):
 
         if commit:
             instance.save()
-            if instance.category == "postgresql":
-                create_postgres_database(instance)
+            if not settings.DEBUG:
+                if instance.category == "postgresql":
+                    create_postgres_database(instance)
 
         return instance
 
