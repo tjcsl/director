@@ -11,7 +11,8 @@ from .models import Site
 from .forms import SiteForm, ProcessForm
 from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
-                      get_supervisor_status, delete_process_config, write_new_index_file)
+                      get_supervisor_status, delete_process_config, write_new_index_file,
+                      generate_ssh_key)
 
 from ..authentication.decorators import superuser_required
 
@@ -195,3 +196,16 @@ def info_view(request, site_id):
         "status": get_supervisor_status(site) if not settings.DEBUG else None
     }
     return render(request, "sites/info_site.html", context)
+
+
+@login_required
+def generate_key_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    if not settings.DEBUG:
+        generate_ssh_key(site)
+
+    messages.success(request, "Generated new RSA public private key-pair!")
+    return redirect("info_site", site_id=site_id)

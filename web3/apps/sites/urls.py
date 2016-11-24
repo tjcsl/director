@@ -12,4 +12,5 @@ urlpatterns = [
     url("^process/edit/(?P<site_id>\d+)$", views.modify_process_view, name="edit_process"),
     url("^process/restart/(?P<site_id>\d+)$", views.restart_process_view, name="restart_process"),
     url("^process/delete/(?P<site_id>\d+)$", views.delete_process_view, name="delete_process"),
+    url("^action/generate_key/(?P<site_id>\d+)$", views.generate_key_view, name="generate_rsa_key")
 ]
