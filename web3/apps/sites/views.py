@@ -127,7 +127,8 @@ def modify_database_view(request, site_id):
         except Site.database.RelatedObjectDoesNotExist:
             form = DatabaseForm(request.POST, initial={"site": site.id})
         if form.is_valid():
-            messages.error(request, "Database creation not implemented!")
+            form.save()
+            messages.success(request, "New database created!")
             return redirect("info_site", site_id=site.id)
     else:
         try:
@@ -138,6 +139,20 @@ def modify_database_view(request, site_id):
         "form": form
     }
     return render(request, "sites/create_database.html", context)
+
+
+@login_required
+def delete_database_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+    if request.method == "POST":
+        site.database.delete()
+        messages.success(request, "Database deleted!")
+        return redirect("info_site", site_id=site.id)
+    else:
+        return render(request, "sites/delete_database.html", {"site": site})
+
 
 @login_required
 def delete_process_view(request, site_id):

@@ -12,7 +12,7 @@
 #generate-key, #git-pull {
     margin-bottom: 1rem;
 }
-#webhook-url {
+#webhook-url, #database-url {
     background-color: white;
     border: none;
     border-radius: 0;
