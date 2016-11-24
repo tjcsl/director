@@ -94,6 +94,7 @@ body {
     line-height: 14px;
 }
 .dropdown-toggle {
+    cursor: pointer;
     border: none;
     padding: 0px;
     margin: 0px;
