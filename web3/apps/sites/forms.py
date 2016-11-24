@@ -37,6 +37,9 @@ class SiteForm(forms.ModelForm):
             initial = kwargs.setdefault('initial', {})
             initial["users"] = [u.pk for u in kwargs['instance'].group.users.all()]
         forms.ModelForm.__init__(self, *args, **kwargs)
+        instance = getattr(self, "instance", None)
+        if instance and instance.pk:
+            self.fields["name"].disabled = True
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
