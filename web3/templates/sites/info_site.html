@@ -28,6 +28,13 @@
                 $("#git-output").text("Process exited with return code " + data.ret + (data.out ? "\n\n" + data.out : "") + (data.err ? "\n\n" + data.err : "")).slideDown("fast");
             });
         });
+        $("#generate-key").click(function(e) {
+            if ($(this).text().indexOf("Regenerate") > -1) {
+                if (!confirm("Are you sure you want to regenerate keys for this site?")) {
+                    e.preventDefault();
+                }
+            }
+        });
     });
     </script>
 {% endblock %}
@@ -73,12 +80,12 @@
         {% if site.has_rsa_key %}
         <p><i class="fa fa-certificate"></i> This site has a RSA key-pair.</p>
         <pre id="public-key">{{ site.public_key }}</pre>
-        <p>After you've generated a key, follow the instructions <a href="https://developer.github.com/guides/managing-deploy-keys/">here</a> to learn how to set up deploy keys. Press the "Git Pull" button below after you've set up your key to make sure it works.</p>
+        <p>After you've generated a key, follow the instructions <a href="https://developer.github.com/guides/managing-deploy-keys/">here</a> to learn how to set up deploy keys. Press the "Git Pull" button below after you've set up your key to make sure everything works.</p>
         <button id="git-pull" class="btn btn-ion"><i class="fa fa-github"></i> Git Pull</button>
         {% else %}
         <p><i class="fa fa-certificate"></i> This site does not have a RSA key-pair. Use the button below to generate one.</p>
         {% endif %}
-        <a href="{% url 'generate_rsa_key' site.id %}" class="btn btn-ion"><i class="fa fa-key"></i> {% if site.has_rsa_key %}Regenerate{% else %}Generate{% endif %} Keys</a>
+        <a id="generate-key" href="{% url 'generate_rsa_key' site.id %}" class="btn btn-ion"><i class="fa fa-key"></i> {% if site.has_rsa_key %}Regenerate{% else %}Generate{% endif %} Keys</a>
         {% endif %}
         <pre id="git-output"></pre>
     </div>
