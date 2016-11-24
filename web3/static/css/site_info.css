@@ -14,4 +14,6 @@
 }
 #webhook-url {
     background-color: white;
+    border: none;
+    border-radius: 0;
 }
