@@ -175,6 +175,7 @@ def create_postgres_database(database):
     try:
         cursor.execute("GRANT ALL PRIVILEGES ON SCHEMA public TO {}".format(database.username))
         cursor.execute("GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {}".format(database.username))
+        cursor.execute("GRANT USAGE ON SCHEMA public TO {}".format(database.username))
         return True
     except psycopg2.DatabaseError:
         client.captureException()
