@@ -225,8 +225,10 @@ def create_mysql_database(database):
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
-        cursor.execute("CREATE USER '{}'@'%' IDENTIFIED BY '{}';".format(database.username, database.password))
-        cursor.execute("CREATE DATABASE {};".format(database.db_name))
+        cursor.execute("SELECT 1 FROM mysql.user WHERE user = ''".format(database.username))
+        if cursor.rowcount == 0:
+            cursor.execute("CREATE USER '{}'@'%' IDENTIFIED BY '{}';".format(database.username, database.password))
+        cursor.execute("CREATE DATABASE IF NOT EXISTS {};".format(database.db_name))
         cursor.execute("GRANT ALL ON {} . * TO {};".format(database.db_name, database.username))
         cursor.execute("FLUSH PRIVILEGES;")
         return True
