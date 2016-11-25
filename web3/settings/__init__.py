@@ -193,5 +193,5 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "mail.tjhsst.edu"
 EMAIL_PORT = 25
 EMAIL_USE_TLS = False  # FIXME: use tls
-EMAIL_SUBJECT_PREFIX = "[Director Website Management]"
+EMAIL_SUBJECT_PREFIX = "[Director]"
 EMAIL_FROM = "director-noreply@tjhsst.edu"
