@@ -227,7 +227,7 @@ def change_mysql_password(database):
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
-        conn.execute("ALTER USER {} SET password=PASSWORD('{}') WHERE User='{}';".format(database.password, database.username))
+        conn.execute("SET PASSWORD FOR '{}'@'%' = '{}';".format(database.username, database.password))
         conn.execute("FLUSH PRIVILEGES;")
         conn.close()
         return True
