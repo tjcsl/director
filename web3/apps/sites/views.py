@@ -17,7 +17,7 @@ from .helpers import (reload_services, delete_site_files, create_config_files,
                       get_supervisor_status, delete_process_config, write_new_index_file,
                       generate_ssh_key, run_as_site, delete_postgres_database, change_postgres_password,
                       do_git_pull, get_latest_commit, delete_mysql_database, change_mysql_password,
-                      fix_permissions)
+                      fix_permissions, reload_nginx_config, check_nginx_config)
 
 from ..authentication.decorators import superuser_required
 from ..users.models import User
@@ -78,20 +78,29 @@ def edit_nginx_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     nginx_path = "/etc/nginx/director.d/{}.conf".format(site.name)
 
-    if request.method == "POST":
-        if request.POST.get("editor", None):
-            with open(nginx_path, "w") as f:
-                f.write(request.POST["editor"])
-            messages.success(request, "Nginx configuration updated!")
-        else:
-            messages.error(request, "You must have a nginx configuration!")
-        return redirect("info_site", site_id=site_id)
-
     if not settings.DEBUG and os.path.isfile(nginx_path):
         with open(nginx_path, "r") as f:
             contents = f.read()
     else:
         contents = render_to_string("config/nginx.conf", {"site": site})
+
+    if request.method == "POST":
+        if request.POST.get("editor", None):
+            if not settings.DEBUG:
+                with open(nginx_path, "w") as f:
+                    f.write(request.POST["editor"])
+                if not check_nginx_config(nginx_path):
+                    with open(nginx_path, "w") as f:
+                        f.write(contents)
+                    messages.error(request, "Invalid nginx configuration!")
+                else:
+                    reload_nginx_config()
+                    messages.success(request, "Nginx configuration updated!")
+            else:
+                messages.warning(request, "Not writing nginx config in debug mode!")
+        else:
+            messages.error(request, "You must have a nginx configuration!")
+        return redirect("info_site", site_id=site_id)
 
     context = {
         "contents": contents,

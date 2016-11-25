@@ -109,6 +109,15 @@ def reload_services():
     Popen("supervisorctl update".split())
 
 
+def reload_nginx_config():
+    Popen("/usr/sbin/nginx -s reload".split())
+
+
+def check_nginx_config(f):
+    proc = Popen(["/usr/sbin/nginx", "-t", "-c", f]).wait()
+    return proc.returncode == 0
+
+
 def flush_permissions():
     with open("/proc/net/rpc/auth.unix.gid/flush", "w") as f:
         f.write(str(int(time.time())))
