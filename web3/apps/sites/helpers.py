@@ -212,10 +212,10 @@ def create_mysql_database(database):
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
-        conn.execute("CREATE USER {} IDENTIFIED BY '{}';".format(database.username, database.password))
-        conn.execute("CREATE DATABASE {};".format(database.db_name))
-        conn.execute("GRANT ALL ON {} . * TO {};".format(databae.db_name, database.username))
-        conn.execute("FLUSH PRIVILEGES;")
+        cursor.execute("CREATE USER {} IDENTIFIED BY '{}';".format(database.username, database.password))
+        cursor.execute("CREATE DATABASE {};".format(database.db_name))
+        cursor.execute("GRANT ALL ON {} . * TO {};".format(databae.db_name, database.username))
+        cursor.execute("FLUSH PRIVILEGES;")
         return True
     except MySQLProgrammingError:
         client.captureException()
@@ -228,8 +228,8 @@ def change_mysql_password(database):
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
-        conn.execute("SET PASSWORD FOR '{}'@'%' = '{}';".format(database.username, database.password))
-        conn.execute("FLUSH PRIVILEGES;")
+        cursor.execute("SET PASSWORD FOR '{}'@'%' = '{}';".format(database.username, database.password))
+        cursor.execute("FLUSH PRIVILEGES;")
         conn.close()
         return True
     except MySQLProgrammingError:
