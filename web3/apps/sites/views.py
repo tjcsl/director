@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 
 from .models import Site
 from .forms import SiteForm, ProcessForm, DatabaseForm
@@ -70,6 +71,33 @@ def edit_view(request, site_id):
         "form": form
     }
     return render(request, "sites/create_site.html", context)
+
+
+@superuser_required
+def edit_nginx_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    nginx_path = "/etc/nginx/director.d/{}.conf".format(site.name)
+
+    if request.method == "POST":
+        if request.POST.get("editor", None):
+            with open(nginx_path, "w") as f:
+                f.write(request.POST["editor"])
+            messages.success(request, "Nginx configuration updated!")
+        else:
+            messages.error(request, "You must have a nginx configuration!")
+        return redirect("info_site", site_id=site_id)
+
+    if not settings.DEBUG and os.path.isfile(nginx_path):
+        with open(nginx_path, "r") as f:
+            contents = f.read()
+    else:
+        contents = render_to_string("config/nginx.conf", {"site": site})
+
+    context = {
+        "contents": contents,
+        "site": site
+    }
+    return render(request, "sites/edit_nginx.html", context)
 
 
 @superuser_required
