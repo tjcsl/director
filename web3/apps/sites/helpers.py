@@ -244,7 +244,7 @@ def delete_mysql_database(database):
     cursor = conn.cursor()
     try:
         cursor.execute("DROP DATABASE IF EXISTS {};".format(database.db_name))
-        cursor.execute("DROP USER IF EXISTS '{}'@'%';".format(database.username))
+        cursor.execute("DROP USER '{}'@'%';".format(database.username))
         return True
     except MySQLProgrammingError:
         client.captureException()
