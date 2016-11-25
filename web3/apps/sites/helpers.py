@@ -205,6 +205,7 @@ def delete_postgres_database(database):
     cursor.execute("DROP DATABASE IF EXISTS {}".format(database.db_name))
     cursor.execute("DROP USER IF EXISTS {}".format(database.username))
     conn.close()
+    return True
 
 
 def create_mysql_database(database):
