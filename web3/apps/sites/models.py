@@ -48,6 +48,8 @@ class Site(models.Model):
             return "https://user.tjhsst.edu/{}/".format(self.name)
         elif self.purpose == "activity":
             return "https://activities.tjhsst.edu/{}/".format(self.name)
+        elif self.purpose == "legacy":
+            return "https://www.tjhsst.edu/~{}/".format(self.name)
         else:
             return self.domain.split(" ")[0]
 
