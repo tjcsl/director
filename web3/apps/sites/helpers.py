@@ -162,6 +162,7 @@ def create_postgres_database(database):
         cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
         cursor.execute("CREATE DATABASE {}".format(database.db_name))
         cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
+        cursor.execute("GRANT USAGE ON SCHEMA public TO {}".format(database.username))
     except psycopg2.DatabaseError:
         client.captureException()
         return False
