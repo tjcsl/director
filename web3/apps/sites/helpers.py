@@ -160,7 +160,7 @@ def create_postgres_database(database):
     cursor = conn.cursor()
     try:
         cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
-        cursor.execute("CREATE DATABASE {}".format(database.db_name))
+        cursor.execute("CREATE DATABASE {} WITH OWNER = {}".format(database.db_name, database.username))
         cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
         return True
     except psycopg2.DatabaseError:
