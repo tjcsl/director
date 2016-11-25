@@ -89,7 +89,7 @@ def edit_nginx_view(request, site_id):
             if not settings.DEBUG:
                 with open(nginx_path, "w") as f:
                     f.write(request.POST["editor"])
-                if not check_nginx_config(nginx_path):
+                if not check_nginx_config():
                     with open(nginx_path, "w") as f:
                         f.write(contents)
                     messages.error(request, "Invalid nginx configuration!")

@@ -113,8 +113,8 @@ def reload_nginx_config():
     Popen("/usr/sbin/nginx -s reload".split())
 
 
-def check_nginx_config(f):
-    return Popen(["/usr/sbin/nginx", "-t", "-c", f]).wait() == 0
+def check_nginx_config():
+    return Popen(["/usr/sbin/nginx", "-t"]).wait() == 0
 
 
 def flush_permissions():
