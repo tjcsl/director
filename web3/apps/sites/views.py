@@ -204,7 +204,7 @@ def delete_process_view(request, site_id):
         try:
             site.process.delete()
             if not settings.DEBUG:
-                delete_process_config(site)
+                delete_process_config(site.process)
                 reload_services()
             messages.success(request, "Process deleted!")
         except Site.process.RelatedObjectDoesNotExist:
