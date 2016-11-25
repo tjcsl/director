@@ -55,6 +55,7 @@
         {% if site.category != "static" %}
         <h4><i class="fa fa-database"></i> Databases</h4>
         {% if site.database %}
+        <p>This site has a <b>{{ site.database.get_category_display }}</b> database associated with it.</p>
         <div class="form-group">
             <input id="database-url" ondblclick="this.select();" type="text" class="form-control" readonly value="{% if site.database.category == "postgresql" %}postgres{% else %}mysql{% endif %}://{{ site.database.username }}:{{ site.database.password }}@{% if site.database.category == "postgresql" %}postgres1:5432{% else %}mysql1:3306{% endif %}/{{ site.database.db_name }}" />
             <span class="help-text"><small>&lt;type&gt;://&lt;username&gt;:&lt;password&gt;@&lt;server&gt;:&lt;port&gt;/&lt;database&gt;</small></span>
