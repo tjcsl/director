@@ -64,7 +64,10 @@ class Site(models.Model):
 
     @property
     def has_repo(self):
-        return settings.DEBUG or os.path.isdir(os.path.join(self.public_path, ".git"))
+        if hasattr(self, "_has_repo"):
+            return self._has_repo
+        self._has_repo = settings.DEBUG or os.path.isdir(os.path.join(self.public_path, ".git"))
+        return self._has_repo
 
 
     @property
