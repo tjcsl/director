@@ -159,8 +159,14 @@ def create_postgres_database(database):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     try:
-        cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
-        cursor.execute("CREATE DATABASE {} WITH OWNER = {}".format(database.db_name, settings.POSTGRES_DB_USER))
+        cursor.execute("SELECT 1 FROM pg_catalog.pg_user WHERE usename = '{}'".format(database.username))
+        if cursor.rowcount == 0:
+            cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
+        else:
+            cursor.execute("ALTER USER {} WITH PASSWORD '{}'".format(database.username, database.password))
+        cursor.execute("SELECT 1 FROM pg_database WHERE datname = '{}'".format(database.db_name))
+        if cursor.rowcount == 0:
+            cursor.execute("CREATE DATABASE {} WITH OWNER = {}".format(database.db_name, settings.POSTGRES_DB_USER))
         cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
     except psycopg2.DatabaseError:
         client.captureException()
