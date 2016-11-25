@@ -51,7 +51,7 @@ class Site(models.Model):
         elif self.purpose == "legacy":
             return "https://www.tjhsst.edu/~{}/".format(self.name)
         else:
-            return self.domain.split(" ")[0]
+            return = "http://" + self.domain.split(" ")[0]
 
 
     @property
