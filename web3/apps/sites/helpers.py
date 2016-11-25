@@ -212,7 +212,7 @@ def create_mysql_database(database):
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
-        cursor.execute("CREATE USER {} IDENTIFIED BY '{}';".format(database.username, database.password))
+        cursor.execute("CREATE USER '{}'@'%' IDENTIFIED BY '{}';".format(database.username, database.password))
         cursor.execute("CREATE DATABASE {};".format(database.db_name))
         cursor.execute("GRANT ALL ON {} . * TO {};".format(databae.db_name, database.username))
         cursor.execute("FLUSH PRIVILEGES;")
@@ -228,23 +228,28 @@ def change_mysql_password(database):
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
-        cursor.execute("SET PASSWORD FOR '{}'@'%' = '{}';".format(database.username, database.password))
+        cursor.execute("SET PASSWORD FOR '{}'@'%' = PASSWORD('{}');".format(database.username, database.password))
         cursor.execute("FLUSH PRIVILEGES;")
-        conn.close()
         return True
     except MySQLProgrammingError:
         client.captureException()
-        conn.close()
         return False
+    finally:
+        conn.close()
 
 
 def delete_mysql_database(database):
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
-    cursor.execute("DROP DATABASE IF EXISTS {};".format(database.db_name))
-    cursor.execute("DROP USER IF EXISTS {};".format(database.username))
-    conn.close()
-    return True
+    try:
+        cursor.execute("DROP DATABASE IF EXISTS {};".format(database.db_name))
+        cursor.execute("DROP USER IF EXISTS '{}'@'%';".format(database.username))
+        return True
+    except MySQLProgrammingError:
+        client.captureException()
+        return False
+    finally:
+        conn.close()
 
 
 def do_git_pull(site):
