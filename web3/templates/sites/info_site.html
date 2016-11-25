@@ -56,7 +56,7 @@
         <br /><br />
     </div>
     <div class="col-md-6">
-        {% if site.category != "static" %}
+        {% if site.category != "static" or site.database %}
         <h4><i class="fa fa-database"></i> Databases</h4>
         {% if site.database %}
         <p>This site has a <b>{{ site.database.get_category_display }}</b> database associated with it.</p>
