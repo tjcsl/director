@@ -173,9 +173,8 @@ def create_postgres_database(database):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     try:
-        cursor.execute("GRANT ALL PRIVILEGES ON SCHEMA public TO {}".format(database.username))
-        cursor.execute("GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {}".format(database.username))
-        cursor.execute("GRANT USAGE, CREATE ON SCHEMA public TO {}".format(database.username))
+        cursor.execute("GRANT ALL ON SCHEMA public TO {}".format(database.username))
+        cursor.execute("GRANT ALL ON ALL TABLES IN SCHEMA public TO {}".format(database.username))
         return True
     except psycopg2.DatabaseError:
         client.captureException()
