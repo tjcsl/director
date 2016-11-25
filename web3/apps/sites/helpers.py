@@ -278,7 +278,7 @@ def get_latest_commit(site):
             return "Error - {}".format(output[2].replace("\n", " ").replace("\r", ""))
         return output[1]
     else:
-        return "abacada example commit"
+        return "commit 77f43ce5c319564fd781ac25dc24da022c3ce15b\nAuthor: Example User <none@none.com>\nDate:   Mon Jan 1 00:00:00 2016 -0000\nexample commit"
 
 
 def fix_permissions(site):

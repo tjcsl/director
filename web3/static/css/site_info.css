@@ -29,3 +29,6 @@
     width: calc(100% - 20px);
     overflow-x: auto;
 }
+#commit.commit .path::first-line {
+    color: #C4A000;
+}
