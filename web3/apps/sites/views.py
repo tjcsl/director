@@ -132,8 +132,11 @@ def modify_database_view(request, site_id):
         except Site.database.RelatedObjectDoesNotExist:
             form = DatabaseForm(request.user, request.POST, initial={"site": site.id})
         if form.is_valid():
-            form.save()
-            messages.success(request, "New database created!")
+            instance = form.save()
+            if instance:
+                messages.success(request, "New database created!")
+            else:
+                messages.error(request, "Failed to create database!")
             return redirect("info_site", site_id=site.id)
     else:
         try:

@@ -136,10 +136,14 @@ class DatabaseForm(forms.ModelForm):
         if commit:
             instance.save()
             if not settings.DEBUG:
+                flag = False
                 if instance.category == "postgresql":
-                    create_postgres_database(instance)
+                    flag = create_postgres_database(instance)
                 elif instance.category == "mysql":
-                    create_mysql_database(instance)
+                    flag = create_mysql_database(instance)
+                if not flag:
+                    instance.delete()
+                    return None
 
         return instance
 
