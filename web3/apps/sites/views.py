@@ -287,7 +287,7 @@ def generate_key_view(request, site_id):
         generate_ssh_key(site)
 
     messages.success(request, "Generated new RSA public private key-pair!")
-    return redirect("info_site", site_id=site_id)
+    return redirect(reverse("info_site", kwargs={"site_id": site_id}) + "#github-integration")
 
 
 @login_required

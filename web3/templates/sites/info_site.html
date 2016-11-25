@@ -74,25 +74,28 @@
             <i class="fa fa-code-fork pull-left"></i> <div class="path pull-left">{{ latest_commit }}</div>
         </div>
         <p>Nice! This site uses Git for version control. You can set up your site to automatically update whenever you push to your GitHub repository.</p>
-        <p>First, you'll have to add a deploy key to your repository. You can use the button below to generate a key.</p>
-        {% if site.has_rsa_key %}
-        <p><i class="fa fa-certificate"></i> This site has a RSA key-pair. The public key is shown below.</p>
-        <pre id="public-key" ondblclick="select(this);">{{ site.public_key }}</pre>
-        <p>After you've generated a key, follow the instructions <a href="https://developer.github.com/guides/managing-deploy-keys/">here</a> to learn how to set up deploy keys. Press the "Git Pull" button below after you've set up your key to make sure everything works.</p>
-        <button id="git-pull" class="btn btn-ion"><i class="fa fa-github"></i> Git Pull</button>
-        {% else %}
-        <p><i class="fa fa-certificate"></i> This site does not have a RSA key-pair. Use the button below to generate one.</p>
-        {% endif %}
-        <a id="generate-key" href="{% url 'generate_rsa_key' site.id %}" class="btn btn-ion"><i class="fa fa-key"></i> {% if site.has_rsa_key %}Regenerate{% else %}Generate{% endif %} Keys</a>
-        <pre id="git-output"></pre>
-        {% if site.has_rsa_key %}
-        <p>Once you have set up your deploy key, you will need to add a webhook so that Director knows when to pull your repository. You can use <a href="https://developer.github.com/webhooks/creating/">this guide</a> to learn how to set up a webhook.</p>
-        <div class="form-group">
-            <label for="webhook-url">Webhook URL</label>
-            <input id="webhook-url" ondblclick="this.select();" type="text" class="form-control" readonly value="{{ webhook_url }}" />
-            <span class="help-text"><small>Content Type - application/json, Just the push event</small></span>
+        <a data-toggle="collapse" href="#github-integration" onclick="$(this).hide();">Show details&hellip;</a>
+        <div id="github-integration" class="collapse">
+            <p>First, you'll have to add a deploy key to your repository. You can use the button below to generate a key.</p>
+            {% if site.has_rsa_key %}
+            <p><i class="fa fa-certificate"></i> This site has a RSA key-pair. The public key is shown below.</p>
+            <pre id="public-key" ondblclick="select(this);">{{ site.public_key }}</pre>
+            <p>After you've generated a key, follow the instructions <a href="https://developer.github.com/guides/managing-deploy-keys/">here</a> to learn how to set up deploy keys. Press the "Git Pull" button below after you've set up your key to make sure everything works.</p>
+            <button id="git-pull" class="btn btn-ion"><i class="fa fa-github"></i> Git Pull</button>
+            {% else %}
+            <p><i class="fa fa-certificate"></i> This site does not have a RSA key-pair. Use the button below to generate one.</p>
+            {% endif %}
+            <a id="generate-key" href="{% url 'generate_rsa_key' site.id %}" class="btn btn-ion"><i class="fa fa-key"></i> {% if site.has_rsa_key %}Regenerate{% else %}Generate{% endif %} Keys</a>
+            <pre id="git-output"></pre>
+            {% if site.has_rsa_key %}
+            <p>Once you have set up your deploy key, you will need to add a webhook so that Director knows when to pull your repository. You can use <a href="https://developer.github.com/webhooks/creating/">this guide</a> to learn how to set up a webhook.</p>
+            <div class="form-group">
+                <label for="webhook-url">Webhook URL</label>
+                <input id="webhook-url" ondblclick="this.select();" type="text" class="form-control" readonly value="{{ webhook_url }}" />
+                <span class="help-text"><small>Content Type - application/json, Just the push event</small></span>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
         {% else %}
         <h4><i class="fa fa-github"></i> GitHub Integration</h4>
         <p>You can use additional features by turning the folder <span class="path">{{ site.public_path }}</span> into a Git repository.</p>
