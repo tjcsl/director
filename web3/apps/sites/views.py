@@ -15,7 +15,8 @@ from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
                       get_supervisor_status, delete_process_config, write_new_index_file,
                       generate_ssh_key, run_as_site, delete_postgres_database, change_postgres_password,
-                      do_git_pull, get_latest_commit, delete_mysql_database, change_mysql_password)
+                      do_git_pull, get_latest_commit, delete_mysql_database, change_mysql_password,
+                      fix_permissions)
 
 from ..authentication.decorators import superuser_required
 from ..users.models import User
@@ -241,16 +242,7 @@ def permission_view(request, site_id):
 
     if not settings.DEBUG:
         make_site_dirs(site)
-        for root, dirs, files in os.walk(site.path):
-            dirs[:] = [d for d in dirs if not d == ".ssh"]
-            for f in files + dirs:
-                path = os.path.join(root, f)
-                st = os.stat(path)
-                os.chown(path, site.user.id, site.group.id)
-                if stat.S_ISDIR(st.st_mode):
-                    os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
-                else:
-                    os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
+        fix_permissions(site)
 
     messages.success(request, "File permissions regenerated!")
     return redirect("info_site", site_id=site.id)

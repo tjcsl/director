@@ -259,6 +259,7 @@ def delete_mysql_database(database):
 
 def do_git_pull(site):
     if not settings.DEBUG:
+        fix_permissions(site)
         output = run_as_site(site, "git pull", cwd=site.public_path, env={
             "GIT_SSH_COMMAND": "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
             "HOME": site.private_path
@@ -278,3 +279,16 @@ def get_latest_commit(site):
         return output[1]
     else:
         return "abacada example commit"
+
+
+def fix_permissions(site):
+    for root, dirs, files in os.walk(site.path):
+        dirs[:] = [d for d in dirs if not d == ".ssh"]
+        for f in files + dirs:
+            path = os.path.join(root, f)
+            st = os.stat(path)
+            os.chown(path, site.user.id, site.group.id)
+            if stat.S_ISDIR(st.st_mode):
+                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
+            else:
+                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
