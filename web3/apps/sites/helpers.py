@@ -114,8 +114,7 @@ def reload_nginx_config():
 
 
 def check_nginx_config(f):
-    proc = Popen(["/usr/sbin/nginx", "-t", "-c", f]).wait()
-    return proc.returncode == 0
+    return Popen(["/usr/sbin/nginx", "-t", "-c", f]).wait() == 0
 
 
 def flush_permissions():
