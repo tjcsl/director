@@ -162,20 +162,6 @@ def create_postgres_database(database):
         cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
         cursor.execute("CREATE DATABASE {}".format(database.db_name))
         cursor.execute("GRANT ALL PRIVILEGES ON DATABASE {} TO {}".format(database.db_name, database.username))
-        cursor.execute("GRANT USAGE ON SCHEMA public TO {}".format(database.username))
-    except psycopg2.DatabaseError:
-        client.captureException()
-        return False
-    finally:
-        conn.close()
-
-    conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(
-        settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
-    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-    cursor = conn.cursor()
-    try:
-        cursor.execute("GRANT ALL ON SCHEMA public TO {}".format(database.username))
-        cursor.execute("GRANT ALL ON ALL TABLES IN SCHEMA public TO {}".format(database.username))
         return True
     except psycopg2.DatabaseError:
         client.captureException()
