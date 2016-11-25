@@ -4,7 +4,7 @@ import stat
 import time
 import psycopg2
 import MySQLdb
-from _mysql_exceptions import ProgrammingError as MySQLProgrammingError
+from _mysql_exceptions import ProgrammingError as MySQLProgrammingError, OperationalError as MySQLOperationalError
 
 from subprocess import Popen, check_output, PIPE
 
@@ -231,7 +231,7 @@ def change_mysql_password(database):
         cursor.execute("SET PASSWORD FOR '{}'@'%' = PASSWORD('{}');".format(database.username, database.password))
         cursor.execute("FLUSH PRIVILEGES;")
         return True
-    except MySQLProgrammingError:
+    except (MySQLProgrammingError, MySQLOperationalError):
         client.captureException()
         return False
     finally:

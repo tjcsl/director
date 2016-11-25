@@ -182,13 +182,16 @@ def regenerate_database_view(request, site_id):
 
     site.database.password = User.objects.make_random_password(length=24)
     site.database.save()
+    flag = True
     if not settings.DEBUG:
         if site.database.category == "postgresql":
-            change_postgres_password(site.database)
+            flag = change_postgres_password(site.database)
         elif site.database.category == "mysql":
-            change_mysql_password(site.database)
-
-    messages.success(request, "Database credentials regenerated!")
+            flag = change_mysql_password(site.database)
+    if flag:
+        messages.success(request, "Database credentials regenerated!")
+    else:
+        messages.error(request, "Failed to regenerate database credentials!")
     return redirect("info_site", site_id=site.id)
 
 
