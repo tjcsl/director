@@ -215,7 +215,7 @@ def create_mysql_database(database):
     try:
         cursor.execute("CREATE USER '{}'@'%' IDENTIFIED BY '{}';".format(database.username, database.password))
         cursor.execute("CREATE DATABASE {};".format(database.db_name))
-        cursor.execute("GRANT ALL ON {} . * TO {};".format(databae.db_name, database.username))
+        cursor.execute("GRANT ALL ON {} . * TO {};".format(database.db_name, database.username))
         cursor.execute("FLUSH PRIVILEGES;")
         return True
     except MySQLProgrammingError:
