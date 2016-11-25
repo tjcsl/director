@@ -3,6 +3,7 @@ secret.py
 db.sqlite
 *.pyc
 *.DS_Store
+*.swp
 .DS_STORE
 __pycache__
 __pycache__/*
