@@ -85,7 +85,8 @@
 
 {% block main %}
 <div id="console">
-    <pre id="output">database: {{ site.database.db_name }}, user: {{ site.database.username }}, type: {{ site.database.category }}
+    <pre id="output"><b>database: {{ site.database.db_name }}, user: {{ site.database.username }}, type: {{ site.database.category }}</b>
+
 </pre>
     <table><tr><td id="ps">{{ site.database.db_name }}=&gt; </td><td><input autofocus id="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /></td></tr></table>
 </div>
