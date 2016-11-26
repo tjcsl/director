@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from django.conf import settings
 
 from .models import Site, Process, Database
-from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, create_postgres_database, create_mysql_database. delete_site_process, reload_services
+from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, create_postgres_database, create_mysql_database, delete_site_process, reload_services
 
 from ..users.models import User, Group
 
