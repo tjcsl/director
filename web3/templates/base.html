@@ -41,6 +41,11 @@
         });
         </script>
         {% endif %}
+        <script type="text/javascript">
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip(); 
+        });
+        </script>
     {% endblock %}
 </head>
 <body{% block bodytag %}{% endblock %}>
@@ -61,6 +66,7 @@
                     <li><a href="{% url 'user_management' %}"><i class="fa fa-fw fa-users"></i> User Admin</a></li>
                     <li><a href="{% url 'admin:index' %}"><i class="fa fa-fw fa-star"></i> Django Admin</li>
                 {% endif %}
+                <li><a href="{% url 'about' %}"><i class="fa fa-fw fa-info-circle"></i> About/Credits</a></li>
                 <li><a href="{% url 'logout' %}"><i class="fa fa-fw fa-sign-out"></i> Logout</a></li>
             </ul>
         </div>
@@ -71,15 +77,5 @@
     {% block main %}
     {% endblock %}
     </div>
-    <div class="footer">
-    {% block footer %}
-        This application developed by <a href="mailto:2017ewang@tjhsst.edu">Eric Wang</a> and <a href="mailto:okulkarni@tjhsst.edu">Omkar Kulkarni</a>
-    {% endblock %}
-    </div>
-    <script>
-    $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip(); 
-    });
-    </script>
 </body>
 </html>
