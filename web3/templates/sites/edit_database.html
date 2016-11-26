@@ -21,7 +21,7 @@
                 if (val) {
                     $("#output").append($("#ps").text() + val + "\n");
                     $.post(sql_endpoint, {"sql": val}, function(data) {
-                        $("#output").append(data + "\n");
+                        $("#output").append(data);
                         $("#console").scrollTop($("#console")[0].scrollHeight);
                     });
                     $(this).val("");

@@ -202,7 +202,7 @@ def sql_database_view(request, site_id):
         raise PermissionDenied
 
     if settings.DEBUG:
-        return HttpResponse("WARNING: debug environment", content_type="text/plain")
+        return HttpResponse("WARNING: debug environment\n", content_type="text/plain")
 
     sql = request.POST.get("sql", "")
 
