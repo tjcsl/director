@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from django.conf import settings
 
 from .models import Site, Process, Database
-from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, create_postgres_database, create_mysql_database
+from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, create_postgres_database, create_mysql_database. delete_site_process, reload_services
 
 from ..users.models import User, Group
 
@@ -70,6 +70,13 @@ class SiteForm(forms.ModelForm):
                 make_site_dirs(instance)
                 create_config_files(instance)
                 flush_permissions()
+
+            if site.category != "dynamic" and site.process:
+                if not settings.DEBUG:
+                    delete_site_process(site.process)
+                    reload_services()
+                site.process.delete()
+
             instance.save()
             self.save_m2m()
         return instance

@@ -243,10 +243,10 @@ def delete_process_view(request, site_id):
         raise PermissionDenied
     if request.method == "POST":
         try:
-            site.process.delete()
             if not settings.DEBUG:
                 delete_process_config(site.process)
                 reload_services()
+            site.process.delete()
             messages.success(request, "Process deleted!")
         except Site.process.RelatedObjectDoesNotExist:
             messages.error(request, "Process not found.")
