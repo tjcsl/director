@@ -71,11 +71,11 @@ class SiteForm(forms.ModelForm):
                 create_config_files(instance)
                 flush_permissions()
 
-            if site.category != "dynamic" and site.process:
+            if instance.category != "dynamic" and instance.process:
                 if not settings.DEBUG:
-                    delete_process_config(site.process)
+                    delete_process_config(instance.process)
                     reload_services()
-                site.process.delete()
+                instance.process.delete()
 
             instance.save()
             self.save_m2m()
