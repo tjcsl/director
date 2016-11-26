@@ -3,7 +3,7 @@
 {% block main %}
 <h3>Confirm Process Deletion</h3>
 <p>Are you sure you want to delete <b>{{ site.name }}</b>'s database? <span style="color:red">This action is permanant and irreversible!</span></p>
-<p>{{ tables }}</p>
+<p>There are <b>{{ tables|length }}</b> table{{ tables|length|pluralize }} in the database.</p>
 <form method="POST">
     {% csrf_token %}
     <div class="form-group">
