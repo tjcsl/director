@@ -228,6 +228,18 @@ def delete_postgres_database(database):
     return True
 
 
+def list_postgres_tables(database):
+    conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(
+        settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+        return [table for table in cursor.fetchall()]
+    finally:
+        conn.close()
+    return None
+
+
 def create_mysql_database(database):
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
