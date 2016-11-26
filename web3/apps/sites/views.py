@@ -275,10 +275,10 @@ def load_database_view(request, site_id):
         proc = Popen(["mysql", "-u", site.database.username, "--password={}".format(site.database.password), "-h", "mysql1", site.database.db_name], preexec_fn=demote(
             site.user.id, site.group.id), cwd=site.path, stdin=PIPE, stdout=PIPE, stderr=PIPE)
 
-    out, err = proc.communicate()
-
     for chunk in sql_file.chunks():
         proc.stdin.write(chunk)
+
+    out, err = proc.communicate()
 
     if proc.returncode == 0:
         messages.success(request, "Database import completed!")
