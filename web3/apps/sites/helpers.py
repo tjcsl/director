@@ -222,10 +222,15 @@ def delete_postgres_database(database):
         settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
-    cursor.execute("DROP DATABASE IF EXISTS {}".format(database.db_name))
-    cursor.execute("DROP USER IF EXISTS {}".format(database.username))
-    conn.close()
-    return True
+    try:
+        cursor.execute("DROP DATABASE IF EXISTS {}".format(database.db_name))
+        cursor.execute("DROP USER IF EXISTS {}".format(database.username))
+        return True
+    except psycopg2.OperationalError:
+        client.captureException()
+        return False
+    finally:
+        conn.close()
 
 
 def list_tables(database):
@@ -235,7 +240,7 @@ def list_tables(database):
         cursor = conn.cursor()
         try:
             cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
-            return [table for table in cursor.fetchall()]
+            return [table[0] for table in cursor.fetchall()]
         finally:
             conn.close()
     elif database.category == "mysql":
