@@ -119,7 +119,7 @@ def delete_view(request, site_id):
     if request.method == "POST":
         if not request.POST.get("confirm", None) == site.name:
             messages.error(request, "Delete confirmation failed!")
-            return redirect("info_site", site_id=site_id)
+            return redirect("delete_site", site_id=site_id)
         if not settings.DEBUG:
             delete_site_files(site)
             reload_services()
@@ -335,7 +335,7 @@ def delete_database_view(request, site_id):
     if request.method == "POST":
         if not request.POST.get("confirm", None) == site.name:
             messages.error(request, "Delete confirmation failed!")
-            return redirect("info_site", site_id=site_id)
+            return redirect("delete_database", site_id=site_id)
         if site.database:
             if not settings.DEBUG:
                 flag = False
