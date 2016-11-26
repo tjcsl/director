@@ -4,10 +4,13 @@ $(document).ready(function() {
         $("a[href='#github-integration']").hide();
     }
     $("#git-pull").click(function() {
+        $(this).html("<i class='fa fa-cog fa-spin'></i> Pulling...").prop("disabled", true);
         $.get(git_pull_endpoint, function(data) {
             $("#git-output").text("Process exited with return code " + data.ret + (data.out ? "\n\n" + data.out : "") + (data.err ? "\n\n" + data.err : "")).slideDown("fast");
         }).fail(function(xhr, textStatus, err) {
             $("#git-output").text("Failed to contact server!\n\n" + xhr + "\n" + textStatus + "\n" + err).slideDown("fast");
+        }).always(function() {
+            $(this).html("<i class='fa fa-github'></i> Git Pull").prop("disabled", false);
         });
     });
     $("#generate-database-password").click(function(e) {
