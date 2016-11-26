@@ -252,6 +252,9 @@ def load_database_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
+    if request.method != "POST":
+        return redirect("backup_database", site_id=site.id)
+
     if not site.database:
         messages.error(request, "No database provisioned!")
         return redirect("info_site", site_id=site.id)
@@ -291,6 +294,9 @@ def dump_database_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
+
+    if request.method != "POST":
+        return redirect("backup_database", site_id=site.id)
 
     if not site.database:
         messages.error(request, "No database provisioned!")
