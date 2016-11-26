@@ -6,7 +6,9 @@ import psycopg2
 import MySQLdb
 from _mysql_exceptions import ProgrammingError as MySQLProgrammingError, OperationalError as MySQLOperationalError
 
+import shlex
 from subprocess import Popen, check_output, PIPE
+from threading import Timer
 
 from django.conf import settings
 from .models import Site
@@ -124,10 +126,15 @@ def flush_permissions():
     Popen("/usr/sbin/nscd -i passwd".split())
 
 
-def run_as_site(site, cmd, cwd=None, env=None):
-    proc = Popen(cmd.split() if isinstance(cmd, str) else cmd, preexec_fn=demote(
+def run_as_site(site, cmd, cwd=None, env=None, timeout=15):
+    proc = Popen(shlex.split(cmd) if isinstance(cmd, str) else cmd, preexec_fn=demote(
         site.user.id, site.group.id), cwd=cwd or site.path, env=env, stdout=PIPE, stderr=PIPE)
-    out, err = proc.communicate()
+    timer = Timer(timeout, lambda p: p.kill(), [proc])
+    try:
+        timer.start()
+        out, err = proc.communicate()
+    finally:
+        timer.cancel()
     return (proc.returncode, out.decode("utf-8"), err.decode("utf-8"))
 
 
