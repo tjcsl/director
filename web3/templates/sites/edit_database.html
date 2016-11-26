@@ -7,88 +7,13 @@
     var sql_endpoint = "{% url 'sql_database' site.id %}";
     var back_endpoint = "{% url 'info_site' site.id %}";
     var csrf_token = "{{ csrf_token }}";
-    $(document).ready(function() {
-        $("#console").click(function() {
-            $("#input").focus();
-        });
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader("X-CSRFToken", csrf_token);
-            }
-        });
-        $("#input").keypress(function(e) {
-            if (e.which == 13) {
-                var val = $(this).val();
-                if (val) {
-                    if (val == "exit" || val == "\\q" || val == ".q") {
-                        window.location.href = back_endpoint;
-                        return;
-                    }
-                    $("#output").append($("#ps").text() + val + "\n");
-                    $("#console table").hide();
-                    $.post(sql_endpoint, {"sql": val}, function(data) {
-                        $("#output").append(data);
-                    }).always(function() {
-                        $("#console table").show().focus();
-                        $("#console").scrollTop($("#console")[0].scrollHeight);
-                    });
-                    $(this).val("");
-                }
-                else {
-                    $("#output").append($("#ps").text() + "\n");
-                }
-                $("#console").scrollTop($("#console")[0].scrollHeight);
-            }
-        });
-    });
     </script>
+    <script type="text/javascript" src="{% static 'js/sql_console.js' %}"></script>
 {% endblock %}
 
 {% block css %}
     {{ block.super }}
-    <style type="text/css">
-    .main {
-        padding: 0;
-    }
-    #console {
-        position: absolute;
-        top: 40px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: white;
-        font-size: 16px;
-        font-family: monospace;
-        overflow-y: hidden;
-    }
-    #output {
-        font-size: 16px;
-        font-family: monospace;
-        width: 100%;
-        padding: 15px;
-        margin: 0;
-        padding-bottom: 0;
-    }
-    #input {
-        font-family: monospace;
-        font-size: 16px;
-        border: none;
-        padding: 0;
-    }
-    #console table {
-        white-space: pre;
-        margin-left: 15px;
-        margin-right: 15px;
-        margin-bottom: 15px;
-    }
-    #console table tr, #console table td {
-        margin: 0;
-        padding: 0;
-    }
-    #input:focus {
-        outline: none;
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sql_console.css' %}" />
 {% endblock %}
 
 {% block navbar %}
