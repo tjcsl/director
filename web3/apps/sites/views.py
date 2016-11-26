@@ -1,5 +1,6 @@
 import os
 import stat
+import datetime
 
 from subprocess import Popen, check_output, PIPE
 
@@ -314,7 +315,7 @@ def dump_database_view(request, site_id):
 
     if ret == 0:
         resp = HttpResponse(out, content_type="application/force-download")
-        resp["Content-Disposition"] = "attachment; filename=dump.sql"
+        resp["Content-Disposition"] = "attachment; filename=dump{}.sql".format(datetime.datetime.now().strftime("%m%d%Y"))
         return resp
     else:
         messages.error(request, "Failed to export database!")
