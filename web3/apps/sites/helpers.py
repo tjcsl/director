@@ -129,7 +129,10 @@ def flush_permissions():
 def run_as_site(site, cmd, cwd=None, env=None, timeout=15):
     proc = Popen(shlex.split(cmd) if isinstance(cmd, str) else cmd, preexec_fn=demote(
         site.user.id, site.group.id), cwd=cwd or site.path, env=env, stdout=PIPE, stderr=PIPE)
-    timer = Timer(timeout, lambda p: p.kill(), [proc])
+    def terminate(p):
+        p.terminate()
+        p.kill()
+    timer = Timer(timeout, terminate, [proc])
     try:
         timer.start()
         out, err = proc.communicate()
