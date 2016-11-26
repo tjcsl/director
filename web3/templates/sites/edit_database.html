@@ -25,12 +25,12 @@
                         return;
                     }
                     $("#output").append($("#ps").text() + val + "\n");
-                    $(this).hide();
+                    $("#console table").hide();
                     $.post(sql_endpoint, {"sql": val}, function(data) {
                         $("#output").append(data);
-                        $("#console").scrollTop($("#console")[0].scrollHeight);
                     }).always(function() {
-                        $("#input").show().focus();
+                        $("#console table").show().focus();
+                        $("#console").scrollTop($("#console")[0].scrollHeight);
                     });
                     $(this).val("");
                 }
