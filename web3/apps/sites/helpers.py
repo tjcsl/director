@@ -7,7 +7,7 @@ import MySQLdb
 from _mysql_exceptions import ProgrammingError as MySQLProgrammingError, OperationalError as MySQLOperationalError
 
 import shlex
-from subprocess import Popen, check_output, PIPE
+from subprocess import Popen, check_output, PIPE, CalledProcessError
 from threading import Timer
 
 from django.conf import settings
@@ -101,6 +101,9 @@ def get_supervisor_status(site):
     try:
         site.process
         return check_output("supervisorctl status {}".format(site.name).split()).decode()
+    except CalledProcessError:
+        client.captureException()
+        return "Status Retrieval Failure"
     except Site.process.RelatedObjectDoesNotExist:
         return "No Process"
 
