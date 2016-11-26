@@ -5,6 +5,7 @@
     {{ block.super }}
     <script type="text/javascript">
     var sql_endpoint = "{% url 'sql_database' site.id %}";
+    var back_endpoint = "{% url 'info_site' site.id %}";
     var csrf_token = "{{ csrf_token }}";
     $(document).ready(function() {
         $("#console").click(function() {
@@ -19,10 +20,17 @@
             if (e.which == 13) {
                 var val = $(this).val();
                 if (val) {
+                    if (val == "exit" || val == "\\q" || val == ".q") {
+                        window.location.href = back_endpoint;
+                        return;
+                    }
                     $("#output").append($("#ps").text() + val + "\n");
+                    $(this).hide();
                     $.post(sql_endpoint, {"sql": val}, function(data) {
                         $("#output").append(data);
                         $("#console").scrollTop($("#console")[0].scrollHeight);
+                    }).always(function() {
+                        $("#input").show().focus();
                     });
                     $(this).val("");
                 }
