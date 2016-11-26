@@ -45,7 +45,7 @@
 {% endblock %}
 
 {% block navbar %}
-<span>{{ site.name }}</span>
+<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
 {% endblock %}
 
 {% block main %}

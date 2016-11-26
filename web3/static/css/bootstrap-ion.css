@@ -156,3 +156,10 @@ body {
 .custom-control-input:focus~.custom-control-indicator {
     box-shadow: none;
 }
+.nav > a {
+    color: white;
+}
+.nav > a:hover, .nav > a:focus {
+    color: #cccccc;
+    text-decoration: none;
+}

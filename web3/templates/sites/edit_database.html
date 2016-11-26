@@ -83,6 +83,10 @@
     </style>
 {% endblock %}
 
+{% block navbar %}
+<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
+{% endblock %}
+
 {% block main %}
 <div id="console">
     <pre id="output"><b>database: {{ site.database.db_name }}, user: {{ site.database.username }}, type: {{ site.database.category }}</b>
