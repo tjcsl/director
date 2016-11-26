@@ -6,6 +6,8 @@ $(document).ready(function() {
     $("#git-pull").click(function() {
         $.get(git_pull_endpoint, function(data) {
             $("#git-output").text("Process exited with return code " + data.ret + (data.out ? "\n\n" + data.out : "") + (data.err ? "\n\n" + data.err : "")).slideDown("fast");
+        }).fail(function(xhr, textStatus, err) {
+            $("#git-output").text("Failed to contact server!\n\n" + xhr + "\n" + textStatus + "\n" + err).slideDown("fast");
         });
     });
     $("#generate-database-password").click(function(e) {
