@@ -17,7 +17,7 @@ from .helpers import (reload_services, delete_site_files, create_config_files,
                       get_supervisor_status, delete_process_config, write_new_index_file,
                       generate_ssh_key, run_as_site, delete_postgres_database, change_postgres_password,
                       do_git_pull, get_latest_commit, delete_mysql_database, change_mysql_password,
-                      fix_permissions, reload_nginx_config, check_nginx_config)
+                      fix_permissions, reload_nginx_config, check_nginx_config, list_tables)
 
 from ..authentication.decorators import superuser_required
 from ..users.models import User
@@ -212,7 +212,10 @@ def delete_database_view(request, site_id):
             messages.error(request, "Database doesn't exist!")
         return redirect("info_site", site_id=site.id)
     else:
-        return render(request, "sites/delete_database.html", {"site": site})
+        return render(request, "sites/delete_database.html", {
+            "site": site,
+            "tables": list_tables(database) if not settings.DEBUG else None
+        })
 
 
 @login_required
