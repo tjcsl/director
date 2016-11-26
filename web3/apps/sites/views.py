@@ -214,7 +214,7 @@ def delete_database_view(request, site_id):
     else:
         return render(request, "sites/delete_database.html", {
             "site": site,
-            "tables": list_tables(database) if not settings.DEBUG else None
+            "tables": list_tables(site.database) if not settings.DEBUG else None
         })
 
 
