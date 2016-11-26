@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+    var sql_endpoint = "{% url 'sql_database' site.id %}";
+    var csrf_token = "{{ csrf_token }}";
+    $(document).ready(function() {
+        $("#console").click(function() {
+            $("#input").focus();
+        });
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrf_token);
+            }
+        });
+        $("#input").keypress(function(e) {
+            if (e.which == 13) {
+                var val = $(this).val();
+                if (val) {
+                    $("#output").append($("#ps").text() + val + "\n");
+                    $.post(sql_endpoint, {"sql": val}, function(data) {
+                        $("#output").append(data + "\n");
+                    });
+                    $(this).val("");
+                }
+                else {
+                    $("#output").append($("#ps").text() + "\n");
+                }
+            }
+        });
+    });
+    </script>
+{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <style type="text/css">
+    .main {
+        padding: 0;
+    }
+    #console {
+        height: calc(100vh - 40px);
+        background-color: white;
+        font-size: 16px;
+        font-family: monospace;
+    }
+    #output {
+        font-size: 16px;
+        font-family: monospace;
+        width: 100%;
+        padding: 15px;
+        margin: 0;
+        padding-bottom: 0;
+    }
+    #input {
+        font-family: monospace;
+        font-size: 16px;
+        border: none;
+        padding: 0;
+        padding-right: 15px;
+        padding-bottom: 15px;
+        width: calc(100% - 133px);
+    }
+    #input:focus {
+        outline: none;
+    }
+    #ps {
+        padding-left: 15px;
+    }
+    </style>
+{% endblock %}
+
+{% block main %}
+<div id="console">
+    <pre id="output">psql (9.4.9)
+Type "help" for help.
+
+</pre>
+    <span id="ps">site_{{ site.name }}=&gt; </span><input autofocus id="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+</div>
+{% endblock %}

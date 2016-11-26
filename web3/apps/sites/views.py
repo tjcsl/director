@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 
@@ -186,6 +186,31 @@ def create_database_view(request, site_id):
     }
     return render(request, "sites/create_database.html", context)
 
+
+@login_required
+def modify_database_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+    return render(request, "sites/edit_database.html", {"site": site})
+
+
+@login_required
+def sql_database_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    if settings.DEBUG:
+        return HttpResponse("WARNING: debug environment", content_type="text/plain")
+
+    sql = request.POST.get("sql", "")
+
+    if site.database.category == "mysql":
+        ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username), "--password={}".format(site.database.password), "--host=mysql1", site.database.db_name, "-e", sql])
+    else:
+        ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql])
+    return HttpResponse(out + err, content_type="text/plain")
 
 @login_required
 def delete_database_view(request, site_id):

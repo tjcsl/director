@@ -61,10 +61,10 @@
         {% if site.database %}
         <p>This site has a <b>{{ site.database.get_category_display }}</b> database associated with it.</p>
         <div class="form-group">
-            <input id="database-url" ondblclick="this.select();" type="text" class="form-control" readonly value="{% if site.database.category == "postgresql" %}postgres{% else %}mysql{% endif %}://{{ site.database.username }}:{{ site.database.password }}@{% if site.database.category == "postgresql" %}postgres1:5432{% else %}mysql1:3306{% endif %}/{{ site.database.db_name }}" />
+            <input id="database-url" ondblclick="this.select();" type="text" class="form-control" readonly value="{{ site.database }}" />
             <span class="help-text"><small>&lt;type&gt;://&lt;username&gt;:&lt;password&gt;@&lt;server&gt;:&lt;port&gt;/&lt;database&gt;</small></span>
         </div>
-        <a id="generate-database-password" href="{% url 'regenerate_database' site.id %}" class="btn btn-ion"><i class="fa fa-key"></i> Regenerate Password</a> <a href="{% url 'delete_database' site.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Database</a>
+        <a href="{% url 'edit_database' site.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Edit Database</a> <a id="generate-database-password" href="{% url 'regenerate_database' site.id %}" class="btn btn-ion"><i class="fa fa-key"></i> Regenerate Password</a> <a href="{% url 'delete_database' site.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Database</a>
         {% else %}
         <p>This site has no databases associated with it.</p>
         <a href="{% url 'create_database' site.id %}" class="btn btn-ion"><i class="fa fa-plus"></i> Add Database</a>
