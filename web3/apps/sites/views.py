@@ -262,11 +262,11 @@ def load_database_view(request, site_id):
     sql_file = request.FILES.get("file", None)
     if not sql_file:
         messages.error(request, "You must upload a .sql file!")
-        return redirect("info_site", site_id=site.id)
+        return redirect("backup_database", site_id=site.id)
 
     if settings.DEBUG:
         messages.warning(request, "Cannot import in debug mode!")
-        return redirect("info_site", site_id=site.id)
+        return redirect("backup_database", site_id=site.id)
 
     if site.database.category == "postgresql":
         proc = Popen(["psql", str(site.database)], preexec_fn=demote(
@@ -304,7 +304,7 @@ def dump_database_view(request, site_id):
 
     if settings.DEBUG:
         messages.warning(request, "Cannot export in debug mode!")
-        return redirect("info_site", site_id=site.id)
+        return redirect("backup_database", site_id=site.id)
 
     if site.database.category == "postgresql":
         ret, out, err = run_as_site(site, ["pg_dump", str(site.database)], timeout=60)
