@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h3>Export Database</h3>
+<p>You can use the feature below to download a copy of the database in .sql format.</p>
+<form action="{% url 'dump_sql' site.id %}" method="POST">
+    {% csrf_token %}
+    <a href="{% url 'info_site' site.id %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+    <button type="submit" class="btn btn-ion"><i class="fa fa-cloud-download"></i> Export</button>
+</form>
+<hr />
+<h3>Import Database</h3>
+<p>You can import existing data into your database by uploading a .sql file.</p>
+<form action="{% url 'load_sql' site.id %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label class="custom-file">
+            <input type="file" name="file" id="file" accept=".sql,application/sql" class="custom-file-input" />
+            <span class="custom-file-control"></span>
+        </label>
+    </div>
+    <a href="{% url 'info_site' site.id %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+    <button type="submit" class="btn btn-ion"><i class="fa fa-cloud-upload"></i> Import</button>
+</form>
+{% endblock %}

@@ -1,6 +1,8 @@
 import os
 import stat
 
+from subprocess import Popen, check_output, PIPE
+
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
@@ -17,12 +19,14 @@ from .helpers import (reload_services, delete_site_files, create_config_files,
                       get_supervisor_status, delete_process_config, write_new_index_file,
                       generate_ssh_key, run_as_site, delete_postgres_database, change_postgres_password,
                       do_git_pull, get_latest_commit, delete_mysql_database, change_mysql_password,
-                      fix_permissions, reload_nginx_config, check_nginx_config, list_tables)
+                      fix_permissions, reload_nginx_config, check_nginx_config, list_tables, demote)
 
 from ..authentication.decorators import superuser_required
 from ..users.models import User
 
 from ...utils.emails import send_new_site_email
+
+from raven.contrib.django.raven_compat.models import client
 
 
 @login_required
@@ -192,6 +196,11 @@ def modify_database_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
+
+    if not site.database:
+        messages.error(request, "No database provisioned!")
+        return redirect("info_site", site_id=site.id)
+
     return render(request, "sites/edit_database.html", {"site": site})
 
 
@@ -200,6 +209,10 @@ def sql_database_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
+
+    if not site.database:
+        messages.error(request, "No database provisioned!")
+        return redirect("info_site", site_id=site.id)
 
     if settings.DEBUG:
         return HttpResponse("WARNING: debug environment\n\n", content_type="text/plain")
@@ -219,11 +232,100 @@ def sql_database_view(request, site_id):
             ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql])
     return HttpResponse(out + err, content_type="text/plain")
 
+
+@login_required
+def backup_database_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    if not site.database:
+        messages.error(request, "No database provisioned!")
+        return redirect("info_site", site_id=site.id)
+
+    return render(request, "sites/backup_database.html", {"site": site})
+
+
+@login_required
+def load_database_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    if not site.database:
+        messages.error(request, "No database provisioned!")
+        return redirect("info_site", site_id=site.id)
+
+    sql_file = request.FILES.get("file", None)
+    if not sql_file:
+        messages.error(request, "You must upload a .sql file!")
+        return redirect("info_site", site_id=site.id)
+
+    if settings.DEBUG:
+        messages.warning(request, "Cannot import in debug mode!")
+        return redirect("info_site", site_id=site.id)
+
+    if site.database.category == "postgresql":
+        proc = Popen(["psql", str(site.database)], preexec_fn=demote(
+            site.user.id, site.group.id), cwd=site.path, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    elif site.database.category == "mysql":
+        proc = Popen(["mysql", "-u", site.database.username, "--password={}".format(site.database.password), "-h", "mysql1", site.database.db_name], preexec_fn=demote(
+            site.user.id, site.group.id), cwd=site.path, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+
+    out, err = proc.communicate()
+
+    for chunk in sql_file.chunks():
+        proc.stdin.write(chunk)
+
+    if proc.returncode == 0:
+        messages.success(request, "Database import completed!")
+    else:
+        messages.error(request, "Database import failed!")
+        client.captureMessage("Database import failed, ({}) - {} - {}".format(proc.returncode, out.decode("utf-8"), err.decode("utf-8")))
+
+    return redirect("info_site", site_id=site.id)
+
+
+@login_required
+def dump_database_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    if not site.database:
+        messages.error(request, "No database provisioned!")
+        return redirect("info_site", site_id=site.id)
+
+    if settings.DEBUG:
+        messages.warning(request, "Cannot export in debug mode!")
+        return redirect("info_site", site_id=site.id)
+
+    if site.database.category == "postgresql":
+        ret, out, err = run_as_site(site, ["pg_dump", str(site.database)], timeout=60)
+    elif site.database.category == "mysql":
+        ret, out, err = run_as_site(site, ["mysqldump", "-u", site.database.username, "--password={}".format(site.database.password), "-h", "mysql1", site.database.db_name], timeout=60)
+
+    if ret == 0:
+        resp = HttpResponse(out, mimetype="application/force-download")
+        resp["Content-Disposition"] = "attachment; filename=dump.sql"
+        return resp
+    else:
+        messages.error(request, "Failed to export database!")
+        client.captureMessage("Database export failed, ({}) - {} - {}".format(ret, out, err))
+
+    return redirect("info_site", site_id=site.id)
+
+
 @login_required
 def delete_database_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
+
+    if not site.database:
+        messages.error(request, "No database provisioned!")
+        return redirect("info_site", site_id=site.id)
+
     if request.method == "POST":
         if not request.POST.get("confirm", None) == site.name:
             messages.error(request, "Delete confirmation failed!")
