@@ -202,14 +202,21 @@ def sql_database_view(request, site_id):
         raise PermissionDenied
 
     if settings.DEBUG:
-        return HttpResponse("WARNING: debug environment\n", content_type="text/plain")
+        return HttpResponse("WARNING: debug environment\n\n", content_type="text/plain")
 
     sql = request.POST.get("sql", "")
+    version = request.POST.get("version", False) != False
 
     if site.database.category == "mysql":
-        ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username), "--password={}".format(site.database.password), "--host=mysql1", site.database.db_name, "-e", sql])
+        if version:
+            ret, out, err = run_as_site(site, ["mysql", "--version"])
+        else:
+            ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username), "--password={}".format(site.database.password), "--host=mysql1", site.database.db_name, "-e", sql])
     else:
-        ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql])
+        if version:
+            ret, out, err = run_as_site(site, ["psql", "--version"])
+        else:
+            ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql])
     return HttpResponse(out + err, content_type="text/plain")
 
 @login_required

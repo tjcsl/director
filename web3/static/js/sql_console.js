@@ -32,6 +32,9 @@ $(document).ready(function() {
             e.preventDefault();
         }
     });
+    $.post(sql_endpoint, {"version": true}, function(data) {
+        $("#output").append(data + "\n");
+    });
     $("#input").keypress(function(e) {
         if (e.which == 13) {
             var val = $(this).val();
