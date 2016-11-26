@@ -22,12 +22,14 @@
                     $("#output").append($("#ps").text() + val + "\n");
                     $.post(sql_endpoint, {"sql": val}, function(data) {
                         $("#output").append(data + "\n");
+                        $("#console").scrollTop($("#console")[0].scrollHeight);
                     });
                     $(this).val("");
                 }
                 else {
                     $("#output").append($("#ps").text() + "\n");
                 }
+                $("#console").scrollTop($("#console")[0].scrollHeight);
             }
         });
     });
@@ -41,10 +43,15 @@
         padding: 0;
     }
     #console {
-        height: calc(100vh - 40px);
+        position: absolute;
+        top: 40px;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background-color: white;
         font-size: 16px;
         font-family: monospace;
+        overflow-y: hidden;
     }
     #output {
         font-size: 16px;
@@ -59,25 +66,27 @@
         font-size: 16px;
         border: none;
         padding: 0;
-        padding-right: 15px;
-        padding-bottom: 15px;
-        width: calc(100% - 133px);
+    }
+    #console table {
+        white-space: pre;
+        margin-left: 15px;
+        margin-right: 15px;
+        margin-bottom: 15px;
+    }
+    #console table tr, #console table td {
+        margin: 0;
+        padding: 0;
     }
     #input:focus {
         outline: none;
-    }
-    #ps {
-        padding-left: 15px;
     }
     </style>
 {% endblock %}
 
 {% block main %}
 <div id="console">
-    <pre id="output">psql (9.4.9)
-Type "help" for help.
-
+    <pre id="output">database: {{ site.database.db_name }}, user: {{ site.database.username }}, type: {{ site.database.category }}
 </pre>
-    <span id="ps">site_{{ site.name }}=&gt; </span><input autofocus id="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    <table><tr><td id="ps">{{ site.database.db_name }}=&gt; </td><td><input autofocus id="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /></td></tr></table>
 </div>
 {% endblock %}
