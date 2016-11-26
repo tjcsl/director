@@ -306,7 +306,7 @@ def dump_database_view(request, site_id):
         ret, out, err = run_as_site(site, ["mysqldump", "-u", site.database.username, "--password={}".format(site.database.password), "-h", "mysql1", site.database.db_name], timeout=60)
 
     if ret == 0:
-        resp = HttpResponse(out, mimetype="application/force-download")
+        resp = HttpResponse(out, content_type="application/force-download")
         resp["Content-Disposition"] = "attachment; filename=dump.sql"
         return resp
     else:
