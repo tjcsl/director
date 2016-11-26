@@ -7,6 +7,11 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}" />
 {% endblock %}
 
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/sites/search.js' %}"></script>
+{% endblock %}
+
 {% block navbar %}
 <input class="form-control search-box" id="select-site" type="text" placeholder="&#xf002; Search Sites" />
 {% endblock %}
@@ -42,10 +47,4 @@
 <div style="text-align:center">You don't have any sites! Click <a href="{% url 'create_site' %}">here</a> to create a new site.</div>
 {% endif %}
 </div>
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-    <script type="text/javascript" src="{% static 'js/sites/search.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/search-resize.js' %}"></script>
 {% endblock %}
