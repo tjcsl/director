@@ -19,6 +19,8 @@
     padding: 15px;
     margin: 0;
     padding-bottom: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 #input {
     font-family: monospace;
