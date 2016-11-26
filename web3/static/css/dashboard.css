@@ -41,3 +41,7 @@
     white-space: nowrap;
     display: block;
 }
+#empty {
+    text-align: center;
+    padding: 15px;
+}

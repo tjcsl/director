@@ -160,7 +160,7 @@ def modify_process_view(request, site_id):
 
 
 @login_required
-def modify_database_view(request, site_id):
+def create_database_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
