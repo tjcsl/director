@@ -10,7 +10,7 @@ $(document).ready(function() {
         }).fail(function(xhr, textStatus, err) {
             $("#git-output").text("Failed to contact server!\n\n" + xhr + "\n" + textStatus + "\n" + err).slideDown("fast");
         }).always(function() {
-            $(this).html("<i class='fa fa-github'></i> Git Pull").prop("disabled", false);
+            $("#git-pull").html("<i class='fa fa-github'></i> Git Pull").prop("disabled", false);
         });
     });
     $("#generate-database-password").click(function(e) {
