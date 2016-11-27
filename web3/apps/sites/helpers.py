@@ -342,7 +342,11 @@ def fix_permissions(site):
         dirs[:] = [d for d in dirs if not d == ".ssh"]
         for f in files + dirs:
             path = os.path.join(root, f)
-            st = os.stat(path)
+            try:
+                st = os.stat(path)
+            except FileNotFoundError:
+                client.captureException()
+                continue
             os.chown(path, site.user.id, site.group.id)
             if stat.S_ISDIR(st.st_mode):
                 os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
