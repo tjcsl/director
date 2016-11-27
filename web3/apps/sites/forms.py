@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from django import forms
 from django.core.validators import RegexValidator
@@ -43,14 +44,20 @@ class SiteForm(forms.ModelForm):
         instance = getattr(self, "instance", None)
         if instance and instance.pk:
             self.fields["name"].disabled = True
-            self.fields["purpose"].disabled = True
             if hasattr(self, "_user") and not self._user.is_superuser and not self._user.is_staff:
                 for field in self.fields:
                     self.fields[field].disabled = True
                 self.fields["category"].disabled = False
+        self.instance = instance
+
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
+
+        if self.instance and self.instance.pk:
+            old_site_path = self.instance.path
+        else:
+            old_site_path = None
 
         old_save_m2m = self.save_m2m
 
@@ -71,6 +78,9 @@ class SiteForm(forms.ModelForm):
                 make_site_dirs(instance)
                 create_config_files(instance)
                 flush_permissions()
+
+            if old_site_path and not instance.path == old_site_path:
+                shutil.move(old_site_path, instance.path)
 
             if instance.category != "dynamic" and hasattr(instance, "process"):
                 if not settings.DEBUG:
