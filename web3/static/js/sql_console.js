@@ -42,6 +42,7 @@ $(document).ready(function() {
         if (e.ctrlKey && e.keyCode == 67 && !window.getSelection().toString()) {
             $("#output").append($("#ps").text() + $(this).val() + "^C\n");
             $(this).val("");
+            $("#console").scrollTop($("#console")[0].scrollHeight);
             e.preventDefault();
         }
     });
@@ -53,24 +54,24 @@ $(document).ready(function() {
                     window.location.href = back_endpoint;
                     return;
                 }
-                if ($.trim(val.toLowerCase()) == "\\! clear") {
+                else if ($.trim(val.toLowerCase()) == "\\! clear") {
                     $("#output").text("");
-                    $(this).val("");
-                    return;
                 }
-                $("#output").append($("#ps").text() + val + "\n");
-                $("#console table").hide();
-                $.post(sql_endpoint, {"sql": val}, function(data) {
-                    $("#output").append(data);
-                }).error(function() {
-                    $("#output").append("<span style='color:red'>Server Error</span>\n\n");
-                }).always(function() {
-                    $("#console table").show();
-                    $("#input").focus();
-                    $("#console").scrollTop($("#console")[0].scrollHeight);
-                });
-                history.unshift(val);
-                history_point = -1;
+                else {
+                    $("#output").append($("#ps").text() + val + "\n");
+                    $("#console table").hide();
+                    $.post(sql_endpoint, {"sql": val}, function(data) {
+                        $("#output").append(data);
+                    }).error(function() {
+                        $("#output").append("<span style='color:red'>Server Error</span>\n\n");
+                    }).always(function() {
+                        $("#console table").show();
+                        $("#input").focus();
+                        $("#console").scrollTop($("#console")[0].scrollHeight);
+                    });
+                    history.unshift(val);
+                    history_point = -1;
+                }
                 $(this).val("");
             }
             else {
