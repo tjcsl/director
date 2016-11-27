@@ -61,7 +61,7 @@ $(document).ready(function() {
                     $("#output").append($("#ps").text() + val + "\n");
                     $("#console table").hide();
                     $.post(sql_endpoint, {"sql": val}, function(data) {
-                        $("#output").append(data);
+                        $("#output").append($("<div />").text(data).html());
                     }).error(function() {
                         $("#output").append("<span style='color:#cc0000'>Server Error</span>\n\n");
                     }).always(function() {
