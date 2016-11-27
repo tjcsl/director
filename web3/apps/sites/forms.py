@@ -71,7 +71,7 @@ class SiteForm(forms.ModelForm):
                 create_config_files(instance)
                 flush_permissions()
 
-            if instance.category != "dynamic" and instance.process:
+            if instance.category != "dynamic" and hasattr(instance, "process"):
                 if not settings.DEBUG:
                     delete_process_config(instance.process)
                     reload_services()
