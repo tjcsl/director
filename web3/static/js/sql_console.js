@@ -39,13 +39,13 @@ $(document).ready(function() {
         if (e.which == 13) {
             var val = $(this).val();
             if (val) {
-                $(this).val("");
                 if (val == "exit" || val == "\\q" || val == ".q") {
                     window.location.href = back_endpoint;
                     return;
                 }
                 if ($.trim(val.toLowerCase()) == "\\! clear") {
                     $("#output").text("");
+                    $(this).val("");
                     return;
                 }
                 $("#output").append($("#ps").text() + val + "\n");
@@ -59,6 +59,7 @@ $(document).ready(function() {
                 });
                 history.unshift(val);
                 history_point = -1;
+                $(this).val("");
             }
             else {
                 $("#output").append($("#ps").text() + "\n");
