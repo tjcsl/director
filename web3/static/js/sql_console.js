@@ -1,6 +1,9 @@
 $(document).ready(function() {
     $("#console").click(function() {
-        $("#input").focus();
+        var sel = window.getSelection().toString();
+        if (!sel) {
+            $("#input").focus();
+        }
     });
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -34,6 +37,13 @@ $(document).ready(function() {
     });
     $.post(sql_endpoint, {"version": true}, function(data) {
         $("#output").append(data + "\n");
+    });
+    $("#input").keydown(function(e) {
+        if (e.ctrlKey && e.keyCode == 67 && !window.getSelection().toString()) {
+            $("#output").append($("#ps").text() + $(this).val() + "^C\n");
+            $(this).val("");
+            e.preventDefault();
+        }
     });
     $("#input").keypress(function(e) {
         if (e.which == 13) {
