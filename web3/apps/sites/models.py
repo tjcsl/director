@@ -114,6 +114,8 @@ class Database(models.Model):
 
     @property
     def db_name(self):
+        if self.category == "mysql":
+            return "site_{}".format(self.site.name)[:16]
         return "site_{}".format(self.site.name)
 
 
