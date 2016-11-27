@@ -48,16 +48,13 @@ class SiteForm(forms.ModelForm):
                 for field in self.fields:
                     self.fields[field].disabled = True
                 self.fields["category"].disabled = False
-        self.instance = instance
+            self._old_path = instance.path
+        else:
+            self._old_path = None
 
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
-
-        if self.instance and self.instance.pk:
-            old_site_path = self.instance.path
-        else:
-            old_site_path = None
 
         old_save_m2m = self.save_m2m
 
@@ -87,11 +84,12 @@ class SiteForm(forms.ModelForm):
 
             instance.save()
 
-            if old_site_path and not instance.path == old_site_path:
-                shutil.move(old_site_path, instance.path)
-                if instance.category == "dynamic" and hasattr(instance, "process"):
-                    instance.process.path.replace(old_site_path, instance.path)
-                    reload_services()
+            if self._old_path and not instance.path == self._old_path:
+                if not settings.DEBUG:
+                    shutil.move(self._old_path, instance.path)
+                    if instance.category == "dynamic" and hasattr(instance, "process"):
+                        instance.process.path.replace(self.old_path, instance.path)
+                        reload_services()
 
             self.save_m2m()
         return instance
