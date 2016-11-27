@@ -88,7 +88,7 @@ class SiteForm(forms.ModelForm):
                 if not settings.DEBUG:
                     shutil.move(self._old_path, instance.path)
                     if instance.category == "dynamic" and hasattr(instance, "process"):
-                        instance.process.path.replace(self.old_path, instance.path)
+                        instance.process.path.replace(self._old_path, instance.path)
                         reload_services()
 
             self.save_m2m()
