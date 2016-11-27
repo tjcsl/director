@@ -252,6 +252,9 @@ def list_tables(database):
         try:
             cursor.execute("SHOW TABLES IN {}".format(database.db_name))
             return [table[0] for table in cursor.fetchall()]
+        except MySQLOperationalError:
+            client.captureException()
+            return None
         finally:
             conn.close()
     return None
