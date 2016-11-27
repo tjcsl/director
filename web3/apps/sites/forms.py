@@ -74,7 +74,7 @@ class SiteForm(forms.ModelForm):
 
             if not settings.DEBUG:
                 if self._old_path and not instance.path == self._old_path:
-                    shutil.move(self._old_path, instance.path)
+                    os.rename(self._old_path, instance.path)
                     if instance.category == "dynamic" and hasattr(instance, "process"):
                         proc = instance.process
                         proc.path = proc.path.replace(self._old_path, instance.path)
