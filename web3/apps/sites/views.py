@@ -221,18 +221,19 @@ def sql_database_view(request, site_id):
     sql = request.POST.get("sql", "")
     version = request.POST.get("version", False) != False
 
+    if sql.startswith("\\!"):
+        return HttpResponse("feature disabled\n\n", content_type="text/plain")
+
     if site.database.category == "mysql":
         if version:
             ret, out, err = run_as_site(site, ["mysql", "--version"])
         else:
             ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username),
-                                               "--password={}".format(site.database.password), "--host=mysql1", site.database.db_name, "-e", sql])
+                "--host=mysql1", site.database.db_name, "-e", sql], env={"MYSQL_PWD": site.database.password})
     else:
         if version:
             ret, out, err = run_as_site(site, ["psql", "--version"])
         else:
-            if sql.startswith("\\!"):
-                return HttpResponse("feature disabled\n\n", content_type="text/plain")
             ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql], env={"SHELL": "/usr/sbin/nologin"})
     return HttpResponse(out + err, content_type="text/plain")
 
