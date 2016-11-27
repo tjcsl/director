@@ -229,9 +229,9 @@ def sql_database_view(request, site_id):
                                                "--password={}".format(site.database.password), "--host=mysql1", site.database.db_name, "-e", sql])
     else:
         if version:
-            ret, out, err = run_as_site(site, ["SHELL=/usr/sbin/nologin", "psql", "--version"])
+            ret, out, err = run_as_site(site, ["psql", "--version"])
         else:
-            ret, out, err = run_as_site(site, ["SHELL=/usr/sbin/nologin", "psql", str(site.database), "-c", sql])
+            ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql], env={"SHELL": "/usr/sbin/nologin"})
     return HttpResponse(out + err, content_type="text/plain")
 
 
@@ -271,7 +271,7 @@ def load_database_view(request, site_id):
         return redirect("backup_database", site_id=site.id)
 
     if site.database.category == "postgresql":
-        proc = Popen(["SHELL=/usr/sbin/nologin", "psql", str(site.database)], preexec_fn=demote(
+        proc = Popen(["psql", str(site.database)], preexec_fn=demote(
             site.user.id, site.group.id), cwd=site.path, stdin=PIPE, stdout=PIPE, stderr=PIPE)
     elif site.database.category == "mysql":
         proc = Popen(["mysql", "-u", site.database.username, "--password={}".format(site.database.password), "-h", "mysql1", site.database.db_name], preexec_fn=demote(
