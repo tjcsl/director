@@ -43,6 +43,7 @@ class SiteForm(forms.ModelForm):
         instance = getattr(self, "instance", None)
         if instance and instance.pk:
             self.fields["name"].disabled = True
+            self.fields["purpose"].disabled = True
             if hasattr(self, "_user") and not self._user.is_superuser and not self._user.is_staff:
                 for field in self.fields:
                     self.fields[field].disabled = True
