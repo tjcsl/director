@@ -74,8 +74,14 @@ def delete_site_files(site):
     files = [x.format(site.name) for x in files]
     for f in files:
         if os.path.isfile(f):
-            os.remove(f)
-    shutil.rmtree(site.path)
+            try:
+                os.remove(f)
+            except OSError:
+                client.captureException()
+    try:
+        shutil.rmtree(site.path)
+    except FileNotFoundError:
+        client.captureException()
 
 
 def create_process_config(process):
