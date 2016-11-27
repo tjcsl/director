@@ -225,12 +225,13 @@ def sql_database_view(request, site_id):
         if version:
             ret, out, err = run_as_site(site, ["mysql", "--version"])
         else:
-            ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username), "--password={}".format(site.database.password), "--host=mysql1", site.database.db_name, "-e", sql])
+            ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username),
+                                               "--password={}".format(site.database.password), "--host=mysql1", site.database.db_name, "-e", sql])
     else:
         if version:
             ret, out, err = run_as_site(site, ["psql", "--version"])
         else:
-            ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql])
+            ret, out, err = run_as_site(site, ["SHELL=/usr/sbin/nologin psql", str(site.database), "-c", sql])
     return HttpResponse(out + err, content_type="text/plain")
 
 
@@ -311,7 +312,8 @@ def dump_database_view(request, site_id):
         # --cluster 9.6/main fixes the server version mismatch error
         ret, out, err = run_as_site(site, ["pg_dump", "--cluster", "9.6/main", str(site.database)], timeout=60)
     elif site.database.category == "mysql":
-        ret, out, err = run_as_site(site, ["mysqldump", "-u", site.database.username, "--password={}".format(site.database.password), "-h", "mysql1", site.database.db_name], timeout=60)
+        ret, out, err = run_as_site(
+            site, ["mysqldump", "-u", site.database.username, "--password={}".format(site.database.password), "-h", "mysql1", site.database.db_name], timeout=60)
 
     if ret == 0:
         resp = HttpResponse(out, content_type="application/force-download")
