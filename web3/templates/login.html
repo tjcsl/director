@@ -25,6 +25,13 @@
         text-align: center;
     }
 
+    .footer {
+        position: fixed;
+        font-size: 13px;
+        bottom: 5px;
+        left: 5px;
+    }
+
     @media (max-width:576px) {
         .login-box {
             width: 100%;
@@ -41,5 +48,8 @@
                 Log In with Ion
             </a>
         </center>
+    </div>
+    <div class="footer">
+        <a href="{% url 'about' %}">About/Credits</a> - <a href="https://www.tjhsst.edu/">TJHSST</a>
     </div>
 {% endblock %}
