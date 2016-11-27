@@ -212,8 +212,7 @@ def sql_database_view(request, site_id):
         raise PermissionDenied
 
     if not site.database:
-        messages.error(request, "No database provisioned!")
-        return redirect("info_site", site_id=site.id)
+        return HttpResponse("ERROR: no database provisioned", content_type="text/plain")
 
     if settings.DEBUG:
         return HttpResponse("WARNING: debug environment\n\n", content_type="text/plain")
