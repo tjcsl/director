@@ -79,9 +79,6 @@ class SiteForm(forms.ModelForm):
                 create_config_files(instance)
                 flush_permissions()
 
-            if old_site_path and not instance.path == old_site_path:
-                shutil.move(old_site_path, instance.path)
-
             if instance.category != "dynamic" and hasattr(instance, "process"):
                 if not settings.DEBUG:
                     delete_process_config(instance.process)
@@ -89,6 +86,13 @@ class SiteForm(forms.ModelForm):
                 instance.process.delete()
 
             instance.save()
+
+            if old_site_path and not instance.path == old_site_path:
+                shutil.move(old_site_path, instance.path)
+                if instance.category == "dynamic" and hasattr(instance, "process"):
+                    instance.process.path.replace(old_site_path, instance.path)
+                    reload_services()
+
             self.save_m2m()
         return instance
 
