@@ -76,7 +76,7 @@ class SiteForm(forms.ModelForm):
                 if self._old_path and not instance.path == self._old_path:
                     shutil.move(self._old_path, instance.path)
                     if instance.category == "dynamic" and hasattr(instance, "process"):
-                        instance.process.path.replace(self._old_path, instance.path)
+                        instance.process.update(path=instance.process.path.replace(self._old_path, instance.path))
                         reload_services()
 
                 make_site_dirs(instance)
