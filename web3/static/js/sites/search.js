@@ -21,10 +21,12 @@ $(document).ready(function() {
                 });
                 show = false;
                 $.each(tags, function(k, v) {
-                    if ($.inArray(v, site_tags) > -1) {
-                        show = true;
-                        return false;
-                    }
+                    $.each(site_tags, function(k2, v2) {
+                        if (v2.indexOf(v) == 0) {
+                            show = true;
+                            return false;
+                        }
+                    });
                 });
             }
             if (show && (desc.toLowerCase().includes(val) || name.toLowerCase().includes(val) || type.toLowerCase().includes(val))) {
