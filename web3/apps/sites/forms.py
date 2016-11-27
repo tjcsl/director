@@ -17,11 +17,11 @@ class SiteForm(forms.ModelForm):
 
     name = forms.CharField(max_length=32,
                            widget=forms.TextInput(attrs={"class": "form-control"}),
-                           help_text="Can only contain alphanumeric characters, underscores, and dashes.",
+                           help_text="Can only contain alphanumeric characters, underscores, and dashes. Maximum length of 32 characters.",
                            validators=[name_validator])
     domain = forms.CharField(max_length=255,
                              widget=forms.TextInput(attrs={"class": "form-control"}),
-                             help_text="Can only contain alphanumeric characters, underscores, and dashes. Separate multiple domains through spaces.",
+                             help_text="Can only contain alphanumeric characters, underscores, and dashes. Separate multiple domains with spaces.",
                              validators=[domain_validator])
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
     category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic")),
