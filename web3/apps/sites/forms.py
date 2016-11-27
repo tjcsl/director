@@ -71,7 +71,14 @@ class SiteForm(forms.ModelForm):
                 g = instance.group
             except (User.DoesNotExist, Group.DoesNotExist):
                 create_site_users(instance)
+
             if not settings.DEBUG:
+                if self._old_path and not instance.path == self._old_path:
+                    shutil.move(self._old_path, instance.path)
+                    if instance.category == "dynamic" and hasattr(instance, "process"):
+                        instance.process.path.replace(self._old_path, instance.path)
+                        reload_services()
+
                 make_site_dirs(instance)
                 create_config_files(instance)
                 flush_permissions()
@@ -83,13 +90,6 @@ class SiteForm(forms.ModelForm):
                 instance.process.delete()
 
             instance.save()
-
-            if self._old_path and not instance.path == self._old_path:
-                if not settings.DEBUG:
-                    shutil.move(self._old_path, instance.path)
-                    if instance.category == "dynamic" and hasattr(instance, "process"):
-                        instance.process.path.replace(self._old_path, instance.path)
-                        reload_services()
 
             self.save_m2m()
         return instance
