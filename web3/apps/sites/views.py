@@ -231,6 +231,8 @@ def sql_database_view(request, site_id):
         if version:
             ret, out, err = run_as_site(site, ["psql", "--version"])
         else:
+            if sql.startswith("\\!"):
+                return HttpResponse("feature disabled\n\n", content_type="text/plain")
             ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql], env={"SHELL": "/usr/sbin/nologin"})
     return HttpResponse(out + err, content_type="text/plain")
 
