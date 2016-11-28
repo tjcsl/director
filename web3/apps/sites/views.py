@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
+from django.views.decorators.http import require_http_methods
 
 from .models import Site
 from .forms import SiteForm, ProcessForm, DatabaseForm
@@ -365,6 +366,7 @@ def delete_database_view(request, site_id):
         })
 
 
+@require_http_methods(["POST"])
 @login_required
 def regenerate_database_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
