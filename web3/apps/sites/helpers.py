@@ -62,6 +62,8 @@ def create_config_files(site):
     if site.category == "php":
         with open("/etc/php5/fpm/pool.d/{}.conf".format(site.name), "w+") as f:
             f.write(render_to_string("config/phpfpm.conf", {"site": site}))
+    elif site.category == "dynamic" and hasattr(site, "process"):
+        create_process_config(site.process)
 
 
 def write_new_index_file(site):
