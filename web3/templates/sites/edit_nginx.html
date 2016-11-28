@@ -19,6 +19,13 @@
             });
             editor.setTheme("ace/theme/chrome");
             editor.getSession().setMode("ace/mode/space");
+
+            $(window).keypress(function(e) {
+                if ((e.which == 115 && e.ctrlKey) || (e.which == 19)) {
+                    e.preventDefault();
+                    $("#save").click();
+                }
+            });
         });
     </script>
 {% endblock %}
