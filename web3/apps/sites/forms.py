@@ -166,6 +166,7 @@ class DatabaseForm(forms.ModelForm):
                 if not flag:
                     instance.delete()
                     return None
+                create_config_files(instance.site)
 
         return instance
 

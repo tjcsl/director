@@ -353,6 +353,7 @@ def delete_database_view(request, site_id):
                     messages.error(request, "Failed to delete database!")
                     return redirect("info_site", site_id=site.id)
             site.database.delete()
+            create_config_files(site)
             messages.success(request, "Database deleted!")
         else:
             messages.error(request, "Database doesn't exist!")
@@ -379,6 +380,7 @@ def regenerate_database_view(request, site_id):
         elif site.database.category == "mysql":
             flag = change_mysql_password(site.database)
     if flag:
+        create_config_files(site)
         messages.success(request, "Database credentials regenerated!")
     else:
         messages.error(request, "Failed to regenerate database credentials!")
