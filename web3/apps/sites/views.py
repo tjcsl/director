@@ -465,6 +465,7 @@ def info_view(request, site_id):
     return render(request, "sites/info_site.html", context)
 
 
+@require_http_methods(["POST"])
 @login_required
 def generate_key_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
