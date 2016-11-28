@@ -13,6 +13,7 @@
             });
             var textarea = $("textarea[name='editor']");
             editor.setValue(textarea.val(), 1);
+            editor.getSession().setUndoManager(new ace.UndoManager());
             editor.getSession().on("change", function () {
                 textarea.val(editor.getSession().getValue());
             });
