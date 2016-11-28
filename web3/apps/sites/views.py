@@ -414,8 +414,6 @@ def config_view(request, site_id):
 
     if not settings.DEBUG:
         create_config_files(site)
-        if site.category is "dynamic" and Process.objects.filter(site=site).exists():
-            create_process_config(Process.objects.get(site=site))
         reload_services()
 
     messages.success(request, "Configuration files regenerated!")
