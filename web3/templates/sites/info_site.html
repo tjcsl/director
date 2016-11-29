@@ -2,6 +2,8 @@
 {% load staticfiles %}
 {% load formfilters %}
 
+{% block title %}{{ site.name }} - {{ block.super }}{% endblock %}
+
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static 'css/site_info.css' %}" />
