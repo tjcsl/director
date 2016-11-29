@@ -80,6 +80,7 @@ def github_oauth_view(request):
     code = request.GET.get("code", None)
 
     if not code:
+        messages.error(request, "No code supplied with request!")
         return redirect("user_settings")
 
     r = requests.post("https://github.com/login/oauth/access_token", data={
