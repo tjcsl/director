@@ -522,7 +522,7 @@ def git_setup_view(request, site_id):
             if ret != 0:
                 messages.error(request, "Failed to detect the remote repository!")
             else:
-                out = [[y for y in x.split(" ") if y] for x in out.split("\n") if x]
+                out = [[y for y in x.replace("\t", " ").split(" ") if y] for x in out.split("\n") if x]
                 out = [x[1] for x in out if x[2] == "(fetch)"]
                 out = [x for x in out if x.startswith("git@github.com") or x.startswith("https://github.com")]
                 if not out:
