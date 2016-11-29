@@ -32,6 +32,7 @@ urlpatterns = [
     url(r"^user/", include("web3.apps.users.urls")),
     url(r"^site/", include("web3.apps.sites.urls")),
     url(r'^admin/', admin.site.urls),
+    url(r'^github_oauth/$', user_views.github_oauth_view)
 ]
 
 if settings.DEBUG:

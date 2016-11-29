@@ -8,6 +8,11 @@
     <b>User ID:</b> {{ request.user.id }}<br />
     <b>Account Type:</b> {% if request.user.is_superuser %}Superuser{% elif request.user.is_staff %}Staff{% else %}Normal Account{% endif %}<br />
 </p>
+{% if request.user.github_token %}
+<p><i class="fa fa-github"></i> Your Director account is linked to your GitHub account! <a href="https://github.com/{{ github_username }}">@{{ github_username }}</a></p>
+{% else %}
+<p><a class="btn btn-ion" href="{% url 'link_github' %}"><i class="fa fa-github"></i> Link GitHub Account</a></p>
+{% endif %}
 <h5>Your Groups</h5>
 {% for group in groups %}
     <div>{{ group.name }}</div>
