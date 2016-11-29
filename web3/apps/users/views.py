@@ -12,6 +12,8 @@ from ..authentication.decorators import superuser_required
 
 from .models import User, Group
 
+from raven.contrib.django.raven_compat.models import client
+
 
 @login_required
 def settings_view(request):
@@ -95,4 +97,11 @@ def github_oauth_view(request):
 
 def get_github_info(request):
     r = requests.get("https://api.github.com/user", headers={"Authorization": "token {}".format(request.user.github_token)})
+    if r.status_code != 200:
+        if r.status_code == 401:
+            request.user.github_token = ""
+            request.user.save()
+        else:
+            client.captureMessage("GitHub API Request Failure: {} {}".format(r.status_code, r.text))
+        return None
     return json.loads(r.text)
