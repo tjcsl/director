@@ -5,7 +5,10 @@ from django.core import validators
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager as DjangoUserManager
 from django.utils import timezone
 
+import json
 import requests
+
+from raven.contrib.django.raven_compat.models import client
 
 
 class UserManager(DjangoUserManager):
@@ -53,6 +56,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         params.update({"access_token": s.extra_data["access_token"]})
         r = requests.get("https://ion.tjhsst.edu/{}".format(url), params=params)
         return r.json()
+
+    def github_api_request(self, url, method="GET", data={}):
+        resp = requests.request("https://api.github.com{}".format(url), headers={"Authorization": "token {}".format(self.github_token)}, method=method, data=data)
+        if resp.status_code != 200:
+            if resp.status_code == 401:
+                self.github_token = ""
+                self.save()
+            else:
+                client.captureMessage("GitHub API Request Failure: {} {}".format(resp.status_code, resp.text))
+                return None
+        return json.loads(resp.text)
 
 
 class Group(models.Model):

@@ -1,7 +1,9 @@
 $(document).ready(function() {
-    if (window.location.hash == "#github-integration") {
-        $("#github-integration").show();
-        $("a[href='#github-integration']").hide();
+    if (window.location.hash) {
+        var ele = $("a[href='" + window.location.hash + "']");
+        if (ele.length && ele.hasClass("nav-link")) {
+            ele.click();
+        }
     }
     $("#git-pull").click(function() {
         $(this).html("<i class='fa fa-cog fa-spin'></i> Pulling...").prop("disabled", true);

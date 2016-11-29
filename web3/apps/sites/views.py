@@ -476,7 +476,7 @@ def generate_key_view(request, site_id):
         generate_ssh_key(site)
 
     messages.success(request, "Generated new RSA public private key-pair!")
-    return redirect(reverse("info_site", kwargs={"site_id": site_id}) + "#github-integration")
+    return redirect(reverse("info_site", kwargs={"site_id": site_id}) + "#github-manual")
 
 
 @login_required
@@ -504,3 +504,54 @@ def webhook_view(request, site_id):
         return JsonResponse({"success": bool(output[0] == 0)})
     else:
         return JsonResponse({"error": "Request method not allowed!"})
+
+
+@require_http_methods(["POST"])
+@login_required
+def git_setup_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    if not request.user.github_token:
+        messages.error(request, "You must connect your GitHub account first!")
+    else:
+        if not settings.DEBUG:
+            generate_ssh_key(site, overwrite=False)
+            ret, out, err = run_as_site(site, "git remote -v", cwd=site.public_path)
+            if ret != 0:
+                messages.error(request, "Failed to detect the remote repository!")
+            else:
+                out = [[y for y in x.split(" ") if y] for x in out.split("\n") if x]
+                out = [x[1] for x in out if x[2] == "(fetch)"]
+                out = [x for x in out if x.startswith("git@github.com") or x.startswith("https://github.com")]
+                if not out:
+                    messages.error(request, "Did not find any remote repositories to pull from!")
+                else:
+                    out = out[0]
+                    if out.startswith("git@github.com"):
+                        out = out.split(":", 1)[1]
+                    else:
+                        a = out.rsplit("/", 2)
+                        out = "{}/{}".format(a[-2], a[-1].rsplit(".", 1)[0])
+                    resp = request.user.github_api_request("/repos/{}/keys".format(out))
+                    if resp:
+                        for i in resp:
+                            if i["title"] == "Director":
+                                request.user.github_api_requst("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
+                        request.user.github_api_request("/repos/{}/keys".format(out), method="POST", data={"title": "Director", "key": site.public_key, "read_only": True})
+                        resp = request.user.github_api_request("/repos/{}/hooks".format(out))
+                        if resp:
+                            webhook_url = request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
+                            for i in resp:
+                                if i["url"] == webhook_url:
+                                    break
+                            else:
+                                request.user.github_api_request("/repos/{}/hooks".format(out), method="POST", data={"name": "web", "config": {"url": webhook_url, "content_type": "json"}, "active": True})
+                            messages.success(request, "The integration was set up!")
+                        else:
+                            messages.error(request, "Failed to retrieve repository webhooks!")
+                    else:
+                        messages.error(request, "Failed to retrieve repository information from GitHub!")
+
+    return redirect(reverse("info_site", kwargs={"site_id": site.id}) + "#github-automatic")

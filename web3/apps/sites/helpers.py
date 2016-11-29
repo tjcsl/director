@@ -157,7 +157,7 @@ def demote(uid, gid):
     return result
 
 
-def generate_ssh_key(site):
+def generate_ssh_key(site, overwrite=True):
     sshpath = os.path.join(site.private_path, ".ssh")
     keypath = os.path.join(sshpath, "id_rsa")
     if not os.path.exists(sshpath):
@@ -165,6 +165,8 @@ def generate_ssh_key(site):
     os.chown(sshpath, site.user.id, site.group.id)
     os.chmod(sshpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
     if os.path.isfile(keypath):
+        if not overwrite:
+            return False
         os.remove(keypath)
     if os.path.isfile(keypath + ".pub"):
         os.remove(keypath + ".pub")
@@ -178,6 +180,7 @@ def generate_ssh_key(site):
     os.chown(keypath + ".pub", site.user.id, site.group.id)
     os.chmod(keypath, stat.S_IRUSR | stat.S_IWUSR)
     os.chmod(keypath + ".pub", stat.S_IRUSR | stat.S_IWUSR)
+    return True
 
 
 def create_postgres_database(database):

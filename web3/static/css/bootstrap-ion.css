@@ -59,7 +59,7 @@ body {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eaeaea', endColorstr='#dadada', GradientType=0);
 }
 .tab-content {
-    padding: 15px;
+    padding-top: 15px;
 }
 .btn.btn-ion:active {
     background-color: #dadada;

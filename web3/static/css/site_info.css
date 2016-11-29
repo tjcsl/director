@@ -32,3 +32,10 @@
 #commit.commit .path::first-line {
     color: #C4A000;
 }
+.nav-pills > li.nav-item {
+    float: none;
+    display: inline-block;
+}
+.nav-pills {
+    text-align: center;
+}
