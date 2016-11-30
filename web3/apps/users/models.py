@@ -59,7 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def github_api_request(self, url, method="GET", data={}):
         resp = requests.request(url="https://api.github.com{}".format(url), headers={"Authorization": "token {}".format(self.github_token)}, method=method, json=data)
-        if resp.status_code != 200 and resp.status_code != 204:
+        if resp.status_code != 200 and resp.status_code != 204 and resp.status_code != 201:
             if resp.status_code == 401:
                 self.github_token = ""
                 self.save()
