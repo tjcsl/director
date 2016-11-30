@@ -538,7 +538,7 @@ def git_setup_view(request, site_id):
                     if resp:
                         for i in resp:
                             if i["title"] == "Director":
-                                request.user.github_api_requst("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
+                                request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
                         request.user.github_api_request("/repos/{}/keys".format(out), method="POST", data={"title": "Director", "key": site.public_key, "read_only": True})
                         resp = request.user.github_api_request("/repos/{}/hooks".format(out))
                         if resp:
