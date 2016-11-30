@@ -535,7 +535,7 @@ def git_setup_view(request, site_id):
                         a = out.rsplit("/", 2)
                         out = "{}/{}".format(a[-2], a[-1].rsplit(".", 1)[0])
                     resp = request.user.github_api_request("/repos/{}/keys".format(out))
-                    if resp:
+                    if resp is not None:
                         for i in resp:
                             if i["title"] == "Director":
                                 request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
