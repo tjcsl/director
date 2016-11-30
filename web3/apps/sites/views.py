@@ -545,7 +545,7 @@ def git_setup_view(request, site_id):
                             if resp:
                                 webhook_url = request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
                                 for i in resp:
-                                    if i["url"] == webhook_url:
+                                    if i["config"]["url"] == webhook_url:
                                         break
                                 else:
                                     request.user.github_api_request("/repos/{}/hooks".format(out), method="POST", data={"name": "web", "config": {"url": webhook_url, "content_type": "json"}, "active": True})
