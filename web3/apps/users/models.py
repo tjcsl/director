@@ -64,7 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 self.github_token = ""
                 self.save()
             else:
-                client.captureMessage("GitHub API Request Failure: {} {}".format(resp.status_code, resp.text))
+                client.captureMessage("GitHub API Request Failure: {} {}\n{} {}\n".format(resp.status_code, resp.text, method, data))
                 return None
         return json.loads(resp.text)
 
