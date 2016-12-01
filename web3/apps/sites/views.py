@@ -534,27 +534,31 @@ def git_setup_view(request, site_id):
                     else:
                         a = out.rsplit("/", 2)
                         out = "{}/{}".format(a[-2], a[-1].rsplit(".", 1)[0])
-                    resp = request.user.github_api_request("/repos/{}/keys".format(out))
+                    resp = request.user.github_api_request("/repos/{}".format(out))
                     if resp is not None:
-                        for i in resp:
-                            if i["title"] == "Director":
-                                request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
-                        resp = request.user.github_api_request("/repos/{}/keys".format(out), method="POST", data={"title": "Director", "key": site.public_key.strip(), "read_only": True})
-                        if resp:
-                            resp = request.user.github_api_request("/repos/{}/hooks".format(out))
+                        resp = request.user.github_api_request("/repos/{}/keys".format(out))
+                        if resp is not None:
+                            for i in resp:
+                                if i["title"] == "Director":
+                                    request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
+                            resp = request.user.github_api_request("/repos/{}/keys".format(out), method="POST", data={"title": "Director", "key": site.public_key.strip(), "read_only": True})
                             if resp:
-                                webhook_url = request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
-                                for i in resp:
-                                    if i["config"]["url"] == webhook_url:
-                                        break
+                                resp = request.user.github_api_request("/repos/{}/hooks".format(out))
+                                if resp:
+                                    webhook_url = request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
+                                    for i in resp:
+                                        if i["config"]["url"] == webhook_url:
+                                            break
+                                    else:
+                                        request.user.github_api_request("/repos/{}/hooks".format(out), method="POST", data={"name": "web", "config": {"url": webhook_url, "content_type": "json"}, "active": True})
+                                    messages.success(request, "The integration was set up!")
                                 else:
-                                    request.user.github_api_request("/repos/{}/hooks".format(out), method="POST", data={"name": "web", "config": {"url": webhook_url, "content_type": "json"}, "active": True})
-                                messages.success(request, "The integration was set up!")
+                                    messages.error(request, "Failed to retrieve repository webhooks!")
                             else:
-                                messages.error(request, "Failed to retrieve repository webhooks!")
+                                messages.error(request, "Failed to add new deploy key!")
                         else:
-                            messages.error(request, "Failed to add new deploy key!")
+                            messages.error(request, "Failed to retrieve deploy keys! Are you the owner of this repository?")
                     else:
-                        messages.error(request, "Failed to retrieve repository information from GitHub!")
+                        messages.error(request, "Failed to retrieve repository information from GitHub! Do you have access to this repository?")
 
     return redirect(reverse("info_site", kwargs={"site_id": site.id}) + "#github-automatic")
