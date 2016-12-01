@@ -534,8 +534,8 @@ def git_setup_view(request, site_id):
                     else:
                         a = out.rsplit("/", 2)
                         out = "{}/{}".format(a[-2], a[-1].rsplit(".", 1)[0])
-                    resp = request.user.github_api_request("/repos/{}".format(out))
-                    if resp is not None:
+                    repo_info = request.user.github_api_request("/repos/{}".format(out))
+                    if repo_info is not None:
                         resp = request.user.github_api_request("/repos/{}/keys".format(out))
                         if resp is not None:
                             for i in resp:
@@ -557,7 +557,10 @@ def git_setup_view(request, site_id):
                             else:
                                 messages.error(request, "Failed to add new deploy key!")
                         else:
-                            messages.error(request, "Failed to retrieve deploy keys! Are you the owner of this repository?")
+                            if repo_info["permissions"]["admin"] == False:
+                                messages.error(request, "You do not have permission to add deploy keys. Ask the owner of the repository to set this integration up for you.")
+                            else:
+                                messages.error(request, "Failed to retrieve deploy keys!")
                     else:
                         messages.error(request, "Failed to retrieve repository information from GitHub! Do you have access to this repository?")
 
