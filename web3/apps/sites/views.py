@@ -530,7 +530,7 @@ def git_setup_view(request, site_id):
                 else:
                     out = out[0]
                     if out.startswith("git@github.com"):
-                        out = out.split(":", 1)[1]
+                        out = out.split(":", 1)[1].rsplit(".", 1)[0]
                     else:
                         a = out.rsplit("/", 2)
                         out = "{}/{}".format(a[-2], a[-1].rsplit(".", 1)[0])
