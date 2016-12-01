@@ -18,7 +18,7 @@ def settings_view(request):
     github_info = get_github_info(request) if request.user.github_token else None
     context = {
         "groups": Group.objects.filter(users__id=request.user.id).order_by("name"),
-        "github_username": github_info["login"] if github_info else None
+        "github_username": github_info.get("login", None) if github_info else None
     }
     return render(request, "users/settings.html", context)
 

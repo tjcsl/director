@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'web3.apps.authentication',
     'web3.apps.sites',
     'web3.apps.users',
+    'web3.apps.vms'
 ]
 
 MIDDLEWARE = [
