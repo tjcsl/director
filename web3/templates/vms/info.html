@@ -35,6 +35,7 @@
 
         <a href="{% url 'vm_list' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
         {% if request.user.is_superuser %}
+        <a href="{% url 'vm_edit' vm.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Edit VM</a>
         <a href="{% url 'vm_delete' vm.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete VM</a>
         {% endif %}
         <br /><br />

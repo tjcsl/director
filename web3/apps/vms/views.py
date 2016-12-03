@@ -122,3 +122,19 @@ def create_view(request):
     else:
         form = VirtualMachineForm()
     return render(request, "vms/create_vm.html", {"form": form})
+
+
+@superuser_required
+def edit_view(request, vm_id):
+    vm = get_object_or_404(VirtualMachine, id=vm_id)
+    if request.method == "POST":
+        form = VirtualMachineForm(request.POST, instance=vm)
+        if form.is_valid():
+            vm = form.save()
+            return redirect("vm_info", vm_id=vm.id)
+    else:
+        form = VirtualMachineForm(instance=vm)
+    context = {
+        "form": form
+    }
+    return render(request, "vms/create_vm.html", context)

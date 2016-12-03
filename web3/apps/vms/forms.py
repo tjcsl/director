@@ -26,13 +26,13 @@ class VirtualMachineForm(forms.ModelForm):
         if commit:
             instance.save()
             ret = call_api("container.create", name=str(instance.uuid))
-            if ret[0] != 0:
+            if ret[0] == 1:
                 instance.delete()
                 return None
             else:
                 if ret[0] != 2:
                     instance.uuid = uuid.UUID(ret[1])
                     instance.save()
-                call_api("container.set_hostname", name=str(instance.uuid), new_hostname=re.replace(" ", "-").sub("[^A-Za-z0-9\\-]+", "", instance.name))
+                call_api("container.set_hostname", name=str(instance.uuid), new_hostname=re.sub("[^A-Za-z0-9\\-]+", "", instance.name.replace(" ", "-")))
 
         return instance
