@@ -25,7 +25,7 @@ class VirtualMachineForm(forms.ModelForm):
 
         if commit:
             instance.save()
-            ret = call_api("container.create", name=slugify(instance.name))
+            ret = call_api("container.create", name=instance.uuid)
             if ret[0] != 0:
                 instance.delete()
                 return None
