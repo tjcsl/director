@@ -12,11 +12,12 @@ from .helpers import call_api
 
 @login_required
 def list_view(request):
+    vm_list = request.user.vms.all()
     if request.user.is_superuser:
-        vm_list = VirtualMachine.objects.all()
+        su_vm_list = VirtualMachine.objects.exclude(users=request.user)
     else:
-        vm_list = request.user.vms.all()
-    return render(request, "vms/list.html", {"vm_list": vm_list})
+        su_vm_list = None
+    return render(request, "vms/list.html", {"vm_list": vm_list, "su_vm_list": su_vm_list})
 
 
 @login_required
