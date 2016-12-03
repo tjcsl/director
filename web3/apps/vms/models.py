@@ -7,4 +7,4 @@ class VirtualMachine(models.Model):
     name = models.CharField(max_length=32, unique=True)
     description = models.TextField(blank=True)
 
-    users = models.ManyToManyField(User, related_name='vm_groups')
+    users = models.ManyToManyField(User, related_name='vms')

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load formfilters %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#id_users").selectize();
+        });
+    </script>
+{% endblock %}
+
+{% block main %}
+<h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Virtual Machine</h4>
+<form method="POST">
+    {% csrf_token %}
+    {% include "form.html" with form=form %}
+    <div class="form-actions">
+        <button type="submit" class="btn btn-ion">Submit</button>
+    </div>
+</form>
+{% endblock %}

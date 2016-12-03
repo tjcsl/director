@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load formfilters %}
+
+{% block title %}{{ vm.name }} - {{ block.super }}{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-md-12">
+        <h3>{{ vm.name }}</h3>
+        <p>
+            <b>Description:</b> {{ vm.description|default:"None" }}<br />
+            <b>Users:</b> {{ vm.users.all|join:", "|default:"None" }}
+        </p>
+
+        {% if request.user.is_superuser %}
+        <a href="#" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete VM</a>
+        {% endif %}
+        <br /><br />
+    </div>
+</div>
+{% endblock %}

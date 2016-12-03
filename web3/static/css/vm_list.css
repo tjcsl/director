@@ -15,7 +15,7 @@
     right: 0;
     z-index: 100;
 }
-#sites .site {
+#vms .vm {
     color: #484848;
     display: block;
     text-decoration: none;
@@ -24,13 +24,13 @@
     padding-right: 20px;
     border-bottom: 1px solid #ccc;
 }
-#sites .site .tag {
+#vms .vm .tag {
     margin-left: 5px;
 }
-#sites .site:hover {
+#vms .vm:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }
-#sites .site .fa.pull-left {
+#vms .vm .fa.pull-left {
     padding: 8px;
     margin-right: 5px;
     vertical-align: middle;

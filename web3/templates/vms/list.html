@@ -1,5 +1,30 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+
+{% block navbar %}
+<input class="form-control search-box" id="select-vm" type="text" placeholder="&#xf002; Search Virtual Machines" />
+{% endblock %}
+
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'css/vm_list.css' %}" />
+{% endblock %}
 
 {% block main %}
-<h3>Coming Soon!</h3>
+<div class="subheading clearfix">
+    <h3 class="pull-left">Virtual Machines</h3>
+    {% if request.user.is_superuser %}
+    <a href="{% url 'create_vm' %}" class="pull-right btn btn-ion"><i class="fa fa-plus"></i> Create VM</a>
+    {% endif %}
+</div>
+<div id="vms">
+{% for vm in request.user.vms.all %}
+<a href="{% url 'vm_info' vm.id %}" class="vm clearfix">
+    <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% else %}fa-cube{% endif %}"></i>
+    <b class="name">{{ vm.name }}</b>
+    <div class="sub">{{ vm.description|default:"No Description" }}</div>
+</a>
+{% empty %}
+<p id="empty">You have no virtual machines!</p>
+{% endfor %}
 {% endblock %}

@@ -25,3 +25,7 @@
         border-right:none;
     }
 }
+#empty {
+    text-align: center;
+    padding: 15px;
+}
