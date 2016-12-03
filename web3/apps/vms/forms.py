@@ -1,4 +1,5 @@
 import uuid
+import re
 
 from django import forms
 from django.conf import settings
@@ -29,7 +30,9 @@ class VirtualMachineForm(forms.ModelForm):
                 instance.delete()
                 return None
             else:
-                instance.uuid = uuid.UUID(ret[1])
-                instance.save()
+                if ret[0] != 2:
+                    instance.uuid = uuid.UUID(ret[1])
+                    instance.save()
+                call_api("container.set_hostname", name=str(instance.uuid), new_hostname=re.replace(" ", "-").sub("[^A-Za-z0-9\\-]+", "", instance.name))
 
         return instance
