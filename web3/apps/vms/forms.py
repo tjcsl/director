@@ -10,7 +10,7 @@ from .helpers import call_api
 
 
 class VirtualMachineForm(forms.ModelForm):
-    name = forms.CharField(max_length=32, widget=forms.TextInput(attrs={"class": "form-control"}))
+    name = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class": "form-control"}))
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
 
