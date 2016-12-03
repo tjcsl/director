@@ -20,8 +20,10 @@
             <b>UUID:</b> {{ vm.uuid }}<br />
             <b>Description:</b> {{ vm.description|default:"None" }}<br />
             <b>Users:</b> {{ vm.users.all|join:", "|default:"None" }}<br />
-            <b>State:</b> {% if vm_state == 0 %}Running{% else %}Not Running{% endif %}<br />
+            <b>State:</b> {% if vm_state == 0 %}<span style="color:#4CAF50">Running</a>{% else %}<span style="color:#F44336">Not Running{% endif %}</span><br />
+            {% if vm_state == 0 %}
             <b>IP(s):</b> {{ vm_ips|join:", "|default:"None" }}<br />
+            {% endif %}
             <b>Root Password:</b> {{ vm.password|default:"Not set" }}
         </p>
 
