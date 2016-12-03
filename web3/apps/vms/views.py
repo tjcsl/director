@@ -30,6 +30,7 @@ def info_view(request, vm_id):
     if vm_state == 0:
         vm_ips = call_api("container.ips", name=str(vm.uuid))[1]
     elif vm_state == 2:
+        vm.delete()
         messages.error(request, "Virtual machine does not exist!")
         return redirect("vm_list")
     else:
