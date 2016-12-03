@@ -1,5 +1,6 @@
 venv/
 secret.py
+conductor.pem
 db.sqlite
 *.pyc
 *.DS_Store
