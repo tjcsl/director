@@ -6,8 +6,13 @@
 {% endblock %}
 
 {% block css %}
-{{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% static 'css/vm_list.css' %}" />
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vm_list.css' %}" />
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/vms/search.js' %}"></script>
 {% endblock %}
 
 {% block main %}
