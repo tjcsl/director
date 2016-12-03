@@ -2,6 +2,7 @@ import uuid
 
 from django import forms
 from django.conf import settings
+from django.utils.text import slugify
 
 from ..users.models import User
 from .models import VirtualMachine
@@ -23,7 +24,7 @@ class VirtualMachineForm(forms.ModelForm):
 
         if commit:
             instance.save()
-            ret = call_api("container.create", name=str(instance.uuid))
+            ret = call_api("container.create", name=slugify(instance.name))
             if ret[0] != 0:
                 instance.delete()
                 return None
