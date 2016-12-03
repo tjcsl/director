@@ -22,7 +22,7 @@
         </p>
 
         {% if request.user.is_superuser %}
-        <a href="#" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete VM</a>
+        <a href="{% url 'vm_delete' vm.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete VM</a>
         {% endif %}
         <br /><br />
     </div>
