@@ -16,4 +16,4 @@ class Command(BaseCommand):
                 pass
             else:
                 print("[*] Importing {}...".format(container))
-                VirtualMachine.objects.create(name="Unknown VM {}".format(container), uuid=uuid.UUID(container), description="Unknown Virtual Machine")
+                VirtualMachine.objects.create(name=container, uuid=uuid.UUID(container), description="Unknown Virtual Machine")
