@@ -8,9 +8,7 @@ from raven.contrib.django.raven_compat.models import client
 
 
 def call_api(action=None, **kwargs):
-    agent_path = "https://deneb.agent.lxc.deneb.csl.tjhsst.edu/"
-    cert_path = os.path.join(settings.PROJECT_ROOT, "settings/conductor.pem")
-    resp = requests.request(method=("POST" if action else "GET"), json={"method": action, "args": kwargs}, url=agent_path, cert=cert_path, verify=False)
+    resp = requests.request(method=("POST" if action else "GET"), json={"method": action, "args": kwargs}, url=settings.CONDUCTOR_AGENT_PATH, cert=settings.CONDUCTOR_CERT_PATH, verify=False)
     if resp.status_code == 500:
         if settings.DEBUG:
             print("{} {}\n{} {}".format(resp.status_code, resp.text, action, kwargs))
