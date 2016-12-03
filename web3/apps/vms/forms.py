@@ -1,5 +1,4 @@
 import uuid
-import re
 
 from django import forms
 from django.conf import settings
@@ -34,6 +33,6 @@ class VirtualMachineForm(forms.ModelForm):
                 if ret[0] != 2:
                     instance.uuid = uuid.UUID(ret[1])
                     instance.save()
-                call_api("container.set_hostname", name=str(instance.uuid), new_hostname=re.sub("[^A-Za-z0-9\\-]+", "", instance.name.replace(" ", "-")))
+                call_api("container.set_hostname", name=str(instance.uuid), new_hostname=slugify(instance.name))
 
         return instance
