@@ -33,6 +33,6 @@ class VirtualMachineForm(forms.ModelForm):
                 if ret[0] != 2:
                     instance.uuid = uuid.UUID(ret[1])
                     instance.save()
-                call_api("container.set_hostname", name=str(instance.uuid), new_hostname=slugify(instance.name))
+                call_api("container.set_hostname", name=str(instance.uuid), new_hostname=slugify(instance.name).replace("_", "-"))
 
         return instance
