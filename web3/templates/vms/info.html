@@ -17,9 +17,21 @@
     <div class="col-md-12">
         <h3>{{ vm.name }}</h3>
         <p>
+            <b>UUID:</b> {{ vm.uuid }}<br />
             <b>Description:</b> {{ vm.description|default:"None" }}<br />
-            <b>Users:</b> {{ vm.users.all|join:", "|default:"None" }}
+            <b>Users:</b> {{ vm.users.all|join:", "|default:"None" }}<br />
+            <b>State:</b> {% if vm_state == 0 %}Running{% else %}Not Running{% endif %}<br />
+            <b>IP(s):</b> {{ vm_ips|join:", "|default:"None" }}<br />
+            <b>Root Password:</b> {{ vm.password|default:"Not set" }}
         </p>
+
+        {% if vm_state == 0 %}
+        <form style="display:inline-block" action="{% url 'set_vm_password' vm.id %}" method="POST">{% csrf_token %}<button type="submit" class="btn btn-ion"><i class="fa fa-key"></i> Set Root Password</button></form>
+        <form style="display:inline-block" action="{% url 'stop_vm' vm.id %}" method="POST">{% csrf_token %}<button type="submit" class="btn btn-ion"><i class="fa fa-power-off"></i> Power Off</button></form>
+        {% else %}
+        <form style="display:inline-block" action="{% url 'start_vm' vm.id %}" method="POST">{% csrf_token %}<button type="submit" class="btn btn-ion"><i class="fa fa-power-off"></i> Power On</button></form>
+        {% endif %}
+        <br /><br />
 
         {% if request.user.is_superuser %}
         <a href="{% url 'vm_delete' vm.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete VM</a>

@@ -10,3 +10,4 @@ class VirtualMachine(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     description = models.TextField(blank=True)
     users = models.ManyToManyField(User, related_name='vms')
+    password = models.TextField(blank=True)
