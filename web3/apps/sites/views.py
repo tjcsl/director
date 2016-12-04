@@ -61,7 +61,8 @@ def create_view(request):
 def ping_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     try:
-        is_up = requests.head(site.url, timeout=10).status_code == 200
+        code = requests.head(site.url, timeout=10).status_code
+        is_up = (code == 200 or code == 302)
     except:
         is_up = False
     return JsonResponse({"online": is_up})
