@@ -57,13 +57,14 @@ def create_view(request):
         return render(request, "sites/create_info.html", {})
 
 
-@superuser_required
-def ping_view(request):
-    up_list = {}
-    for site in Site.objects.all():
-        is_up = requests.head(site.url, timeout=5).status_code == 200
-        up_list[site.name] = is_up
-    return JsonResponse(up_list)
+@login_required
+def ping_view(request, site_id):
+    site = get_object_or_404(Site, name=site_id)
+    try:
+        is_up = requests.head(site.url, timeout=10).status_code == 200
+    except:
+        is_up = False
+    return JsonResponse({"online": is_up})
 
 
 @login_required

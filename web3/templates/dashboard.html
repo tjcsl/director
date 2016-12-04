@@ -21,7 +21,7 @@
 </div>
 <div id="sites">
 {% for site in sites %}
-    <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.name }}">
+    <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.id }}">
         {% if site.database %}<span class="pull-right tag tag-primary">{{ site.database.get_category_display }}</span>{% endif %}
         {% if site.has_repo %}<span data-toggle="tooltip"  data-placement="left" title="This site uses Git for version control." class="pull-right tag tag-default"><i class="fa fa-github-alt"></i> Git</span>{% endif %}
         {% if site.custom_nginx %}<span data-toggle="tooltip" data-placement="left" title="This site has a custom nginx configuration." class="pull-right tag tag-info">Nginx</span>{% endif %}
@@ -31,7 +31,7 @@
 {% endfor %}
 {% if other_sites %}
     {% for site in other_sites %}
-    <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.name }}">
+    <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.id }}">
         <span data-toggle="tooltip"  data-placement="left" title="You can see this website because you are a superuser." class="pull-right tag tag-warning">Superuser</span>
         {% if site.has_repo %}<span data-toggle="tooltip"  data-placement="left" title="This site uses Git for version control." class="pull-right tag tag-default"><i class="fa fa-github-alt"></i> Git</span>{% endif %}
         {% if site.custom_nginx %}<span data-toggle="tooltip" data-placement="left" title="This site has a custom nginx configuration." class="pull-right tag tag-info">Nginx</span>{% endif %}
