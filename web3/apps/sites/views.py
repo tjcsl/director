@@ -1,6 +1,7 @@
 import os
 import stat
 import datetime
+import requests
 
 from subprocess import Popen, check_output, PIPE
 
@@ -54,6 +55,15 @@ def create_view(request):
         return render(request, "sites/create_site.html", context)
     else:
         return render(request, "sites/create_info.html", {})
+
+
+@superuser_required
+def ping_view(request):
+    up_list = {}
+    for site in Site.objects.all():
+        is_up = requests.head(site.url, timeout=5).status_code == 200
+        up_list[site.name] = is_up
+    return JsonResponse(up_list)
 
 
 @login_required
