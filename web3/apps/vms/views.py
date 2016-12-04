@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from ..authentication.decorators import superuser_required
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_http_methods
+from django.db.models import Count
 
 from .forms import VirtualMachineForm
 from .models import VirtualMachine
@@ -12,9 +13,9 @@ from .helpers import call_api
 
 @login_required
 def list_view(request):
-    vm_list = request.user.vms.all()
+    vm_list = request.user.vms.all().annotate(num_users=Count("users"))
     if request.user.is_superuser:
-        su_vm_list = VirtualMachine.objects.exclude(users=request.user)
+        su_vm_list = VirtualMachine.objects.annotate(num_users=Count("users")).exclude(users=request.user)
     else:
         su_vm_list = None
     return render(request, "vms/list.html", {"vm_list": vm_list, "su_vm_list": su_vm_list})
