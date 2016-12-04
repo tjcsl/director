@@ -75,7 +75,7 @@ function pingSites() {
             }
         });
         if (sites.length) {
-            setTimeout(process, 1000);
+            setTimeout(process, 2000);
         }
     };
     process();
