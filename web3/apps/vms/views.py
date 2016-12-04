@@ -13,9 +13,9 @@ from .helpers import call_api
 
 @login_required
 def list_view(request):
-    vm_list = request.user.vms.all().annotate(num_users=Count("users"))
+    vm_list = request.user.vms.all().annotate(num_users=Count("users")).order_by("name")
     if request.user.is_superuser:
-        su_vm_list = VirtualMachine.objects.annotate(num_users=Count("users")).exclude(users=request.user)
+        su_vm_list = VirtualMachine.objects.annotate(num_users=Count("users")).exclude(users=request.user).order_by("name")
     else:
         su_vm_list = None
     return render(request, "vms/list.html", {"vm_list": vm_list, "su_vm_list": su_vm_list})
