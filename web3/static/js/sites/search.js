@@ -61,3 +61,22 @@ $(document).ready(function() {
         });
     });
 });
+function pingSites() {
+    var sites = $("#sites .site").map(function(v) { return $(this); }).toArray();
+    var process = function() {
+        var t = sites.pop();
+        var id = t.attr("id");
+        $.get("/site/" + id + "/ping", function(data) {
+            if (data.online) {
+                t.prepend("<span class='tag tag-success pull-right'>Online</span>");
+            }
+            else {
+                t.prepend("<span class='tag tag-danger pull-right'>Offline</span>");
+            }
+        });
+        if (sites.length) {
+            setTimeout(process, 1000);
+        }
+    };
+    process();
+}
