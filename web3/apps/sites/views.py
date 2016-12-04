@@ -62,7 +62,8 @@ def ping_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     try:
         code = requests.head(site.url, timeout=10).status_code
-        is_up = (code == 200 or code == 302)
+        # check for 4xx or 5xx http codes
+        is_up = str(code).startswith("4") or str(code).startswith("5")
     except:
         is_up = False
     return JsonResponse({"online": is_up})
