@@ -173,7 +173,8 @@ def modify_process_view(request, site_id):
         except Site.process.RelatedObjectDoesNotExist:
             form = ProcessForm(request.user, initial={"site": site.id})
     context = {
-        "form": form
+        "form": form,
+        "site": site
     }
     return render(request, "sites/create_process.html", context)
 
@@ -201,7 +202,8 @@ def create_database_view(request, site_id):
         except:
             form = DatabaseForm(request.user, initial={"site": site.id})
     context = {
-        "form": form
+        "form": form,
+        "site": site
     }
     return render(request, "sites/create_database.html", context)
 
