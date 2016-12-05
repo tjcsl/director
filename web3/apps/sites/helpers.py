@@ -146,7 +146,7 @@ def run_as_site(site, cmd, cwd=None, env=None, timeout=15):
         out, err = proc.communicate()
     finally:
         timer.cancel()
-    return (proc.returncode, out.decode("utf-8"), err.decode("utf-8"))
+    return (proc.returncode, out.decode("utf-8", "replace"), err.decode("utf-8", "replace"))
 
 
 def demote(uid, gid):
