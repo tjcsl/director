@@ -3,6 +3,7 @@ import stat
 import datetime
 import requests
 
+from multiprocessing import Pool
 from subprocess import Popen, check_output, PIPE
 
 from django.shortcuts import render, redirect, get_object_or_404, reverse
@@ -57,16 +58,20 @@ def create_view(request):
         return render(request, "sites/create_info.html", {})
 
 
-@login_required
-def ping_view(request, site_id):
-    site = get_object_or_404(Site, id=site_id)
+def ping_site(name, url):
     try:
-        code = requests.head(site.url, timeout=10).status_code
-        # check for 4xx or 5xx http codes
+        code = requests.head(url, timeout=10).status_code
         is_up = str(code).startswith("4") or str(code).startswith("5")
     except:
         is_up = False
-    return JsonResponse({"online": is_up})
+    return (name, is_up)
+
+
+@login_required
+def ping_view(request):
+    with Pool(10) as p:
+        results = p.starmap(ping_site, [(x.id, x.url) for x in Site.objects.all()])
+    return JsonResponse({x[0]: x[1] for x in results})
 
 
 @login_required
