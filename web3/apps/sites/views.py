@@ -62,9 +62,10 @@ def ping_site(name, url):
     try:
         code = requests.head(url, timeout=10).status_code
         is_up = str(code).startswith("4") or str(code).startswith("5")
-    except:
+    except Exception as e:
+        code = str(e)
         is_up = False
-    return (name, is_up)
+    return (name, is_up, code)
 
 
 @login_required
@@ -74,9 +75,11 @@ def ping_view(request):
     else:
         sites = Site.objects.filter(group__users=request.user)
 
+    details = request.GET.get("details", False) != False
+
     with Pool(10) as p:
         results = p.starmap(ping_site, [(x.id, x.url) for x in sites])
-    return JsonResponse({x[0]: x[1] for x in results})
+    return JsonResponse({x[0]: x[1:] if details else x[1] for x in results})
 
 
 @login_required
