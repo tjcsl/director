@@ -61,7 +61,7 @@ def create_view(request):
 def ping_site(name, url):
     try:
         code = requests.head(url, timeout=10).status_code
-        is_up = str(code).startswith("4") or str(code).startswith("5")
+        is_up = not str(code).startswith("4") and not str(code).startswith("5")
     except Exception as e:
         code = str(e)
         is_up = False
