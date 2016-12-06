@@ -69,8 +69,13 @@ def ping_site(name, url):
 
 @login_required
 def ping_view(request):
+    if request.user.is_superuser:
+        sites = Site.objects.all()
+    else:
+        sites = Site.objects.filter(group__users=request.user)
+
     with Pool(10) as p:
-        results = p.starmap(ping_site, [(x.id, x.url) for x in Site.objects.all()])
+        results = p.starmap(ping_site, [(x.id, x.url) for x in sites])
     return JsonResponse({x[0]: x[1] for x in results})
 
 
