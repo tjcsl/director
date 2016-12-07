@@ -13,11 +13,11 @@ class VirtualMachineForm(forms.ModelForm):
     name = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class": "form-control"}))
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
+    site = forms.ModelChoiceField(queryset=Site.objects.filter(category="vm"))
 
     class Meta:
         model = VirtualMachine
-        fields = ["name", "description", "users"]
-
+        fields = ["name", "description", "users", "site"]
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
