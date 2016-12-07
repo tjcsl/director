@@ -70,8 +70,9 @@ function pingSites() {
             }
             else {
                 var tag = $("<span class='tag tag-danger pull-right' data-toggle='tooltip' data-placement='left'>Offline</span>");
-                tag.attr("ttile", data[key][1]);
+                tag.attr("title", data[key][1]);
                 tag.prependTo(t);
+                tag.tooltip();
             }
         }
     });
