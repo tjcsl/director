@@ -160,5 +160,8 @@ def container_run_action(name, action):
 
 
 @rpc.method("container.list")
-def container_list():
-    return lxc.list_containers()
+def container_list(status=False):
+    if status:
+        return {x.name: x.state for x in lxc.list_containers(as_object=True)}
+    else:
+        return lxc.list_containers()
