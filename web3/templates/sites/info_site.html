@@ -27,8 +27,8 @@
             <b>Description:</b> {{ site.description|default:"None" }}<br />
             <b>Site User:</b> {{ site.user.username }} ({{ site.user.id }})<br />
             <b>Site Group:</b> {{ site.group.name }} ({{ site.group.id }})<br />
-            <b>Users:</b> {{ users|join:", "|default:"None" }}
-            {% if site.category == "dynamic" %}<br />
+            <b>Users:</b> {{ users|join:", "|default:"None" }}<br />
+            {% if site.category == "dynamic" %}
             <b>Process:</b> <a href="{% url 'edit_process' site.id %}">{% if site.process %}<span class="path">{{ site.process.path }}</span>{% else %}None{% endif %}</a><br />
             {% if site.process %}<b>Process Status</b>: <span class="path">{{ status }}</span><br />
             <a href="{% url 'restart_process' site.id %}" class="btn btn-ion"><i class="fa fa-retweet"></i> Restart Process</a>
