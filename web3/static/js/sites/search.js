@@ -69,7 +69,7 @@ function pingSites() {
                 t.prepend("<span class='tag tag-success pull-right'>Online</span>");
             }
             else {
-                var tag = ("<span class='tag tag-danger pull-right' data-toggle='tooltip' data-placement='left'>Offline</span>");
+                var tag = $("<span class='tag tag-danger pull-right' data-toggle='tooltip' data-placement='left'>Offline</span>");
                 tag.attr("ttile", data[key][1]);
                 tag.prependTo(t);
             }
