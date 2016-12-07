@@ -24,7 +24,7 @@ class SiteForm(forms.ModelForm):
                              help_text="Can only contain alphanumeric characters, underscores, and dashes. Separate multiple domains with spaces.",
                              validators=[domain_validator])
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
-    category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic")),
+    category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic"), ("vm", "Virtual Machine")),
                                  widget=forms.Select(attrs={"class": "form-control"}))
     purpose = forms.ChoiceField(choices=(("user", "User"), ("activity", "Activity"), ("other", "Other")),
                                 widget=forms.Select(attrs={"class": "form-control"}))
@@ -51,7 +51,6 @@ class SiteForm(forms.ModelForm):
             self._old_path = instance.path
         else:
             self._old_path = None
-
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
@@ -142,13 +141,11 @@ class DatabaseForm(forms.ModelForm):
     category = forms.ChoiceField(choices=(("postgresql", "PostgreSQL"), ("mysql", "MySQL")),
                                  widget=forms.RadioSelect(), label="Type")
 
-
     def __init__(self, user, *args, **kwargs):
         super(DatabaseForm, self).__init__(*args, **kwargs)
         self.initial["category"] = "postgresql"
         if not user.is_superuser:
             self.fields['site'].queryset = Site.objects.exclude(category="static").filter(group__users__id=user.id)
-
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
