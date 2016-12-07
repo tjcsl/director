@@ -52,11 +52,11 @@
     position: absolute;
     bottom: 5px;
     right: 0px;
-    background-color: yellow;
+    background-color: #FFEB3B;
 }
 .pull-left.fa span.red {
-    background-color: red;
+    background-color: #F44336;
 }
 .pull-left.fa span.green {
-    background-color: green;
+    background-color: #4CAF50;
 }
