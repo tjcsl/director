@@ -75,11 +75,9 @@ def ping_view(request):
     else:
         sites = Site.objects.filter(group__users=request.user)
 
-    details = request.GET.get("details", False) != False
-
     with Pool(10) as p:
         results = p.starmap(ping_site, [(x.id, x.url) for x in sites])
-    return JsonResponse({x[0]: x[1:] if details else x[1] for x in results})
+    return JsonResponse({x[0]: x[1:] for x in results})
 
 
 @login_required

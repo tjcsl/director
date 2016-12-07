@@ -65,11 +65,13 @@ function pingSites() {
     $.get("/site/ping", function(data) {
         for (var key in data) {
             var t = $("#sites #" + key + ".site");
-            if (data[key]) {
+            if (data[key][0]) {
                 t.prepend("<span class='tag tag-success pull-right'>Online</span>");
             }
             else {
-                t.prepend("<span class='tag tag-danger pull-right'>Offline</span>");
+                var tag = ("<span class='tag tag-danger pull-right' data-toggle='tooltip' data-placement='left'>Offline</span>");
+                tag.attr("ttile", data[key][1]);
+                tag.prependTo(t);
             }
         }
     });
