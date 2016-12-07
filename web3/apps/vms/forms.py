@@ -5,6 +5,7 @@ from django.conf import settings
 from django.utils.text import slugify
 
 from ..users.models import User
+from ..sites.models import Site
 from .models import VirtualMachine
 from .helpers import call_api
 
