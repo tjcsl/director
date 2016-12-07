@@ -14,7 +14,8 @@ class Site(models.Model):
     category = models.CharField(max_length=16, choices=(
         ("static", "Static"),
         ("php", "PHP"),
-        ("dynamic", "Dynamic")
+        ("dynamic", "Dynamic"),
+        ("vm", "Virtual Machine")
     ))
     purpose = models.CharField(max_length=16, choices=(
         ("legacy", "Legacy"),
@@ -41,7 +42,6 @@ class Site(models.Model):
         else:
             return "/web/{}/".format(self.name)
 
-
     @property
     def url(self):
         if self.purpose == "user":
@@ -53,16 +53,13 @@ class Site(models.Model):
         else:
             return "http://" + self.domain.split(" ")[0]
 
-
     @property
     def private_path(self):
         return os.path.join(self.path, "private")
 
-
     @property
     def public_path(self):
         return os.path.join(self.path, "public")
-
 
     @property
     def has_repo(self):
@@ -70,7 +67,6 @@ class Site(models.Model):
             return self._has_repo
         self._has_repo = settings.DEBUG or os.path.isdir(os.path.join(self.public_path, ".git"))
         return self._has_repo
-
 
     @property
     def public_key(self):
@@ -80,7 +76,6 @@ class Site(models.Model):
             data = f.read()
         return data
 
-
     @property
     def has_rsa_key(self):
         if hasattr(self, "_has_rsa_key"):
@@ -88,6 +83,13 @@ class Site(models.Model):
         self._has_rsa_key = settings.DEBUG or os.path.isfile(os.path.join(self.private_path, ".ssh/id_rsa"))
         return self._has_rsa_key
 
+    @property
+    def has_vm(self):
+        try:
+            vm = self.virtual_machine
+            return True
+        except Site.virtual_machine.RelatedObjectDoesNotExist:
+            return False
 
     def __str__(self):
         return self.name
@@ -116,13 +118,11 @@ class Database(models.Model):
     def db_name(self):
         return "site_{}".format(self.site.name)
 
-
     @property
     def username(self):
         if self.category == "mysql":
             return "site_{}".format(self.site.name)[:16]
         return "site_{}".format(self.site.name)
-
 
     def __str__(self):
         return "{}://{}:{}@{}/{}".format("postgres" if self.category == "postgresql" else "mysql", self.username, self.password, "postgres1:5432" if self.category == "postgresql" else "mysql1:3306", self.db_name)
