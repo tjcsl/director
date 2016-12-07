@@ -36,7 +36,7 @@
             {% endif %}
             {% elif site.category == "vm" %}
             {% if site.virtual_machine %}
-            <b>Virtual Machine:</b> {{ site.virtual_machine.name }}<br />
+            <b>Virtual Machine:</b> <a href="{% url 'vm_info' site.virtual_machine.id %}">{{ site.virtual_machine.name }}</a><br />
             {% endif %}
             {% endif %}
         </p>
