@@ -41,3 +41,22 @@
     white-space: nowrap;
     display: block;
 }
+.pull-left.fa {
+    position: relative;
+}
+.pull-left.fa span {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: 14px;
+    position: absolute;
+    bottom: 5px;
+    right: 0px;
+    background-color: yellow;
+}
+.pull-left.fa span.red {
+    background-color: red;
+}
+.pull-left.fa span.green {
+    background-color: green;
+}
