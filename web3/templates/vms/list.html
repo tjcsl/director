@@ -32,7 +32,7 @@
 {% endfor %}
 {% for vm in su_vm_list %}
 <a href="{% url 'vm_info' vm.id %}" class="vm clearfix">
-    {% if vm.num_users <= 1 %}<span class="pull-right tag tag-danger">No Users</span>{% endif %}
+    {% if vm.num_users == 0 %}<span class="pull-right tag tag-danger">No Users</span>{% endif %}
     <span class="pull-right tag tag-warning">Superuser</span>
     <i class="pull-left fa fa-2x fa-fw fa-cube"></i>
     <b class="name">{{ vm.name }}</b>
