@@ -7,6 +7,8 @@ from ..sites.models import Site
 
 from .helpers import call_api
 
+from django.core.cache import cache
+
 
 class VirtualMachine(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -16,9 +18,20 @@ class VirtualMachine(models.Model):
     password = models.TextField(blank=True)
     site = models.OneToOneField(Site, related_name="virtual_machine", blank=True, null=True)
 
-    def ip_address(self):
-        vm_state = call_api("container.state", name=str(self.uuid))
-        if vm_state == 0:
-            return call_api("container.ips", name=str(self.uuid))[1][0]
+
+    @property
+    def ips(self):
+        key = "vm_ip_{}".format(self.id)
+        obj = cache.get(key)
+        if obj:
+            return obj
         else:
-            return "127.0.0.1"
+            vm_ips = call_api("container.ips", name=str(self.uuid))[1]
+            cache.set(key, vm_ips)
+        return vm_ips
+
+
+    @property
+    def ip_address(self):
+        ips = self.ips
+        return ips[0] if len(ips) else None
