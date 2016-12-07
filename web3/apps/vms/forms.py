@@ -14,7 +14,7 @@ class VirtualMachineForm(forms.ModelForm):
     name = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class": "form-control"}))
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
-    site = forms.ModelChoiceField(queryset=Site.objects.filter(category="vm"))
+    site = forms.ModelChoiceField(queryset=Site.objects.filter(category="vm"), widget=forms.Select(attrs={"class": "form-control"}))
 
     class Meta:
         model = VirtualMachine
