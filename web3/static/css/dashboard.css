@@ -50,8 +50,8 @@
     height: 14px;
     border-radius: 14px;
     position: absolute;
-    bottom: 5px;
-    right: 0px;
+    bottom: 6px;
+    right: 2px;
     background-color: #FFEB3B;
 }
 #sites .site .pull-left.fa span.red {
