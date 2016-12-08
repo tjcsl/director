@@ -64,14 +64,14 @@ $(document).ready(function() {
 function pingSites() {
     $.get("/site/ping", function(data) {
         for (var key in data) {
-            var t = $("#sites #" + key + ".site");
+            var t = $("#sites #" + key + ".site .fa.pull-left");
             if (data[key][0]) {
-                t.prepend("<span class='tag tag-success pull-right'>Online</span>");
+                t.append("<span class='green' />");
             }
             else {
-                var tag = $("<span class='tag tag-danger pull-right' data-toggle='tooltip' data-placement='left'>Offline</span>");
+                var tag = $("<span class='red' data-toggle='tooltip' data-placement='right' />");
                 tag.attr("title", data[key][1]);
-                tag.prependTo(t);
+                tag.appendTo(t);
                 tag.tooltip();
             }
         }

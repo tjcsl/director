@@ -41,3 +41,22 @@
     white-space: nowrap;
     display: block;
 }
+#sites .site .pull-left.fa {
+    position: relative;
+}
+#sites .site .pull-left.fa span {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border-radius: 14px;
+    position: absolute;
+    bottom: 5px;
+    right: 0px;
+    background-color: #FFEB3B;
+}
+#sites .site .pull-left.fa span.red {
+    background-color: #F44336;
+}
+#sites .site .pull-left.fa span.green {
+    background-color: #4CAF50;
+}
