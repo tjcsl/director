@@ -12,10 +12,19 @@ $(document).ready(function() {
         val = $.trim(val.replace(/\s*notag:\w+/g, ""));
 
         var tags = [];
+        var show_online = false;
+        var show_offline = false;
         var matches = val.match(/tag:\w+/g);
         if (matches) {
             $.each(matches, function(k, v) {
-                tags.push(v.substring(4).toLowerCase());
+                var tag = v.substring(4).toLowerCase();
+                if (tag == "online") {
+                    show_online = true;
+                }
+                else if (tag == "offline") {
+                    show_offline = true;
+                }
+                tags.push(tag);
             });
         }
         val = $.trim(val.replace(/\s*tag:\w+/g, ""));
@@ -50,6 +59,16 @@ $(document).ready(function() {
                         }
                     });
                 });
+            }
+            if (show_offline) {
+                if (!$(this).find(".fa.pull-left span").hasClass("red")) {
+                    show = false;
+                }
+            }
+            if (show_online) {
+                if (!$(this).find(".fa.pull-left span").hasClass("green")) {
+                    show = false;
+                }
             }
             if (show && (sub.toLowerCase().includes(val) || name.toLowerCase().includes(val))) {
                 $(this).show();
