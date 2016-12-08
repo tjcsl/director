@@ -24,7 +24,9 @@ $(document).ready(function() {
                 else if (tag == "offline") {
                     show_offline = true;
                 }
-                tags.push(tag);
+                else {
+                    tags.push(tag);
+                }
             });
         }
         val = $.trim(val.replace(/\s*tag:\w+/g, ""));
