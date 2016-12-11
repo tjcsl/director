@@ -59,6 +59,7 @@ $(document).ready(function() {
                 $(this).hide();
             }
         });
+        $("#filtered").html("(<b>" + $("#sites .site:visible").length + "</b> shown out of <b>" + $("#sites .site").length + "</b>)");
     });
 });
 function pingSites() {
