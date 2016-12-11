@@ -59,7 +59,11 @@ $(document).ready(function() {
                 $(this).hide();
             }
         });
-        $("#filtered").html("(<b>" + $("#sites .site:visible").length + "</b> shown out of <b>" + $("#sites .site").length + "</b>)");
+        var sites_shown = $("#sites .site:visible").length;
+        var sites_total = $("#sites .site").length;
+        if (sites_shown < sites_total) {
+            $("#filtered").html("(<b>" + sites_shown + "</b> shown out of <b>" + sites_total + "</b>)");
+        }
     });
 });
 function pingSites() {
