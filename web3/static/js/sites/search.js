@@ -64,6 +64,9 @@ $(document).ready(function() {
         if (sites_shown < sites_total) {
             $("#filtered").html("(<b>" + sites_shown + "</b> shown out of <b>" + sites_total + "</b>)");
         }
+        else {
+            $("#filtered").html("");
+        }
     });
 });
 function pingSites() {
