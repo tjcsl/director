@@ -565,7 +565,7 @@ def git_setup_view(request, site_id):
                         resp = request.user.github_api_request("/repos/{}/keys".format(out))
                         if resp is not None:
                             for i in resp:
-                                if i["title"] == "Director":
+                                if i["title"] == "Director" or i["key"].strip().split(" ")[1] == site.public_key.strip().split(" ")[1]:
                                     request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
                             resp = request.user.github_api_request("/repos/{}/keys".format(out), method="POST", data={"title": "Director", "key": site.public_key.strip(), "read_only": True})
                             if resp:
