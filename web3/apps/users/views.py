@@ -54,7 +54,8 @@ def edit_view(request, user_id):
         form = UserForm(instance=user)
 
     context = {
-        "form": form
+        "form": form,
+        "groups": user.unix_groups.all()
     }
     return render(request, "users/create_user.html", context)
 

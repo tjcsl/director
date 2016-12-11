@@ -8,6 +8,14 @@
 
 {% block main %}
 <h4>{% if "create" in request.path %}Create New{% else %}Edit{% endif %} User</h4>
+{% if groups %}
+<div>Current Groups</div>
+<ul>
+{% for group in groups %}
+    <li>{{ group }}</li>
+{% endfor %}
+</ul>
+{% endif %}
 <form method="POST">
     {% csrf_token %}
     {% include "form.html" with form=form %}
