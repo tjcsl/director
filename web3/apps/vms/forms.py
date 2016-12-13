@@ -27,7 +27,7 @@ class VirtualMachineForm(forms.ModelForm):
             instance.save()
             self.save_m2m()
             ret = call_api("container.create", name=str(instance.uuid))
-            if ret[0] == 1:
+            if ret is None or ret[0] == 1:
                 instance.delete()
                 return None
             else:

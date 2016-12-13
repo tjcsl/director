@@ -202,14 +202,19 @@ def modify_vm_view(request, site_id):
 
     if request.method == "POST":
         vm = request.POST.get("vm", None)
-        if vm is None or vm == "":
-            site.virtual_machine = None
-        else:
-            site.virtual_machine = VirtualMachine.objects.get(id=vm)
-        site.save()
+        if hasattr(site, "virtual_machine"):
+            current_vm = site.virtual_machine
+            current_vm.site = None
+            current_vm.save()
+        if vm is not None and vm != "__blank__":
+            vm = int(vm)
+            new_vm = VirtualMachine.objects.get(id=vm)
+            new_vm.site = site
+            new_vm.save()
 
-        create_config_files(site)
-        reload_nginx_config()
+        if not settings.DEBUG:
+            create_config_files(site)
+            reload_nginx_config()
 
         messages.success(request, "Virtual machine successfully linked!")
         return redirect("info_site", site_id=site.id)

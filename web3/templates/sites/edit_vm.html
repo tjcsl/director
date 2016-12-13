@@ -22,7 +22,7 @@
     <div class="form-group">
         <label>Virtual Machine</label>
         <select id="id_vm" name="vm">
-            <option value>---------</option>
+        <option value="__blank__">---------</option>
         {% for vm in vms %}
             <option value="{{ vm.id }}" {% if site.virtual_machine == vm %}selected="selected"{% endif %}>{{ vm.name }}</option>
         {% endfor %}
