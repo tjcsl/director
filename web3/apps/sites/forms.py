@@ -90,6 +90,11 @@ class SiteForm(forms.ModelForm):
                     reload_services()
                 instance.process.delete()
 
+            if instance.category != "vm" and hasattr(instance, "virtual_machine"):
+                vm = instance.virtual_machine
+                vm.site = None
+                vm.save()
+
             instance.save()
 
             self.save_m2m()
