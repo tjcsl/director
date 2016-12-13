@@ -17,6 +17,7 @@ urlpatterns = [
     url("^(?P<site_id>\d+)/database/backup/load$", views.load_database_view, name="load_sql"),
     url("^(?P<site_id>\d+)/database/delete$", views.delete_database_view, name="delete_database"),
     url("^(?P<site_id>\d+)/database/regenenerate$", views.regenerate_database_view, name="regenerate_database"),
+    url("^(?P<site_id>\d+)/vm/edit$", views.modify_vm_view, name="edit_vm"),
     url("^(?P<site_id>\d+)/process/edit$", views.modify_process_view, name="edit_process"),
     url("^(?P<site_id>\d+)/process/restart$", views.restart_process_view, name="restart_process"),
     url("^(?P<site_id>\d+)/process/delete$", views.delete_process_view, name="delete_process"),

@@ -37,6 +37,8 @@
             {% elif site.category == "vm" %}
             {% if site.virtual_machine %}
             <b>Virtual Machine:</b> <a href="{% url 'vm_info' site.virtual_machine.id %}">{{ site.virtual_machine.name }}</a><br />
+            {% else %}
+            <b>Virtual Machine:</b> <a href="{% url 'edit_vm' site.id %}">None</a><br />
             {% endif %}
             {% endif %}
         </p>

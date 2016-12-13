@@ -27,6 +27,7 @@ from .helpers import (reload_services, delete_site_files, create_config_files,
 
 from ..authentication.decorators import superuser_required
 from ..users.models import User
+from ..vms.models import VirtualMachine
 
 from ...utils.emails import send_new_site_email
 
@@ -188,6 +189,41 @@ def modify_process_view(request, site_id):
         "site": site
     }
     return render(request, "sites/create_process.html", context)
+
+
+@login_required
+def modify_vm_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+    if not site.category == "vm":
+        messages.error(request, "Not a VM site!")
+        return redirect("info_site", site_id=site.id)
+
+    if request.method == "POST":
+        vm = request.POST.get("vm", None)
+        if vm is None or vm == "":
+            site.virtual_machine = None
+        else:
+            site.virtual_machine = VirtualMachine.objects.get(id=vm)
+        site.save()
+
+        create_config_files(site)
+        reload_nginx_config()
+
+        messages.success(request, "Virtual machine successfully linked!")
+        return redirect("info_site", site_id=site.id)
+
+    if request.user.is_superuser:
+        vms = VirtualMachine.objects.all().order_by("name")
+    else:
+        vms = VirtualMachine.objects.filter(users=request.user).order_by("name")
+
+    context = {
+        "site": site,
+        "vms": vms
+    }
+    return render(request, "sites/edit_vm.html", context)
 
 
 @login_required
