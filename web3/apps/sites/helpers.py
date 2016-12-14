@@ -189,7 +189,7 @@ def create_postgres_database(database):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT 1 FROM pg_catalog.pg_user WHERE username = '{}'".format(database.username))
+        cursor.execute("SELECT 1 FROM pg_catalog.pg_user WHERE usename = '{}'".format(database.username))
         if cursor.rowcount == 0:
             cursor.execute("CREATE USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
         else:
