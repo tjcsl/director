@@ -65,8 +65,9 @@ wss.on("connection", function(ws) {
                 resp.setEncoding("utf8");
                 resp.on("data", function(authinfo) {
                     var auth = JSON.parse(authinfo);
-                    if (auth.error) {
-                        ws.send(JSON.stringify({ action: "ERROR" }));
+                    if (!auth.granted) {
+                        ws.send(JSON.stringify({ action: "ERROR", message: auth.error }));
+                        ws.close();
                     }
                     else {
                         term = pty.spawn(__dirname + "/run.sh", [auth.site_user], {
