@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+
+{% block main %}
+<iframe src="/ws/terminal?uid={{ request.user.id }}&token={{ request.user.access_token }}#{{ site.id }}"></iframe>
+{% endblock %}
