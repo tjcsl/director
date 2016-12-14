@@ -42,12 +42,11 @@ def logout_view(request):
 def node_auth_view(request):
     if request.method == "POST":
         try:
-            body = json.loads(request.body.decode("utf-8"))
-            user = User.objects.get(id=body["uid"])
-            site = Site.objects.get(id=body["sid"])
+            user = User.objects.get(id=int(request.POST.get("uid")))
+            site = Site.objects.get(id=int(request.POST.get("sid")))
             if not user.is_superuser and not site.group.users.filter(id=user.id).exists():
                 return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status=403)
-            if user.access_token != body["access_token"]:
+            if user.access_token != request.POST.get("access_token"):
                 return JsonResponse({"granted": False, "error": "Invalid access token."})
             return JsonResponse({"granted": True, "site_homedir": site.path, "site_user": site.user.username})
         except Exception as e:
