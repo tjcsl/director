@@ -119,13 +119,13 @@ class Database(models.Model):
 
     @property
     def db_name(self):
-        return "site_{}".format(self.site.name)
+        return "site_{}".format(self.site.name).lower()
 
     @property
     def username(self):
         if self.category == "mysql":
             return "site_{}".format(self.site.name)[:16]
-        return "site_{}".format(self.site.name)
+        return "site_{}".format(self.site.name).lower()
 
     def __str__(self):
         return "{}://{}:{}@{}/{}".format("postgres" if self.category == "postgresql" else "mysql", self.username, self.password, "postgres1:5432" if self.category == "postgresql" else "mysql1:3306", self.db_name)
