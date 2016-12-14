@@ -1,4 +1,3 @@
 #!/bin/bash
 
-source /etc/profile
-su -p -s /bin/bash $1
+su - -s /bin/bash $1
