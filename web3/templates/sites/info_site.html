@@ -52,6 +52,10 @@
         {% endif %}
         {% endif %}
 
+        {% if site.category != "vm" %}
+        <a href="{% url 'web_terminal' site.id %}" class="btn btn-ion"><i class="fa fa-terminal"></i> Web Terminal</a>
+        {% endif %}
+
         <a href="{% url 'config_site' site.id %}" class="btn btn-ion"><i class="fa fa-refresh"></i> Rewrite Configuration</a>
         {% if site.category != "vm" %}
         <a href="{% url 'permission_site' site.id %}" class="btn btn-ion"><i class="fa fa-wrench"></i> Reset Permissions</a>
