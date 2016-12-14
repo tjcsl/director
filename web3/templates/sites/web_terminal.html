@@ -7,7 +7,9 @@
         overflow-y: hidden;
     }
     .main {
-        padding: 0;
+        padding: 5px;
+        background-color: black;
+        padding-right: 0;
     }
     iframe {
         border: none;
@@ -16,6 +18,10 @@
         height: calc(100vh - 40px);
     }
     </style>
+{% endblock %}
+
+{% block navbar %}
+<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
 {% endblock %}
 
 {% block main %}
