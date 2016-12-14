@@ -42,6 +42,9 @@ function main() {
             }
             else {
                 var data = JSON.parse(e.data);
+                if (data.error) {
+                    console.error(data.error);
+                }
                 if (data.id) {
                     termid = data.id;
                     term.open(document.getElementById("console"));
