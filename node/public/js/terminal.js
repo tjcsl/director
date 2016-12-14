@@ -30,7 +30,7 @@ function main() {
             if (!termid) {
                 return;
             }
-            $.post("terminal/" + encodeURIComponent(termid) + "/size?cols=" + size.cols + "&rows=" + size.rows);
+            $.post("/ws/terminal/" + encodeURIComponent(termid) + "/size?cols=" + size.cols + "&rows=" + size.rows);
         });
         term.on("title", function(title) {
             document.title = title;
