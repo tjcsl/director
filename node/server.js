@@ -86,7 +86,8 @@ wss.on("connection", function(ws) {
                             name: "xterm-color",
                             cols: 80,
                             rows: 30,
-                            cwd: auth.site_homedir
+                            cwd: auth.site_homedir,
+                            env: { HOME: auth.site_homedir }
                         });
                         term.on("close", function(e) {
                             ws.close();
