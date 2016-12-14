@@ -74,7 +74,9 @@ function main() {
             restart = true;
         };
         $(window).resize(function(e) {
-            term.fit();
+            if (started) {
+                term.fit();
+            }
         });
     };
 }
