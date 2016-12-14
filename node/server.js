@@ -69,6 +69,7 @@ wss.on("connection", function(ws) {
                     }
                     catch (err) {
                         console.error(err);
+                        console.log(authinfo);
                         ws.send(JSON.stringify({ action: "ERROR", message: "Failed to parse auth server response!" }));
                         ws.close();
                         return;
