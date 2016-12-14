@@ -13,16 +13,16 @@ var uuid = require("uuid/v4");
 var terminals = {};
 
 app.set("port", (process.env.PORT || 8301));
-app.use(express.static(__dirname + "/public"));
+app.use("/ws", express.static(__dirname + "/public"));
 
 var server = require("http").createServer(app);
 server.listen(app.get("port"));
 
-app.get("/terminal", function(req, res) {
+app.get("/ws/terminal", function(req, res) {
     res.sendFile(__dirname + "/public/terminal.html");
 });
 
-app.post("/terminal/:id/size", function(req, res) {
+app.post("/ws/terminal/:id/size", function(req, res) {
     var id = req.params.id;
     if (terminals[id]) {
         var rows = parseInt(req.query.rows);
