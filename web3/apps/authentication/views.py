@@ -3,6 +3,7 @@ from django.contrib.auth import logout
 from django.db.models import Count
 from django.http import JsonResponse
 from django.utils.crypto import get_random_string
+from django.views.decorators.csrf import csrf_exempt
 
 from ..sites.models import Site
 from ..users.models import User
@@ -37,6 +38,7 @@ def logout_view(request):
     return redirect("index")
 
 
+@csrf_exempt
 def node_auth_view(request):
     if request.method == "POST":
         try:
