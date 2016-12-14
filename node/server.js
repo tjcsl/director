@@ -23,11 +23,16 @@ app.get("/ws/terminal", function(req, res) {
 });
 
 app.post("/ws/terminal/:id/size", function(req, res) {
+    res.setHeader("Content-Type", "application/json");
     var id = req.params.id;
     if (terminals[id]) {
         var rows = parseInt(req.query.rows);
         var cols = parseInt(req.query.cols);
         terminals[id].resize(cols, rows);
+        res.send(JSON.stringify({ success: true }));
+    }
+    else {
+        res.send(JSON.stringify({ success: false }));
     }
     res.end();
 });
