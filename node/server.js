@@ -41,8 +41,6 @@ var wss = new WebSocketServer({ server: server });
 wss.on("connection", function(ws) {
     var id = uuid();
     var started = false;
-    var term;
-    terminals[id] = term;
     ws.on("close", function() {
         if (term) {
             term.destroy();
@@ -87,7 +85,7 @@ wss.on("connection", function(ws) {
                         ws.close();
                     }
                     else {
-                        term = pty.spawn(__dirname + "/run.sh", [auth.site_user], {
+                        var term = pty.spawn(__dirname + "/run.sh", [auth.site_user], {
                             name: "xterm-color",
                             cols: 80,
                             rows: 30,
@@ -101,6 +99,7 @@ wss.on("connection", function(ws) {
                         term.on("data", function(data) {
                             ws.send(data);
                         });
+                        terminals[id] = term;
                         started = true;
                         ws.send(JSON.stringify({ id: id, action: "START" }));
                     }
