@@ -24,6 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
     github_token = models.CharField(max_length=40, blank=True)
+    access_token = models.CharField(max_length=64, blank=True)
     USERNAME_FIELD = 'username'
 
     objects = UserManager()
@@ -58,7 +59,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return r.json()
 
     def github_api_request(self, url, method="GET", data={}):
-        resp = requests.request(url="https://api.github.com{}".format(url), headers={"Authorization": "token {}".format(self.github_token)}, method=method, json=data)
+        resp = requests.request(url="https://api.github.com{}".format(url),
+                                headers={"Authorization": "token {}".format(self.github_token)}, method=method, json=data)
         if resp.status_code == 204:
             return True
         if resp.status_code == 404:

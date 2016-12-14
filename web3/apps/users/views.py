@@ -70,7 +70,7 @@ def manage_view(request):
 
 @login_required
 def github_link_view(request):
-    return redirect("https://github.com/login/oauth/authorize?client_id={}&scope={}".format(settings.GITHUB_CLIENT_ID, "repo"));
+    return redirect("https://github.com/login/oauth/authorize?client_id={}&scope={}".format(settings.GITHUB_CLIENT_ID, "repo"))
 
 
 @csrf_exempt
