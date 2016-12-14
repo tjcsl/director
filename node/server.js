@@ -1,9 +1,12 @@
+#!/usr/bin/node
+
 var pty = require("pty.js");
 var WebSocketServer = require('ws').Server;
 var express = require("express");
 var app = express();
 var http = require("http");
 var https = require("https");
+var querystring = require("querystring");
 
 var uuid = require("uuid/v4");
 
@@ -44,7 +47,21 @@ wss.on("connection", function(ws) {
     ws.on("message", function(data, flags) {
         if (!started) {
             data = JSON.parse(data);
-            https.post({ method: "POST", hostname: "director.tjhsst.edu", port: 443, path: "/nodeauth" }, { json: { uid: data.uid, sid: data.site, access_token: data.token } }, function(resp) {
+            var postData = querystring.stringify({
+                uid: data.uid,
+                sid: data.site,
+                access_token: data.token
+            });
+            var req = https.request({
+                method: "POST",
+                hostname: "director.tjhsst.edu",
+                port: 443,
+                path: "/wsauth",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Length": postData.length
+                }
+            }, function(resp) {
                 resp.setEncoding("utf8");
                 resp.on("data", function(authinfo) {
                     var auth = JSON.parse(authinfo);
@@ -70,6 +87,8 @@ wss.on("connection", function(ws) {
                     }
                 });
             });
+            req.write(postData);
+            req.end();
         }
         else {
             term.write(data);
