@@ -64,7 +64,15 @@ wss.on("connection", function(ws) {
             }, function(resp) {
                 resp.setEncoding("utf8");
                 resp.on("data", function(authinfo) {
-                    var auth = JSON.parse(authinfo);
+                    try {
+                        var auth = JSON.parse(authinfo);
+                    }
+                    catch (err) {
+                        console.error(err);
+                        ws.send(JSON.stringify({ action: "ERROR", message: "Failed to parse auth server response!" }));
+                        ws.close();
+                        return;
+                    }
                     if (!auth.granted) {
                         ws.send(JSON.stringify({ action: "ERROR", message: auth.error }));
                         ws.close();
