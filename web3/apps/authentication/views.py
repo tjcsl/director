@@ -44,11 +44,11 @@ def node_auth_view(request):
             user = User.objects.get(id=body["uid"])
             site = Site.objects.get(id=body["sid"])
             if not user.is_superuser and not site.group.users.filter(id=user.id).exists():
-                return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status_code=403)
+                return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status=403)
             if user.access_token != body["access_token"]:
                 return JsonResponse({"granted": False, "error": "Invalid access token."})
             return JsonResponse({"granted": True, "site_homedir": site.path, "site_user": site.user.username})
         except Exception as e:
-            return JsonResponse({"granted": False, "error": "Malformed request.", "exception": str(e)}, status_code=400)
+            return JsonResponse({"granted": False, "error": "Malformed request.", "exception": str(e)}, status=400)
     else:
-        return JsonResponse({"error": "Method not allowed."}, status_code=405)
+        return JsonResponse({"error": "Method not allowed."}, status=405)
