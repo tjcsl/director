@@ -1,3 +1,3 @@
 #!/bin/bash
 
-su - -s /bin/bash $1
+su - -p -s /bin/bash $1
