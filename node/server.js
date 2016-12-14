@@ -92,8 +92,7 @@ wss.on("connection", function(ws) {
                             rows: 30,
                             cwd: auth.site_homedir,
                             env: {
-                                HOME: auth.site_homedir,
-                                PS1: "${debian_chroot:+($debian_chroot)}\u@\h:\w\$ "
+                                HOME: auth.site_homedir
                             }
                         });
                         term.on("close", function(e) {
