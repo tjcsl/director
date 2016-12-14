@@ -16,7 +16,7 @@ function main() {
     restart = false;
     var started = false;
     var host = location.origin.replace(/^http/, 'ws');
-    var ws = new WebSocket(host);
+    var ws = new WebSocket(host + "ws/");
     var termid;
     ws.onopen = function(e) {
         $("#console").empty();
