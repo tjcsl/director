@@ -50,13 +50,13 @@ def node_auth_view(request):
             if user.access_token != request.POST.get("access_token"):
                 return JsonResponse({"granted": False, "error": "Invalid access token."})
 
-            if siteid is not None:
+            if siteid is not None and siteid != "":
                 site = Site.objects.get(id=int(siteid))
                 if not user.is_superuser and not site.group.users.filter(id=user.id).exists():
                     return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status=403)
                 return JsonResponse({"granted": True, "site_homedir": site.path, "site_user": site.user.username})
 
-            if vmid is not None:
+            if vmid is not None and siteid != "":
                 vm = VirtualMachine.objects.get(id=int(vmid))
                 if not user.is_superuser and not vm.users.filter(id=user.id).exists():
                     return JsonResponse({"granted": False, "error": "User does not have permission to access this virtual machine."}, status=403)
