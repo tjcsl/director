@@ -43,7 +43,7 @@ function main() {
             else {
                 var data = JSON.parse(e.data);
                 if (data.error) {
-                    $("#console").append("<p style='color:red'>Error: " + $("<div />").text(data.error).html() + "</p>");
+                    $("#console").append("<div style='color:red'>Error: " + $("<div />").text(data.error).html() + "</div>");
                 }
                 if (data.id) {
                     termid = data.id;
@@ -73,7 +73,7 @@ function main() {
             });
             started = false;
             document.title = 'Terminal';
-            $("#console .terminal .xterm-rows").append('<div>&nbsp;</div><div><b style="color:red">Connection lost, press ENTER to reconnect</b></div>');
+            $("#console .terminal .xterm-rows").append('<div>&nbsp;</div><div style="color:red"><b>Connection Lost</b>, press ENTER to reconnect</b></div>');
             restart = true;
         };
         $(window).resize(function(e) {
