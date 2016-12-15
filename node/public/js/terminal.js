@@ -57,7 +57,10 @@ function main() {
         };
         ws.onclose = function(e) {
             var cache = $("#console").html();
-            term.destroy();
+            try {
+                term.destroy();
+            }
+            catch (ignore) {  }
             $(window).unbind("resize");
             $("#console").html(cache);
             $($("#console .terminal div").get().reverse()).each(function(i, v) {
