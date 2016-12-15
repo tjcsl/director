@@ -15,6 +15,7 @@ var restart = false;
 function main() {
     restart = false;
     var started = false;
+    var last_error = false;
     var host = location.origin.replace(/^http/, 'ws');
     var ws = new WebSocket(host + "/ws/");
     var termid;
@@ -43,6 +44,7 @@ function main() {
             else {
                 var data = JSON.parse(e.data);
                 if (data.error) {
+                    last_error = data.error;
                     console.error(data.error);
                 }
                 if (data.id) {
@@ -73,7 +75,10 @@ function main() {
             });
             started = false;
             document.title = 'Terminal';
-            $("#console .terminal .xterm-rows").append('<div>&nbsp;</div><b style="color:red">Connection lost, press ENTER to reconnect</b></div>');
+            $("#console .terminal .xterm-rows").append('<div>&nbsp;</div><div><b style="color:red">Connection lost, press ENTER to reconnect</b></div>');
+            if (last_error) {
+                $("#console .terminal .xterm-rows").append('<div><b style="color:red">Error: ' + $("<div />").text(last_error).html() + '</b></div>');
+            }
             restart = true;
         };
         $(window).resize(function(e) {
