@@ -127,6 +127,31 @@ def container_execute_shell_command(name, command):
     return 0, 0
 
 
+@rpc.method("container.get_config")
+def container_get_config(name, key):
+    container = lxc.Container(name)
+    if not container.defined:
+        return 1, ""
+    return 0, container.get_config_item(key)
+
+
+@rpc.method("container.set_config")
+def container_set_config(name, key, value):
+    container = lxc.Container(name)
+    if not container.defined:
+        return 1
+    return 0 if container.set_config_item(key, value) else 2
+
+
+@rpc.method("container.clear_config")
+def container_clear_config(name, key):
+    container = lxc.Container(name)
+    if not container.defined:
+        return 1
+    container.clear_config_item(key)
+    return 0
+
+
 @rpc.method("container.dump_config")
 def container_dump_config(name):
     container = lxc.Container(name)
