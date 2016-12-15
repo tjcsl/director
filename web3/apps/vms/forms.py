@@ -37,7 +37,7 @@ class VirtualMachineForm(forms.ModelForm):
                 if ret[0] != 2:
                     instance.uuid = uuid.UUID(ret[1])
                     instance.save()
-                ret = call_api("container.set_config", key="lxc.cgroup.memory.limit_in_bytes", value="4G")
+                ret = call_api("container.set_config", name=str(instance.uuid), key="lxc.cgroup.memory.limit_in_bytes", value="4G")
                 if ret != 0:
                     client.captureMessage("Failed to set VM memory limit: {}".format(ret))
 
