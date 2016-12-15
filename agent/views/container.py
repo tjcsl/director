@@ -31,6 +31,11 @@ def create_container(name, template="debian"):
     return 0, uuid
 
 
+@rpc.method("container.templates")
+def container_templates():
+    return [x for x in next(os.walk("/var/conductor"))[1] if not x.startswith(".")]
+
+
 @rpc.method("container.state")
 def container_state(name):
     container = lxc.Container(name)
