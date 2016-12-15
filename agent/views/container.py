@@ -22,10 +22,6 @@ def replace_in_file(fn, find, replace):
 @rpc.method("container.create")
 def create_container(name, template="debian"):
     script_path = "/var/conductor/{}/create".format(template)
-    container = lxc.Container(name)
-    if container.defined:
-        return 2, ""
-
     proc = subprocess.Popen([script_path, name], stdout=subprocess.PIPE)
     exit_code = proc.wait()
     uuid = proc.stdout.read().strip().decode()
