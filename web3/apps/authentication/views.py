@@ -10,6 +10,9 @@ from ..vms.models import VirtualMachine
 from ..users.models import User
 
 
+from raven.contrib.django.raven_compat.models import client
+
+
 import json
 
 
@@ -56,7 +59,7 @@ def node_auth_view(request):
                     return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status=403)
                 return JsonResponse({"granted": True, "site_homedir": site.path, "site_user": site.user.username})
 
-            if vmid is not None and siteid != "":
+            if vmid is not None and vmid != "":
                 vm = VirtualMachine.objects.get(id=int(vmid))
                 if not user.is_superuser and not vm.users.filter(id=user.id).exists():
                     return JsonResponse({"granted": False, "error": "User does not have permission to access this virtual machine."}, status=403)
@@ -65,6 +68,7 @@ def node_auth_view(request):
                 return JsonResponse({"granted": True, "ip": vm.ip_address, "password": vm.password})
 
         except Exception as e:
+            client.captureException()
             return JsonResponse({"granted": False, "error": "Malformed request.", "exception": str(e)}, status=400)
     else:
         return JsonResponse({"error": "Method not allowed."}, status=405)
