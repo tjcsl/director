@@ -75,7 +75,7 @@ wss.on("connection", function(ws) {
                     catch (err) {
                         console.error(err);
                         console.log(authinfo);
-                        ws.send(JSON.stringify({ action: "ERROR", message: "Failed to parse auth server response!" }));
+                        ws.send(JSON.stringify({ error: "Failed to parse auth server response!" }));
                         ws.close();
                         return;
                     }
@@ -83,7 +83,7 @@ wss.on("connection", function(ws) {
                         if (auth.exception) {
                             console.error(auth.exception);
                         }
-                        ws.send(JSON.stringify({ action: "ERROR", message: auth.error }));
+                        ws.send(JSON.stringify({ error: auth.error }));
                         ws.close();
                     }
                     else {
