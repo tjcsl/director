@@ -24,7 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
     github_token = models.CharField(max_length=40, blank=True)
-    access_token = models.CharField(max_length=64, blank=True)
+    access_token = models.CharField(max_length=64, blank=True, null=True)
     USERNAME_FIELD = 'username'
 
     objects = UserManager()
