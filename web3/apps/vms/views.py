@@ -162,6 +162,14 @@ def terminal_view(request, vm_id):
     request.user.access_token = get_random_string(64)
     request.user.save()
 
+    if not vm.password:
+        ret = call_api("container.reset_root_password", name=str(vm.uuid))
+        if ret[0] == 0:
+            vm.password = ret[1]
+            vm.save()
+        else:
+            messages.error(request, "Failed to set VM password!")
+
     context = {
         "vm": vm
     }
