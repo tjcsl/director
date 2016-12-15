@@ -143,6 +143,14 @@ def container_set_config(name, key, value):
     return 0 if container.set_config_item(key, value) else 2
 
 
+@rpc.method("container.set_cgroup")
+def container_set_config(name, key, value):
+    container = lxc.Container(name)
+    if not container.defined:
+        return 1
+    return 0 if container.set_cgroup_item(key, value) else 2
+
+
 @rpc.method("container.clear_config")
 def container_clear_config(name, key):
     container = lxc.Container(name)
