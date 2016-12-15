@@ -24,11 +24,12 @@ class VirtualMachineForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
+        hostname = slugify(instance.name).replace("_", "-")
 
         if commit:
             instance.save()
             self.save_m2m()
-            ret = call_api("container.create", name=str(instance.uuid))
+            ret = call_api("container.create", name=hostname)
             if ret is None or ret[0] == 1:
                 instance.delete()
                 return None
@@ -36,8 +37,5 @@ class VirtualMachineForm(forms.ModelForm):
                 if ret[0] != 2:
                     instance.uuid = uuid.UUID(ret[1])
                     instance.save()
-                ret = call_api("container.set_hostname", name=str(instance.uuid), new_hostname=slugify(instance.name).replace("_", "-"))
-                if ret != 0:
-                    client.captureMessage("Failed to set VM hostname: {}".format(ret))
 
         return instance
