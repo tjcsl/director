@@ -54,6 +54,7 @@ wss.on("connection", function(ws) {
             var postData = querystring.stringify({
                 uid: data.uid,
                 sid: data.site,
+                vmid: data.vm,
                 access_token: data.token
             });
             var req = https.request({
@@ -86,15 +87,24 @@ wss.on("connection", function(ws) {
                         ws.close();
                     }
                     else {
-                        term = pty.spawn(__dirname + "/run.sh", [auth.site_user], {
-                            name: "xterm-color",
-                            cols: 80,
-                            rows: 30,
-                            cwd: auth.site_homedir,
-                            env: {
-                                HOME: auth.site_homedir
-                            }
-                        });
+                        if (data.site !== null) {
+                            term = pty.spawn(__dirname + "/run.sh", [auth.site_user], {
+                                name: "xterm-color",
+                                cols: 80,
+                                rows: 30,
+                                cwd: auth.site_homedir,
+                                env: {
+                                    HOME: auth.site_homedir
+                                }
+                            });
+                        }
+                        else if (data.vm !== null) {
+                            term = pty.spawn("/bin/echo", [auth.ip, auth.password], {
+                                name: "xterm-color",
+                                cols: 80,
+                                rows: 30
+                            });
+                        }
                         term.on("close", function(e) {
                             ws.close();
                             delete terminals[id];

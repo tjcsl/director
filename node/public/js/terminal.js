@@ -35,7 +35,7 @@ function main() {
         term.on("title", function(title) {
             document.title = title;
         });
-        ws.send(JSON.stringify({ uid: gup("uid"), token: gup("token"), site: window.location.hash.substring(1) }));
+        ws.send(JSON.stringify({ uid: gup("uid"), token: gup("token"), site: gup("site"), vm: gup("vm") }));
         ws.onmessage = function(e) {
             if (started) {
                 term.write(e.data);

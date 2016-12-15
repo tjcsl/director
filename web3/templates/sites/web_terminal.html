@@ -25,5 +25,5 @@
 {% endblock %}
 
 {% block main %}
-<iframe src="/ws/terminal?uid={{ request.user.id }}&token={{ request.user.access_token }}#{{ site.id }}"></iframe>
+<iframe src="/ws/terminal?uid={{ request.user.id }}&token={{ request.user.access_token }}&site={{ site.id }}"></iframe>
 {% endblock %}
