@@ -88,7 +88,7 @@ wss.on("connection", function(ws) {
                     }
                     else {
                         if (data.site !== null) {
-                            term = pty.spawn(__dirname + "/run.sh", [auth.site_user], {
+                            term = pty.spawn(__dirname + "/shell.sh", [auth.site_user], {
                                 name: "xterm-color",
                                 cols: 80,
                                 rows: 30,
@@ -99,7 +99,7 @@ wss.on("connection", function(ws) {
                             });
                         }
                         else if (data.vm !== null) {
-                            term = pty.spawn("/bin/echo", [auth.ip, auth.password], {
+                            term = pty.spawn(__dirname + "/ssh.sh", [auth.ip, auth.password], {
                                 name: "xterm-color",
                                 cols: 80,
                                 rows: 30
