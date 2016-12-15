@@ -9,6 +9,8 @@ from ..sites.models import Site
 from .models import VirtualMachine
 from .helpers import call_api
 
+from raven.contrib.django.raven_compat.models import client
+
 
 class VirtualMachineForm(forms.ModelForm):
     name = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class": "form-control"}))
@@ -34,6 +36,8 @@ class VirtualMachineForm(forms.ModelForm):
                 if ret[0] != 2:
                     instance.uuid = uuid.UUID(ret[1])
                     instance.save()
-                call_api("container.set_hostname", name=str(instance.uuid), new_hostname=slugify(instance.name).replace("_", "-"))
+                ret = call_api("container.set_hostname", name=str(instance.uuid), new_hostname=slugify(instance.name).replace("_", "-"))
+                if ret != 0:
+                    client.captureMessage("Failed to set VM hostname: {}".format(ret))
 
         return instance
