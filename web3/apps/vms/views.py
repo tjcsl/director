@@ -1,3 +1,4 @@
+from django.utils.crypto import get_random_string
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -154,6 +155,13 @@ def edit_view(request, vm_id):
 @superuser_required
 def terminal_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
+
+    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    request.user.access_token = get_random_string(64)
+    request.user.save()
+
     context = {
         "vm": vm
     }

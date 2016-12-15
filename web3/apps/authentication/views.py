@@ -31,7 +31,6 @@ def about_view(request):
 
 
 def login_view(request):
-    request.user.access_token = get_random_string(64)
     return render(request, "login.html", {})
 
 
