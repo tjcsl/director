@@ -115,6 +115,9 @@ def delete_view(request, vm_id):
 
 @superuser_required
 def create_view(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     if request.method == "POST":
         form = VirtualMachineForm(request.POST)
         if form.is_valid():
@@ -132,6 +135,9 @@ def create_view(request):
 @superuser_required
 def edit_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
+    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
     if request.method == "POST":
         form = VirtualMachineForm(request.POST, instance=vm)
         if form.is_valid():
@@ -143,3 +149,12 @@ def edit_view(request, vm_id):
         "form": form
     }
     return render(request, "vms/create_vm.html", context)
+
+
+@superuser_required
+def terminal_view(request, vm_id):
+    vm = get_object_or_404(VirtualMachine, id=vm_id)
+    context = {
+        "vm": vm
+    }
+    return render(request, "vms/web_terminal.html", context)
