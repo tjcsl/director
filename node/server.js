@@ -99,10 +99,13 @@ wss.on("connection", function(ws) {
                             });
                         }
                         else if (data.vm !== null) {
-                            term = pty.spawn(__dirname + "/ssh.sh", [auth.ip, auth.password], {
+                            term = pty.spawn(__dirname + "/ssh.sh", [auth.ip], {
                                 name: "xterm-color",
                                 cols: 80,
-                                rows: 30
+                                rows: 30,
+                                env: {
+                                    SSHPASS: auth.password
+                                }
                             });
                         }
                         term.on("close", function(e) {
