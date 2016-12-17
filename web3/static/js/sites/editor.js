@@ -42,6 +42,14 @@ You can drag files and folders around to move them.");
                     "delete": {name: "Delete", icon: "fa-trash-o"}
                 }
             };
+        },
+        events: {
+            show: function(opt) {
+                this.addClass("active");
+            },
+            hide: function(opt) {
+                this.removeClass("active");
+            }
         }
     });
     $.contextMenu({
@@ -55,6 +63,14 @@ You can drag files and folders around to move them.");
                     "delete": {name: "Delete", icon: "fa-trash-o"}
                 }
             };
+        }
+        events: {
+            show: function(opt) {
+                this.addClass("active");
+            },
+            hide: function(opt) {
+                this.removeClass("active");
+            }
         }
     });
     editor.setTheme("ace/theme/chrome");

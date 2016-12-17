@@ -8,6 +8,9 @@ body {
 #files .folder:hover, #files .file:hover {
     background-color: #ddd;
 }
+#files div.active {
+    background-color: #ccc;
+}
 .main {
     padding: 0;
 }
