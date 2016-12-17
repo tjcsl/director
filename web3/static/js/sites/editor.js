@@ -15,6 +15,14 @@ $(document).ready(function() {
         editor.setSession(tabs[filepath]);
         e.preventDefault();
     });
+    $("#tabs").on("click", ".tab .fa-times", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var t = $(this).parent();
+        delete tabs[t.attr("data-file")];
+        t.remove();
+        $("#tabs .tab:first").click();
+    });
     $("#files").on("click", ".file", function(e) {
         e.preventDefault();
         var t = $(this);
@@ -37,6 +45,7 @@ $(document).ready(function() {
                     tab.addClass("tab active");
                     tab.text(t.attr("data-name"));
                     tab.attr("data-file", filepath);
+                    tab.append(" <i class='fa fa-times'></i>");
                     tabs[filepath] = session;
                     $("#tabs").append(tab);
                 }
@@ -128,11 +137,8 @@ function get_path(t) {
     var loop_depth = depth;
     var loop_path = "/";
     var loop_t = t;
-    while (true) {
+    while (loop_depth >= 1) {
         loop_depth -= 1;
-        if (loop_depth < 0) {
-            break;
-        }
         var new_t = loop_t.prevAll("div.folder[data-depth=" + loop_depth + "]:first");
         loop_path = new_t.attr("data-name") + "/" + loop_path;
         loop_t = new_t;
