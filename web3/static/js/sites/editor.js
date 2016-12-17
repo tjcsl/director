@@ -5,7 +5,7 @@ $(document).ready(function() {
     var modelist = ace.require("ace/ext/modelist");
     var help_session = ace.createEditSession("____    _                        _\n\
 |  _ \  (_)  _ __    ___    ___  | |_    ___    _ __\n\
-| | | | | | | '__|  / _ \  / __| | __|  / _ \  | '__|\n\
+| | | | | | | '__|  / _ \\  / __| | __|  / _ \\  | '__|\n\
 | |_| | | | | |    |  __/ | (__  | |_  | (_) | | |\n\
 |____/  |_| |_|     \___|  \___|  \__|  \___/  |_|\n\
 Use the panel on the right to select a file to edit.\n\
