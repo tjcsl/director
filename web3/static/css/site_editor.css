@@ -46,14 +46,14 @@ body {
 #tabs .tab .fa-times {
     color: #ccc;
 }
-#tabs .tab.active .fa-times {
-    color: #1A237E;
-}
 #tabs .tab .fa-times:hover {
     color: #bbb;
 }
-#tabs .tab.active .fa-times:hover {
+#tabs .tab.active .fa-times {
     color: #303F9F;
+}
+#tabs .tab.active .fa-times:hover {
+    color: #1A237E;
 }
 #tabs .tab .fa-circle {
     color: #4CAF50;
