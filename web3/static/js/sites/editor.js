@@ -1,7 +1,9 @@
+var editor;
+
 $(document).ready(function() {
     var tabs = {};
     var modelist = ace.require("ace/ext/modelist");
-    var editor = ace.edit("editor");
+    editor = ace.edit("editor");
     editor.setOptions({
         "fontSize": "12pt",
         "showPrintMargin": false
