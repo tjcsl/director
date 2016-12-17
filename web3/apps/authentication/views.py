@@ -1,19 +1,19 @@
+import json
+
+from django.utils.crypto import get_random_string
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.db.models import Count
 from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.signals import user_logged_in
 
 from ..sites.models import Site
 from ..vms.models import VirtualMachine
 from ..users.models import User
 
-
 from raven.contrib.django.raven_compat.models import client
-
-
-import json
 
 
 def index_view(request):
@@ -32,6 +32,14 @@ def about_view(request):
 
 def login_view(request):
     return render(request, "login.html", {})
+
+
+def grant_access_token(sender, user, request, **kwargs):
+    request.user.access_token = get_random_string(24)
+    request.user.save()
+
+
+user_logged_in.connect(grant_access_token)
 
 
 def logout_view(request):

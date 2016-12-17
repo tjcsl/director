@@ -1,4 +1,3 @@
-from django.utils.crypto import get_random_string
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -158,9 +157,6 @@ def terminal_view(request, vm_id):
 
     if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists():
         raise PermissionDenied
-
-    request.user.access_token = get_random_string(64)
-    request.user.save()
 
     if not vm.password:
         ret = call_api("container.reset_root_password", name=str(vm.uuid))

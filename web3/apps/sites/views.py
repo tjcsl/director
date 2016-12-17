@@ -6,7 +6,6 @@ import requests
 from multiprocessing import Pool
 from subprocess import Popen, check_output, PIPE
 
-from django.utils.crypto import get_random_string
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.core.exceptions import PermissionDenied
 from django.conf import settings
@@ -552,9 +551,6 @@ def web_terminal_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
-
-    request.user.access_token = get_random_string(64)
-    request.user.save()
 
     context = {
         "site": site
