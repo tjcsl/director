@@ -749,7 +749,7 @@ def editor_delete_view(request, site_id):
 
 @require_http_methods(["POST"])
 @login_required
-def editor_delete_view(request, site_id):
+def editor_create_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
