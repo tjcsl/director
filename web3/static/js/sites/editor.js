@@ -36,10 +36,15 @@ You can drag files and folders around to move them.");
         build: function(trigger, e) {
             return {
                 callback: function(key, options) {
-                    console.log(key); // TODO: implement
+                    if (key == "open") {
+                        trigger.click();
+                    }
                 },
                 items: {
+                    "open": {name: "Open", icon: "fa-pencil"},
                     "download": {name: "Download", icon: "fa-download"},
+                    "sep1": "--------",
+                    "rename": {name: "Rename", icon: "fa-pencil-square-o"},
                     "delete": {name: "Delete", icon: "fa-trash-o"}
                 }
             };
@@ -58,10 +63,18 @@ You can drag files and folders around to move them.");
         build: function(trigger, e) {
             return {
                 callback: function(key, options) {
-                    console.log(key); // TODO: implement
+                    if (key == "toggle") {
+                        trigger.click();
+                    }
                 },
                 items: {
-                    "delete": {name: "Delete", icon: "fa-trash-o"}
+                    "toggle": {name: "Toggle", icon: "fa-expand"},
+                    "sep1": "--------",
+                    "rename": {name: "Rename", icon: "fa-pencil-square-o"},
+                    "delete": {name: "Delete", icon: "fa-trash-o"},
+                    "sep2": "--------",
+                    "new_file": {name: "New File", icon: "fa-file"},
+                    "new_folder": {name: "New Folder", icon: "fa-folder"}
                 }
             };
         },
