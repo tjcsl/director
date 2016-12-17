@@ -3,6 +3,9 @@
 {% block css %}
     {{ block.super }}
     <style>
+    body {
+        overflow: hidden;
+    }
     #files .folder, #files .file {
         cursor: pointer;
         white-space: nowrap;
@@ -22,7 +25,7 @@
     }
     #editor {
         float: right;
-        width: calc(100vw - 265px);
+        width: calc(100vw - 250px);
         height: calc(100vh - 40px);
     }
     </style>
