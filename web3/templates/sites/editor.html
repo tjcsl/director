@@ -3,53 +3,7 @@
 
 {% block css %}
     {{ block.super }}
-    <style>
-    body {
-        overflow: hidden;
-    }
-    #files .folder, #files .file {
-        cursor: pointer;
-        white-space: nowrap;
-    }
-    #files .folder:hover, #files .file:hover {
-        background-color: #ddd;
-    }
-    .main {
-        padding: 0;
-    }
-    #files {
-        float: left;
-        padding: 10px;
-        overflow: auto;
-        width: 250px;
-        height: calc(100vh - 40px);
-    }
-    #editor-wrapper {
-        float: right;
-        width: calc(100vw - 250px);
-        height: calc(100vh - 40px);
-    }
-    #tabs {
-        width: 100%;
-        height: 35px;
-    }
-    #editor {
-        width: 100%;
-        height: calc(100% - 35px);
-    }
-    #tabs .tab {
-        display: inline-block;
-        margin-top: 5px;
-        padding: 4px 10px;
-        margin-right: 5px;
-        background-color: #ddd;
-        border-radius: 5px 5px 0 0;
-    }
-    #tabs .tab.active {
-        color: white;
-        background-color: #3F51B5;
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/site_editor.css' %}" />
 {% endblock %}
 
 {% block js %}
