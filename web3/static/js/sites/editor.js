@@ -11,7 +11,7 @@ $(document).ready(function() {
         var t = $(this);
         $("#tabs .tab").removeClass("active");
         t.addClass("active");
-        var filepath = get_path(t) + t.attr("data-name");
+        var filepath = t.attr("data-file");
         editor.setSession(tabs[filepath]);
         e.preventDefault();
     });
