@@ -646,14 +646,13 @@ def git_setup_view(request, site_id):
     return redirect(reverse("info_site", kwargs={"site_id": site.id}) + "#github-automatic")
 
 
-@require_http_methods(["POST"])
 @login_required
 def editor_path_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    requested_path = request.POST.get("path", "/")
+    requested_path = request.GET.get("path", "/")
     base_path = site.path
     path = os.path.abspath(os.path.join(base_path, requested_path))
 
