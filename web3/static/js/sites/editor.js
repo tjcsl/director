@@ -8,11 +8,12 @@ $(document).ready(function() {
 | | | | | '__/ _ \\/ __| __/ _ \\| '__|\n\
 | |_| | | | |  __/ (__| || (_) | |   \n\
 |____/|_|_|  \\___|\\___|\\__\\___/|_|   \n\
-                                     \n\
+\n\
 =====================================\n\
 \n\
 Use the panel on the right to select a file to edit.\n\
-Press Ctrl + S to save your changes.");
+Press Ctrl + S to save your changes.\n\
+You can right click files and folders for more options.");
 
     editor = ace.edit("editor");
     editor.setSession(help_session);
