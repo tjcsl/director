@@ -9,24 +9,6 @@
 <script type="text/javascript">
 var path_endpoint = "{% url 'editor_path' site.id %}";
 $(document).ready(function() {
-    $.get(path_endpoint, function(data) {
-        if (data.error) {
-            Messenger().error(data.error);
-        }
-        else {
-            $.each(data.files, function(k, v) {
-                var c = (v.type == "f" ? "file" : "folder");
-                var node = $("<div><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
-                node.addClass(c);
-                node.attr("data-name", v.name);
-                node.attr("data-depth", 0);
-                if (v.type == "d") {
-                    node.append(" <i class='exp fa fa-caret-down'>");
-                }
-                $("#files").append(node);
-            });
-        }
-    });
     $("#files").on("click", ".folder", function(e) {
         e.preventDefault();
         var t = $(this);
@@ -85,6 +67,25 @@ $(document).ready(function() {
                     t.find(".exp").removeClass("fa-caret-down").addClass("fa-caret-up");
                 }
             });
+        }
+    });
+    $.get(path_endpoint, function(data) {
+        if (data.error) {
+            Messenger().error(data.error);
+        }
+        else {
+            $.each(data.files, function(k, v) {
+                var c = (v.type == "f" ? "file" : "folder");
+                var node = $("<div><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
+                node.addClass(c);
+                node.attr("data-name", v.name);
+                node.attr("data-depth", 0);
+                if (v.type == "d") {
+                    node.append(" <i class='exp fa fa-caret-down'>");
+                }
+                $("#files").append(node);
+            });
+            $("div.folder[data-name='public']").click();
         }
     });
 });
