@@ -34,7 +34,8 @@
 
 {% block js %}
     {{ block.super }}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-modelist.js"></script>
     <script type="text/javascript" src="{% static 'js/sites/editor.js' %}"></script>
     <script type="text/javascript">
     var path_endpoint = "{% url 'editor_path' site.id %}";
