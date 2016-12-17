@@ -766,6 +766,9 @@ def editor_create_view(request, site_id):
 
     new_path = os.path.join(path, requested_new)
 
+    if os.path.exists(new_path):
+        return JsonResponse({"error": "The file or folder you are trying to create already exists!"})
+
     if is_file:
         open(new_path, "a").close()
     else:

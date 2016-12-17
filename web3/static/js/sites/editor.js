@@ -61,7 +61,7 @@ You can drag files and folders around to move them.");
                     Messenger().error(data.error);
                 }
                 else {
-                    if (filepath == "/") {
+                    if (filepath == "") {
                         $("#files").children().remove();
                         initFiles();
                     }
