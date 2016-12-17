@@ -48,7 +48,7 @@ body {
     color: #ccc;
 }
 #tabs .tab.active .fa-times {
-    color: #303F9F;
+    color: #1A237E;
 }
 #tabs .tab .fa-times:hover {
     color: red;
