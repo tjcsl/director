@@ -35,12 +35,12 @@ $(document).ready(function() {
             var expand = t.find(".exp").hasClass("fa-caret-down");
             var children = t.nextUntil("div.folder[data-depth=" + depth + "]");
             if (expand) {
-                t.removeClass("fa-caret-down").addClass("fa-caret-up");
+                t.find(".exp").removeClass("fa-caret-down").addClass("fa-caret-up");
                 children.find(".exp").removeClass("fa-caret-down").addClass("fa-caret-up");
                 children.show();
             }
             else {
-                t.removeClass("fa-caret-up").addClass("fa-caret-down");
+                t.find(".exp").removeClass("fa-caret-up").addClass("fa-caret-down");
                 children.find(".exp").addClass("fa-caret-down").removeClass("fa-caret-up");
                 children.hide();
             }
