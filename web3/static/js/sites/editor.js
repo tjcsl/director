@@ -29,10 +29,13 @@ $(document).ready(function() {
                 Messenger().error(data.error);
             }
             else {
-                editor.setValue(data.contents, 1);
-                editor.getSession().setUndoManager(new ace.UndoManager());
-                var mode = modelist.getModeForPath(t.attr("data-name")).mode;
-                editor.getSession().setMode(mode);
+                var session = ace.createEditSession(data.contents);
+                session.setMode(modelist.getModeForPath(t.attr("data-name")).mode);
+                editor.setSession(session);
+                var tab = $("<div />");
+                tab.addClass("tab active");
+                tab.text(t.attr("data-name"));
+                $("#tabs").append(tab);
             }
         });
     });
