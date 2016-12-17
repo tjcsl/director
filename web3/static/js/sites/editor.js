@@ -43,8 +43,8 @@ You can drag files and folders around to move them.");
                 }
                 else {
                     if (item.hasClass("folder")) {
-                        var depth = parseInt(t.attr("data-depth"));
-                        var children = t.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                        var depth = parseInt(item.attr("data-depth"));
+                        var children = item.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
                         children.remove();
                     }
                     item.remove();
