@@ -31,6 +31,7 @@ class VirtualMachineForm(forms.ModelForm):
             self.save_m2m()
             ret = call_api("container.create", name=hostname)
             if ret is None or ret[0] == 1:
+                client.captureMessage("Failed to create VM: {}".format(ret))
                 instance.delete()
                 return None
             else:

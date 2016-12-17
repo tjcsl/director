@@ -1,5 +1,4 @@
 import os
-import shutil
 
 from django import forms
 from django.core.validators import RegexValidator
@@ -66,8 +65,8 @@ class SiteForm(forms.ModelForm):
         self.save_m2m = save_m2m
         if commit:
             try:
-                u = instance.user
-                g = instance.group
+                instance.user
+                instance.group
             except (User.DoesNotExist, Group.DoesNotExist):
                 create_site_users(instance)
 

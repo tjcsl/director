@@ -1,10 +1,9 @@
 import os
-import stat
 import datetime
 import requests
 
 from multiprocessing import Pool
-from subprocess import Popen, check_output, PIPE
+from subprocess import Popen, PIPE
 
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.core.exceptions import PermissionDenied
@@ -286,7 +285,7 @@ def sql_database_view(request, site_id):
         return HttpResponse("WARNING: debug environment\n\n", content_type="text/plain")
 
     sql = request.POST.get("sql", "")
-    version = request.POST.get("version", False) != False
+    version = request.POST.get("version", False) is not False
 
     if sql.startswith("\\!"):
         return HttpResponse("feature disabled\n\n", content_type="text/plain")
@@ -637,7 +636,7 @@ def git_setup_view(request, site_id):
                             else:
                                 messages.error(request, "Failed to add new deploy key!")
                         else:
-                            if repo_info["permissions"]["admin"] == False:
+                            if not repo_info["permissions"]["admin"]:
                                 messages.error(request, "You do not have permission to add deploy keys. Ask the owner of the repository to set this integration up for you.")
                             else:
                                 messages.error(request, "Failed to retrieve deploy keys!")

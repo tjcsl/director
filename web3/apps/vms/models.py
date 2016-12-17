@@ -18,7 +18,6 @@ class VirtualMachine(models.Model):
     password = models.TextField(blank=True)
     site = models.OneToOneField(Site, related_name="virtual_machine", blank=True, null=True)
 
-
     @property
     def ips(self):
         key = "vm_ip_{}".format(self.id)
@@ -29,7 +28,6 @@ class VirtualMachine(models.Model):
             vm_ips = call_api("container.ips", name=str(self.uuid))[1]
             cache.set(key, vm_ips)
         return vm_ips
-
 
     @property
     def ip_address(self):

@@ -31,7 +31,7 @@ class UserForm(forms.ModelForm):
             return data
 
         try:
-            uid = get_uid(data)
+            get_uid(data)
         except IndexError:
             raise forms.ValidationError("Username is not a valid TJ username!")
 

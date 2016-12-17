@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import os
 
 from django.conf import settings
-from django.core import validators
 from django.db import models
 
 from ..users.models import User, Group
@@ -88,11 +87,7 @@ class Site(models.Model):
 
     @property
     def has_vm(self):
-        try:
-            vm = self.virtual_machine
-            return True
-        except Site.virtual_machine.RelatedObjectDoesNotExist:
-            return False
+        return hasattr(self, "virtual_machine")
 
     def __str__(self):
         return self.name

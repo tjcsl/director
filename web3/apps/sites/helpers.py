@@ -48,9 +48,7 @@ def make_site_dirs(site):
         if not os.path.exists(path):
             os.makedirs(path)
         os.chown(path, site.user.id, site.group.id)
-        os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR
-                 | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP
-                 | stat.S_ISGID)
+        os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISGID)
     Popen("/usr/bin/setfacl -m u:www-data:rx {}".format(site.path).split())
     Popen("/usr/bin/setfacl -m u:www-data:rx {}public".format(site.path).split())
 
