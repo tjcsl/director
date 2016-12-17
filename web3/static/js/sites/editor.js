@@ -265,16 +265,13 @@ You can drag files and folders around to move them.");
 function get_path(t) {
     var depth = parseInt(t.attr("data-depth"));
     var loop_depth = depth;
-    var loop_path = "/";
+    var loop_path = "";
     var loop_t = t;
     while (loop_depth >= 1) {
         loop_depth -= 1;
         var new_t = loop_t.prevAll("div.folder[data-depth=" + loop_depth + "]:first");
         loop_path = new_t.attr("data-name") + "/" + loop_path;
         loop_t = new_t;
-    }
-    if (loop_path == "/") {
-        loop_path = "";
     }
     return loop_path;
 }
