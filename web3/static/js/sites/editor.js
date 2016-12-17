@@ -15,6 +15,12 @@ $(document).ready(function() {
         }
     });
     editor.setTheme("ace/theme/chrome");
+    $(window).keypress(function(event) {
+        if ((event.which == 115 && event.ctrlKey) || event.which == 19) {
+            editor.session.getUndoManager().markClean();
+            event.preventDefault();
+        }
+    });
     $("#tabs").on("click", ".tab", function(e) {
         var t = $(this);
         $("#tabs .tab").removeClass("active");
