@@ -30,6 +30,20 @@ You can drag files and folders around to move them.");
     editor.on("input", function() {
         checkTabClean();
     });
+    $.contextMenu({
+        "selector": "#files .file",
+        build: function(trigger, e) {
+            return {
+                callback: function(key, options) {
+                    console.log(key);
+                },
+                items: {
+                    "download": {name: "Download", icon: "fa-download"},
+                    "delete": {name: "Delete", icon: "fa-trashcan-o"}
+                }
+            };
+        }
+    });
     editor.setTheme("ace/theme/chrome");
     $(document).keydown(function(e) {
         if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
