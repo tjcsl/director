@@ -40,10 +40,14 @@
     #tabs .tab {
         display: inline-block;
         margin-top: 5px;
-        padding: 5px;
+        padding: 5px 10px;
         margin-right: 5px;
         background-color: #ddd;
-        display: inline-block;
+        border-radius: 5px 5px 0 0;
+    }
+    #tabs .tab.active {
+        color: white;
+        background-color: #3F51B5;
     }
     </style>
 {% endblock %}
