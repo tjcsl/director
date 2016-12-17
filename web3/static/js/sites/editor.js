@@ -8,16 +8,20 @@ $(document).ready(function() {
         "fontSize": "12pt",
         "showPrintMargin": false
     });
-    editor.on("input", function() {
+    function checkTabClean() {
         var tab = $("#tabs .tab.active");
         if (tab.length) {
             tab.toggleClass("unsaved", !editor.session.getUndoManager().isClean());
         }
+    }
+    editor.on("input", function() {
+        checkTabClean();
     });
     editor.setTheme("ace/theme/chrome");
     $(document).keydown(function(e) {
         if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
             editor.session.getUndoManager().markClean();
+            checkTabClean();
             e.preventDefault();
             e.stopPropagation();
         }
