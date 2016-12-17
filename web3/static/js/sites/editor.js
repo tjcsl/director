@@ -32,7 +32,10 @@ You can drag files and folders around to move them.");
         checkTabClean();
     });
     function triggerDelete(item) {
-        var filepath = get_path(item) + item.attr("data-name");
+        var filepath = get_path(item);
+        if (item.hasClass("file")) {
+            filepath += item.attr("data-name");
+        }
         if (confirm("Are you sure you want to delete:\n" + filepath)) {
             $.post(delete_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
                 if (data.error) {
@@ -49,6 +52,28 @@ You can drag files and folders around to move them.");
             });
         }
     }
+    function triggerCreate(item, type) {
+        var filepath = get_path(item);
+        var name = prompt("Enter a name for your new " + (type ? "file" : "directory") + ".");
+        if (name) {
+            $.post(create_endpoint, { name: name, path: filepath, type: (type ? "f" : "d") }, function(data) {
+                if (data.error) {
+                    Messenger().error(data.error);
+                }
+                else {
+                    var folder = item;
+                    if (!item.hasClass("folder")) {
+                        folder = item.prevAll("div.folder[data-depth=" + (parseInt(item.attr("data-depth")) - 1) + "]:first");
+                    }
+                    var depth = parseInt(folder.attr("data-depth"));
+                    var children = folder.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                    children.remove();
+                    folder.removeClass("loaded");
+                    folder.click();
+                }
+            });
+        }
+    }
     $.contextMenu({
         "selector": "#files .file",
         build: function(trigger, e) {
@@ -60,6 +85,12 @@ You can drag files and folders around to move them.");
                     if (key == "delete") {
                         triggerDelete(trigger);
                     }
+                    if (key == "new_file") {
+                        triggerCreate(trigger, true);
+                    }
+                    if (key == "new_folder") {
+                        triggerCreate(trigger, false);
+                    }
                 },
                 items: {
                     "open": {name: "Open", icon: "fa-pencil"},
@@ -67,6 +98,9 @@ You can drag files and folders around to move them.");
                     "sep1": "--------",
                     "rename": {name: "Rename", icon: "fa-pencil-square-o"},
                     "delete": {name: "Delete", icon: "fa-trash-o"}
+                    "sep2": "--------",
+                    "new_file": {name: "New File", icon: "fa-file"},
+                    "new_folder": {name: "New Folder", icon: "fa-folder"}
                 }
             };
         },
@@ -89,6 +123,12 @@ You can drag files and folders around to move them.");
                     }
                     if (key == "delete") {
                         triggerDelete(trigger);
+                    }
+                    if (key == "new_file") {
+                        triggerCreate(trigger, true);
+                    }
+                    if (key == "new_folder") {
+                        triggerCreate(trigger, false);
                     }
                 },
                 items: {
@@ -214,7 +254,7 @@ You can drag files and folders around to move them.");
         else {
             var depth = parseInt(t.attr("data-depth"));
             t.addClass("loaded");
-            $.get(path_endpoint + "?path=" + encodeURIComponent(get_path(t) + t.attr("data-name")), function(data) {
+            $.get(path_endpoint + "?path=" + encodeURIComponent(get_path(t)), function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
                 }
@@ -265,6 +305,9 @@ function get_path(t) {
         var new_t = loop_t.prevAll("div.folder[data-depth=" + loop_depth + "]:first");
         loop_path = new_t.attr("data-name") + "/" + loop_path;
         loop_t = new_t;
+    }
+    if (t.hasClass("folder")) {
+        loop_path += t.attr("data-name");
     }
     return loop_path;
 }

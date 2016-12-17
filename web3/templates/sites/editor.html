@@ -18,6 +18,7 @@
     var load_endpoint = "{% url 'editor_load' site.id %}";
     var save_endpoint = "{% url 'editor_save' site.id %}";
     var delete_endpoint = "{% url 'editor_delete' site.id %}";
+    var create_endpoint = "{% url 'editor_create' site.id %}";
     var csrftoken = "{{ csrf_token }}";
     function csrfSafeMethod(method) {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));

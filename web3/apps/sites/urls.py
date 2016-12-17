@@ -17,6 +17,7 @@ urlpatterns = [
     url("^(?P<site_id>\d+)/files/load$", views.editor_load_view, name="editor_load"),
     url("^(?P<site_id>\d+)/files/save$", views.editor_save_view, name="editor_save"),
     url("^(?P<site_id>\d+)/files/delete$", views.editor_delete_view, name="editor_delete"),
+    url("^(?P<site_id>\d+)/files/create$", views.editor_create_view, name="editor_create"),
 
     # Site Databases
     url("^(?P<site_id>\d+)/database/create$", views.create_database_view, name="create_database"),

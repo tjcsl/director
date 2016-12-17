@@ -745,3 +745,30 @@ def editor_delete_view(request, site_id):
         shutil.rmtree(path)
 
     return JsonResponse({"success": True})
+
+
+@require_http_methods(["POST"])
+@login_required
+def editor_delete_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    is_file = request.POST.get("type", "f") == "f"
+
+    requested_path = request.POST.get("path", "")
+    requested_new = os.path.basename(request.POST.get("name", ""))
+    base_path = site.path[:-1]
+    path = os.path.abspath(os.path.join(base_path, requested_path))
+
+    if not path.startswith(base_path) or not os.path.isdir(path):
+        return JsonResponse({"error": "Invalid or nonexistent folder!", "path": path})
+
+    new_path = os.path.join(path, requested_new)
+
+    if is_file:
+        open(new_path, "a").close()
+    else:
+        os.mkdir(new_path)
+
+    return JsonResponse({"success": True})
