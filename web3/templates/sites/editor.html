@@ -12,7 +12,8 @@ $(document).ready(function() {
     $.get(path_endpoint, function(data) {
         $.each(data.files, function(k, v) {
             var c = (v.type == "f" ? "file" : "folder");
-            var node = $("<div><i class='" + c + " fa fa-fw fa-" + c + "-o'> " + $("<div />").text(v.name).html() + "</div>");
+            var node = $("<div><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
+            node.addClass(c);
             node.attr("data-name", v.name);
             node.attr("data-depth", 0);
             $("#files").append(node);
@@ -24,7 +25,8 @@ $(document).ready(function() {
             var depth = parseInt(t.attr("data-depth")) + 1;
             $.each(data.files, function(k, v) {
                 var c = (v.type == "f" ? "file" : "folder");
-                var node = $("<div style='margin-left:" + depth*15 + "px'><i class='" + c + " fa fa-fw fa-" + c + "-o'> " + $("<div />").text(v.name).html() + "</div>");
+                var node = $("<div style='margin-left:" + depth*15 + "px'><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
+                node.addClass(c);
                 node.attr("data-name", v.name);
                 node.attr("data-depth", depth);
                 t.after(node);

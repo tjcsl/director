@@ -675,7 +675,7 @@ def editor_path_view(request, site_id):
     filesystem = []
 
     for f in os.listdir(path):
-        if os.path.isdir(f):
+        if os.path.isdir(os.path.join(path, f)):
             filesystem.append({"type": "d", "name": f})
         else:
             filesystem.append({"type": "f", "name": f})
