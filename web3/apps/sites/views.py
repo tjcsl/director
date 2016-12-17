@@ -704,3 +704,22 @@ def editor_load_view(request, site_id):
 
     return JsonResponse({"contents": contents})
 
+
+@login_required
+def editor_load_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    requested_path = request.GET.get("name", "")
+    base_path = site.path[:-1]
+    path = os.path.abspath(os.path.join(base_path, requested_path))
+
+    if not path.startswith(base_path) or not os.path.isfile(path):
+        return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
+
+    with open(path, "w") as f:
+        contents = f.write(request.POST.get("contents"))
+
+    return JsonResponse({"success": True})
+
