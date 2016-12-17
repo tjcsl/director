@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    var tabs = {};
     var modelist = ace.require("ace/ext/modelist");
     var editor = ace.edit("editor");
     editor.setOptions({
@@ -7,13 +8,14 @@ $(document).ready(function() {
     });
     editor.setTheme("ace/theme/chrome");
     $("#tabs").on("click", ".tab", function(e) {
+        var t = $(this);
         $("#tabs .tab").removeClass("active");
-        $(this).addClass("active");
+        t.addClass("active");
+        var filepath = getPath(t) + t.attr("data-name");
+        editor.setSession(tabs[filepath]);
         e.preventDefault();
     });
-    $("#files").on("click", ".file", function(e) {
-        e.preventDefault();
-        var t = $(this);
+    function getPath(t) {
         var depth = parseInt(t.attr("data-depth"));
         var loop_depth = depth;
         var loop_path = "/";
@@ -30,7 +32,12 @@ $(document).ready(function() {
         if (loop_path == "/") {
             loop_path = "";
         }
-        var filepath = loop_path + t.attr("data-name");
+        return loop_path;
+    }
+    $("#files").on("click", ".file", function(e) {
+        e.preventDefault();
+        var t = $(this);
+        var filepath = get_path(t) + t.attr("data-name");
         var existing_tab = $("#tabs .tab[data-file='" + filepath.replace("'", "\\'") + "']");
         if (existing_tab.length) {
             existing_tab.click();
@@ -49,6 +56,7 @@ $(document).ready(function() {
                     tab.addClass("tab active");
                     tab.text(t.attr("data-name"));
                     tab.attr("data-file", filepath);
+                    tabs[filepath] = session;
                     $("#tabs").append(tab);
                 }
             });
