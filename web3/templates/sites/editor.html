@@ -35,6 +35,7 @@ $(document).ready(function() {
         "fontSize": "12pt",
         "showPrintMargin": false
     });
+    editor.setTheme("ace/theme/chrome");
     $("#files").on("click", ".folder", function(e) {
         e.preventDefault();
         var t = $(this);
