@@ -2,13 +2,39 @@
 
 {% block css %}
     {{ block.super }}
+    <style>
+    #files .folder, .file {
+        cursor: pointer;
+    }
+    .main {
+        padding: 0;
+    }
+    #files {
+        float: left;
+        padding: 10px;
+        overflow: auto;
+        width: 250px;
+        height: calc(100vh - 40px);
+    }
+    #editor {
+        float: left;
+        width: calc(100vw - 250px);
+        height: calc(100vh - 40px);
+    }
+    </style>
 {% endblock %}
 
 {% block js %}
     {{ block.super }}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.5/ace.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 var path_endpoint = "{% url 'editor_path' site.id %}";
 $(document).ready(function() {
+    var editor = ace.edit("editor");
+    editor.setOptions({
+        "fontSize": "12pt",
+        "showPrintMargin": false
+    });
     $("#files").on("click", ".folder", function(e) {
         e.preventDefault();
         var t = $(this);
@@ -97,6 +123,6 @@ $(document).ready(function() {
 {% endblock %}
 
 {% block main %}
-<div id="files">
-</div>
+<div id="files"></div>
+<div id="editor"></div>
 {% endblock %}
