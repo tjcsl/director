@@ -18,10 +18,6 @@ app.use("/ws", express.static(__dirname + "/public"));
 var server = require("http").createServer(app);
 server.listen(app.get("port"));
 
-app.get("/ws/terminal", function(req, res) {
-    res.sendFile(__dirname + "/public/terminal.html");
-});
-
 app.post("/ws/terminal/:id/size", function(req, res) {
     res.setHeader("Content-Type", "application/json");
     var id = req.params.id;
