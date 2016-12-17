@@ -49,7 +49,7 @@ $(document).ready(function() {
                 children.find(".exp").each(function(k, v) {
                     var folder = $(this).parent();
                     var expand = folder.find(".exp").hasClass("fa-caret-up");
-                    var children = folder.nextUntil("div.folder[data-depth=" + folder.attr("data-depth") + "]").filter(function(v) { return $(this).attr("data-depth") > folder.attr("data-depth"); });
+                    var children = folder.nextUntil("div.folder[data-depth=" + folder.attr("data-depth") + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > parseInt(folder.attr("data-depth")); });
                     if (!expand) {
                         children.hide();
                     }
@@ -57,7 +57,7 @@ $(document).ready(function() {
             }
             else {
                 t.find(".exp").removeClass("fa-caret-up").addClass("fa-caret-down");
-                children.filter(function(v) { return $(this).attr("data-depth") > depth; }).hide();
+                children.filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; }).hide();
             }
         }
         else {
