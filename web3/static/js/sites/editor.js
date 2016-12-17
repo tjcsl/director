@@ -22,17 +22,23 @@ $(document).ready(function() {
     editor.setTheme("ace/theme/chrome");
     $(document).keydown(function(e) {
         if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
-            if ($("#tabs .tab.active").length) {
-                var filepath = $("#tabs .tab.active").attr("data-file");
-                $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: editor.session.getValue() }, function(data) {
-                    if (data.error) {
-                        Messenger().error(data.error);
-                    }
-                    else {
-                        editor.session.getUndoManager().markClean();
-                        checkTabClean();
-                    }
-                });
+            var tab = $("#tabs .tab.active");
+            if (tab.length) {
+                if (tab.hasClass("tab-help")) {
+                    Messenger().error("No file selected to save!");
+                }
+                else {
+                    var filepath = tab.attr("data-file");
+                    $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: editor.session.getValue() }, function(data) {
+                        if (data.error) {
+                            Messenger().error(data.error);
+                        }
+                        else {
+                            editor.session.getUndoManager().markClean();
+                            checkTabClean();
+                        }
+                    });
+                }
             }
             e.preventDefault();
             e.stopPropagation();
