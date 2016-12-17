@@ -97,7 +97,7 @@ You can drag files and folders around to move them.");
                     "download": {name: "Download", icon: "fa-download"},
                     "sep1": "--------",
                     "rename": {name: "Rename", icon: "fa-pencil-square-o"},
-                    "delete": {name: "Delete", icon: "fa-trash-o"}
+                    "delete": {name: "Delete", icon: "fa-trash-o"},
                     "sep2": "--------",
                     "new_file": {name: "New File", icon: "fa-file"},
                     "new_folder": {name: "New Folder", icon: "fa-folder"}
