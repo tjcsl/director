@@ -9,7 +9,7 @@ $(document).ready(function() {
         "showPrintMargin": false
     });
     editor.on("input", function() {
-        var tab = $("#tab .tab.active");
+        var tab = $("#tabs .tab.active");
         if (tab.length) {
             tab.toggleClass("unsaved", !editor.session.getUndoManager().isClean());
         }
