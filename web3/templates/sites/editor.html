@@ -32,16 +32,22 @@ $(document).ready(function() {
         var t = $(this);
         if (t.hasClass("loaded")) {
             var depth = parseInt(t.attr("data-depth"));
-            var expand = t.find(".exp").hasClass("fa-caret-down");
+            var contracted = t.find(".exp").hasClass("fa-caret-down");
             var children = t.nextUntil("div.folder[data-depth=" + depth + "]");
-            if (expand) {
+            if (contracted) {
                 t.find(".exp").removeClass("fa-caret-down").addClass("fa-caret-up");
-                children.find(".exp").removeClass("fa-caret-down").addClass("fa-caret-up");
                 children.show();
+                children.find(".exp").each(function(k, v) {
+                    var folder = $(this).parent();
+                    var expand = folder.find(".exp").hasClass("fa-caret-up");
+                    var children = folder.nextUntil("div.folder[data-depth=" + folder.attr("data-depth") + "]");
+                    if (!expand) {
+                        children.hide();
+                    }
+                });
             }
             else {
                 t.find(".exp").removeClass("fa-caret-up").addClass("fa-caret-down");
-                children.find(".exp").addClass("fa-caret-down").removeClass("fa-caret-up");
                 children.hide();
             }
         }
