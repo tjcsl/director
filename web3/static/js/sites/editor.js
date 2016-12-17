@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    var modelist = ace.require("ace/ext/modelist");
     var editor = ace.edit("editor");
     editor.setOptions({
         "fontSize": "12pt",
@@ -30,6 +31,8 @@ $(document).ready(function() {
             else {
                 editor.setValue(data.contents, 1);
                 editor.getSession().setUndoManager(new ace.UndoManager());
+                var mode = modelist.getModeForPath(t.attr("data-name")).mode;
+                editor.getSession().setMode(mode);
             }
         });
     });
