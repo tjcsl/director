@@ -20,6 +20,9 @@ $(document).ready(function() {
                 node.addClass(c);
                 node.attr("data-name", v.name);
                 node.attr("data-depth", 0);
+                if (v.type == "d") {
+                    node.append(" <i class='collapse fa fa-caret-down'>");
+                }
                 $("#files").append(node);
             });
         }
@@ -59,6 +62,7 @@ $(document).ready(function() {
                         node.attr("data-depth", depth + 1);
                         t.after(node);
                     });
+                    t.find(".collapse").removeClass("fa-caret-down").addClass("fa-caret-up");
                 }
             });
         }
