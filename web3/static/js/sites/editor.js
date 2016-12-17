@@ -32,6 +32,7 @@ $(document).ready(function() {
                 var session = ace.createEditSession(data.contents);
                 session.setMode(modelist.getModeForPath(t.attr("data-name")).mode);
                 editor.setSession(session);
+                $("#tabs .tab").removeClass("active");
                 var tab = $("<div />");
                 tab.addClass("tab active");
                 tab.text(t.attr("data-name"));
