@@ -213,20 +213,8 @@ You can drag files and folders around to move them.");
         }
         else {
             var depth = parseInt(t.attr("data-depth"));
-            var loop_depth = depth;
-            var loop_path = "";
-            var loop_t = t;
-            while (true) {
-                loop_depth -= 1;
-                if (loop_depth < 0) {
-                    break;
-                }
-                var new_t = loop_t.prevAll("div.folder[data-depth=" + loop_depth + "]:first");
-                loop_path = new_t.attr("data-name") + "/" + loop_path;
-                loop_t = new_t;
-            }
             t.addClass("loaded");
-            $.get(path_endpoint + "?path=" + encodeURIComponent(loop_path + t.attr("data-name")), function(data) {
+            $.get(path_endpoint + "?path=" + encodeURIComponent(get_path(t) + t.attr("data-name")), function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
                 }
