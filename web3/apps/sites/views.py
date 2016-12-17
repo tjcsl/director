@@ -21,8 +21,8 @@ from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
                       get_supervisor_status, delete_process_config, write_new_index_file,
                       generate_ssh_key, run_as_site, do_git_pull, get_latest_commit,
-                      fix_permissions, reload_nginx_config, check_nginx_config, list_tables, demote)
-from .database_helpers import delete_postgres_database, change_postgres_password, delete_mysql_database, change_mysql_password
+                      fix_permissions, reload_nginx_config, check_nginx_config, demote)
+from .database_helpers import delete_postgres_database, change_postgres_password, delete_mysql_database, change_mysql_password, list_tables
 
 from ..authentication.decorators import superuser_required
 from ..users.models import User
