@@ -92,11 +92,9 @@ def password_view(request, vm_id):
     return redirect("vm_info", vm_id=vm_id)
 
 
-@login_required
+@superuser_required
 def delete_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
-    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists():
-        raise PermissionDenied
 
     if request.method == "POST":
         if request.POST.get("confirm", None) == vm.name:
@@ -135,8 +133,6 @@ def create_view(request):
 @superuser_required
 def edit_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
-    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists():
-        raise PermissionDenied
 
     if request.method == "POST":
         form = VirtualMachineForm(request.POST, instance=vm)
@@ -151,7 +147,7 @@ def edit_view(request, vm_id):
     return render(request, "vms/create_vm.html", context)
 
 
-@superuser_required
+@login_required
 def terminal_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
 
