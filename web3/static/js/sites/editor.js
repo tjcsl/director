@@ -15,10 +15,11 @@ $(document).ready(function() {
         }
     });
     editor.setTheme("ace/theme/chrome");
-    $(window).keypress(function(event) {
-        if (((event.which == 115 || event.which == 83) && event.ctrlKey) || event.which == 19) {
+    $(document).keydown(function(e) {
+        if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
             editor.session.getUndoManager().markClean();
-            event.preventDefault();
+            e.preventDefault();
+            e.stopPropagation();
         }
     });
     $("#tabs").on("click", ".tab", function(e) {
