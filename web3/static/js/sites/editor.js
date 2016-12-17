@@ -22,7 +22,7 @@ $(document).ready(function() {
         if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
             if ($("#tabs .tab.active").length) {
                 var filepath = $("#tabs .tab.active").attr("data-file");
-                $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
+                $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: editor.session.getValue() }, function(data) {
                     if (data.error) {
                         Messenger().error(data.error);
                     }
