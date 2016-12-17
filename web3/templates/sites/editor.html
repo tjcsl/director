@@ -31,8 +31,19 @@ $(document).ready(function() {
         e.preventDefault();
         var t = $(this);
         if (t.hasClass("loaded")) {
-            // TODO: collapsing and expansion
-            return;
+            var depth = parseInt(t.attr("data-depth"));
+            var expand = t.find(".exp").hasClass("fa-caret-down");
+            var children = t.nextUntil("div.folder[data-depth=" + depth + "]");
+            if (expand) {
+                t.removeClass("fa-caret-down").addClass("fa-caret-up");
+                children.find(".exp").removeClass("fa-caret-down").addClass("fa-caret-up");
+                children.show();
+            }
+            else {
+                t.removeClass("fa-caret-up").addClass("fa-caret-down");
+                children.find(".exp").addClass("fa-caret-down").removeClass("fa-caret-up");
+                children.hide();
+            }
         }
         else {
             var depth = parseInt(t.attr("data-depth"));
