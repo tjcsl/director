@@ -653,7 +653,7 @@ def editor_path_view(request, site_id):
         raise PermissionDenied
 
     requested_path = request.GET.get("path", "")
-    base_path = site.path
+    base_path = site.path[:-1]
     path = os.path.abspath(os.path.join(base_path, requested_path))
 
     if not path.startswith(base_path) or not os.path.isdir(path):
