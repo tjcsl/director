@@ -13,7 +13,9 @@ $(document).ready(function() {
 \n\
 Use the panel on the right to select a file to edit.\n\
 Press Ctrl + S to save your changes.\n\
-You can right click files and folders for more options.");
+\n\
+You can right click files and folders for more options.\n\
+You can also drag and drop files to folders to upload them.");
 
     editor = ace.edit("editor");
     editor.setSession(help_session);
