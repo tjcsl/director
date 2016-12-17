@@ -16,7 +16,7 @@ $(document).ready(function() {
     });
     editor.setTheme("ace/theme/chrome");
     $(window).keypress(function(event) {
-        if ((event.which == 115 && event.ctrlKey) || event.which == 19) {
+        if (((event.which == 115 || event.which == 83) && event.ctrlKey) || event.which == 19) {
             editor.session.getUndoManager().markClean();
             event.preventDefault();
         }
