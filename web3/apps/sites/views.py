@@ -696,8 +696,11 @@ def editor_load_view(request, site_id):
     if not path.startswith(base_path) or not os.path.isfile(path):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
 
-    with open(path, "r") as f:
-        contents = f.read()
+    try:
+        with open(path, "r") as f:
+            contents = f.read()
+    except UnicodeDecodeError:
+        return JsonResponse({"error": "Failed to open file!"})
 
     return JsonResponse({"contents": contents})
 
