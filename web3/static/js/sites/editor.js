@@ -3,7 +3,9 @@ var editor;
 $(document).ready(function() {
     var tabs = {};
     var modelist = ace.require("ace/ext/modelist");
+    var help_session = ace.createEditSession("");
     editor = ace.edit("editor");
+    editor.setSession(help_session);
     editor.setOptions({
         "fontSize": "12pt",
         "showPrintMargin": false
@@ -40,8 +42,13 @@ $(document).ready(function() {
         var t = $(this);
         $("#tabs .tab").removeClass("active");
         t.addClass("active");
-        var filepath = t.attr("data-file");
-        editor.setSession(tabs[filepath]);
+        if (t.hasClass("tab-help")) {
+            editor.setSession(help_session);
+        }
+        else {
+            var filepath = t.attr("data-file");
+            editor.setSession(tabs[filepath]);
+        }
         e.preventDefault();
     });
     $("#tabs").on("click", ".tab .fa-times", function(e) {
