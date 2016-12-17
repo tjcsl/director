@@ -61,15 +61,21 @@ You can drag files and folders around to move them.");
                     Messenger().error(data.error);
                 }
                 else {
-                    var folder = item;
-                    if (!item.hasClass("folder")) {
-                        folder = item.prevAll("div.folder[data-depth=" + (parseInt(item.attr("data-depth")) - 1) + "]:first");
+                    if (filepath == "/") {
+                        $("#files").children().remove();
+                        initFiles();
                     }
-                    var depth = parseInt(folder.attr("data-depth"));
-                    var children = folder.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
-                    children.remove();
-                    folder.removeClass("loaded");
-                    folder.click();
+                    else {
+                        var folder = item;
+                        if (!item.hasClass("folder")) {
+                            folder = item.prevAll("div.folder[data-depth=" + (parseInt(item.attr("data-depth")) - 1) + "]:first");
+                        }
+                        var depth = parseInt(folder.attr("data-depth"));
+                        var children = folder.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                        children.remove();
+                        folder.removeClass("loaded");
+                        folder.click();
+                    }
                 }
             });
         }
@@ -275,25 +281,28 @@ You can drag files and folders around to move them.");
             });
         }
     });
-    $.get(path_endpoint, function(data) {
-        if (data.error) {
-            Messenger().error(data.error);
-        }
-        else {
-            $.each(data.files, function(k, v) {
-                var c = (v.type == "f" ? "file" : "folder");
-                var node = $("<div><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
-                node.addClass(c);
-                node.attr("data-name", v.name);
-                node.attr("data-depth", 0);
-                if (v.type == "d") {
-                    node.append(" <i class='exp fa fa-caret-down'>");
-                }
-                $("#files").append(node);
-            });
-            $("div.folder[data-name='public']").click();
-        }
-    });
+    function initFiles() {
+        $.get(path_endpoint, function(data) {
+            if (data.error) {
+                Messenger().error(data.error);
+            }
+            else {
+                $.each(data.files, function(k, v) {
+                    var c = (v.type == "f" ? "file" : "folder");
+                    var node = $("<div><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
+                    node.addClass(c);
+                    node.attr("data-name", v.name);
+                    node.attr("data-depth", 0);
+                    if (v.type == "d") {
+                        node.append(" <i class='exp fa fa-caret-down'>");
+                    }
+                    $("#files").append(node);
+                });
+                $("div.folder[data-name='public']").click();
+            }
+        });
+    }
+    initFiles();
 });
 function get_path(t) {
     var depth = parseInt(t.attr("data-depth"));
