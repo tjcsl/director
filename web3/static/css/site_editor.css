@@ -50,6 +50,7 @@ body {
     color: #bbb;
 }
 #tabs .tab.active .fa-times {
+    cursor: pointer;
     color: #303F9F;
 }
 #tabs .tab.active .fa-times:hover {
