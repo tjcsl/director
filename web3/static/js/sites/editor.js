@@ -11,11 +11,11 @@ $(document).ready(function() {
         var t = $(this);
         $("#tabs .tab").removeClass("active");
         t.addClass("active");
-        var filepath = getPath(t) + t.attr("data-name");
+        var filepath = get_path(t) + t.attr("data-name");
         editor.setSession(tabs[filepath]);
         e.preventDefault();
     });
-    function getPath(t) {
+    function get_path(t) {
         var depth = parseInt(t.attr("data-depth"));
         var loop_depth = depth;
         var loop_path = "/";
