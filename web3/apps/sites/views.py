@@ -1,4 +1,5 @@
 import os
+import shutil
 import datetime
 import requests
 
@@ -723,3 +724,24 @@ def editor_save_view(request, site_id):
 
     return JsonResponse({"success": True})
 
+
+@require_http_methods(["POST"])
+@login_required
+def editor_delete_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    requested_path = request.GET.get("name", "")
+    base_path = site.path[:-1]
+    path = os.path.abspath(os.path.join(base_path, requested_path))
+
+    if not path.startswith(base_path) or not os.path.exists(path):
+        return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": path})
+
+    if os.path.isfile(path):
+        os.remove(path)
+    else:
+        shutil.rmtree(path)
+
+    return JsonResponse({"success": True})

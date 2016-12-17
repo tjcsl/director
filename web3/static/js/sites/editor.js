@@ -31,6 +31,19 @@ You can drag files and folders around to move them.");
     editor.on("input", function() {
         checkTabClean();
     });
+    function triggerDelete(item) {
+        var filepath = get_path(item) + item.attr("data-name");
+        if (confirm("Are you sure you want to delete:\n" + filepath)) {
+            $.post(delete_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
+                if (data.error) {
+                    Messenger().error(data.error);
+                }
+                else {
+                    item.remove();
+                }
+            });
+        }
+    }
     $.contextMenu({
         "selector": "#files .file",
         build: function(trigger, e) {
@@ -38,6 +51,9 @@ You can drag files and folders around to move them.");
                 callback: function(key, options) {
                     if (key == "open") {
                         trigger.click();
+                    }
+                    if (key == "delete") {
+                        triggerDelete(trigger);
                     }
                 },
                 items: {
@@ -65,6 +81,9 @@ You can drag files and folders around to move them.");
                 callback: function(key, options) {
                     if (key == "toggle") {
                         trigger.click();
+                    }
+                    if (key == "delete") {
+                        triggerDelete(trigger);
                     }
                 },
                 items: {
