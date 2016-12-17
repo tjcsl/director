@@ -6,6 +6,12 @@ $(document).ready(function() {
         "fontSize": "12pt",
         "showPrintMargin": false
     });
+    editor.on("input", function() {
+        var tab = $("#tab .tab.active");
+        if (tab.length) {
+            tab.toggleClass("unsaved", !editor.session.getUndoManager().isClean());
+        }
+    });
     editor.setTheme("ace/theme/chrome");
     $("#tabs").on("click", ".tab", function(e) {
         var t = $(this);
