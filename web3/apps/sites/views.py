@@ -657,14 +657,14 @@ def editor_path_view(request, site_id):
     path = os.path.abspath(os.path.join(base_path, requested_path))
 
     if not path.startswith(base_path) or not os.path.isdir(path):
-        return JsonResponse({"error": "Invalid or nonexistent path!"})
+        return JsonResponse({"error": "Invalid or nonexistent path!", "path": path})
 
     filesystem = []
 
-    for root, dirs, filenames in os.walk(path):
-        for f in filenames:
+    for f in os.path.listdir(path):
+        if os.path.isdir(f):
+            filesystem.append({"type": "d", "name": f})
+        else:
             filesystem.append({"type": "f", "name": f})
-        for d in dirs:
-            filesystem.append({"type": "d", "name": d})
 
     return JsonResponse({"files": filesystem})
