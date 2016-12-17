@@ -50,7 +50,13 @@ body {
     color: #1A237E;
 }
 #tabs .tab .fa-times:hover {
-    color: red;
+    color: #bbb;
+}
+#tabs .tab.active .fa-times:hover {
+    color: #303F9F;
+}
+#tabs .tab .fa-circle {
+    color: #4CAF50;
 }
 #tabs .tab.active {
     cursor: default;

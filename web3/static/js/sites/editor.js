@@ -45,6 +45,7 @@ $(document).ready(function() {
                     tab.addClass("tab active");
                     tab.text(t.attr("data-name"));
                     tab.attr("data-file", filepath);
+                    tab.append(" <i class='fa fa-circle'></i>");
                     tab.append(" <i class='fa fa-times'></i>");
                     tabs[filepath] = session;
                     $("#tabs").append(tab);
