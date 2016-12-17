@@ -644,3 +644,28 @@ def git_setup_view(request, site_id):
                         messages.error(request, "Failed to retrieve repository information from GitHub! Do you have access to this repository?")
 
     return redirect(reverse("info_site", kwargs={"site_id": site.id}) + "#github-automatic")
+
+
+@require_http_methods(["POST"])
+@login_required
+def editor_path_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    requested_path = request.POST.get("path", "/")
+    base_path = site.path
+    path = os.path.abspath(os.path.join(base_path, requested_path))
+
+    if not path.startswith(base_path) or not os.path.isdir(path):
+        return JsonResponse({"error": "Invalid or nonexistent path!"})
+
+    filesystem = []
+
+    for root, dirs, filenames in os.walk(path):
+        for f in filenames:
+            filesystem.append({"type": "f", "name": f})
+        for d in dirs:
+            filesystem.append({"type": "d", "name": d})
+
+    return JsonResponse({"files": filesystem})
