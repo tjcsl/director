@@ -6,7 +6,13 @@ $(document).ready(function() {
         "showPrintMargin": false
     });
     editor.setTheme("ace/theme/chrome");
+    $("#tabs").on("click", ".tab", function(e) {
+        $("#tabs .tab").removeClass("active");
+        $(this).addClass("active");
+        e.preventDefault();
+    });
     $("#files").on("click", ".file", function(e) {
+        e.preventDefault();
         var t = $(this);
         var depth = parseInt(t.attr("data-depth"));
         var loop_depth = depth;
@@ -24,21 +30,29 @@ $(document).ready(function() {
         if (loop_path == "/") {
             loop_path = "";
         }
-        $.get(load_endpoint + "?name=" + encodeURIComponent(loop_path + t.attr("data-name")), function(data) {
-            if (data.error) {
-                Messenger().error(data.error);
-            }
-            else {
-                var session = ace.createEditSession(data.contents);
-                session.setMode(modelist.getModeForPath(t.attr("data-name")).mode);
-                editor.setSession(session);
-                $("#tabs .tab").removeClass("active");
-                var tab = $("<div />");
-                tab.addClass("tab active");
-                tab.text(t.attr("data-name"));
-                $("#tabs").append(tab);
-            }
-        });
+        var filepath = loop_path + t.attr("data-name");
+        var existing_tab = $("#tabs .tab[data-file='" + filepath.replace("'", "\\'") + "']");
+        if (existing_tab.length) {
+            existing_tab.click();
+        }
+        else {
+            $.get(load_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
+                if (data.error) {
+                    Messenger().error(data.error);
+                }
+                else {
+                    var session = ace.createEditSession(data.contents);
+                    session.setMode(modelist.getModeForPath(t.attr("data-name")).mode);
+                    editor.setSession(session);
+                    $("#tabs .tab").removeClass("active");
+                    var tab = $("<div />");
+                    tab.addClass("tab active");
+                    tab.text(t.attr("data-name"));
+                    tab.attr("data-file", filepath);
+                    $("#tabs").append(tab);
+                }
+            });
+        }
     });
     $("#files").on("click", ".folder", function(e) {
         e.preventDefault();
