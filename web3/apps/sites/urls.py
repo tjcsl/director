@@ -12,8 +12,8 @@ urlpatterns = [
     # Site Editing
     url("^(?P<site_id>\d+)/terminal$", views.web_terminal_view, name="web_terminal"),
     url("^(?P<site_id>\d+)/nginx/edit$", views.edit_nginx_view, name="edit_nginx"),
-    url("^(?P<site_id>\d+)/editor", views.editor_view, name="editor"),
-    url("^(?P<site_id>\d+)/editor/path", views.editor_path_view, name="editor_path"),
+    url("^(?P<site_id>\d+)/editor$", views.editor_view, name="editor"),
+    url("^(?P<site_id>\d+)/editor/path$", views.editor_path_view, name="editor_path"),
 
     # Site Databases
     url("^(?P<site_id>\d+)/database/create$", views.create_database_view, name="create_database"),
