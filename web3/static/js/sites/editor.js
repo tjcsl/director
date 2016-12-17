@@ -3,7 +3,17 @@ var editor;
 $(document).ready(function() {
     var tabs = {};
     var modelist = ace.require("ace/ext/modelist");
-    var help_session = ace.createEditSession("");
+    var help_session = ace.createEditSession(" ____  _               _             \
+|  _ \(_)_ __ ___  ___| |_ ___  _ __ \
+| | | | | '__/ _ \/ __| __/ _ \| '__|\
+| |_| | | | |  __/ (__| || (_) | |   \
+|____/|_|_|  \___|\___|\__\___/|_|   \
+                                     \
+=====================================\
+\
+Use the panel on the right to select a file to edit.\
+Press Ctrl + S to save your changes.");
+
     editor = ace.edit("editor");
     editor.setSession(help_session);
     editor.setOptions({
