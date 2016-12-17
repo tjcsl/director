@@ -3,8 +3,12 @@
 {% block css %}
     {{ block.super }}
     <style>
-    #files .folder, .file {
+    #files .folder, #files .file {
         cursor: pointer;
+        white-space: nowrap;
+    }
+    #files .folder:hover, #files .file:hover {
+        background-color: #ddd;
     }
     .main {
         padding: 0;
@@ -36,6 +40,9 @@ $(document).ready(function() {
         "showPrintMargin": false
     });
     editor.setTheme("ace/theme/chrome");
+    $("#files").on("click", ".file", function(e) {
+        // TODO: implement open file in editor
+    });
     $("#files").on("click", ".folder", function(e) {
         e.preventDefault();
         var t = $(this);
