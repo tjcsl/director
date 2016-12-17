@@ -60,6 +60,9 @@ $(document).ready(function() {
                         node.addClass(c);
                         node.attr("data-name", v.name);
                         node.attr("data-depth", depth + 1);
+                        if (v.type == "d") {
+                            node.append(" <i class='exp fa fa-caret-down'>");
+                        }
                         t.after(node);
                     });
                     t.find(".exp").removeClass("fa-caret-down").addClass("fa-caret-up");
