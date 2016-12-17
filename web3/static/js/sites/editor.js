@@ -57,7 +57,7 @@ $(document).ready(function() {
             }
             else {
                 t.find(".exp").removeClass("fa-caret-up").addClass("fa-caret-down");
-                children.hide();
+                children.filter(function(v) { return $(this).attr("data-depth") > depth; }).hide();
             }
         }
         else {
