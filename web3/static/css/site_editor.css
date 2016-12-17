@@ -67,3 +67,6 @@ body {
     color: white;
     background-color: #3F51B5;
 }
+.context-menu-list {
+    z-index: 5;
+}

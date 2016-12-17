@@ -35,11 +35,24 @@ You can drag files and folders around to move them.");
         build: function(trigger, e) {
             return {
                 callback: function(key, options) {
-                    console.log(key);
+                    console.log(key); // TODO: implement
                 },
                 items: {
                     "download": {name: "Download", icon: "fa-download"},
-                    "delete": {name: "Delete", icon: "fa-trashcan-o"}
+                    "delete": {name: "Delete", icon: "fa-trash-o"}
+                }
+            };
+        }
+    });
+    $.contextMenu({
+        "selector": "#files .folder",
+        build: function(trigger, e) {
+            return {
+                callback: function(key, options) {
+                    console.log(key); // TODO: implement
+                },
+                items: {
+                    "delete": {name: "Delete", icon: "fa-trash-o"}
                 }
             };
         }
