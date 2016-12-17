@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block css %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+<script type="text/javascript">
+var path_endpoint = "{% url 'editor_path' site.id %}";
+$(document).ready(function() {
+    $.get(path_endpoint, function(data) {
+        $.each(data.files, function(k, v) {
+            var c = (v.type == "f" ? "file" : "folder");
+            var node = $("<div><i class='" + c + " fa fa-fw fa-" + c + "-o'> " + $("<div />").text(v.name).html() + "</div>");
+            node.attr("data-name", v.name);
+            node.attr("data-depth", 0);
+            $("#files").append(node);
+        });
+    });
+    $("#files").on("click", ".folder", function(e) {
+        var t = $(this);
+        $.get(path_endpoint + "?path=" + encodeURIComponent(t.attr("data-name")), function(data) {
+            var depth = parseInt(t.attr("data-depth")) + 1;
+            $.each(data.files, function(k, v) {
+                var c = (v.type == "f" ? "file" : "folder");
+                var node = $("<div style='margin-left:" + depth*15 + "px'><i class='" + c + " fa fa-fw fa-" + c + "-o'> " + $("<div />").text(v.name).html() + "</div>");
+                node.attr("data-name", v.name);
+                node.attr("data-depth", depth);
+                t.after(node);
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% block navbar %}
+<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
+{% endblock %}
+
+{% block main %}
+<div id="files">
+</div>
+{% endblock %}
