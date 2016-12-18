@@ -194,7 +194,7 @@ You can drag files and folders around to move them.");
                                 }
                                 if (typeof f == "undefined" || f.attr("id") == "files") {
                                     newdepth = 0;
-                                    f = $("#files");
+                                    path_obj.insertAfter($("#files div:last"));
                                 }
                                 else {
                                     var dest_depth = parseInt(f.attr("data-depth"));
@@ -203,8 +203,8 @@ You can drag files and folders around to move them.");
                                     if (dest_children.length) {
                                         f = dest_children[dest_children.length-1];
                                     }
+                                    path_obj.insertAfter(f);
                                 }
-                                path_obj.insertAfter(f);
                                 path_obj.css("padding-left", newdepth*20 + "px");
                                 path_obj.attr("data-depth", newdepth);
                                 if (path_obj.hasClass("folder")) {
