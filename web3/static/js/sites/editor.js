@@ -99,7 +99,7 @@ You can drag files and folders around to move them.");
                     Messenger().error(data.error);
                 }
                 else {
-                    item.attr("data-name") = name;
+                    item.attr("data-name", name);
                     item.find("span").text(name);
                 }
             });
