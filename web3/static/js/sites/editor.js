@@ -134,17 +134,23 @@ You can drag files and folders around to move them.");
                 e.preventDefault();
                 e.stopPropagation();
                 var files = e.originalEvent.dataTransfer.files;
+                var folder;
                 var path = "";
                 if (e.target !== $("#files")[0]) {
-                    var f = $(e.target).closest("div.folder");
-                    if (f.length) {
+                    folder = $(e.target).closest("div.folder");
+                    if (folder.length) {
                         path = get_path(f);
                     }
                     else {
-                        f = $(e.target).closest("div.file");
-                        if (f.length) {
-                            f = f.prevAll("div.folder[data-depth=" + (parseInt(f.attr("data-depth")) - 1) + "]:first");
-                            path = get_path(f);
+                        folder = $(e.target).closest("div.file");
+                        if (folder.length) {
+                            folder = folder.prevAll("div.folder[data-depth=" + (parseInt(folder.attr("data-depth")) - 1) + "]:first");
+                            if (folder.length) {
+                                path = get_path(f);
+                            }
+                            else {
+                                folder = null;
+                            }
                         }
                     }
                 }
@@ -168,12 +174,17 @@ You can drag files and folders around to move them.");
                                 initFiles();
                             }
                             else {
-                                var folder = $(e.target).closest("div.folder");
-                                var depth = parseInt(folder.attr("data-depth"));
-                                var children = folder.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
-                                children.remove();
-                                folder.removeClass("loaded");
-                                folder.click();
+                                var depth = 0;
+                                if (folder) {
+                                    var depth = parseInt(folder.attr("data-depth"));
+                                    var children = folder.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                                    children.remove();
+                                    folder.removeClass("loaded");
+                                    folder.click();
+                                }
+                                else {
+                                    initFiles();
+                                }
                             }
                         }
                     }
