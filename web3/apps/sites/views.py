@@ -818,10 +818,13 @@ def editor_rename_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    new_name = os.path.basename(request.POST.get("name", ""))
-    requested_path = request.POST.get("path", "")
+    new_name = os.path.basename(request.POST.get("newname", ""))
+    requested_path = request.POST.get("name", "")
     base_path = site.path[:-1]
     path = os.path.abspath(os.path.join(base_path, requested_path))
+
+    if not requested_path:
+        return JsonResponse({"error": "You cannot rename the root directory!"})
 
     if not path.startswith(base_path) or not os.path.exists(path):
         return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": path})
