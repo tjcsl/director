@@ -865,3 +865,27 @@ def editor_upload_view(request, site_id):
     fix_permissions(site)
 
     return JsonResponse({"success": True})
+
+
+@require_http_methods(["POST"])
+@login_required
+def editor_move_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    old_path = request.POST.get("old", "")
+    new_path = request.POST.get("new", "")
+    base_path = site.path[:-1]
+    new_abs_path = os.path.abspath(os.path.join(base_path, new_path))
+    old_abs_path = os.path.abspath(os.path.join(base_path, old_path))
+
+    if not old_path.startswith(base_path) or not os.path.exists(old_path):
+        return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": old_path})
+
+    if not new_path.startswith(base_path) or os.path.isfile(new_path):
+        return JsonResponse({"error": "Invalid destination!", "path": new_path})
+
+    os.rename(old_path, new_path)
+
+    return JsonResponse({"success": True})
