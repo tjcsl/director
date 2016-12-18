@@ -192,8 +192,9 @@ You can drag files and folders around to move them.");
                                 var children = path_obj.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
                             }
                             path_obj.insertAfter(f);
-                            if (f.attr("id") == "files") {
+                            if (typeof f == "undefined" || f.attr("id") == "files") {
                                 newdepth = 0;
+                                f = $("#files");
                             }
                             else {
                                 var newdepth = parseInt(f.attr("data-depth")) + 1;
