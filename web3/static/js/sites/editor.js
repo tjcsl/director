@@ -281,7 +281,7 @@ You can drag files and folders around to move them.");
                 else {
                     $.each(data.files, function(k, v) {
                         var c = (v.type == "f" ? "file" : "folder");
-                        var node = $("<div style='padding-left:" + (depth + 1)*20 + "px'><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
+                        var node = $("<div draggable='true' style='padding-left:" + (depth + 1)*20 + "px'><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
                         node.addClass(c);
                         node.attr("data-name", v.name);
                         node.attr("data-depth", depth + 1);
@@ -303,7 +303,7 @@ You can drag files and folders around to move them.");
             else {
                 $.each(data.files, function(k, v) {
                     var c = (v.type == "f" ? "file" : "folder");
-                    var node = $("<div><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
+                    var node = $("<div draggable='true'><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
                     node.addClass(c);
                     node.attr("data-name", v.name);
                     node.attr("data-depth", 0);
