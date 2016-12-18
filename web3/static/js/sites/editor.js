@@ -335,7 +335,7 @@ You can drag files and folders around to move them.");
                     "delete": {name: "Delete", icon: "fa-trash-o"},
                     "sep2": "--------",
                     "new_file": {name: "New File", icon: "fa-file"},
-                    "new_folder": {name: "New Folder", icon: "fa-folder"}
+                    "new_folder": {name: "New Folder", icon: "fa-folder"},
                     "sep3": "--------",
                     "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
