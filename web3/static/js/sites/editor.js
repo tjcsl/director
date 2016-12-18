@@ -444,6 +444,13 @@ You can drag files and folders around to move them.");
     });
     $("#files").on("click", ".file", function(e) {
         e.preventDefault();
+        if (e.ctrlKey) {
+            $(this).addClass("active");
+            return;
+        }
+        else {
+            $("#files div").removeClass("active");
+        }
         var t = $(this);
         var filepath = get_path(t) + t.attr("data-name");
         var existing_tab = $("#tabs .tab[data-file='" + filepath.replace("'", "\\'") + "']");
