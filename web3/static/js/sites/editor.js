@@ -266,13 +266,17 @@ You can drag files and folders around to move them.");
                     if (key == "close") {
                         trigger.find(".fa-times").click();
                     }
-                    if (key == "close-other") {
+                    if (key == "close_other") {
                         $("#tabs .tab:not(.tab-terminal):.not(.tab-help).not([data-file='" + trigger.attr("data-file").replace("'", "\\'") + "']) .fa-times").click();
+                    }
+                    if (key == "close_right") {
+                        trigger.nextAll(":not(.tab-terminal):not(.tab-help)").find(".fa-times").click();
                     }
                 },
                 items: {
                     "close": {name: "Close Tab", icon: "fa-times"},
-                    "close_other": {name: "Close Other Tabs", icon: "fa-times-circle-o"}
+                    "close_other": {name: "Close Other Tabs", icon: "fa-times-circle-o"},
+                    "close_right": {name: "Close Tabs to Right", icon: "fa-chevron-right"}
                 }
             }
         }
