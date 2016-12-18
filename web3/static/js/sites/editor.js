@@ -502,6 +502,9 @@ You can drag files and folders around to move them.");
                         node.addClass(c);
                         node.attr("data-name", v.name);
                         node.attr("data-depth", depth + 1);
+                        if (v.executable) {
+                            node.addClass("exec");
+                        }
                         t.after(node);
                     });
                     t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
@@ -525,6 +528,9 @@ You can drag files and folders around to move them.");
                     node.addClass(c);
                     node.attr("data-name", v.name);
                     node.attr("data-depth", 0);
+                    if (v.executable) {
+                        node.addClass("exec");
+                    }
                     if (!$("#files div[data-depth=0][data-name='" + v.name.replace("'", "\\'") + "']").length) {
                         $("#files").append(node);
                     }
