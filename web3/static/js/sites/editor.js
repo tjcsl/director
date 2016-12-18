@@ -126,6 +126,9 @@ You can drag files and folders around to move them.");
         $(this).removeClass("dragover");
     });
     $("#files").on("drop", function(e) {
+        if (e.target !== $("#files")[0]) {
+            $(e.target).closest("div").removeClass("dragover");
+        }
         if (e.originalEvent.dataTransfer) {
             if (e.originalEvent.dataTransfer.files.length) {
                 e.preventDefault();
