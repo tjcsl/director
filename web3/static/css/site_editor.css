@@ -25,12 +25,12 @@ body {
 #sep {
     cursor: ew-resize;
     float: left;
-    width: 5px;
+    width: 10px;
     height: calc(100vh - 40px);
 }
 #editor-wrapper {
     float: right;
-    width: calc(100vw - 255px);
+    width: calc(100vw - 260px);
     height: calc(100vh - 40px);
 }
 #tabs {
