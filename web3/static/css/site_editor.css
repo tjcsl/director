@@ -54,6 +54,7 @@ body {
     background-color: #ddd;
     border-radius: 5px 5px 0 0;
     cursor: pointer;
+    vertical-align: top;
 }
 #tabs .tab .fa-times {
     color: #ccc;
