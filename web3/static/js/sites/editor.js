@@ -139,14 +139,14 @@ You can drag files and folders around to move them.");
                 if (e.target !== $("#files")[0]) {
                     folder = $(e.target).closest("div.folder");
                     if (folder.length) {
-                        path = get_path(f);
+                        path = get_path(folder);
                     }
                     else {
                         folder = $(e.target).closest("div.file");
                         if (folder.length) {
                             folder = folder.prevAll("div.folder[data-depth=" + (parseInt(folder.attr("data-depth")) - 1) + "]:first");
                             if (folder.length) {
-                                path = get_path(f);
+                                path = get_path(folder);
                             }
                             else {
                                 folder = null;
