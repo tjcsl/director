@@ -388,9 +388,6 @@ You can drag files and folders around to move them.");
             if (!$("#terminal iframe").length) {
                 var frame = $("<iframe />");
                 frame.attr("src", terminal_url);
-                frame.css("width", "100%");
-                frame.css("height", "100%");
-                frame.css("border", "none");
                 $("#terminal").append(frame);
             }
             $("#terminal").show();
