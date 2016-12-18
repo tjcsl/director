@@ -32,4 +32,6 @@
 }
 #users .user .username {
     color: #888;
+    font-size: 12px;
+    margin-left: 3px;
 }
