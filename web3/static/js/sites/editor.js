@@ -400,11 +400,11 @@ You can drag files and folders around to move them.");
     }).mousemove(function(e) {
         if (sep_dragging) {
             var newPos = e.clientX - 10;
-            if (newPos < 30) {
-                newPos = 30;
+            if (newPos < 25) {
+                newPos = 25;
             }
             else {
-                var max = $(window).width() - 30;
+                var max = $(window).width() - 40;
                 if (newPos > max) {
                     newPos = max;
                 }
