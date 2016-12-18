@@ -394,11 +394,12 @@ You can drag files and folders around to move them.");
     var sep_dragging = false;
     $("#sep").mousedown(function() {
         sep_dragging = true;
-    }).mouseup(function() {
+    });
+    $(document).mouseup(function() {
         sep_dragging = false;
     }).mousemove(function(e) {
         if (sep_dragging) {
-            var newPos = e.clientX - 2;
+            var newPos = e.clientX;
             $("#files").width(newPos);
             $("#editor-wrapper").css("width", "calc(100vw - 5px - " + newPos + "px)");
         }
