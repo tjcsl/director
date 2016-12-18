@@ -377,23 +377,24 @@ You can drag files and folders around to move them.");
             existing_tab.click();
         }
         else {
+            $("#tabs .tab").removeClass("active");
+            var tab = $("<div />");
+            tab.addClass("tab active");
+            tab.text(t.attr("data-name"));
+            tab.attr("data-file", filepath);
+            tab.prepend("<i class='fa fa-circle'></i> ");
+            tab.append(" <i class='fa fa-times'></i>");
+            $("#tabs").append(tab);
             $.get(load_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
+                    tab.remove();
                 }
                 else {
                     var session = ace.createEditSession(data.contents);
                     session.setMode(modelist.getModeForPath(t.attr("data-name")).mode);
                     editor.setSession(session);
-                    $("#tabs .tab").removeClass("active");
-                    var tab = $("<div />");
-                    tab.addClass("tab active");
-                    tab.text(t.attr("data-name"));
-                    tab.attr("data-file", filepath);
-                    tab.prepend("<i class='fa fa-circle'></i> ");
-                    tab.append(" <i class='fa fa-times'></i>");
                     tabs[filepath] = session;
-                    $("#tabs").append(tab);
                 }
             });
         }
