@@ -24,6 +24,7 @@
     var upload_endpoint = "{% url 'editor_upload' site.id %}";
     var move_endpoint = "{% url 'editor_move' site.id %}";
     var process_endpoint = "{% url 'editor_process' site.id %}";
+    var exec_endpoint = "{% url 'editor_exec' site.id %}";
     var is_dynamic = {% if site.category == 'dynamic' %}true{% else %}false{% endif %};
     var csrftoken = "{{ csrf_token }}";
     var terminal_url = "/ws/terminal.html?uid={{ request.user.id }}&token={{ request.user.access_token }}&site={{ site.id }}";

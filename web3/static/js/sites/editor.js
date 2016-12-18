@@ -288,11 +288,23 @@ You can drag files and folders around to move them.");
                             }
                         });
                     }
+                    if (key == "set_exec") {
+                        var filepath = get_path(trigger) + trigger.attr("data-name");
+                        $.post(exec_endpoint, {name: filepath}, function(data) {
+                            if (data.error) {
+                                Messenger().error(data.error);
+                            }
+                            else {
+                                trigger.toggleClass("exec");
+                            }
+                        });
+                    }
                 },
                 items: {
                     "open": {name: "Open", icon: "fa-pencil"},
                     "download": {name: "Download", icon: "fa-download"},
-                    "sep1": (is_dynamic ? "--------" : undefined),
+                    "sep1": "--------",
+                    "set_exec": (trigger.hasClass("exec") ? "Unset Executable" : "Set Executable"),
                     "set_process": (is_dynamic ? {name: "Set Process", icon: "fa-cog"} : undefined),
                     "sep2": "--------",
                     "rename": {name: "Rename", icon: "fa-pencil-square-o"},
