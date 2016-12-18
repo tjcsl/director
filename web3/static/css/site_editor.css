@@ -37,7 +37,8 @@ body {
     width: 100%;
     height: 35px;
 }
-#editor {
+.tab-pane {
+    display: none;
     width: 100%;
     height: calc(100% - 35px);
 }

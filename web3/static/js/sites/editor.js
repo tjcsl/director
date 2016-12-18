@@ -22,6 +22,7 @@ You can drag files and folders around to move them.");
         "fontSize": "12pt",
         "showPrintMargin": false
     });
+    $("#editor").show();
     function checkTabClean() {
         var tab = $("#tabs .tab.active");
         if (tab.length) {
@@ -372,12 +373,16 @@ You can drag files and folders around to move them.");
         var t = $(this);
         $("#tabs .tab").removeClass("active");
         t.addClass("active");
-        if (t.hasClass("tab-help")) {
-            editor.setSession(help_session);
-        }
-        else {
-            var filepath = t.attr("data-file");
-            editor.setSession(tabs[filepath]);
+        $(".tab-pane").hide();
+        if (t.hasClass("tab-help") || t.attr("data-file")) {
+            $("#editor").show();
+            if (t.hasClass("tab-help")) {
+                editor.setSession(help_session);
+            }
+            else {
+                var filepath = t.attr("data-file");
+                editor.setSession(tabs[filepath]);
+            }
         }
         e.preventDefault();
     });
@@ -387,7 +392,13 @@ You can drag files and folders around to move them.");
         var t = $(this).parent();
         delete tabs[t.attr("data-file")];
         t.remove();
-        $("#tabs .tab:last").click();
+        var next_tab = $("#tabs .tab:last")
+        if (next_tab) {
+            next_tab.click();
+        }
+        else {
+            $(".tab-pane").hide();
+        }
     });
     $("#files").on("click", ".file", function(e) {
         e.preventDefault();
