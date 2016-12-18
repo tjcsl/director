@@ -30,3 +30,6 @@
 #users .user:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }
+#users .user .username {
+    color: #888;
+}
