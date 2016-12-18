@@ -16,9 +16,7 @@ from .models import User, Group
 @login_required
 def settings_view(request):
     github_info = get_github_info(request) if request.user.github_token else None
-    profile = request.user.api_request("profile")
     context = {
-        "profile": profile,
         "groups": Group.objects.filter(users__id=request.user.id).order_by("name"),
         "github_username": github_info.get("login", None) if github_info else None
     }

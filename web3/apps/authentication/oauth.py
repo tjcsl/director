@@ -33,6 +33,7 @@ class IonOauth2(BaseOAuth2):
         # fields used to populate/update User model
         return {
             'username': profile['ion_username'],
+            'full_name': profile['common_name'],
             'id': get_uid(profile['ion_username']),
             'email': profile['tj_email'],
             'service': False,
