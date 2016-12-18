@@ -30,7 +30,7 @@ body {
 }
 #editor-wrapper {
     float: right;
-    width: calc(100vw - 250px);
+    width: calc(100vw - 255px);
     height: calc(100vh - 40px);
 }
 #tabs {
