@@ -399,7 +399,7 @@ You can drag files and folders around to move them.");
         sep_dragging = false;
     }).mousemove(function(e) {
         if (sep_dragging) {
-            var newPos = e.clientX - 8;
+            var newPos = e.clientX - 10;
             $("#files").width(newPos);
             $("#editor-wrapper").css("width", "calc(100vw - 15px - " + newPos + "px)");
         }
