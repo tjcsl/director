@@ -208,7 +208,7 @@ You can drag files and folders around to move them.");
                                 path_obj.css("padding-left", newdepth*20 + "px");
                                 path_obj.attr("data-depth", newdepth);
                                 if (path_obj.hasClass("folder")) {
-                                    children.get().reverse().each(function(k, v) {
+                                    $.each(children.get().reverse(), function(k, v) {
                                         var cdepth = newdepth + (parseInt($(this).attr("data-depth")) - depth);
                                         $(this).insertAfter(path_obj);
                                         $(this).attr("data-depth", cdepth);
