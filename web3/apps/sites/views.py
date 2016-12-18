@@ -134,7 +134,7 @@ def edit_nginx_view(request, site_id):
                 return JsonResponse({"error": "Invalid nginx configuration!"})
             else:
                 reload_nginx_config()
-                return JsonResponse{{"success": "Nginx configuration updated!"})
+                return JsonResponse({"success": "Nginx configuration updated!"})
         else:
             return JsonResponse({"error": "You must have a nginx configuration!"})
     else:
