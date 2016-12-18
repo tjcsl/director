@@ -5,6 +5,7 @@ import stat
 import datetime
 import requests
 import zipfile
+import magic
 
 from multiprocessing import Pool
 from subprocess import Popen, PIPE
@@ -797,7 +798,11 @@ def editor_download_view(request, site_id):
 
     if os.path.isfile(path):
         response = HttpResponse(content=open(path, "rb"))
-        response["Content-Type"] = "application/octet-stream"
+        if request.GET.get("embed", False) is not False:
+            mime = magic.Magic(mime=True)
+            response["Content-Type"] = mime.from_file(path)
+        else:
+            response["Content-Type"] = "application/octet-stream"
         response["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(path))
         return response
     else:

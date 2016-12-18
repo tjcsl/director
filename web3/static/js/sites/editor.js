@@ -407,7 +407,11 @@ You can drag files and folders around to move them.");
         $("#tabs .tab").removeClass("active");
         t.addClass("active");
         $(".tab-pane").hide();
-        if (t.hasClass("tab-help") || t.attr("data-file")) {
+        if (t.hasClass("tab-image")) {
+            $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath) + "&embed=true");
+            $("#image").show();
+        }
+        else if (t.hasClass("tab-help") || t.attr("data-file")) {
             $("#editor").show();
             if (t.hasClass("tab-help")) {
                 editor.setSession(help_session);
@@ -465,18 +469,26 @@ You can drag files and folders around to move them.");
             tab.prepend("<i class='fa fa-circle'></i> ");
             tab.append(" <i class='fa fa-times'></i>");
             $("#tabs").append(tab);
-            $.get(load_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
-                if (data.error) {
-                    Messenger().error(data.error);
-                    tab.remove();
-                }
-                else {
-                    var session = ace.createEditSession(data.contents);
-                    session.setMode(modelist.getModeForPath(t.attr("data-name")).mode);
-                    editor.setSession(session);
-                    tabs[filepath] = session;
-                }
-            });
+            if (filepath.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+                tab.addClass("tab-image");
+                $(".tab-pane").hide();
+                $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath) + "&embed=true");
+                $("#image").show();
+            }
+            else {
+                $.get(load_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
+                    if (data.error) {
+                        Messenger().error(data.error);
+                        tab.remove();
+                    }
+                    else {
+                        var session = ace.createEditSession(data.contents);
+                        session.setMode(modelist.getModeForPath(t.attr("data-name")).mode);
+                        editor.setSession(session);
+                        tabs[filepath] = session;
+                    }
+                });
+            }
         }
     });
     $("#files").on("click", ".folder", function(e) {
