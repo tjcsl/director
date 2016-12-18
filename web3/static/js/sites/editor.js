@@ -92,7 +92,7 @@ You can drag files and folders around to move them.");
         if (item.hasClass("file")) {
             filepath += item.attr("data-name");
         }
-        var name = prompt("Enter a new name for your new " + (item.hasClass("file") ? "file" : "directory") + ".");
+        var name = prompt("Enter a new name for the file or directory:\n" + filepath);
         if (name) {
             $.post(rename_endpoint, { name: filepath, newname: name }, function(data) {
                 if (data.error) {
