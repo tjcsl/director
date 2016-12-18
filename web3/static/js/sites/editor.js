@@ -40,7 +40,7 @@ You can drag files and folders around to move them.");
             if (item.hasClass("file")) {
                 filepath += item.attr("data-name");
             }
-            filepaths.append(filepath);
+            filepaths.push(filepath);
         });
         if (confirm("Are you sure you want to delete:\n" + filepaths.join("\n"))) {
             $.post(delete_endpoint, { name: filepaths }, function(data) {
