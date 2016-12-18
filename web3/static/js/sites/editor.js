@@ -62,7 +62,6 @@ You can drag files and folders around to move them.");
                 }
                 else {
                     if (filepath == "") {
-                        $("#files").children().remove();
                         initFiles();
                     }
                     else {
@@ -137,7 +136,6 @@ You can drag files and folders around to move them.");
                         }
                         else {
                             if (path == "") {
-                                $("#files").children().remove();
                                 initFiles();
                             }
                             else {
@@ -383,7 +381,9 @@ You can drag files and folders around to move them.");
                     if (v.type == "d") {
                         node.append(" <i class='exp fa fa-caret-down'>");
                     }
-                    $("#files").append(node);
+                    if (!$("#files div[data-depth=0][data-name='" + v.name.replace("'", "\\'") + "']").length) {
+                        $("#files").append(node);
+                    }
                 });
                 $("div.folder[data-name='public']").click();
             }
