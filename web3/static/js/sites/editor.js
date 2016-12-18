@@ -259,7 +259,7 @@ You can drag files and folders around to move them.");
         }
     });
     $.contextMenu({
-        "selector": ".tab:not(.tab-help):not(.tab-terminal)",
+        "selector": ".tab:not(.tab-special)",
         build: function(trigger, e) {
             return {
                 callback: function(key, options) {
@@ -267,13 +267,13 @@ You can drag files and folders around to move them.");
                         trigger.find(".fa-times").click();
                     }
                     if (key == "close_other") {
-                        $("#tabs .tab:not(.tab-terminal):not(.tab-help):not([data-file='" + trigger.attr("data-file").replace("'", "\\'") + "']) .fa-times").click();
+                        $("#tabs .tab:not(.tab-special):not([data-file='" + trigger.attr("data-file").replace("'", "\\'") + "']) .fa-times").click();
                     }
                     if (key == "close_right") {
-                        trigger.nextAll(":not(.tab-terminal):not(.tab-help)").find(".fa-times").click();
+                        trigger.nextAll(":not(.tab-special)").find(".fa-times").click();
                     }
                     if (key == "close_left") {
-                        trigger.prevAll(":not(.tab-terminal):not(.tab-help)").find(".fa-times").click();
+                        trigger.prevAll(":not(.tab-special)").find(".fa-times").click();
                     }
                     if (key == "save") {
                         saveTab(trigger);
@@ -482,7 +482,15 @@ You can drag files and folders around to move them.");
             $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(t.attr("data-file")) + "&embed=true");
             $("#image").show();
         }
-        else if (t.hasClass("tab-help") || t.attr("data-file")) {
+        else if (t.hasClass("tab-terminal")) {
+            if (!$("#terminal iframe").length) {
+                var frame = $("<iframe />");
+                frame.attr("src", terminal_url);
+                $("#terminal").append(frame);
+            }
+            $("#terminal").show();
+        }
+        else if (t.hasClass("tab-help") || !t.hasClass("tab-special")) {
             $("#editor").show();
             if (t.hasClass("tab-help")) {
                 editor.setSession(help_session);
@@ -491,14 +499,6 @@ You can drag files and folders around to move them.");
                 var filepath = t.attr("data-file");
                 editor.setSession(tabs[filepath]);
             }
-        }
-        else if (t.hasClass("tab-terminal")) {
-            if (!$("#terminal iframe").length) {
-                var frame = $("<iframe />");
-                frame.attr("src", terminal_url);
-                $("#terminal").append(frame);
-            }
-            $("#terminal").show();
         }
         e.preventDefault();
     });
@@ -667,7 +667,7 @@ You can drag files and folders around to move them.");
     $("#files").resizable("option", "maxWidth", $(window).width() - 80);
 
     $("#tabs").sortable({
-        items: ".tab:not(.tab-help):not(.tab-terminal)",
+        items: ".tab:not(.tab-special)",
         axis: "x",
         containment: "#tabs"
     });

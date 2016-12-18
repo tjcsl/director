@@ -50,7 +50,11 @@
 {% block main %}
 <div id="files"></div>
 <div id="editor-wrapper">
-    <div id="tabs"><div class="tab active tab-help"><i class="fa fa-question-circle"></i></div><div class="tab tab-terminal pull-right"><i class="fa fa-terminal"></i></div></div>
+    <div id="tabs">
+        <div class="tab active tab-special tab-help"><i class="fa fa-question-circle"></i></div>
+        <div class="tab tab-special tab-nginx pull-right"><i class="fa fa-cog"></i> Nginx</div>
+        <div class="tab tab-special tab-terminal pull-right"><i class="fa fa-terminal"></i></div>
+    </div>
     <div id="terminal" class="tab-pane"></div>
     <div id="editor" class="tab-pane"></div>
     <div id="image" class="tab-pane"><img /></div>
