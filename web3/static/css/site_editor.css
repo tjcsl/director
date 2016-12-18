@@ -80,3 +80,6 @@ body {
 .context-menu-list {
     z-index: 5 !important;
 }
+.dragover {
+    border: 1px solid #999;
+}
