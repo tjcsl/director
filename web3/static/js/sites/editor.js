@@ -324,6 +324,9 @@ You can drag files and folders around to move them.");
                     }
                     if (key == "refresh") {
                         trigger.removeClass("loaded");
+                        var depth = parseInt(trigger.attr("data-depth"));
+                        var children = trigger.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                        children.remove();
                         trigger.click();
                     }
                 },
