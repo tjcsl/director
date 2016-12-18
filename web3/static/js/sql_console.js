@@ -5,11 +5,6 @@ $(document).ready(function() {
             $("#console .input").focus();
         }
     });
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            xhr.setRequestHeader("X-CSRFToken", csrf_token);
-        }
-    });
     var history = [];
     var history_point = 0;
     $(document).keydown(function(e) {

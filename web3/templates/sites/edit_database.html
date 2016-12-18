@@ -6,7 +6,13 @@
     <script type="text/javascript">
     var sql_endpoint = "{% url 'sql_database' site.id %}";
     var back_endpoint = "{% url 'info_site' site.id %}";
-    var csrf_token = "{{ csrf_token }}";
+    var csrftoken = "{{ csrf_token }}";
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    });
     </script>
     <script type="text/javascript" src="{% static 'js/sql_console.js' %}"></script>
 {% endblock %}
@@ -21,9 +27,11 @@
 {% endblock %}
 
 {% block main %}
-<div id="console">
-    <pre class="output"><b>database: {{ site.database.db_name }}, user: {{ site.database.username }}, type: {{ site.database.category }}</b>
-</pre>
-    <table><tr><td class="ps">{{ site.database.db_name }}=&gt; </td><td class="input-td"><input autofocus class="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /></td></tr></table>
+<div id="console-wrapper">
+    <div id="console">
+        <pre class="output"><b>database: {{ site.database.db_name }}, user: {{ site.database.username }}, type: {{ site.database.category }}</b>
+    </pre>
+        <table><tr><td class="ps">{{ site.database.db_name }}=&gt; </td><td class="input-td"><input autofocus class="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /></td></tr></table>
+    </div>
 </div>
 {% endblock %}
