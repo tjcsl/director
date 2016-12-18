@@ -106,6 +106,7 @@ You can drag files and folders around to move them.");
 
     }
     $("#files").on("dragstart", "div", function(e) {
+        var item = $(this);
         var filepath = get_path(item);
         if (item.hasClass("file")) {
             filepath += item.attr("data-name");
