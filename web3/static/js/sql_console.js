@@ -40,7 +40,7 @@ $(document).ready(function() {
     });
     $("#console .input").keydown(function(e) {
         if (e.ctrlKey && e.keyCode == 67 && !window.getSelection().toString()) {
-            $("#console .output").append($("#ps").text() + $(this).val() + "^C\n");
+            $("#console .output").append($("#console .ps").text() + $(this).val() + "^C\n");
             $(this).val("");
             $("#console").scrollTop($("#console")[0].scrollHeight);
             e.preventDefault();
@@ -58,7 +58,7 @@ $(document).ready(function() {
                     $("#console .output").text("");
                 }
                 else {
-                    $("#console .output").append($("#ps").text() + val + "\n");
+                    $("#console .output").append($("#console .ps").text() + val + "\n");
                     $("#console table").hide();
                     $.post(sql_endpoint, {"sql": val}, function(data) {
                         $("#console .output").append($("<div />").text(data).html());
