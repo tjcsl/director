@@ -678,8 +678,9 @@ def editor_path_view(request, site_id):
     filesystem = []
 
     for f in os.listdir(path):
-        if os.path.isdir(os.path.join(path, f)):
-            filesystem.append({"type": "d", "name": f})
+        fpath = os.path.join(path, f)
+        if os.path.isdir(fpath):
+            filesystem.append({"type": "d", "name": f, "executable": os.access(fpath, os.X_OK)})
         else:
             filesystem.append({"type": "f", "name": f})
 
