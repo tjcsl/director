@@ -192,18 +192,23 @@ You can drag files and folders around to move them.");
                                     var depth = parseInt(path_obj.attr("data-depth"));
                                     var children = path_obj.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
                                 }
-                                path_obj.insertAfter(f);
                                 if (typeof f == "undefined" || f.attr("id") == "files") {
                                     newdepth = 0;
                                     f = $("#files");
                                 }
                                 else {
-                                    var newdepth = parseInt(f.attr("data-depth")) + 1;
+                                    var dest_depth = parseInt(f.attr("data-depth"));
+                                    var newdepth = dest_depth + 1;
+                                    var dest_children = f.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                                    if (dest_children.length) {
+                                        f = dest_children[dest_children.length-1];
+                                    }
                                 }
+                                path_obj.insertAfter(f);
                                 path_obj.css("padding-left", newdepth*20 + "px");
                                 path_obj.attr("data-depth", newdepth);
                                 if (path_obj.hasClass("folder")) {
-                                    children.each(function(k, v) {
+                                    children.get().reverse().each(function(k, v) {
                                         var cdepth = newdepth + (parseInt($(this).attr("data-depth")) - depth);
                                         $(this).insertAfter(path_obj);
                                         $(this).attr("data-depth", cdepth);
