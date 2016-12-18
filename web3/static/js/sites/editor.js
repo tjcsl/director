@@ -53,8 +53,7 @@ You can drag files and folders around to move them.");
                         var item = $(this);
                         if (item.hasClass("folder")) {
                             var depth = parseInt(item.attr("data-depth"));
-                            var children = item.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
-                            children.remove();
+                            getChildren(item).remove();
                         }
                         item.remove();
                     });
@@ -223,17 +222,15 @@ You can drag files and folders around to move them.");
                             }
                             else {
                                 if (path_obj.hasClass("folder")) {
-                                    var depth = parseInt(path_obj.attr("data-depth"));
-                                    var children = path_obj.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                                    var children = getChildren(path_obj);
                                 }
                                 if (typeof f == "undefined" || f.attr("id") == "files") {
                                     newdepth = 0;
                                     path_obj.insertAfter($("#files div:last"));
                                 }
                                 else {
-                                    var dest_depth = parseInt(f.attr("data-depth"));
-                                    var newdepth = dest_depth + 1;
-                                    var dest_children = f.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                                    var newdepth = parseInt(f.attr("data-depth")) + 1;
+                                    var dest_children = getChildren(f);
                                     if (dest_children.length) {
                                         f = dest_children[dest_children.length-1];
                                     }
@@ -353,8 +350,7 @@ You can drag files and folders around to move them.");
                     if (key == "refresh") {
                         trigger.removeClass("loaded");
                         var depth = parseInt(trigger.attr("data-depth"));
-                        var children = trigger.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
-                        children.remove();
+                        getChildren(trigger).remove();
                         trigger.click();
                     }
                 },
@@ -494,9 +490,8 @@ You can drag files and folders around to move them.");
         }
         var t = $(this);
         if (t.hasClass("loaded")) {
-            var depth = parseInt(t.attr("data-depth"));
             var contracted = t.find(".fa-fw").hasClass("fa-folder-o");
-            var children = t.nextUntil("div.folder[data-depth=" + depth + "]");
+            var children = getChildren(t);
             if (contracted) {
                 t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
                 children.show();
@@ -506,7 +501,7 @@ You can drag files and folders around to move them.");
                         return;
                     }
                     var expand = $(this).hasClass("fa-folder-open-o");
-                    var children = folder.nextUntil("div.folder[data-depth=" + folder.attr("data-depth") + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > parseInt(folder.attr("data-depth")); });
+                    var children = getChildren(folder);
                     if (!expand) {
                         children.hide();
                     }
@@ -514,7 +509,7 @@ You can drag files and folders around to move them.");
             }
             else {
                 t.find(".fa-fw").removeClass("fa-folder-open-o").addClass("fa-folder-o");
-                children.filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; }).hide();
+                children.hide();
             }
         }
         else {
@@ -534,7 +529,7 @@ You can drag files and folders around to move them.");
                         if (v.executable) {
                             node.addClass("exec");
                         }
-                        if (!t.find("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
+                        if (!getChildren(t).has("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
                             t.after(node);
                         }
                     });
@@ -612,4 +607,10 @@ function get_path(t) {
         loop_path += t.attr("data-name");
     }
     return loop_path;
+}
+function getChildren(item) {
+    var depth = parseInt(item.attr("data-depth"));
+    return item.nextUntil(function() {
+        return $(this).hasClass("folder") && parseInt($(this).attr("data-depth")) <= depth;
+    });
 }
