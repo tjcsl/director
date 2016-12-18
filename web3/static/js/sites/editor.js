@@ -136,7 +136,17 @@ You can drag files and folders around to move them.");
                 var files = e.originalEvent.dataTransfer.files;
                 var path = "";
                 if (e.target !== $("#files")[0]) {
-                    path = get_path($(e.target).closest("div.folder"));
+                    var f = $(e.target).closest("div.folder");
+                    if (f.length) {
+                        path = get_path(f);
+                    }
+                    else {
+                        f = $(e.target).closest("div.file");
+                        if (f.length) {
+                            f = f.prevAll("div.folder[data-depth=" + (parseInt(f.attr("data-depth")) - 1) + "]:first");
+                            path = get_path(f);
+                        }
+                    }
                 }
                 var formData = new FormData();
                 formData.append("path", path);
@@ -327,7 +337,7 @@ You can drag files and folders around to move them.");
         if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
             var tab = $("#tabs .tab.active");
             if (tab.length) {
-                if (tab.hasClass("tab-help")) {
+                if (tab.hasClass("tab-help") || tab.hasClass("tab-custom")) {
                     Messenger().error("No file selected to save!");
                 }
                 else {
