@@ -182,7 +182,7 @@ You can drag files and folders around to move them.");
                             }
                         }
                     }
-                    $.post(move_endpoint, { old_path: old_path, new_path: new_path }, function(data) {
+                    $.post(move_endpoint, { old: old_path, new: new_path }, function(data) {
                         if (data.error) {
                             Messenger().error(data.error);
                         }
