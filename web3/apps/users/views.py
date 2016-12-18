@@ -29,6 +29,10 @@ def create_view(request):
         form = UserForm(request.POST)
         if form.is_valid():
             user = form.save()
+            if not user.full_name:
+                profile = request.user.api_request("profile/{}".format(user.username))
+                user.full_name = profile.get("common_name", "")
+                user.save()
             messages.success(request, "User {} created!".format(user.username))
             return redirect("user_management")
     else:
@@ -48,6 +52,10 @@ def edit_view(request, user_id):
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
             user = form.save()
+            if not user.full_name:
+                profile = request.user.api_request("profile/{}".format(user.username))
+                user.full_name = profile.get("common_name", "")
+                user.save()
             messages.success(request, "User {} edited!".format(user.username))
             return redirect("user_management")
     else:
