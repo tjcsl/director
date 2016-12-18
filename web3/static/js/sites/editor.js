@@ -187,7 +187,8 @@ You can drag files and folders around to move them.");
                             Messenger().error(data.error);
                         }
                         else {
-                            path_obj.appendTo(f);
+                            path_obj.insertAfter(f);
+                            path_obj.attr("data-depth", parseInt(f.attr("data-depth")) + 1);
                             path_obj = null;
                         }
                     });
