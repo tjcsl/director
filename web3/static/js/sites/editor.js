@@ -266,9 +266,13 @@ You can drag files and folders around to move them.");
                     if (key == "close") {
                         trigger.find(".fa-times").click();
                     }
+                    if (key == "close-other") {
+                        $("#tabs .tab:not(.tab-terminal):.not(.tab-help).not([data-file='" + trigger.attr("data-file").replace("'", "\\'") + "']) .fa-times").click();
+                    }
                 },
                 items: {
                     "close": {name: "Close Tab", icon: "fa-times"},
+                    "close_other": {name: "Close Other Tabs", icon: "fa-times-circle-o"}
                 }
             }
         }
