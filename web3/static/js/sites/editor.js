@@ -322,6 +322,10 @@ You can drag files and folders around to move them.");
                     if (key == "rename") {
                         triggerRename(trigger);
                     }
+                    if (key == "refresh") {
+                        trigger.removeClass("loaded");
+                        trigger.click();
+                    }
                 },
                 items: {
                     "toggle": {name: "Toggle", icon: "fa-expand"},
@@ -332,6 +336,8 @@ You can drag files and folders around to move them.");
                     "sep2": "--------",
                     "new_file": {name: "New File", icon: "fa-file"},
                     "new_folder": {name: "New Folder", icon: "fa-folder"}
+                    "sep3": "--------",
+                    "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
             };
         },
