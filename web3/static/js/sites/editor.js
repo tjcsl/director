@@ -267,7 +267,7 @@ You can drag files and folders around to move them.");
                         trigger.find(".fa-times").click();
                     }
                     if (key == "close_other") {
-                        $("#tabs .tab:not(.tab-terminal):.not(.tab-help).not([data-file='" + trigger.attr("data-file").replace("'", "\\'") + "']) .fa-times").click();
+                        $("#tabs .tab:not(.tab-terminal):not(.tab-help):not([data-file='" + trigger.attr("data-file").replace("'", "\\'") + "']) .fa-times").click();
                     }
                     if (key == "close_right") {
                         trigger.nextAll(":not(.tab-terminal):not(.tab-help)").find(".fa-times").click();
