@@ -578,11 +578,11 @@ You can drag files and folders around to move them.");
     }).mousemove(function(e) {
         if (sep_dragging) {
             var newPos = e.clientX - 10;
-            if (newPos < 15) {
-                newPos = 15;
+            if (newPos < 30) {
+                newPos = 30;
             }
             else {
-                var max = $(window).width() - 50;
+                var max = $(window).width() - 80;
                 if (newPos > max) {
                     newPos = max;
                 }
