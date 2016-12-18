@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_http_methods
@@ -775,3 +775,22 @@ def editor_create_view(request, site_id):
         os.mkdir(new_path)
 
     return JsonResponse({"success": True})
+
+
+@login_required
+def editor_download_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    requested_path = request.GET.get("name", "")
+    base_path = site.path[:-1]
+    path = os.path.abspath(os.path.join(base_path, requested_path))
+
+    if not path.startswith(base_path) or not os.path.isfile(path):
+        raise Http404
+
+    response = HttpResponse(content=open(path, "rb"))
+    response["Content-Type"] = "application/octet-stream"
+    response["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(path))
+    return response
