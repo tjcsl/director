@@ -366,7 +366,8 @@ You can drag files and folders around to move them.");
             });
         }
     });
-    function initFiles() {
+    function initFiles(firstRun) {
+        firstRun = firstRun || false;
         $.get(path_endpoint, function(data) {
             if (data.error) {
                 Messenger().error(data.error);
@@ -385,11 +386,13 @@ You can drag files and folders around to move them.");
                         $("#files").append(node);
                     }
                 });
-                $("div.folder[data-name='public']").click();
+                if (firstRun) {
+                    $("div.folder[data-name='public']").click();
+                }
             }
         });
     }
-    initFiles();
+    initFiles(true);
 });
 function get_path(t) {
     var depth = parseInt(t.attr("data-depth"));
