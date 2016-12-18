@@ -34,7 +34,8 @@ You can drag files and folders around to move them.");
     });
     function triggerDelete(item) {
         var filepaths = [];
-        $("#files div.active").each(function(k, v) {
+        var items = $("#files div.active");
+        items.each(function(k, v) {
             var item = $(this);
             var filepath = get_path(item);
             if (item.hasClass("file")) {
@@ -48,7 +49,7 @@ You can drag files and folders around to move them.");
                     Messenger().error(data.error);
                 }
                 else {
-                    $("#files div.active").each(function(k, v) {
+                    items.each(function(k, v) {
                         var item = $(this);
                         if (item.hasClass("folder")) {
                             var depth = parseInt(item.attr("data-depth"));
