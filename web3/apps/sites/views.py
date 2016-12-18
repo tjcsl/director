@@ -802,7 +802,8 @@ def editor_download_view(request, site_id):
         with zipfile.ZipFile(zip_io, "w", zipfile.ZIP_DEFLATED) as zipf:
             for root, dirs, files in os.walk(path):
                 for f in files:
-                    zipf.write(os.path.join(root, f))
+                    filepath = os.path.join(root, f)
+                    zipf.write(filepath, filepath[len(path):])
         response = HttpResponse(zip_io.getvalue())
         response["Content-Type"] = "application/x-zip-compressed"
         response["Content-Disposition"] = "attachment; filename={}.zip".format(os.path.basename(path))
