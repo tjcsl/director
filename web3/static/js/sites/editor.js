@@ -33,22 +33,30 @@ You can drag files and folders around to move them.");
         checkTabClean();
     });
     function triggerDelete(item) {
-        var filepath = get_path(item);
-        if (item.hasClass("file")) {
-            filepath += item.attr("data-name");
-        }
-        if (confirm("Are you sure you want to delete:\n" + filepath)) {
-            $.post(delete_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
+        var filepaths = [];
+        $("#files div.active").each(function(k, v) {
+            var item = $(this);
+            var filepath = get_path(item);
+            if (item.hasClass("file")) {
+                filepath += item.attr("data-name");
+            }
+            filepaths.append(filepath);
+        });
+        if (confirm("Are you sure you want to delete:\n" + filepaths.join("\n"))) {
+            $.post(delete_endpoint, { name: filepaths }, function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
                 }
                 else {
-                    if (item.hasClass("folder")) {
-                        var depth = parseInt(item.attr("data-depth"));
-                        var children = item.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
-                        children.remove();
-                    }
-                    item.remove();
+                    $("#files div.active").each(function(k, v) {
+                        var item = $(this);
+                        if (item.hasClass("folder")) {
+                            var depth = parseInt(item.attr("data-depth"));
+                            var children = item.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                            children.remove();
+                        }
+                        item.remove();
+                    });
                 }
             });
         }
