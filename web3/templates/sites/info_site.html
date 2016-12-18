@@ -47,9 +47,6 @@
 
         {% if site.custom_nginx %}
         <p><i class="fa fa-exclamation-triangle"></i> This site has a custom nginx configuration.</p>
-        {% if request.user.is_superuser %}
-        <a href="{% url 'edit_nginx' site.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Edit Nginx Configuration</a>
-        {% endif %}
         {% endif %}
 
         {% if site.category != "vm" %}

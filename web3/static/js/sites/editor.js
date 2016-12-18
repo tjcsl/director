@@ -2,6 +2,7 @@ var editor;
 
 $(document).ready(function() {
     var tabs = {};
+    var tab_nginx;
     var modelist = ace.require("ace/ext/modelist");
     var help_session = ace.createEditSession(" ____  _               _             \n\
 |  _ \\(_)_ __ ___  ___| |_ ___  _ __ \n\
@@ -29,7 +30,7 @@ You can drag files and folders around to move them.");
         }
     }
     editor.on("input", function() {
-        checkTabClean($("#tabs .tab.active"));
+        checkTabClean($("#tabs .tab.active:not(.tab-special)"));
     });
     function triggerDelete(item) {
         var filepaths = [];
@@ -444,13 +445,20 @@ You can drag files and folders around to move them.");
     });
     function saveTab(tab) {
         if (tab.length) {
-            if (tab.hasClass("tab-help") || tab.hasClass("tab-custom")) {
-                Messenger().error("No file selected to save!");
+            if (tab.hasClass("tab-nginx")) {
+                $.post(nginx_endpoint, { "editor": tab_nginx.getValue() }, function(data) {
+                    if (data.error) {
+                        Messenger().error(data.error);
+                    }
+                    if (data.success) {
+                        Messenger().success(data.success);
+                    }
+                });
             }
             else if (tab.hasClass("tab-image")) {
                 Messenger().error("Image editing is not supported!");
             }
-            else {
+            else if (!tab.hasClass("tab-special")) {
                 var filepath = tab.attr("data-file");
                 $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: tabs[filepath].getValue() }, function(data) {
                     if (data.error) {
@@ -461,6 +469,9 @@ You can drag files and folders around to move them.");
                         checkTabClean(tab);
                     }
                 });
+            }
+            else {
+                Messenger().error("No file selected to save!");
             }
         }
     }
@@ -489,6 +500,19 @@ You can drag files and folders around to move them.");
                 $("#terminal").append(frame);
             }
             $("#terminal").show();
+        }
+        else if (t.hasClass("tab-nginx")) {
+            $("#editor").show();
+            if (!tab_nginx) {
+                $.get(nginx_endpoint, function(data) {
+                    tab_nginx = ace.createEditSession(data);
+                    tab_nginx.setMode("ace/mode/space");
+                    editor.setSession(tab_nginx);
+                }, "text");
+            }
+            else {
+                editor.setSession(tab_nginx);
+            }
         }
         else if (t.hasClass("tab-help") || !t.hasClass("tab-special")) {
             $("#editor").show();

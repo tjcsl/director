@@ -108,40 +108,37 @@ def edit_view(request, site_id):
     return render(request, "sites/create_site.html", context)
 
 
-@superuser_required
+@login_required
 def edit_nginx_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
     nginx_path = "/etc/nginx/director.d/{}.conf".format(site.name)
 
-    if not settings.DEBUG and os.path.isfile(nginx_path):
+    if os.path.isfile(nginx_path):
         with open(nginx_path, "r") as f:
             contents = f.read()
     else:
         contents = render_to_string("config/nginx.conf", {"site": site})
 
     if request.method == "POST":
+        if not request.user.is_superuser:
+            return JsonResponse({"error": "You are not allowed to make changes to this file!"})
         if request.POST.get("editor", None):
-            if not settings.DEBUG:
+            with open(nginx_path, "w") as f:
+                f.write(request.POST["editor"])
+            if not check_nginx_config():
                 with open(nginx_path, "w") as f:
-                    f.write(request.POST["editor"])
-                if not check_nginx_config():
-                    with open(nginx_path, "w") as f:
-                        f.write(contents)
-                    messages.error(request, "Invalid nginx configuration!")
-                else:
-                    reload_nginx_config()
-                    messages.success(request, "Nginx configuration updated!")
+                    f.write(contents)
+                return JsonResponse({"error": "Invalid nginx configuration!"})
             else:
-                messages.warning(request, "Not writing nginx config in debug mode!")
+                reload_nginx_config()
+                return JsonResponse{{"success": "Nginx configuration updated!"})
         else:
-            messages.error(request, "You must have a nginx configuration!")
-        return redirect("info_site", site_id=site_id)
-
-    context = {
-        "contents": contents,
-        "site": site
-    }
-    return render(request, "sites/edit_nginx.html", context)
+            return JsonResponse({"error": "You must have a nginx configuration!"})
+    else:
+        return HttpResponse(contents, content_type="text/plain")
 
 
 @superuser_required

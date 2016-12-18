@@ -27,6 +27,7 @@
     var move_endpoint = "{% url 'editor_move' site.id %}";
     var process_endpoint = "{% url 'editor_process' site.id %}";
     var exec_endpoint = "{% url 'editor_exec' site.id %}";
+    var nginx_endpoint = "{% url 'edit_nginx' site.id %}";
     var is_dynamic = {% if site.category == 'dynamic' %}true{% else %}false{% endif %};
     var csrftoken = "{{ csrf_token }}";
     var terminal_url = "/ws/terminal.html?uid={{ request.user.id }}&token={{ request.user.access_token }}&site={{ site.id }}";
@@ -52,8 +53,8 @@
 <div id="editor-wrapper">
     <div id="tabs">
         <div class="tab active tab-special tab-help"><i class="fa fa-question-circle"></i></div>
-        <div class="tab tab-special tab-nginx pull-right"><i class="fa fa-cog"></i> Nginx</div>
         <div class="tab tab-special tab-terminal pull-right"><i class="fa fa-terminal"></i></div>
+        <div class="tab tab-special tab-nginx pull-right"><i class="fa fa-cog"></i> Nginx</div>
     </div>
     <div id="terminal" class="tab-pane"></div>
     <div id="editor" class="tab-pane"></div>
