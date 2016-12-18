@@ -606,7 +606,7 @@ You can drag files and folders around to move them.");
     });
 
     $("#tabs").sortable({
-        items: ":not(.tab-help):not(.tab-terminal)"
+        items: ".tab:not(.tab-help):not(.tab-terminal)"
     });
     $("#tabs").disableSelection();
 });
