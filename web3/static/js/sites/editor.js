@@ -493,6 +493,9 @@ You can drag files and folders around to move them.");
             $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(t.attr("data-file")) + "&embed=true");
             $("#image").show();
         }
+        else if (t.hasClass("tab-console")) {
+            $("#sql-console").show();
+        }
         else if (t.hasClass("tab-terminal")) {
             if (!$("#terminal iframe").length) {
                 var frame = $("<iframe />");

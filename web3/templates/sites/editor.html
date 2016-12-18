@@ -5,6 +5,9 @@
     {{ block.super }}
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.1/jquery.contextMenu.min.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+    {% if site.database %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sql_console.css' %}" />
+    {% endif %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/site_editor.css' %}" />
 {% endblock %}
 
@@ -42,6 +45,13 @@
         }
     });
     </script>
+    {% if site.database %}
+    <script type="text/javascript" src="{% static 'js/sql_console.js' %}"></script>
+    <script type="text/javascript">
+    var sql_endpoint = "{% url 'sql_database' site.id %}";
+    var back_endpoint = "{% url 'info_site' site.id %}";
+    </script>
+    {% endif %}
 {% endblock %}
 
 {% block navbar %}
@@ -63,6 +73,15 @@
     </div>
     <div id="terminal" class="tab-pane"></div>
     <div id="editor" class="tab-pane"></div>
+    {% if site.database %}
+    <div id="sql-console" class="tab-pane">
+        <div id="console">
+            <pre class="output"><b>database: {{ site.database.db_name }}, user: {{ site.database.username }}, type: {{ site.database.category }}</b>
+        </pre>
+            <table><tr><td class="ps">{{ site.database.db_name }}=&gt; </td><td class="input-td"><input autofocus class="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /></td></tr></table>
+        </div>
+    </div>
+    {% endif %}
     <div id="image" class="tab-pane"><img /></div>
 </div>
 <iframe id="download" style="display:none"></iframe>
