@@ -401,7 +401,7 @@ You can drag files and folders around to move them.");
         if (sep_dragging) {
             var newPos = e.clientX;
             $("#files").width(newPos);
-            $("#editor-wrapper").css("width", "calc(100vw - 5px - " + newPos + "px)");
+            $("#editor-wrapper").css("width", "calc(100vw - 15px - " + newPos + "px)");
         }
     });
 });
