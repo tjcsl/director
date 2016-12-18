@@ -390,6 +390,18 @@ You can drag files and folders around to move them.");
         });
     }
     initFiles(true);
+
+    var sep_dragging = false;
+    $("#sep").mousedown(function() {
+        sep_dragging = true;
+    }).mouseup(function() {
+        sep_dragging = false;
+    }).mousemove(function(e) {
+        if (sep_dragging) {
+            $("#files").width(e.clientX);
+            $("#editor-wrapper").css("width", "calc(100vw - 5px - " + e.clientX + "px)");
+        }
+    });
 });
 function get_path(t) {
     var depth = parseInt(t.attr("data-depth"));
