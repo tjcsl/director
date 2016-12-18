@@ -12,7 +12,7 @@
     font-family: monospace;
     overflow-y: auto;
 }
-#output {
+#console .output {
     font-size: 16px;
     font-family: monospace;
     width: 100%;
@@ -22,7 +22,7 @@
     white-space: pre-wrap;
     word-wrap: break-word;
 }
-#input {
+#console .input {
     font-family: monospace;
     font-size: 16px;
     border: none;
@@ -41,12 +41,12 @@
     margin: 0;
     padding: 0;
 }
-#input-td {
+#console .input-td {
     width: 99%;
 }
-#input {
+#console .input {
     width: 100%;
 }
-#input:focus {
+#console .input:focus {
     outline: none;
 }

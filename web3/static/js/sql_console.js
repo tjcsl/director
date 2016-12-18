@@ -2,7 +2,7 @@ $(document).ready(function() {
     $("#console").click(function() {
         var sel = window.getSelection().toString();
         if (!sel) {
-            $("#input").focus();
+            $("#console .input").focus();
         }
     });
     $.ajaxSetup({
@@ -16,7 +16,7 @@ $(document).ready(function() {
         if (e.which == 38) {
             history_point += 1;
             if (history_point < history.length) {
-                $("#input").val(history[history_point]);
+                $("#console .input").val(history[history_point]);
             }
             else {
                 history_point = history.length - 1;
@@ -26,27 +26,27 @@ $(document).ready(function() {
         if (e.which == 40) {
             history_point -= 1;
             if (history_point >= 0 && history.length > 0) {
-                $("#input").val(history[history_point]);
+                $("#console .input").val(history[history_point]);
             }
             else {
-                $("#input").val("");
+                $("#console .input").val("");
                 history_point = -1;
             }
             e.preventDefault();
         }
     });
     $.post(sql_endpoint, {"version": true}, function(data) {
-        $("#output").append(data + "\n");
+        $("#console .output").append(data + "\n");
     });
-    $("#input").keydown(function(e) {
+    $("#console .input").keydown(function(e) {
         if (e.ctrlKey && e.keyCode == 67 && !window.getSelection().toString()) {
-            $("#output").append($("#ps").text() + $(this).val() + "^C\n");
+            $("#console .output").append($("#ps").text() + $(this).val() + "^C\n");
             $(this).val("");
             $("#console").scrollTop($("#console")[0].scrollHeight);
             e.preventDefault();
         }
     });
-    $("#input").keypress(function(e) {
+    $("#console .input").keypress(function(e) {
         if (e.which == 13) {
             var val = $(this).val();
             if (val) {
@@ -55,18 +55,18 @@ $(document).ready(function() {
                     return;
                 }
                 else if ($.trim(val.toLowerCase()) == "\\! clear") {
-                    $("#output").text("");
+                    $("#console .output").text("");
                 }
                 else {
-                    $("#output").append($("#ps").text() + val + "\n");
+                    $("#console .output").append($("#ps").text() + val + "\n");
                     $("#console table").hide();
                     $.post(sql_endpoint, {"sql": val}, function(data) {
-                        $("#output").append($("<div />").text(data).html());
+                        $("#console .output").append($("<div />").text(data).html());
                     }).error(function() {
-                        $("#output").append("<span style='color:#cc0000'>Server Error</span>\n\n");
+                        $("#console .output").append("<span style='color:#cc0000'>Server Error</span>\n\n");
                     }).always(function() {
                         $("#console table").show();
-                        $("#input").focus();
+                        $("#console .input").focus();
                         $("#console").scrollTop($("#console")[0].scrollHeight);
                     });
                     history.unshift(val);
@@ -75,7 +75,7 @@ $(document).ready(function() {
                 $(this).val("");
             }
             else {
-                $("#output").append($("#ps").text() + "\n");
+                $("#console .output").append($("#console .ps").text() + "\n");
             }
             $("#console").scrollTop($("#console")[0].scrollHeight);
         }
