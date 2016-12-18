@@ -105,6 +105,13 @@ You can drag files and folders around to move them.");
         }
 
     }
+    $("#files").on("dragstart", "div", function(e) {
+        var filepath = get_path(item);
+        if (item.hasClass("file")) {
+            filepath += item.attr("data-name");
+        }
+        e.originalEvent.dataTransfer.setData("path", filepath);
+    });
     $("#files").on("dragover", function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -149,6 +156,19 @@ You can drag files and folders around to move them.");
                         }
                     }
                 });
+            }
+            else {
+                var old_path = e.originalEvent.dataTransfer.getData("path");
+                if (old_path) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var new_path = "";
+                    if (e.target !== $("#files")[0]) {
+                        path = get_path($(e.target).closest("div.folder"));
+                    }
+                    console.log(old_path + " -> " + new_path);
+                    // TODO: move
+                }
             }
         }
     });
