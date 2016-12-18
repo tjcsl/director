@@ -103,3 +103,6 @@ body {
     background-image: url("/static/images/transparent.png");
     background-repeat: repeat;
 }
+#image img {
+    border: 1px solid #ccc;
+}
