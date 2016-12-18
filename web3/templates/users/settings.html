@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block main %}
-<h5>Your Information</h5>
+<h5>{{ request.user.full_name }}</h5>
 <p>
     <b>Username:</b> {{ request.user.username }}<br />
     <b>Email:</b> {{ request.user.email }}<br />
