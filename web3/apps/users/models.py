@@ -51,11 +51,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_social_auth(self):
         return self.social_auth.get(provider='ion')
 
-    def api_request(self, url, params):
+    def api_request(self, url, params={}):
         s = self.get_social_auth()
         params.update({"format": "json"})
         params.update({"access_token": s.extra_data["access_token"]})
-        r = requests.get("https://ion.tjhsst.edu/{}".format(url), params=params)
+        r = requests.get("https://ion.tjhsst.edu/api/{}".format(url), params=params)
         return r.json()
 
     def github_api_request(self, url, method="GET", data={}):
