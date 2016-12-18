@@ -680,9 +680,9 @@ def editor_path_view(request, site_id):
     for f in os.listdir(path):
         fpath = os.path.join(path, f)
         if os.path.isdir(fpath):
-            filesystem.append({"type": "d", "name": f, "executable": os.access(fpath, os.X_OK)})
+            filesystem.append({"type": "d", "name": f})
         else:
-            filesystem.append({"type": "f", "name": f})
+            filesystem.append({"type": "f", "name": f, "executable": os.access(fpath, os.X_OK)})
 
     return JsonResponse({"files": filesystem})
 
