@@ -54,7 +54,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def api_request(self, url, params={}):
         s = self.get_social_auth()
         params.update({"format": "json"})
-        params.update({"access_token": s.extra_data["access_token"]})
+        params.update({"access_token": s.access_token})
         r = requests.get("https://ion.tjhsst.edu/api/{}".format(url), params=params)
         return r.json()
 
