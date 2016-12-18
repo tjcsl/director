@@ -638,16 +638,16 @@ You can drag files and folders around to move them.");
 
     $("#files").resizable({
         handles: "e",
-        minWidth: 30,
+        minWidth: 35,
         resize: function() {
             $("#editor-wrapper").css("width", "calc(100vw - 20px - " + $("#files").width() + "px)");
         }
     });
 
     $(window).resize(function() {
-        $("#files").resizable("option", "maxWidth", $(window).width() - 30);
+        $("#files").resizable("option", "maxWidth", $(window).width() - 80);
     });
-    $("#files").resizable("option", "maxWidth", $(window).width() - 30);
+    $("#files").resizable("option", "maxWidth", $(window).width() - 80);
 
     $("#tabs").sortable({
         items: ".tab:not(.tab-help):not(.tab-terminal)",
