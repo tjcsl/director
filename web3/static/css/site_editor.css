@@ -17,8 +17,15 @@ body {
 #files {
     float: left;
     padding: 10px;
+    padding-right: 5px;
     overflow: auto;
     width: 250px;
+    height: calc(100vh - 40px);
+}
+#sep {
+    cursor: ew-resize;
+    float: left;
+    width: 5px;
     height: calc(100vh - 40px);
 }
 #editor-wrapper {
