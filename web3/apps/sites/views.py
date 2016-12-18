@@ -2,6 +2,7 @@ import os
 import shutil
 import datetime
 import requests
+import zipfile
 
 from multiprocessing import Pool
 from subprocess import Popen, PIPE
@@ -787,10 +788,22 @@ def editor_download_view(request, site_id):
     base_path = site.path[:-1]
     path = os.path.abspath(os.path.join(base_path, requested_path))
 
-    if not path.startswith(base_path) or not os.path.isfile(path):
+    if not path.startswith(base_path) or not os.path.exists(path):
         raise Http404
 
-    response = HttpResponse(content=open(path, "rb"))
-    response["Content-Type"] = "application/octet-stream"
-    response["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(path))
-    return response
+    if os.path.isfile(path):
+        response = HttpResponse(content=open(path, "rb"))
+        response["Content-Type"] = "application/octet-stream"
+        response["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(path))
+        return response
+    else:
+        zip_io = io.BytesIO()
+        with zipfile.ZipFile(zip_io, "w", zipfile.ZIP_DEFLATED) as zipf:
+            for root, dirs, files in os.walk(path):
+                for f in files:
+                    zipf.write(os.path.join(root, f))
+        response = HttpResponse(zip_io.getvalue())
+        response["Content-Type"] = "application/x-zip-compressed"
+        response["Content-Disposition"] = "attachment; filename={}.zip".format(os.path.basename(path))
+        response["Content-Length"] = zip_io.tell()
+        return response

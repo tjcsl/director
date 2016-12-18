@@ -81,7 +81,10 @@ You can drag files and folders around to move them.");
         }
     }
     function triggerDownload(item) {
-        var filepath = get_path(item) + item.attr("data-name");
+        var filepath = get_path(item);
+        if (item.hasClass("file")) {
+            filepath += item.attr("data-name");
+        }
         $("#download").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath));
     }
     $.contextMenu({
@@ -137,6 +140,9 @@ You can drag files and folders around to move them.");
                     if (key == "delete") {
                         triggerDelete(trigger);
                     }
+                    if (key == "download") {
+                        triggerDownload(trigger);
+                    }
                     if (key == "new_file") {
                         triggerCreate(trigger, true);
                     }
@@ -146,6 +152,7 @@ You can drag files and folders around to move them.");
                 },
                 items: {
                     "toggle": {name: "Toggle", icon: "fa-expand"},
+                    "download": {name: "Download as ZIP", icon: "fa-download"},
                     "sep1": "--------",
                     "rename": {name: "Rename", icon: "fa-pencil-square-o"},
                     "delete": {name: "Delete", icon: "fa-trash-o"},
