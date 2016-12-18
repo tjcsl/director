@@ -408,7 +408,7 @@ You can drag files and folders around to move them.");
         t.addClass("active");
         $(".tab-pane").hide();
         if (t.hasClass("tab-image")) {
-            $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath) + "&embed=true");
+            $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(t.attr("data-file")) + "&embed=true");
             $("#image").show();
         }
         else if (t.hasClass("tab-help") || t.attr("data-file")) {
