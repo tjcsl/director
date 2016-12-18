@@ -320,7 +320,7 @@ You can drag files and folders around to move them.");
                 this.addClass("active");
             },
             hide: function(opt) {
-                this.removeClass("active");
+                $("#files div.active").removeClass("active");
             }
         }
     });
@@ -374,7 +374,7 @@ You can drag files and folders around to move them.");
                 this.addClass("active");
             },
             hide: function(opt) {
-                this.removeClass("active");
+                $("#files div.active").removeClass("active");
             }
         }
     });
@@ -482,6 +482,13 @@ You can drag files and folders around to move them.");
     });
     $("#files").on("click", ".folder", function(e) {
         e.preventDefault();
+        if (e.ctrlKey) {
+            $(this).addClass("active");
+            return;
+        }
+        else {
+            $("#files div").removeClass("active");
+        }
         var t = $(this);
         if (t.hasClass("loaded")) {
             var depth = parseInt(t.attr("data-depth"));
