@@ -99,4 +99,7 @@ body {
     overflow-y: scroll;
     padding-top: 30px;
     padding-bottom: 30px;
+
+    background-image: url("/static/images/transparent.png");
+    background-repeat: repeat;
 }
