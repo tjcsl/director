@@ -638,9 +638,9 @@ You can drag files and folders around to move them.");
 
     $("#files").resizable({
         handles: "e",
-        minWidth: 40,
+        minWidth: 30,
         resize: function() {
-            $("#editor-wrapper").css("width", "calc(100vw - 10px - " + $("#files").width() + "px)");
+            $("#editor-wrapper").css("width", "calc(100vw - 20px - " + $("#files").width() + "px)");
         }
     });
 

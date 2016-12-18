@@ -17,10 +17,13 @@ body {
 #files {
     float: left;
     padding: 10px;
-    padding-right: 0;
     overflow: auto;
     width: 250px;
     height: calc(100vh - 40px);
+}
+#files .ui-resizable-e {
+    width: 15px;
+    cursor: ew-resize;
 }
 #editor-wrapper {
     float: right;
