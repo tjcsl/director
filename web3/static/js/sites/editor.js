@@ -165,9 +165,18 @@ You can drag files and folders around to move them.");
                     e.stopPropagation();
                     var new_path = "";
                     if (e.target !== $("#files")[0]) {
-                        path = get_path($(e.target).closest("div.folder"));
+                        var f = $(e.target).closest("div.folder");
+                        if (f.length) {
+                            new_path = get_path();
+                        }
+                        else {
+                            f = $(e.target).closest("div.file");
+                            if (f.length) {
+                                new_path = get_path(f.prevAll("div.folder[data-depth=" + (parseInt(f.attr("data-depth")) - 1) + "]:first"));
+                            }
+                        }
                     }
-                    console.log(old_path + " -> " + new_path, e.target);
+                    console.log(old_path + " -> " + new_path);
                     // TODO: move
                 }
             }
