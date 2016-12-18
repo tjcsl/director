@@ -886,6 +886,6 @@ def editor_move_view(request, site_id):
     if not new_path.startswith(base_path) or os.path.isfile(new_path):
         return JsonResponse({"error": "Invalid destination!", "path": new_path})
 
-    os.rename(old_path, new_path)
+    os.rename(old_path, os.path.join(new_path, os.path.basename(old_path)))
 
     return JsonResponse({"success": True})
