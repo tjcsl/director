@@ -835,3 +835,32 @@ def editor_rename_view(request, site_id):
     os.rename(path, os.path.join(os.path.dirname(path), new_name))
 
     return JsonResponse({"success": True})
+
+
+@require_http_methods(["POST"])
+@login_required
+def editor_upload_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    name = request.POST.get("path", "")
+    base_path = site.path[:-1]
+    path = os.path.abspath(os.path.join(base_path, name))
+
+    if not path.startswith(base_path) or not os.path.isfolder(path):
+        return JsonResponse({"error": "Invalid or nonexistent folder!", "path": path})
+
+    f = request.FILES.get("file", None)
+
+    if not f:
+        return JsonResponse({"error": "No file uploaded!"})
+
+    filename = os.path.basename(f.name)
+    with open(os.path.join(path, filename), "wb") as dest:
+        for chunk in f.chunks():
+            dest.write(chunk)
+
+    fix_permissions(site)
+
+    return JsonResponse({"success": True})
