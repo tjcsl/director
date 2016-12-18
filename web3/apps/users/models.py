@@ -19,6 +19,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.PositiveIntegerField(primary_key=True, validators=[validators.MinValueValidator(1000)])
     service = models.BooleanField(default=False)
     username = models.CharField(unique=True, max_length=32)
+    full_name = models.CharField(max_length=60)
     email = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -35,10 +36,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return Site.objects.filter(name=self.username, purpose="user").count() > 0
 
     @property
-    def full_name(self):
-        return self.username
-
-    @property
     def short_name(self):
         return self.username
 
@@ -46,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
     def get_full_name(self):
-        return self.username
+        return self.full_name
 
     def get_social_auth(self):
         return self.social_auth.get(provider='ion')
