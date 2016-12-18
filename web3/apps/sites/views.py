@@ -809,3 +809,26 @@ def editor_download_view(request, site_id):
         response["Content-Disposition"] = "attachment; filename={}.zip".format(os.path.basename(path))
         response["Content-Length"] = zip_io.tell()
         return response
+
+
+@require_http_methods(["POST"])
+@login_required
+def editor_rename_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    new_name = os.path.basename(request.POST.get("name", ""))
+    requested_path = request.POST.get("path", "")
+    base_path = site.path[:-1]
+    path = os.path.abspath(os.path.join(base_path, requested_path))
+
+    if not path.startswith(base_path) or not os.path.exists(path):
+        return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": path})
+
+    if not new_name:
+        return JsonResponse({"error": "You must enter a valid name!", "path": path})
+
+    os.rename(path, new_name)
+
+    return JsonResponse({"success": True})

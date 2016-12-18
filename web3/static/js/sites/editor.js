@@ -87,6 +87,25 @@ You can drag files and folders around to move them.");
         }
         $("#download").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath));
     }
+    function triggerRename(item) {
+        var filepath = get_path(item);
+        if (item.hasClass("file")) {
+            filepath += item.attr("data-name");
+        }
+        var name = prompt("Enter a new name for your new " + (item.hasClass("file") ? "file" : "directory") + ".");
+        if (name) {
+            $.post(rename_endpoint, { name: filepath, newname: name }, function(data) {
+                if (data.error) {
+                    Messenger().error(data.error);
+                }
+                else {
+                    item.attr("data-name") = name;
+                    item.find("span").text(name);
+                }
+            });
+        }
+
+    }
     $.contextMenu({
         "selector": "#files .file",
         build: function(trigger, e) {
@@ -106,6 +125,9 @@ You can drag files and folders around to move them.");
                     }
                     if (key == "new_folder") {
                         triggerCreate(trigger, false);
+                    }
+                    if (key == "rename") {
+                        triggerRename(trigger);
                     }
                 },
                 items: {
@@ -148,6 +170,9 @@ You can drag files and folders around to move them.");
                     }
                     if (key == "new_folder") {
                         triggerCreate(trigger, false);
+                    }
+                    if (key == "rename") {
+                        triggerRename(trigger);
                     }
                 },
                 items: {
@@ -281,7 +306,7 @@ You can drag files and folders around to move them.");
                 else {
                     $.each(data.files, function(k, v) {
                         var c = (v.type == "f" ? "file" : "folder");
-                        var node = $("<div draggable='true' style='padding-left:" + (depth + 1)*20 + "px'><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
+                        var node = $("<div draggable='true' style='padding-left:" + (depth + 1)*20 + "px'><i class='fa fa-fw fa-" + c + "-o'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
                         node.addClass(c);
                         node.attr("data-name", v.name);
                         node.attr("data-depth", depth + 1);
@@ -303,7 +328,7 @@ You can drag files and folders around to move them.");
             else {
                 $.each(data.files, function(k, v) {
                     var c = (v.type == "f" ? "file" : "folder");
-                    var node = $("<div draggable='true'><i class='fa fa-fw fa-" + c + "-o'></i> " + $("<div />").text(v.name).html() + "</div>");
+                    var node = $("<div draggable='true'><i class='fa fa-fw fa-" + c + "-o'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
                     node.addClass(c);
                     node.attr("data-name", v.name);
                     node.attr("data-depth", 0);
