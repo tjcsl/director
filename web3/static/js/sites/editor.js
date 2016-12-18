@@ -469,13 +469,14 @@ You can drag files and folders around to move them.");
             tab.prepend("<i class='fa fa-circle'></i> ");
             tab.append(" <i class='fa fa-times'></i>");
             $("#tabs").append(tab);
+            $(".tab-pane").hide();
             if (filepath.match(/\.(jpeg|jpg|gif|png)$/) != null) {
                 tab.addClass("tab-image");
-                $(".tab-pane").hide();
                 $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath) + "&embed=true");
                 $("#image").show();
             }
             else {
+                $("#editor").show();
                 $.get(load_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
                     if (data.error) {
                         Messenger().error(data.error);
