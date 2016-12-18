@@ -62,7 +62,12 @@ You can drag files and folders around to move them.");
         }
     }
     function triggerCreate(item, type) {
-        var filepath = get_path(item);
+        if (item[0] == $("#files")[0]) {
+            filepath = "";
+        }
+        else {
+            var filepath = get_path(item);
+        }
         var name = prompt("Enter a name for your new " + (type ? "file" : "directory") + ".");
         if (name) {
             $.post(create_endpoint, { name: name, path: filepath, type: (type ? "f" : "d") }, function(data) {
@@ -250,6 +255,30 @@ You can drag files and folders around to move them.");
                             }
                         });
                     }
+                }
+            }
+        }
+    });
+    $.contextMenu({
+        "selector": "#files",
+        build: function(trigger, e) {
+            return {
+                callback: function(key, options) {
+                    if (key == "new_file") {
+                        triggerCreate(trigger, true);
+                    }
+                    if (key == "new_folder") {
+                        triggerCreate(trigger, false);
+                    }
+                    if (key == "refresh") {
+                        initFiles();
+                    }
+                },
+                items: {
+                    "new_file": {name: "New File", icon: "fa-file"},
+                    "new_folder": {name: "New Folder", icon: "fa-folder"},
+                    "sep1": "--------",
+                    "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
             }
         }
