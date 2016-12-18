@@ -535,7 +535,7 @@ You can drag files and folders around to move them.");
         var t = $(this).parent();
         delete tabs[t.attr("data-file")];
         t.remove();
-        var next_tab = $("#tabs .tab:not(.tab-terminal):last")
+        var next_tab = $("#tabs .tab:not(.tab-terminal):not(.tab-console):last")
         if (next_tab) {
             next_tab.click();
         }
