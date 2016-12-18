@@ -21,6 +21,7 @@
     var create_endpoint = "{% url 'editor_create' site.id %}";
     var download_endpoint = "{% url 'editor_download' site.id %}";
     var rename_endpoint = "{% url 'editor_rename' site.id %}";
+    var upload_endpoint = "{% url 'editor_upload' site.id %}";
     var csrftoken = "{{ csrf_token }}";
     function csrfSafeMethod(method) {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
