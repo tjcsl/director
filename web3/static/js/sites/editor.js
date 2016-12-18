@@ -604,6 +604,11 @@ You can drag files and folders around to move them.");
             $("#editor-wrapper").css("width", "calc(100vw - 20px - " + newPos + "px)");
         }
     });
+
+    $("#tabs").sortable({
+        items: ":not(.tab-help):not(.tab-terminal)"
+    });
+    $("#tabs").disableSelection();
 });
 function get_path(t) {
     var depth = parseInt(t.attr("data-depth"));
