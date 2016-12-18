@@ -384,6 +384,17 @@ You can drag files and folders around to move them.");
                 editor.setSession(tabs[filepath]);
             }
         }
+        else if (t.hasClass("tab-terminal")) {
+            if (!$("#terminal iframe").length) {
+                var frame = $("<iframe />");
+                frame.attr("src", terminal_url);
+                frame.css("width", "100%");
+                frame.css("height", "100%");
+                frame.css("border", "none");
+                $("#terminal").append(frame);
+            }
+            $("#terminal").show();
+        }
         e.preventDefault();
     });
     $("#tabs").on("click", ".tab .fa-times", function(e) {
@@ -481,6 +492,9 @@ You can drag files and folders around to move them.");
     });
     function initFiles(firstRun) {
         firstRun = firstRun || false;
+        if (firstRun) {
+            $("#files div").remove();
+        }
         $.get(path_endpoint, function(data) {
             if (data.error) {
                 Messenger().error(data.error);

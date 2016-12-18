@@ -24,6 +24,7 @@
     var upload_endpoint = "{% url 'editor_upload' site.id %}";
     var move_endpoint = "{% url 'editor_move' site.id %}";
     var csrftoken = "{{ csrf_token }}";
+    var terminal_url = "/ws/terminal.html?uid={{ request.user.id }}&token={{ request.user.access_token }}&site={{ site.id }}";
     function csrfSafeMethod(method) {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
@@ -45,7 +46,7 @@
 <div id="files"></div>
 <div id="sep"></div>
 <div id="editor-wrapper">
-    <div id="tabs"><div class="tab active tab-help"><i class="fa fa-question-circle"></i></div></div>
+    <div id="tabs"><div class="tab active tab-help"><i class="fa fa-question-circle"></i></div><div class="tab tab-terminal"><i class="fa fa-terminal"></i></div></div>
     <div id="terminal" class="tab-pane"></div>
     <div id="editor" class="tab-pane"></div>
 </div>
