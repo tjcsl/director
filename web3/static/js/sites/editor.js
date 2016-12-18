@@ -361,7 +361,7 @@ You can drag files and folders around to move them.");
                         node.attr("data-depth", depth + 1);
                         t.after(node);
                     });
-                    t.find("div.folder .fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
+                    t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
                 }
             });
         }
