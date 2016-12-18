@@ -275,11 +275,20 @@ You can drag files and folders around to move them.");
                     if (key == "close_left") {
                         trigger.prevAll(":not(.tab-terminal):not(.tab-help)").find(".fa-times").click();
                     }
+                    if (key == "save") {
+                        saveTab(trigger);
+                    }
+                    if (key == "open") {
+                        trigger.click();
+                    }
                 },
                 items: {
+                    "open": {name: "Show", icon: "fa-pencil-square-o"},
+                    "save": {name: "Save", icon: "fa-pencil"},
+                    "sep1": "--------",
                     "close": {name: "Close Tab", icon: "fa-times"},
                     "close_other": {name: "Close Other Tabs", icon: "fa-times-circle-o"},
-                    "sep1": "--------",
+                    "sep2": "--------",
                     "close_left": {name: "Close Tabs to Left", icon: "fa-chevron-left"},
                     "close_right": {name: "Close Tabs to Right", icon: "fa-chevron-right"}
                 }
