@@ -167,7 +167,7 @@ You can drag files and folders around to move them.");
                     if (e.target !== $("#files")[0]) {
                         path = get_path($(e.target).closest("div.folder"));
                     }
-                    console.log(old_path + " -> " + new_path);
+                    console.log(old_path + " -> " + new_path, e.target);
                     // TODO: move
                 }
             }
