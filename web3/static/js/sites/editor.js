@@ -136,7 +136,18 @@ You can drag files and folders around to move them.");
                             Messenger().error(data.error);
                         }
                         else {
-                            Messenger().success("File(s) uploaded!");
+                            if (path == "") {
+                                $("#files").children().remove();
+                                initFiles();
+                            }
+                            else {
+                                var folder = $(e.target).closest("div.folder");
+                                var depth = parseInt(folder.attr("data-depth"));
+                                var children = folder.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                                children.remove();
+                                folder.removeClass("loaded");
+                                folder.click();
+                            }
                         }
                     }
                 });
