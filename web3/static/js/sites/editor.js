@@ -187,10 +187,27 @@ You can drag files and folders around to move them.");
                             Messenger().error(data.error);
                         }
                         else {
+                            if (path_obj.hasClass("folder")) {
+                                var depth = parseInt(path_obj.attr("data-depth"));
+                                var children = path_obj.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
+                            }
                             path_obj.insertAfter(f);
-                            var newdepth = parseInt(f.attr("data-depth")) + 1;
-                            path_obj.css("padding-left", newdepth*20);
+                            if (f.attr("id") == "files") {
+                                newdepth = 0;
+                            }
+                            else {
+                                var newdepth = parseInt(f.attr("data-depth")) + 1;
+                            }
+                            path_obj.css("padding-left", newdepth*20 + "px");
                             path_obj.attr("data-depth", newdepth);
+                            if (path_obj.hasClass("folder")) {
+                                children.each(function(k, v) {
+                                    var cdepth = newdepth + (parseInt($(this).attr("data-depth")) - depth);
+                                    $(this).insertAfter(path_obj);
+                                    $(this).attr("data-depth", cdepth);
+                                    $(this).css("padding-left", cdepth*20 + "px");
+                                });
+                            }
                             path_obj = null;
                         }
                     });
