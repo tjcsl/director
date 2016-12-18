@@ -281,10 +281,12 @@ You can drag files and folders around to move them.");
                 items: {
                     "open": {name: "Open", icon: "fa-pencil"},
                     "download": {name: "Download", icon: "fa-download"},
-                    "sep1": "--------",
+                    "sep1": (is_dynamic ? "--------" : undefined),
+                    "set_server": (is_dynamic ? {name: "Set Process", icon: "fa-cog"} : undefined),
+                    "sep2": "--------",
                     "rename": {name: "Rename", icon: "fa-pencil-square-o"},
                     "delete": {name: "Delete", icon: "fa-trash-o"},
-                    "sep2": "--------",
+                    "sep3": "--------",
                     "new_file": {name: "New File", icon: "fa-file"},
                     "new_folder": {name: "New Folder", icon: "fa-folder"}
                 }

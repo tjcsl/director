@@ -23,6 +23,7 @@
     var rename_endpoint = "{% url 'editor_rename' site.id %}";
     var upload_endpoint = "{% url 'editor_upload' site.id %}";
     var move_endpoint = "{% url 'editor_move' site.id %}";
+    var is_dynamic = {% site.category == 'dynamic' %}true{% else %}false{% endif %};
     var csrftoken = "{{ csrf_token }}";
     var terminal_url = "/ws/terminal.html?uid={{ request.user.id }}&token={{ request.user.access_token }}&site={{ site.id }}";
     function csrfSafeMethod(method) {
