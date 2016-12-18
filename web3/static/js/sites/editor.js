@@ -115,7 +115,31 @@ You can drag files and folders around to move them.");
             if (e.originalEvent.dataTransfer.files.length) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log(e.target);
+                var files = e.originalEvent.dataTransfer.files;
+                var path = "";
+                if (e.target !== $("#files")[0]) {
+                    path = get_path($(e.target).closest("div.folder"));
+                }
+                var formData = new FormData();
+                formData.append("path", path);
+                for (var i = 0; i < files.length; i++) {
+                    formData.append("file[]", files[i], files[i].name);
+                }
+                $.ajax({
+                    url: upload_endpoint,
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if (data.error) {
+                            Messenger().error(data.error);
+                        }
+                        else {
+                            Messenger().success("File(s) uploaded!");
+                        }
+                    }
+                });
             }
         }
     });

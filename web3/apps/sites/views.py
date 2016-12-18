@@ -851,15 +851,16 @@ def editor_upload_view(request, site_id):
     if not path.startswith(base_path) or not os.path.isfolder(path):
         return JsonResponse({"error": "Invalid or nonexistent folder!", "path": path})
 
-    f = request.FILES.get("file", None)
+    fs = request.FILES.getlist("file")
 
-    if not f:
-        return JsonResponse({"error": "No file uploaded!"})
+    if len(fs) == 0:
+        return JsonResponse({"error": "No file(s) uploaded!"})
 
-    filename = os.path.basename(f.name)
-    with open(os.path.join(path, filename), "wb") as dest:
-        for chunk in f.chunks():
-            dest.write(chunk)
+    for f in fs:
+        filename = os.path.basename(f.name)
+        with open(os.path.join(path, filename), "wb") as dest:
+            for chunk in f.chunks():
+                dest.write(chunk)
 
     fix_permissions(site)
 
