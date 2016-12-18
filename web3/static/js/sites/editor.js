@@ -23,14 +23,13 @@ You can drag files and folders around to move them.");
         "showPrintMargin": false
     });
     $("#editor").show();
-    function checkTabClean() {
-        var tab = $("#tabs .tab.active");
+    function checkTabClean(tab) {
         if (tab.length) {
-            tab.toggleClass("unsaved", !editor.session.getUndoManager().isClean());
+            tab.toggleClass("unsaved", !tabs[tab.attr("data-file")].getUndoManager().isClean());
         }
     }
     editor.on("input", function() {
-        checkTabClean();
+        checkTabClean($("#tabs .tab.active"));
     });
     function triggerDelete(item) {
         var filepaths = [];
@@ -421,27 +420,30 @@ You can drag files and folders around to move them.");
             }
         }
     });
+    function saveTab(tab) {
+        if (tab.length) {
+            if (tab.hasClass("tab-help") || tab.hasClass("tab-custom")) {
+                Messenger().error("No file selected to save!");
+            }
+            else {
+                var filepath = tab.attr("data-file");
+                $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: tabs[filepath].getValue() }, function(data) {
+                    if (data.error) {
+                        Messenger().error(data.error);
+                    }
+                    else {
+                        tabs[filepath].getUndoManager().markClean();
+                        checkTabClean(tab);
+                    }
+                });
+            }
+        }
+    }
     editor.setTheme("ace/theme/chrome");
     $(document).keydown(function(e) {
         if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
             var tab = $("#tabs .tab.active");
-            if (tab.length) {
-                if (tab.hasClass("tab-help") || tab.hasClass("tab-custom")) {
-                    Messenger().error("No file selected to save!");
-                }
-                else {
-                    var filepath = tab.attr("data-file");
-                    $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: editor.session.getValue() }, function(data) {
-                        if (data.error) {
-                            Messenger().error(data.error);
-                        }
-                        else {
-                            editor.session.getUndoManager().markClean();
-                            checkTabClean();
-                        }
-                    });
-                }
-            }
+            saveTab(tab);
             e.preventDefault();
             e.stopPropagation();
         }
