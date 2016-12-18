@@ -400,6 +400,15 @@ You can drag files and folders around to move them.");
     }).mousemove(function(e) {
         if (sep_dragging) {
             var newPos = e.clientX - 10;
+            if (newPos < 30) {
+                newPos = 30;
+            }
+            else {
+                var max = $(window).width() - 30;
+                if (newPos > max) {
+                    newPos = max;
+                }
+            }
             $("#files").width(newPos);
             $("#editor-wrapper").css("width", "calc(100vw - 15px - " + newPos + "px)");
         }
