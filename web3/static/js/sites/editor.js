@@ -260,6 +260,21 @@ You can drag files and folders around to move them.");
         }
     });
     $.contextMenu({
+        "selector": ".tab:not(.tab-help):not(.tab-terminal)",
+        build: function(trigger, e) {
+            return {
+                callback: function(key, options) {
+                    if (key == "close") {
+                        trigger.find(".fa-times").click();
+                    }
+                },
+                items: {
+                    "close": {name: "Close Tab", icon: "fa-times"},
+                }
+            }
+        }
+    });
+    $.contextMenu({
         "selector": "#files",
         build: function(trigger, e) {
             return {
