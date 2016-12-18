@@ -95,3 +95,9 @@ body {
 #files div.exec span {
     color: #388E3C;
 }
+#image {
+    text-align: center;
+    overflow-y: scroll;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
