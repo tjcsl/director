@@ -79,9 +79,6 @@ You can drag files and folders around to move them.");
                         if (!item.hasClass("folder")) {
                             folder = item.prevAll("div.folder[data-depth=" + (parseInt(item.attr("data-depth")) - 1) + "]:first");
                         }
-                        var depth = parseInt(folder.attr("data-depth"));
-                        var children = folder.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
-                        children.remove();
                         folder.removeClass("loaded");
                         folder.click();
                     }
@@ -186,9 +183,6 @@ You can drag files and folders around to move them.");
                             else {
                                 var depth = 0;
                                 if (folder) {
-                                    var depth = parseInt(folder.attr("data-depth"));
-                                    var children = folder.nextUntil("div.folder[data-depth=" + depth + "]").filter(function(v) { return parseInt($(this).attr("data-depth")) > depth; });
-                                    children.remove();
                                     folder.removeClass("loaded");
                                     folder.click();
                                 }
@@ -540,7 +534,9 @@ You can drag files and folders around to move them.");
                         if (v.executable) {
                             node.addClass("exec");
                         }
-                        t.after(node);
+                        if (!t.find("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
+                            t.after(node);
+                        }
                     });
                     t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
                 }
