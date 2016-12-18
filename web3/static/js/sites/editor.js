@@ -277,12 +277,23 @@ You can drag files and folders around to move them.");
                     if (key == "rename") {
                         triggerRename(trigger);
                     }
+                    if (key == "set_process") {
+                        var filepath = get_path(trigger) + trigger.attr("data-name");
+                        $.post(process_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
+                            if (data.error) {
+                                Messenger().error(data.error);
+                            }
+                            else {
+                                Messenger().success("Dynamic process successfully updated!");
+                            }
+                        });
+                    }
                 },
                 items: {
                     "open": {name: "Open", icon: "fa-pencil"},
                     "download": {name: "Download", icon: "fa-download"},
                     "sep1": (is_dynamic ? "--------" : undefined),
-                    "set_server": (is_dynamic ? {name: "Set Process", icon: "fa-cog"} : undefined),
+                    "set_process": (is_dynamic ? {name: "Set Process", icon: "fa-cog"} : undefined),
                     "sep2": "--------",
                     "rename": {name: "Rename", icon: "fa-pencil-square-o"},
                     "delete": {name: "Delete", icon: "fa-trash-o"},

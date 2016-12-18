@@ -18,7 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_http_methods
 
-from .models import Site
+from .models import Site, Process
 from .forms import SiteForm, ProcessForm, DatabaseForm
 from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
@@ -887,5 +887,39 @@ def editor_move_view(request, site_id):
         return JsonResponse({"error": "Invalid destination!", "path": new_path})
 
     os.rename(old_path, os.path.join(new_path, os.path.basename(old_path)))
+
+    return JsonResponse({"success": True})
+
+
+@require_http_methods(["POST"])
+@login_required
+def editor_process_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    path = request.POST.get("name", None)
+
+    if not path:
+        return JsonResponse({"error": "No file path received!"})
+
+    base_path = site.path[:-1]
+    path = os.path.abspath(os.path.join(base_path, path))
+
+    if not path.startswith(base_path) or not os.path.isfile(path):
+        return JsonResponse({"error": "Invalid or nonexistent file!"})
+
+    if not os.access(path, os.X_OK):
+        return JsonResponse({"error": "File not set as executable!"})
+
+    if Process.objects.filter(site=site).exists():
+        proc = Process.objects.get(site=site)
+        proc.path = path
+        proc.save()
+    else:
+        proc = Process.objects.create(site=site, path=path)
+
+    create_process_config(proc)
+    reload_services()
 
     return JsonResponse({"success": True})
