@@ -447,6 +447,9 @@ You can drag files and folders around to move them.");
             if (tab.hasClass("tab-help") || tab.hasClass("tab-custom")) {
                 Messenger().error("No file selected to save!");
             }
+            else if (tab.hasClass("tab-image")) {
+                Messenger().error("Image editing is not supported!");
+            }
             else {
                 var filepath = tab.attr("data-file");
                 $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: tabs[filepath].getValue() }, function(data) {
