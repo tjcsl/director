@@ -848,7 +848,7 @@ def editor_upload_view(request, site_id):
     base_path = site.path[:-1]
     path = os.path.abspath(os.path.join(base_path, name))
 
-    if not path.startswith(base_path) or not os.path.isfolder(path):
+    if not path.startswith(base_path) or not os.path.isdir(path):
         return JsonResponse({"error": "Invalid or nonexistent folder!", "path": path})
 
     fs = request.FILES.getlist("file")
