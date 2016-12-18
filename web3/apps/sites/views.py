@@ -877,8 +877,8 @@ def editor_move_view(request, site_id):
     old_path = request.POST.get("old", "")
     new_path = request.POST.get("new", "")
     base_path = site.path[:-1]
-    new_abs_path = os.path.abspath(os.path.join(base_path, new_path))
-    old_abs_path = os.path.abspath(os.path.join(base_path, old_path))
+    old_path = os.path.abspath(os.path.join(base_path, old_path))
+    new_path = os.path.abspath(os.path.join(base_path, new_path))
 
     if not old_path.startswith(base_path) or not os.path.exists(old_path):
         return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": old_path})
