@@ -279,7 +279,7 @@ You can drag files and folders around to move them.");
                     }
                     if (key == "set_process") {
                         var filepath = get_path(trigger) + trigger.attr("data-name");
-                        $.post(process_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
+                        $.post(process_endpoint, {name: filepath}, function(data) {
                             if (data.error) {
                                 Messenger().error(data.error);
                             }
