@@ -6,7 +6,7 @@ jQuery.fn.selectText = function(){
        range.moveToElementText(element);
        range.select();
    } else if (window.getSelection) {
-       var selection = window.getSelection();        
+       var selection = window.getSelection();
        var range = document.createRange();
        range.selectNodeContents(element);
        selection.removeAllRanges();
@@ -46,6 +46,7 @@ $(document).ready(function() {
 
     $("#database-url").click(function() {
         $("#database-pass").removeClass("hide");
+    }).dblclick(function() {
         $(this).selectText();
     }).on("blur",function() {
         $("#database-pass").addClass("hide");
