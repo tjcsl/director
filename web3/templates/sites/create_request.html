@@ -88,6 +88,7 @@
 <h3>Website Request Form</h3>
 <p>Please fill out the form below if you want a website for your activity. You will be notified about the status of your request via email, or you may check with a Student Systems Administrator at any time. <b>You will need a teacher's approval if you need services for a class or club/group/organization that is recognized by the 8th period office and the TJHSST administration.</b> This request will be valid until the end of the current school year. Service requests must be submitted before the last day of the school year for requested services to not expire. If you have any questions, please contact <a href="mailto:sysadmins@tjhsst.edu">sysadmins@tjhsst.edu</a>.</p>
 <form method="POST">
+    {% csrf_token %}
     <h4>Student Information</h4>
     <div class="form-group">
         <label>Full Name</label>
