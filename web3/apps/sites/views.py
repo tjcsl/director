@@ -951,6 +951,6 @@ def editor_exec_view(request, site_id):
     if not os.access(path, os.X_OK):
         os.chmod(path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     else:
-        os.chmod(path, stat.S_IMODE(st.st_mode) & ~stat.S_IEXEC)
+        os.chmod(path, stat.S_IMODE(st.st_mode) & ~stat.S_IXUSR & ~stat.S_IXGRP & ~stat.S_IXOTH)
 
     return JsonResponse({"success": True})
