@@ -57,7 +57,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         r = requests.get("https://ion.tjhsst.edu/api/{}".format(url), params=params)
         if r.status_code == 401:
             if refresh:
-                self.get_social_auth().refresh_token(load_strategy())
+                try:
+                    self.get_social_auth().refresh_token(load_strategy())
+                except:
+                    client.captureException()
                 return self.api_request(url, params, False)
             else:
                 client.captureMessage("Ion API Request Failure: {} {}".format(r.status_code, r.json()))
