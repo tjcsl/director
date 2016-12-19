@@ -208,7 +208,7 @@ def fix_permissions(site):
         for f in files + dirs:
             path = os.path.join(root, f)
             try:
-                st = os.stat(path)
+                st = os.lstat(path)
             except FileNotFoundError:
                 client.captureException()
                 continue
