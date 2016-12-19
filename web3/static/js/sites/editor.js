@@ -470,7 +470,7 @@ You can drag files and folders around to move them.");
                 Messenger().error("Image and media editing is not supported!");
             }
             else if (!tab.hasClass("tab-special")) {
-                if (checkTabClean(tab)) {
+                if (!checkTabClean(tab)) {
                     var filepath = tab.attr("data-file");
                     $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: tabs[filepath].getValue() }, function(data) {
                         if (data.error) {
