@@ -682,7 +682,7 @@ You can drag files and folders around to move them.");
         depth = depth || 0;
         var c = (v.type == "f" ? "file" : "folder");
         var ic = c;
-        var node = $("<div draggable='true' style='padding-left:" + (depth*20) + "'><i class='fa fa-fw'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
+        var node = $("<div draggable='true' style='padding-left:" + (depth*20) + "px'><i class='fa fa-fw'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
         node.addClass(c);
         node.attr("data-name", v.name);
         node.attr("data-depth", depth);
