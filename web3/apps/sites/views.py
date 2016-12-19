@@ -989,13 +989,14 @@ def request_view(request):
         teacher = create_user(request, teacher)
         if not teacher:
             messages.error(request, "Invalid teacher selected!")
-        SiteRequest.objects.create(
-            user=request.user,
-            teacher=teacher,
-            activity=activity,
-            extra_information=extra
-        )
-        messages.success(request, "Website request created!")
+        else:
+            SiteRequest.objects.create(
+                user=request.user,
+                teacher=teacher,
+                activity=activity,
+                extra_information=extra
+            )
+            messages.success(request, "Website request created!")
 
     context["requests"] = request.user.requested_sites.all()
 
