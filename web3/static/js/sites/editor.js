@@ -481,16 +481,17 @@ You can drag files and folders around to move them.");
         }
     }
     function doEmbed(path) {
+        var obj;
         if (path.toLowerCase().match(/\.pdf$/) != null) {
-            var obj = $("<embed class='prfobject' type='application/pdf' />");
+            obj = $("<embed class='pdfobject' type='application/pdf' />");
             obj.attr("src", download_endpoint + "?name=" + encodeURIComponent(path) + "&embed=true");
-            $("#embed").html(obj.html());
         }
         else {
-            var obj = $("<iframe />");
+            obj = $("<iframe />");
             obj.attr("src", download_endpoint + "?name=" + encodeURIComponent(path) + "&embed=true");
-            $("#embed").html(obj.html());
         }
+        $("#embed").children().remove();
+        $("#embed").append(obj);
     }
     editor.setTheme("ace/theme/chrome");
     $(document).keydown(function(e) {
