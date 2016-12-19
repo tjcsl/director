@@ -44,9 +44,11 @@
     <div class="input-group">
         <input id="teacher-search" class="form-control" placeholder="Teacher Name" />
         <span class="input-group-btn">
-            <button class="btn btn-ion"><i class="fa fa-search"></i> Search</button>
+            <button class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
         </span>
     </div>
+    <input type="hidden" name="teacher" required />
+    <p>Selected Teacher: <b>None</b></p>
     <h4>Student Agreement</h4>
     <div id="guidelines">{% include "guidelines.html" %}</div>
     <label class="custom-control custom-checkbox">
