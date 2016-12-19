@@ -962,3 +962,8 @@ def editor_exec_view(request, site_id):
         os.chmod(path, stat.S_IMODE(st.st_mode) & ~stat.S_IXUSR & ~stat.S_IXGRP & ~stat.S_IXOTH)
 
     return JsonResponse({"success": True})
+
+
+@login_required
+def request_view(request):
+    return render(request, "sites/create_request.html")

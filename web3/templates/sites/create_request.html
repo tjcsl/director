@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block css %}
+    {{ block.super }}
+{% endblock %}
+
+{% block main %}
+<h3>Website Request Form</h3>
+<p>Please fill out the form below if you want a website for your activity. You will be notified about the status of your request via email, or you may check with a Student Systems Administrator at any time. <b>You will need a teacher's approval if you need services for a class or club/group/organization that is recognized by the 8th period office and the TJHSST administration.</b> This request will be valid until the end of the current school year. Service requests must be submitted before the last day of the school year for requested services to not expire. If you have any questions, please contact <a href="mailto:sysadmins@tjhsst.edu">sysadmins@tjhsst.edu</a>.</p>
+<form method="POST">
+    <h4>Student Information</h4>
+    <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" class="form-control" value="{{ request.user.full_name }}" readonly />
+    </div>
+    <div class="form-group">
+        <label>Email</label>
+        <input type="text" class="form-control" value="{{ request.user.email }}" readonly />
+    </div>
+    <h4>Services<h4>
+    <div class="form-group">
+        <label>Activity Name</label>
+        <input type="text" class="form-control" value="{{ request.user.email }}" required />
+    </div>
+    <div class="form-group">
+        <label>Other Details</label>
+        <textarea></textarea>
+        <small class="form-text">You can specify any additional software you want installed on the web server here.</small>
+    </div>
+    <h4>Student Agreement</h4>
+    <div class="guidelines">{% include "guidelines.html" %}</div>
+    <label class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" required />
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">I have read, understood, and agree to abide by the rules outlined in the Computer Systems Lab Policy, the TJHSST World-Wide Website Guidelines, the FCPS Acceptable Use Policy, and the FCPS Student Rights and Responsibilities. I understand that the above services may be revoked at any time and other disciplinary actions may occur if I directly or indirectly violate any guidelines as outlined in the above policies.</span>
+    </label>
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}
