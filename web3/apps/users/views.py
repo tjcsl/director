@@ -89,7 +89,7 @@ def create_webdocs_view(request):
     if request.method == "POST":
         students = [x.strip() for x in request.POST.get("students", "").split("\n")]
         for username in students:
-            user = create_user(username)
+            user = create_user(request, username)
             if user:
                 site = create_webdocs(user)
                 if site:
