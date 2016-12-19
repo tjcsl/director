@@ -480,6 +480,18 @@ You can drag files and folders around to move them.");
             }
         }
     }
+    function doEmbed(path) {
+        if (path.toLowerCase().match(/\.pdf$/) != null) {
+            var obj = $("<embed class='prfobject' type='application/pdf' />");
+            obj.attr("src", download_endpoint + "?name=" + encodeURIComponent(path) + "&embed=true");
+            $("#embed").html(obj.html());
+        }
+        else {
+            var obj = $("<iframe />");
+            obj.attr("src", download_endpoint + "?name=" + encodeURIComponent(path) + "&embed=true");
+            $("#embed").html(obj.html());
+        }
+    }
     editor.setTheme("ace/theme/chrome");
     $(document).keydown(function(e) {
         if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
@@ -499,7 +511,7 @@ You can drag files and folders around to move them.");
             $("#image").show();
         }
         else if (t.hasClass("tab-media")) {
-            $("#embed iframe").attr("src", download_endpoint + "?name=" + encodeURIComponent(t.attr("data-file")) + "&embed=true");
+            doEmbed(t.attr("data-file"));
             $("#embed").show();
         }
         else if (t.hasClass("tab-console")) {
@@ -584,7 +596,7 @@ You can drag files and folders around to move them.");
             }
             else if (t.hasClass("media")) {
                 tab.addClass("tab-media");
-                $("#embed iframe").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath) + "&embed=true");
+                doEmbed(filepath);
                 $("#embed").show();
             }
             else {
