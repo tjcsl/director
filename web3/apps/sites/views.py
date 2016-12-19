@@ -783,6 +783,8 @@ def editor_create_view(request, site_id):
     else:
         os.mkdir(new_path)
 
+    os.lchown(new_path, site.user.id, site.group.id)
+
     return JsonResponse({"success": True})
 
 
