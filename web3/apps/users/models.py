@@ -58,7 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         if r.status_code == 401:
             if refresh:
                 try:
-                    self.get_social_auth().refresh_token(load_strategy())
+                    self.get_social_auth().refresh_token(load_strategy(backend='ion'))
                 except:
                     client.captureException()
                 return self.api_request(url, params, False)
