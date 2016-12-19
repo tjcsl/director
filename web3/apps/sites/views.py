@@ -799,7 +799,7 @@ def editor_download_view(request, site_id):
             response["Content-Type"] = mimetypes.guess_type(path)[0]
         else:
             response["Content-Type"] = "application/octet-stream"
-        response["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(path))
+            response["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(path))
         return response
     else:
         zip_io = io.BytesIO()
