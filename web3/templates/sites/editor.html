@@ -19,6 +19,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="{% static 'js/sites/editor.js' %}"></script>
     <script type="text/javascript">
+    var site_url = "{{ site.url }}";
     var path_endpoint = "{% url 'editor_path' site.id %}";
     var load_endpoint = "{% url 'editor_load' site.id %}";
     var save_endpoint = "{% url 'editor_save' site.id %}";

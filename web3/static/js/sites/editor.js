@@ -310,11 +310,16 @@ You can drag files and folders around to move them.");
                     if (key == "refresh") {
                         initFiles();
                     }
+                    if (key == "open") {
+                        window.open(site_url, "_blank");
+                    }
                 },
                 items: {
+                    "open": {name: "Open Website", icon: "fa-globe"},
+                    "sep1": "--------",
                     "new_file": {name: "New File", icon: "fa-file"},
                     "new_folder": {name: "New Folder", icon: "fa-folder"},
-                    "sep1": "--------",
+                    "sep2": "--------",
                     "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
             }
