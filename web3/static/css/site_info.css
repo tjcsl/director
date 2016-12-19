@@ -39,3 +39,31 @@
 .nav-pills {
     text-align: center;
 }
+#database-url {
+    white-space: nowrap;
+    overflow-x: auto;
+}
+#database-pass.hide {
+    position: relative;
+}
+#database-pass.hide > span {
+    filter: blur(3px);
+    cursor: pointer;
+    min-width: 120px;
+    display: inline-block;
+    text-align: center;
+}
+#database-pass.hide:after {
+    position: absolute;
+    left: 50%;
+    width: 140px;
+    margin-left: -70px;
+    margin-top: 2px;
+    text-align: center;
+    font-size: 11.5px;
+    padding: 1px;
+    outline: 1px solid black;
+    background: white;
+    cursor: pointer;
+    content: "Click to show password";
+}

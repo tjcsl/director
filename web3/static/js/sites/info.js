@@ -1,3 +1,19 @@
+jQuery.fn.selectText = function(){
+   var doc = document;
+   var element = this[0];
+   if (doc.body.createTextRange) {
+       var range = document.body.createTextRange();
+       range.moveToElementText(element);
+       range.select();
+   } else if (window.getSelection) {
+       var selection = window.getSelection();        
+       var range = document.createRange();
+       range.selectNodeContents(element);
+       selection.removeAllRanges();
+       selection.addRange(range);
+   }
+};
+
 $(document).ready(function() {
     if (window.location.hash) {
         var ele = $("a[href='" + window.location.hash + "']");
@@ -26,6 +42,18 @@ $(document).ready(function() {
                 e.preventDefault();
             }
         }
+    });
+
+    $("#database-url").click(function() {
+        $("#database-pass").removeClass("hide");
+        $(this).selectText();
+    }).on("blur",function() {
+        $("#database-pass").addClass("hide");
+    }).keydown(function(event) {
+        // prevent from entering text
+        return (event.ctrlKey || (33 <= event.keyCode && event.keyCode <= 40));
+    }).keyup(function(event) {
+        event.preventDefault();
     });
 });
 var select = function(el) {

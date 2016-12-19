@@ -130,5 +130,13 @@ class Database(models.Model):
     def db_port(self):
         return settings.POSTGRES_DB_PORT if self.category == "postgresql" else settings.MYSQL_DB_PORT
 
+    @property
+    def db_type(self):
+        return "postgres" if self.category == "postgresql" else "mysql"
+
+    @property
+    def db_full_host(self):
+        return "{}:{}".format(self.db_host, self.db_port)
+
     def __str__(self):
-        return "{}://{}:{}@{}:{}/{}".format("postgres" if self.category == "postgresql" else "mysql", self.username, self.password, self.db_host, self.db_port, self.db_name)
+        return "{}://{}:{}@{}/{}".format(self.db_type, self.username, self.password, self.db_full_host, self.db_name)
