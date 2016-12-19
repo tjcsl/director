@@ -988,6 +988,7 @@ def request_view(request):
             messages.error(request, "You must accept the agreement before submitting this form!")
         teacher = create_user(request, teacher)
         if not teacher:
+            client.captureMessage("Create Teacher Failure: {}".format(teacher))
             messages.error(request, "Invalid teacher selected!")
         else:
             SiteRequest.objects.create(
