@@ -710,6 +710,9 @@ You can drag files and folders around to move them.");
                     ic = "file-video";
                 }
             }
+            if (vnl.match(/\.(doc|docx|odt)$/) != null) {
+                ic = "file-word";
+            }
             if (vnl.match(/\.(py|php|js|html|css)$/) != null) {
                 ic = "file-code";
             }
