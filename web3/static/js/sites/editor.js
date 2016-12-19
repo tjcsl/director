@@ -692,6 +692,9 @@ You can drag files and folders around to move them.");
         if (v.link) {
             node.addClass("link");
         }
+        if (v.name.charAt(0) == ".") {
+            node.addClass("hidden");
+        }
         if (v.type == "f") {
             var vnl = v.name.toLowerCase();
             if (vnl.match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {

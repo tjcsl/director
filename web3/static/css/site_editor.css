@@ -96,6 +96,9 @@ body {
     width: 100%;
     height: 100%;
 }
+#files div.hidden span {
+    color: #888;
+}
 #files div.image span, #files div.media span {
     color: #673AB7;
 }
