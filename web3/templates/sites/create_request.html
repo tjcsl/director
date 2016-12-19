@@ -27,13 +27,34 @@
         });
         $("#search-btn").click(function(e) {
             e.preventDefault();
+            $("#teacher-list li").remove();
             var name = $("#teacher-search").val();
             if (!name) {
                 return;
             }
             $.get(lookup_endpoint + "?name=" + encodeURIComponent(name), function(data) {
-                console.log(data);
+                var teachers = data.teachers;
+                if (teachers.length == 0) {
+                    Messenger().error("No teachers found with that search query!");
+                }
+                else if (teachers.length == 1) {
+                    $("#teacher-username").val(teachers[0].username);
+                    $("#teacher-name").text(teachers[0].name);
+                }
+                else {
+                    $.each(teachers, function(k, v) {
+                        var ele = $("<li />");
+                        ele.text(v.name);
+                        ele.attr("data-id", v.username);
+                        $("#teacher-list").append(ele);
+                    });
+                }
             });
+        });
+        $("#teacher-list").on("click", "li", function(e) {
+            e.preventDefault();
+            $("#teacher-username").val($(this).attr("data-id"));
+            $("#teacher-name").text($(this).text());
         });
     });
     </script>
@@ -73,8 +94,9 @@
             </span>
         </div>
     </div>
-    <input type="hidden" name="teacher" required />
-    <p>Selected Teacher: <b>None</b></p>
+    <input type="hidden" id="teacher-username" name="teacher" required />
+    <ul id="teacher-list"></ul>
+    <p>Selected Teacher: <b id="teacher-name">None</b></p>
     <h4>Student Agreement</h4>
     <div id="guidelines">{% include "guidelines.html" %}</div>
     <label class="custom-control custom-checkbox">
