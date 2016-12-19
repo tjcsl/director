@@ -19,7 +19,7 @@
     <h3 class="pull-left">Your Sites <span id="filtered"></span></h3>
     <a href="{% url 'create_site' %}" class="pull-right btn btn-ion"><i class="fa fa-plus"></i> Create Site</a>
     {% if request.user.is_staff or request.user.is_superuser %}
-    <a href="{% url 'create_webdocs' %}" class="pull-right btn btn-ion"><i class="fa fa-user-plus"></i> Create Webdocs</a>
+    <a href="{% url 'create_webdocs' %}" class="pull-right btn btn-ion" style="margin-right:5px"><i class="fa fa-user-plus"></i> Create Webdocs</a>
     {% endif %}
 </div>
 <div id="sites">

@@ -4,9 +4,12 @@
 {% block main %}
 <h4>Create Student Websites</h4>
 <form method="POST">
-    <p>Please enter a list of students, separated by newlines.</p>
     {% csrf_token %}
-    <textarea class="form-control" name="students"></textarea>
+    <div class="form-group">
+        <label for="students">Student IDs</label>
+        <textarea class="form-control" id="students" name="students"></textarea>
+        <small class="form-text">Please enter a list of student IDs (ex: 2017ewang) separated by newlines.</small>
+    </div>
     <button class="btn btn-ion">Create Websites</button>
 </form>
 {% endblock %}
