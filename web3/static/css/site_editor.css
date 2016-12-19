@@ -94,6 +94,9 @@ body {
 #files div.exec span {
     color: #388E3C;
 }
+#files div.image span {
+    color: #512DA8;
+}
 #image {
     text-align: center;
     overflow-y: scroll;

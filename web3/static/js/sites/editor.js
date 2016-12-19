@@ -568,7 +568,7 @@ You can drag files and folders around to move them.");
             tab.append(" <i class='fa fa-times'></i>");
             $("#tabs").append(tab);
             $(".tab-pane").hide();
-            if (filepath.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
+            if (t.hasClass("image")) {
                 tab.addClass("tab-image");
                 $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath) + "&embed=true");
                 $("#image").show();
@@ -639,6 +639,9 @@ You can drag files and folders around to move them.");
                         node.attr("data-depth", depth + 1);
                         if (v.executable) {
                             node.addClass("exec");
+                        }
+                        if (v.name.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
+                            node.addClass("image");
                         }
                         if (!getChildren(t).has("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
                             t.after(node);
