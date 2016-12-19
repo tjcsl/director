@@ -460,8 +460,8 @@ You can drag files and folders around to move them.");
                     }
                 });
             }
-            else if (tab.hasClass("tab-image")) {
-                Messenger().error("Image editing is not supported!");
+            else if (tab.hasClass("tab-image") || tab.hasClass("tab-media")) {
+                Messenger().error("Image and media editing is not supported!");
             }
             else if (!tab.hasClass("tab-special")) {
                 var filepath = tab.attr("data-file");
@@ -497,6 +497,10 @@ You can drag files and folders around to move them.");
         if (t.hasClass("tab-image")) {
             $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(t.attr("data-file")) + "&embed=true");
             $("#image").show();
+        }
+        else if (t.hasClass("tab-media")) {
+            $("#embed iframe").attr("src", download_endpoint + "?name=" + encodeURIComponent(t.attr("data-file")) + "&embed=true");
+            $("#embed").show();
         }
         else if (t.hasClass("tab-console")) {
             $("#sql-console").show();
@@ -578,6 +582,11 @@ You can drag files and folders around to move them.");
                 $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath) + "&embed=true");
                 $("#image").show();
             }
+            else if (t.hasClass("media")) {
+                tab.addClass("tab-media");
+                $("#embed iframe").attr("src", download_endpoint + "?name=" + encodeURIComponent(t.attr("data-file")) + "&embed=true");
+                $("#embed").show();
+            }
             else {
                 $("#editor").show();
                 $.get(load_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
@@ -648,6 +657,9 @@ You can drag files and folders around to move them.");
                         if (v.name.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
                             node.addClass("image");
                         }
+                        if (v.name.toLowerCase().match(/\.(mp3|mp4|pdf|swf)$/) != null) {
+                            node.addClass("media");
+                        }
                         if (!getChildren(t).filter("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
                             t.after(node);
                         }
@@ -678,6 +690,9 @@ You can drag files and folders around to move them.");
                     }
                     if (v.name.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
                         node.addClass("image");
+                    }
+                    if (v.name.toLowerCase().match(/\.(mp3|mp4|pdf|swf)$/) != null) {
+                        node.addClass("media");
                     }
                     if (!$("#files div[data-depth=0][data-name='" + v.name.replace("'", "\\'") + "']").length) {
                         $("#files").append(node);
