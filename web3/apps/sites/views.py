@@ -682,7 +682,7 @@ def editor_path_view(request, site_id):
         if stat.S_ISDIR(fmode):
             obj = {"type": "d", "name": f}
         else:
-            obj = {"type": "f", "name": f, "executable": fmode & stat.S_IXUSR & stat.S_IXGRP & stat.S_IXOTH}
+            obj = {"type": "f", "name": f, "executable": fmode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)}
         if stat.S_ISLNK(fmode):
             obj["link"] = True
         filesystem.append(obj)
@@ -704,8 +704,10 @@ def editor_load_view(request, site_id):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
 
     try:
-        with open(path, "rb") as f:
-            contents = f.read().decode("utf-8", errors="replace")
+        with open(path, "r") as f:
+            contents = f.read()
+    except UnicodeDecodeError:
+        return JsonResponse({"error": "Editing binary files is not supported!"})
     except IOError:
         return JsonResponse({"error": "Failed to open file!"})
 
@@ -725,8 +727,8 @@ def editor_save_view(request, site_id):
     if not path.startswith(base_path) or not os.path.isfile(path):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
 
-    with open(path, "wb") as f:
-        contents = f.write(request.POST.get("contents").encode("utf-8"))
+    with open(path, "w") as f:
+        contents = f.write(request.POST.get("contents"))
 
     return JsonResponse({"success": True})
 
