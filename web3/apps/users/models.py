@@ -55,9 +55,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         params.update({"format": "json"})
         params.update({"access_token": s.access_token})
         r = requests.get("https://ion.tjhsst.edu/api/{}".format(url), params=params)
-        if r.status_code == 401 and refresh:
-            self.get_social_auth().refresh_token(load_strategy())
-            return self.api_request(url, params, False)
+        if r.status_code == 401:
+            if refresh:
+                self.get_social_auth().refresh_token(load_strategy())
+                return self.api_request(url, params, False)
+            else:
+                client.captureMessage("Ion API Request Failure: {} {}".format(r.status_code, r.json()))
         return r.json()
 
     def github_api_request(self, url, method="GET", data={}):
