@@ -604,8 +604,8 @@ You can drag files and folders around to move them.");
                 $("#embed").show();
             }
             else {
-                $("#editor").show();
                 $.get(load_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
+                    $("#editor").show();
                     if (data.error) {
                         Messenger().error(data.error);
                         tab.remove();
