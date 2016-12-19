@@ -6,11 +6,18 @@
     #guidelines {
         max-width: 800px;
         max-height: 400px;
-        overflow-y: scroll;
+        overflow-y: auto;
         margin: 15px auto;
         border: 1px solid black;
         padding: 15px;
         background-color: white;
+    }
+    #teacher-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    #teacher-list li {
+        cursor: pointer;
     }
     </style>
 {% endblock %}
@@ -32,6 +39,7 @@
             if (!name) {
                 return;
             }
+            $("#search-btn, #teacher-search").prop("disabled", true);
             $.get(lookup_endpoint + "?name=" + encodeURIComponent(name), function(data) {
                 var teachers = data.teachers;
                 if (teachers.length == 0) {
@@ -49,6 +57,8 @@
                         $("#teacher-list").append(ele);
                     });
                 }
+            }).always(function() {
+                $("#search-btn, #teacher-search").prop("disabled", false);
             });
         });
         $("#teacher-list").on("click", "li", function(e) {
