@@ -704,9 +704,9 @@ def editor_load_view(request, site_id):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
 
     try:
-        with open(path, "r") as f:
-            contents = f.read()
-    except UnicodeDecodeError:
+        with open(path, "rb") as f:
+            contents = f.read().decode("utf-8", errors="replace")
+    except IOError:
         return JsonResponse({"error": "Failed to open file!"})
 
     return JsonResponse({"contents": contents})
