@@ -214,6 +214,6 @@ def fix_permissions(site):
                 continue
             os.lchown(path, site.user.id, site.group.id)
             if stat.S_ISDIR(st.st_mode):
-                os.lchmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
+                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP, follow_symlinks=False)
             else:
-                os.lchmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
+                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP, follow_symlinks=False)
