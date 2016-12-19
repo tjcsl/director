@@ -584,7 +584,7 @@ You can drag files and folders around to move them.");
             }
             else if (t.hasClass("media")) {
                 tab.addClass("tab-media");
-                $("#embed iframe").attr("src", download_endpoint + "?name=" + encodeURIComponent(t.attr("data-file")) + "&embed=true");
+                $("#embed iframe").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath) + "&embed=true");
                 $("#embed").show();
             }
             else {
