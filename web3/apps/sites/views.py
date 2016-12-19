@@ -678,7 +678,7 @@ def editor_path_view(request, site_id):
 
     for f in os.listdir(path):
         fpath = os.path.join(path, f)
-        fmode = os.stat(fpath).st_mode
+        fmode = os.lstat(fpath).st_mode
         if stat.S_ISDIR(fmode):
             obj = {"type": "d", "name": f}
         else:
