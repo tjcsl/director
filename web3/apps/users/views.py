@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import PermissionDenied
 
 from .forms import UserForm
 from ..authentication.decorators import superuser_required
@@ -74,6 +75,17 @@ def manage_view(request):
         "users": User.objects.filter(service=False).order_by("username")
     }
     return render(request, "users/management.html", context)
+
+
+@login_required
+def create_webdocs(request):
+    if not request.user.is_superuser or not request.user.is_staff:
+        raise PermissionDenied
+
+    if request.method == "POST":
+        pass
+
+    return render(request, "users/create_webdocs.html")
 
 
 @login_required

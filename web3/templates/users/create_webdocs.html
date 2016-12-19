@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block main %}
+<h4>Create Student Websites</h4>
+<form method="POST">
+    <p>Please enter a list of students, separated by newlines.</p>
+    {% csrf_token %}
+    <textarea class="form-control" name="students"></textarea>
+    <button class="btn btn-ion">Create Websites</button>
+</form>
+{% endblock %}
