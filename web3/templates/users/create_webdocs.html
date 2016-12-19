@@ -10,9 +10,15 @@
     .no {
         color: #F44336;
     }
+    .none {
+        color: #888;
+    }
     textarea {
         max-width: 600px;
         min-height: 150px;
+    }
+    .user-list {
+        margin-bottom: 1rem;
     }
     </style>
 {% endblock %}
@@ -22,17 +28,21 @@
 {% if finished %}
 <p>Finished creating student websites!</p>
 <b>Successes</b>
-{% for item in success %}
-<div class="yes">{{ item }}</div>
-{% empty %}
-<div>None</div>
-{% endfor %}
-<b>Failures</b>
-{% for item in failure %}
-<div class="no">{{ item }}</div>
-{% empty %}
-<div>None</div>
-{% endfor %}
+<div class="user-list">
+    {% for item in success %}
+    <div class="yes">{{ item }}</div>
+    {% empty %}
+    <div class="none">None</div>
+    {% endfor %}
+</div>
+<div class="user-list">
+    <b>Failures</b>
+    {% for item in failure %}
+    <div class="no">{{ item }}</div>
+    {% empty %}
+    <div class="none">None</div>
+    {% endfor %}
+</div>
 <p>If any student websites could not be created, check to make sure that the username is correct.</p>
 <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
 {% else %}
