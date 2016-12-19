@@ -122,9 +122,13 @@ class Database(models.Model):
             return "site_{}".format(self.site.name)[:16]
         return "site_{}".format(self.site.name).lower()
 
+    @property
+    def db_host(self):
+        return settings.POSTGRES_DB_HOST if self.category == "postgresql" else settings.MYSQL_DB_HOST
+
+    @property
+    def db_port(self):
+        return settings.POSTGRES_DB_PORT if self.category == "postgresql" else settings.MYSQL_DB_PORT
+
     def __str__(self):
-        if self.category == "postgresql":
-            server = "{}:{}".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_PORT)
-        else:
-            server = "{}:{}".format(settings.MYSQL_DB_HOST, settings.MYSQL_DB_PORT)
-        return "{}://{}:{}@{}/{}".format("postgres" if self.category == "postgresql" else "mysql", self.username, self.password, server, self.db_name)
+        return "{}://{}:{}@{}/{}".format("postgres" if self.category == "postgresql" else "mysql", self.username, self.password, self.db_host, self.db_port, self.db_name)
