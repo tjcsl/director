@@ -20,7 +20,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_http_methods
 
-from .models import Site, Process
+from .models import Site, Process, SiteRequest
 from .forms import SiteForm, ProcessForm, DatabaseForm
 from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
@@ -32,6 +32,8 @@ from .database_helpers import delete_postgres_database, change_postgres_password
 from ..authentication.decorators import superuser_required
 from ..users.models import User
 from ..vms.models import VirtualMachine
+
+from ..users.helpers import create_user
 
 from ...utils.emails import send_new_site_email
 
@@ -297,7 +299,7 @@ def sql_database_view(request, site_id):
             ret, out, err = run_as_site(site, ["mysql", "--version"])
         else:
             ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username),
-                "--host=mysql1", site.database.db_name, "-e", sql], env={"MYSQL_PWD": site.database.password})
+                                               "--host=mysql1", site.database.db_name, "-e", sql], env={"MYSQL_PWD": site.database.password})
     else:
         if version:
             ret, out, err = run_as_site(site, ["psql", "--version"])
@@ -631,7 +633,14 @@ def git_setup_view(request, site_id):
                                         if i["config"]["url"] == webhook_url:
                                             break
                                     else:
-                                        request.user.github_api_request("/repos/{}/hooks".format(out), method="POST", data={"name": "web", "config": {"url": webhook_url, "content_type": "json"}, "active": True})
+                                        request.user.github_api_request("/repos/{}/hooks".format(out), method="POST", data={
+                                            "name": "web",
+                                            "config": {
+                                                "url": webhook_url,
+                                                "content_type": "json"
+                                            },
+                                            "active": True
+                                        })
                                     messages.success(request, "The integration was set up!")
                                 else:
                                     messages.error(request, "Failed to retrieve repository webhooks!")
@@ -728,7 +737,7 @@ def editor_save_view(request, site_id):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
 
     with open(path, "w") as f:
-        contents = f.write(request.POST.get("contents"))
+        f.write(request.POST.get("contents"))
 
     return JsonResponse({"success": True})
 
@@ -966,7 +975,28 @@ def editor_exec_view(request, site_id):
 
 @login_required
 def request_view(request):
-    context = {
-        "requests": request.user.requested_sites.all()
-    }
+    context = {}
+
+    if request.method == "POST":
+        activity = request.POST.get("name", None)
+        extra = request.POST.get("extra", None)
+        teacher = request.POST.get("teacher", None)
+        agreement = request.POST.get("agreement", None)
+        if not activity or not teacher:
+            messages.error(request, "You must fill out all of the fields before submitting this form!")
+        if not agreement:
+            messages.error(request, "You must accept the agreement before submitting this form!")
+        teacher = create_user(request, teacher)
+        if not teacher:
+            messages.error(request, "Invalid teacher selected!")
+        SiteRequest.objects.create(
+            user=request.user,
+            teacher=teacher,
+            activity=activity,
+            extra_information=extra
+        )
+        messages.success(request, "Website request created!")
+
+    context["requests"] = request.user.requested_sites.all()
+
     return render(request, "sites/create_request.html", context)
