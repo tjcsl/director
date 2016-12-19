@@ -758,6 +758,6 @@ function get_path(t) {
 function getChildren(item) {
     var depth = parseInt(item.attr("data-depth"));
     return item.nextUntil(function() {
-        return $(this).hasClass("folder") && parseInt($(this).attr("data-depth")) <= depth;
+        return parseInt($(this).attr("data-depth")) <= depth;
     });
 }
