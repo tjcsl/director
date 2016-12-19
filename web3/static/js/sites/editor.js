@@ -26,8 +26,11 @@ You can drag files and folders around to move them.");
     $("#editor").show();
     function checkTabClean(tab) {
         if (tab.length) {
-            tab.toggleClass("unsaved", !tabs[tab.attr("data-file")].getUndoManager().isClean());
+            var clean = tabs[tab.attr("data-file")].getUndoManager().isClean();
+            tab.toggleClass("unsaved", !clean);
+            return clean;
         }
+        return false;
     }
     editor.on("input", function() {
         checkTabClean($("#tabs .tab.active:not(.tab-special)"));
@@ -467,16 +470,18 @@ You can drag files and folders around to move them.");
                 Messenger().error("Image and media editing is not supported!");
             }
             else if (!tab.hasClass("tab-special")) {
-                var filepath = tab.attr("data-file");
-                $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: tabs[filepath].getValue() }, function(data) {
-                    if (data.error) {
-                        Messenger().error(data.error);
-                    }
-                    else {
-                        tabs[filepath].getUndoManager().markClean();
-                        checkTabClean(tab);
-                    }
-                });
+                if (checkTabClean(tab)) {
+                    var filepath = tab.attr("data-file");
+                    $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: tabs[filepath].getValue() }, function(data) {
+                        if (data.error) {
+                            Messenger().error(data.error);
+                        }
+                        else {
+                            tabs[filepath].getUndoManager().markClean();
+                            checkTabClean(tab);
+                        }
+                    });
+                }
             }
             else {
                 Messenger().error("No file selected to save!");
