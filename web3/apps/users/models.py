@@ -50,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_social_auth(self):
         return self.social_auth.get(provider='ion')
 
-    def api_request(self, url, params={}, refresh=True, request=None):
+    def api_request(self, url, params={}, refresh=True):
         s = self.get_social_auth()
         params.update({"format": "json"})
         params.update({"access_token": s.access_token})
@@ -58,7 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         if r.status_code == 401:
             if refresh:
                 try:
-                    self.get_social_auth().refresh_token(load_strategy(request=request))
+                    self.get_social_auth().refresh_token(load_strategy())
                 except:
                     client.captureException()
                 return self.api_request(url, params, False)
