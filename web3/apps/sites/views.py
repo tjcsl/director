@@ -678,10 +678,14 @@ def editor_path_view(request, site_id):
 
     for f in os.listdir(path):
         fpath = os.path.join(path, f)
-        if os.path.isdir(fpath):
-            filesystem.append({"type": "d", "name": f})
+        fmode = os.stat(fpath).st_mode
+        if stat.S_ISDIR(fmode):
+            obj = {"type": "d", "name": f}
         else:
-            filesystem.append({"type": "f", "name": f, "executable": os.access(fpath, os.X_OK)})
+            obj = {"type": "f", "name": f, "executable": fmode & stat.S_IXUSR & stat.S_IXGRP & stat.S_IXOTH}
+        if stat.S_ISLNK(fmode):
+            obj["link"] = True
+        filesystem.append(obj)
 
     return JsonResponse({"files": filesystem})
 

@@ -670,6 +670,9 @@ You can drag files and folders around to move them.");
                         if (v.executable) {
                             node.addClass("exec");
                         }
+                        if (v.link) {
+                            node.addClass("link");
+                        }
                         if (v.name.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
                             node.addClass("image");
                         }
@@ -703,6 +706,9 @@ You can drag files and folders around to move them.");
                     node.attr("data-depth", 0);
                     if (v.executable) {
                         node.addClass("exec");
+                    }
+                    if (v.link) {
+                        node.addClass("link");
                     }
                     if (v.name.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
                         node.addClass("image");
