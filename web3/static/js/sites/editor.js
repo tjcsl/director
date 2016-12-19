@@ -331,7 +331,7 @@ You can drag files and folders around to move them.");
             return {
                 callback: function(key, options) {
                     if (key == "open") {
-                        trigger.click();
+                        $("#files div.file.active").click();
                     }
                     if (key == "delete") {
                         triggerDelete(trigger);
