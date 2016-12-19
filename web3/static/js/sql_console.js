@@ -46,8 +46,10 @@ $(document).ready(function() {
             var val = $(this).val();
             if (val) {
                 if (val == "exit" || val == "\\q" || val == ".q") {
-                    window.location.href = back_endpoint;
-                    return;
+                    if (typeof back_endpoint != "undefined") {
+                        window.location.href = back_endpoint;
+                        return;
+                    }
                 }
                 else if ($.trim(val.toLowerCase()) == "\\! clear") {
                     $("#console .output").text("");

@@ -50,7 +50,6 @@
     <script type="text/javascript" src="{% static 'js/sql_console.js' %}"></script>
     <script type="text/javascript">
     var sql_endpoint = "{% url 'sql_database' site.id %}";
-    var back_endpoint = "{% url 'info_site' site.id %}";
     </script>
     {% endif %}
 {% endblock %}
