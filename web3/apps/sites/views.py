@@ -725,8 +725,8 @@ def editor_save_view(request, site_id):
     if not path.startswith(base_path) or not os.path.isfile(path):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
 
-    with open(path, "w") as f:
-        contents = f.write(request.POST.get("contents"))
+    with open(path, "wb") as f:
+        contents = f.write(request.POST.get("contents").encode("utf-8"))
 
     return JsonResponse({"success": True})
 
