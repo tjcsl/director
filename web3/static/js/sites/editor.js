@@ -648,7 +648,7 @@ You can drag files and folders around to move them.");
                         if (v.name.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
                             node.addClass("image");
                         }
-                        if (!getChildren(t).has("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
+                        if (!getChildren(t).filter("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
                             t.after(node);
                         }
                     });
