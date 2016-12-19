@@ -78,7 +78,7 @@ def manage_view(request):
 
 
 @login_required
-def create_webdocs(request):
+def create_webdocs_view(request):
     if not request.user.is_superuser or not request.user.is_staff:
         raise PermissionDenied
 
