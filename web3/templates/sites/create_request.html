@@ -19,6 +19,12 @@
     #teacher-list li {
         cursor: pointer;
     }
+    #submitted .fa-check {
+        color: #4CAF50;
+    }
+    #submitted .fa-times {
+        color: #F44336;
+    }
     </style>
 {% endblock %}
 
@@ -73,13 +79,13 @@
 {% block main %}
 {% if requests %}
 <h3>Submitted Requests</h3>
-<table class="table">
+<table id="submitted" class="table">
     <thead>
-        <tr><th>Activity</th><th>Submission Date</th></tr>
+        <tr><th>Activity</th><th>Submission Date</th><th>Teacher</th><th>Admin</th></tr>
     </thead>
     <tbody>
     {% for r in requests %}
-        <tr><td>{{ r.activity }}</td><td>{{ r.request_date }}</td></tr>
+        <tr><td>{{ r.activity }}</td><td>{{ r.request_date }}</td><td><i class="fa fa-{% if r.teacher_approval %}check{% else %}times{% endif %}"></i></td><td><i class="fa fa-{% if r.admin_approval %}check{% else %}times{% endif %}"></i></td></tr>
     {% endfor %}
     </tbody>
 </table>
