@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import PermissionDenied
 
 from .forms import UserForm
+from .helpers import create_user, create_webdocs
 from ..authentication.decorators import superuser_required
 
 from .models import User, Group
@@ -82,10 +83,29 @@ def create_webdocs_view(request):
     if not request.user.is_superuser or not request.user.is_staff:
         raise PermissionDenied
 
-    if request.method == "POST":
-        pass
+    success = []
+    failure = []
 
-    return render(request, "users/create_webdocs.html")
+    if request.method == "POST":
+        students = [x.strip() for x in request.POST.get("students", "").split("\n")]
+        for username in students:
+            user = create_user(username)
+            if user:
+                site = create_webdocs(user)
+                if site:
+                    success.append(username)
+                else:
+                    failure.append(username)
+            else:
+                failure.append(username)
+        return render(request, "users/create_webdocs.html", {
+            "finished": True,
+            "success": success,
+            "failure": failure
+        })
+
+
+    return render(request, "users/create_webdocs.html", {"finished": False})
 
 
 @login_required
