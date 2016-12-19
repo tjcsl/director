@@ -2,6 +2,16 @@
 
 {% block css %}
     {{ block.super }}
+    <style>
+    #guidelines {
+        max-width: 800px;
+        max-height: 400px;
+        overflow-y: scroll;
+        margin: 15px auto;
+        border: 1px solid black;
+        padding: 15px;
+    }
+    </style>
 {% endblock %}
 
 {% block main %}
@@ -17,23 +27,23 @@
         <label>Email</label>
         <input type="text" class="form-control" value="{{ request.user.email }}" readonly />
     </div>
-    <h4>Services<h4>
+    <h4>Services</h4>
     <div class="form-group">
         <label>Activity Name</label>
-        <input type="text" class="form-control" value="{{ request.user.email }}" required />
+        <input type="text" name="name" class="form-control" required />
     </div>
     <div class="form-group">
         <label>Other Details</label>
-        <textarea></textarea>
+        <textarea name="extra" class="form-control"></textarea>
         <small class="form-text">You can specify any additional software you want installed on the web server here.</small>
     </div>
     <h4>Student Agreement</h4>
-    <div class="guidelines">{% include "guidelines.html" %}</div>
+    <div id="guidelines">{% include "guidelines.html" %}</div>
     <label class="custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" required />
+        <input type="checkbox" name="agreement" class="custom-control-input" required />
         <span class="custom-control-indicator"></span>
         <span class="custom-control-description">I have read, understood, and agree to abide by the rules outlined in the Computer Systems Lab Policy, the TJHSST World-Wide Website Guidelines, the FCPS Acceptable Use Policy, and the FCPS Student Rights and Responsibilities. I understand that the above services may be revoked at any time and other disciplinary actions may occur if I directly or indirectly violate any guidelines as outlined in the above policies.</span>
     </label>
-    <button type="submit">Submit</button>
+    <button type="submit" class="btn btn-ion">Submit</button>
 </form>
 {% endblock %}
