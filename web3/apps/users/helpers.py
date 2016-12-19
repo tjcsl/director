@@ -12,7 +12,7 @@ def create_user(request, username):
     except IndexError:
         return None
 
-    profile = request.user.api_request("profile/{}".format(user.username))
+    profile = request.user.api_request("profile/{}".format(user.username), request=request)
 
     user = User.objects.create(
         id=uid,
