@@ -966,4 +966,7 @@ def editor_exec_view(request, site_id):
 
 @login_required
 def request_view(request):
-    return render(request, "sites/create_request.html")
+    context = {
+        "requests": request.user.requested_sites.all()
+    }
+    return render(request, "sites/create_request.html", context)
