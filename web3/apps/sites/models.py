@@ -123,4 +123,8 @@ class Database(models.Model):
         return "site_{}".format(self.site.name).lower()
 
     def __str__(self):
-        return "{}://{}:{}@{}/{}".format("postgres" if self.category == "postgresql" else "mysql", self.username, self.password, "postgres1:5432" if self.category == "postgresql" else "mysql1:3306", self.db_name)
+        if self.category == "postgresql":
+            server = "{}:{}".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_PORT)
+        else:
+            server = "{}:{}".format(settings.MYSQL_DB_HOST, settings.MYSQL_DB_PORT)
+        return "{}://{}:{}@{}/{}".format("postgres" if self.category == "postgresql" else "mysql", self.username, self.password, server, self.db_name)
