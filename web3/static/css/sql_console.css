@@ -20,7 +20,7 @@
     font-size: 16px;
     font-family: monospace;
     width: 100%;
-    padding: 10px;
+    padding: 5px;
     margin: 0;
     padding-bottom: 0;
     white-space: pre-wrap;
@@ -36,9 +36,9 @@
 #console table {
     white-space: pre;
     display: block;
-    padding-left: 15px;
-    padding-right: 15px;
-    margin-bottom: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-bottom: 5px;
     width: 100%;
 }
 #console table tr, #console table td {
