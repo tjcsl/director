@@ -1,11 +1,12 @@
 from .models import User, Group
+from ..sites.models import Site
+from ..sites.helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions
 from ...utils.tjldap import get_uid
 
 
 def create_user(request, username):
-    user = User.objects.filter(username=username)
-    if user.exists():
-        return user
+    if User.objects.filter(username=username).exists():
+        return User.objects.get(username=username)
 
     try:
         uid = get_uid(username)
@@ -29,3 +30,24 @@ def create_user(request, username):
         group.save()
 
     return user
+
+
+def create_webdocs(user):
+    if Site.objects.filter(name=user.username).exists():
+        return Site.objects.get(name=user.username)
+
+    site = Site.objects.create(
+        name=user.username,
+        description=user.full_name,
+        domain="{}.sites.tjhsst.edu".format(user.username),
+        category="php",
+        purpose="user",
+        custom_nginx=False
+    )
+    create_site_users(site)
+    site.group.users.add(user)
+
+    make_site_dirs(site)
+    crate_config_files(site)
+    flush_permissions()
+    return site
