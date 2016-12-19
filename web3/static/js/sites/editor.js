@@ -667,23 +667,7 @@ You can drag files and folders around to move them.");
                 }
                 else {
                     $.each(data.files, function(k, v) {
-                        var c = (v.type == "f" ? "file" : "folder");
-                        var node = $("<div draggable='true' style='padding-left:" + (depth + 1)*20 + "px'><i class='fa fa-fw fa-" + c + "-o'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
-                        node.addClass(c);
-                        node.attr("data-name", v.name);
-                        node.attr("data-depth", depth + 1);
-                        if (v.executable) {
-                            node.addClass("exec");
-                        }
-                        if (v.link) {
-                            node.addClass("link");
-                        }
-                        if (v.name.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
-                            node.addClass("image");
-                        }
-                        if (v.name.toLowerCase().match(/\.(mp3|mp4|pdf|swf)$/) != null) {
-                            node.addClass("media");
-                        }
+                        var node = makeNode(v, depth + 1);
                         if (!getChildren(t).filter("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
                             t.after(node);
                         }
@@ -693,6 +677,44 @@ You can drag files and folders around to move them.");
             });
         }
     });
+
+    function makeNode(v, depth) {
+        depth = depth || 0;
+        var c = (v.type == "f" ? "file" : "folder");
+        var node = $("<div draggable='true' style='padding-left:" + (depth*20) + "'><i class='fa fa-fw fa-" + c + "-o'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
+        node.addClass(c);
+        node.attr("data-name", v.name);
+        node.attr("data-depth", depth);
+        if (v.executable) {
+            node.addClass("exec");
+        }
+        if (v.link) {
+            node.addClass("link");
+        }
+        if (v.type == "f") {
+            if (v.name.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
+                node.addClass("image");
+                node.find("i.fa").removeClass("fa-file-o").addClass("fa-file-image-o");
+            }
+            if (v.name.toLowerCase().match(/\.(mp3|mp4|pdf|swf)$/) != null) {
+                node.addClass("media");
+                if (v.name.toLowerCase().match(/\.pdf$/)) {
+                    node.find("i.fa").removeClass("fa-file-o").addClass("fa-file-pdf-o");
+                }
+                else {
+                    node.find("i.fa").removeClass("fa-file-o").addClass("fa-file-video-o");
+                }
+            }
+            if (v.name.toLowerCase().match(/\.(py|php|js)$/) != null) {
+                node.find("i.fa").removeClass("fa-file-o").addClass("fa-file-code-o");
+            }
+            if (v.name.toLowerCase().match(/\.(zip|rar|gz|tar|7z|bz2|xz)$/) != null) {
+                node.find("i.fa").removeClass("fa-file-o").addClass("fa-file-archive-o");
+            }
+        }
+        return node;
+    }
+
     function initFiles(firstRun) {
         firstRun = firstRun || false;
         if (firstRun) {
@@ -704,23 +726,7 @@ You can drag files and folders around to move them.");
             }
             else {
                 $.each(data.files, function(k, v) {
-                    var c = (v.type == "f" ? "file" : "folder");
-                    var node = $("<div draggable='true'><i class='fa fa-fw fa-" + c + "-o'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
-                    node.addClass(c);
-                    node.attr("data-name", v.name);
-                    node.attr("data-depth", 0);
-                    if (v.executable) {
-                        node.addClass("exec");
-                    }
-                    if (v.link) {
-                        node.addClass("link");
-                    }
-                    if (v.name.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
-                        node.addClass("image");
-                    }
-                    if (v.name.toLowerCase().match(/\.(mp3|mp4|pdf|swf)$/) != null) {
-                        node.addClass("media");
-                    }
+                    var node = makeNode(v);
                     if (!$("#files div[data-depth=0][data-name='" + v.name.replace("'", "\\'") + "']").length) {
                         $("#files").append(node);
                     }
