@@ -213,7 +213,9 @@ def fix_permissions(site):
                 client.captureException()
                 continue
             os.lchown(path, site.user.id, site.group.id)
-            if stat.S_ISDIR(st.st_mode):
-                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP, follow_symlinks=False)
+            if stat.S_ISLNK(st.st_mode):
+                pass
+            elif stat.S_ISDIR(st.st_mode):
+                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
             else:
-                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP, follow_symlinks=False)
+                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
