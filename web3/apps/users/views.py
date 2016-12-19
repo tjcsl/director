@@ -12,6 +12,7 @@ from .forms import UserForm
 from .helpers import create_user, create_webdocs
 from ..authentication.decorators import superuser_required
 
+from requests.utils import quote
 from .models import User, Group
 
 
@@ -138,3 +139,12 @@ def github_oauth_view(request):
 
 def get_github_info(request):
     return request.user.github_api_request("/user")
+
+
+@login_required
+def teacher_lookup_view(request):
+    name = request.GET.get("name", "")
+    if not name:
+        return JsonResponse({"teachers": []})
+    responses = request.user.api_request("search/{}".format(quote(name)))
+    return JsonResponse({"teachers": [{"username": x["username"], "name": x["full_name"]} for x in responses["results"] if x["user_type"] == "tjhsstTeacher"]})

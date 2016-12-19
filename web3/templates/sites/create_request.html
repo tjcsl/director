@@ -15,6 +15,30 @@
     </style>
 {% endblock %}
 
+{% block js %}
+    {{ block.super }}
+    <script>
+    var lookup_endpoint = "{% url 'teacher_lookup' %}";
+    $(document).ready(function() {
+        $("#teacher-search").keydown(function(e) {
+            if (e.which == 13) {
+                $("#search-btn").click();
+            }
+        });
+        $("#search-btn").click(function(e) {
+            e.preventDefault();
+            var name = $("#teacher-search").val();
+            if (!name) {
+                return;
+            }
+            $.get(lookup_endpoint + "?name=" + encodeURIComponent(name), function(data) {
+                console.log(data);
+            });
+        });
+    });
+    </script>
+{% endblock %}
+
 {% block main %}
 <h3>Website Request Form</h3>
 <p>Please fill out the form below if you want a website for your activity. You will be notified about the status of your request via email, or you may check with a Student Systems Administrator at any time. <b>You will need a teacher's approval if you need services for a class or club/group/organization that is recognized by the 8th period office and the TJHSST administration.</b> This request will be valid until the end of the current school year. Service requests must be submitted before the last day of the school year for requested services to not expire. If you have any questions, please contact <a href="mailto:sysadmins@tjhsst.edu">sysadmins@tjhsst.edu</a>.</p>
@@ -41,11 +65,13 @@
     </div>
     <h4>Teacher Authorization</h4>
     <p>You can use the tool below to search for the teacher you want to send the request to. Once this form is submitted, that teacher will be emailed with instructions on how to approve this website request.</p>
-    <div class="input-group">
-        <input id="teacher-search" class="form-control" placeholder="Teacher Name" />
-        <span class="input-group-btn">
-            <button class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
-        </span>
+    <div class="form-group">
+        <div class="input-group">
+            <input id="teacher-search" class="form-control" placeholder="Teacher Name" />
+            <span class="input-group-btn">
+                <button id="search-btn" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
+            </span>
+        </div>
     </div>
     <input type="hidden" name="teacher" required />
     <p>Selected Teacher: <b>None</b></p>
