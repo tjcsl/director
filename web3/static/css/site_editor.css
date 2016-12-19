@@ -83,6 +83,9 @@ body {
 .dragover {
     border: 1px solid #999;
 }
+#editor {
+    background-color: white;
+}
 #terminal iframe {
     border: none;
     background-color: black;
