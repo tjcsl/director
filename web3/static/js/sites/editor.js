@@ -568,7 +568,7 @@ You can drag files and folders around to move them.");
             tab.append(" <i class='fa fa-times'></i>");
             $("#tabs").append(tab);
             $(".tab-pane").hide();
-            if (filepath.match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
+            if (filepath.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
                 tab.addClass("tab-image");
                 $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath) + "&embed=true");
                 $("#image").show();
