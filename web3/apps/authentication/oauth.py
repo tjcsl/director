@@ -25,6 +25,10 @@ class IonOauth2(BaseOAuth2):
     AUTHORIZATION_URL = 'https://ion.tjhsst.edu/oauth/authorize'
     ACCESS_TOKEN_URL = 'https://ion.tjhsst.edu/oauth/token'
     ACCESS_TOKEN_METHOD = 'POST'
+    EXTRA_DATA = [
+        ('refresh_token', 'refresh_token', True),
+        ('expires_in', 'expires')
+    ]
 
     def get_user_details(self, response):
         profile = self.get_json('https://ion.tjhsst.edu/api/profile',
