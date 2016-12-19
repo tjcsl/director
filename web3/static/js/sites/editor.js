@@ -229,6 +229,9 @@ You can drag files and folders around to move them.");
                                 if (path_obj.hasClass("folder")) {
                                     var children = getChildren(path_obj);
                                 }
+                                if (f.hasClass("folder") && !f.find(".fa-fw").hasClass("fa-folder-open-o")) {
+                                    f.click();
+                                }
                                 if (typeof f == "undefined" || f.attr("id") == "files") {
                                     newdepth = 0;
                                     path_obj.insertAfter($("#files div:last"));
