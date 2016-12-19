@@ -39,6 +39,14 @@
         <textarea name="extra" class="form-control"></textarea>
         <small class="form-text">You can specify any additional software you want installed on the web server here.</small>
     </div>
+    <h4>Teacher Authorization</h4>
+    <p>You can use the tool below to search for the teacher you want to send the request to. Once this form is submitted, that teacher will be emailed with instructions on how to approve this website request.</p>
+    <div class="input-group">
+        <input id="teacher-search" class="form-control" placeholder="Teacher Name" />
+        <span class="input-group-btn">
+            <button class="btn btn-ion"><i class="fa fa-search"></i> Search</button>
+        </span>
+    </div>
     <h4>Student Agreement</h4>
     <div id="guidelines">{% include "guidelines.html" %}</div>
     <label class="custom-control custom-checkbox">
