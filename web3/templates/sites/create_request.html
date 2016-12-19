@@ -10,6 +10,7 @@
         margin: 15px auto;
         border: 1px solid black;
         padding: 15px;
+        background-color: white;
     }
     </style>
 {% endblock %}
@@ -26,6 +27,7 @@
     <div class="form-group">
         <label>Email</label>
         <input type="text" class="form-control" value="{{ request.user.email }}" readonly />
+        <small class="form-text">We will send an email to this address after your website request has been approved.</small>
     </div>
     <h4>Services</h4>
     <div class="form-group">
