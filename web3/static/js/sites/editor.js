@@ -681,7 +681,8 @@ You can drag files and folders around to move them.");
     function makeNode(v, depth) {
         depth = depth || 0;
         var c = (v.type == "f" ? "file" : "folder");
-        var node = $("<div draggable='true' style='padding-left:" + (depth*20) + "'><i class='fa fa-fw fa-" + c + "-o'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
+        var ic = c;
+        var node = $("<div draggable='true' style='padding-left:" + (depth*20) + "'><i class='fa fa-fw'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
         node.addClass(c);
         node.attr("data-name", v.name);
         node.attr("data-depth", depth);
@@ -692,26 +693,31 @@ You can drag files and folders around to move them.");
             node.addClass("link");
         }
         if (v.type == "f") {
-            if (v.name.toLowerCase().match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
+            var vnl = v.name.toLowerCase();
+            if (vnl.match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
                 node.addClass("image");
-                node.find("i.fa").removeClass("fa-file-o").addClass("fa-file-image-o");
+                ic = "file-image";
             }
-            if (v.name.toLowerCase().match(/\.(mp3|mp4|pdf|swf)$/) != null) {
+            if (vnl.match(/\.(mp3|mp4|pdf|swf)$/) != null) {
                 node.addClass("media");
-                if (v.name.toLowerCase().match(/\.pdf$/)) {
-                    node.find("i.fa").removeClass("fa-file-o").addClass("fa-file-pdf-o");
+                if (vnl.match(/\.pdf$/)) {
+                    ic = "file-pdf";
                 }
                 else {
-                    node.find("i.fa").removeClass("fa-file-o").addClass("fa-file-video-o");
+                    ic = "file-video";
                 }
             }
-            if (v.name.toLowerCase().match(/\.(py|php|js)$/) != null) {
-                node.find("i.fa").removeClass("fa-file-o").addClass("fa-file-code-o");
+            if (vnl.match(/\.(py|php|js|html|css)$/) != null) {
+                ic = "file-code";
             }
-            if (v.name.toLowerCase().match(/\.(zip|rar|gz|tar|7z|bz2|xz)$/) != null) {
-                node.find("i.fa").removeClass("fa-file-o").addClass("fa-file-archive-o");
+            if (vnl.match(/\.(txt|log)/) != null) {
+                ic = "file-text";
+            }
+            if (vnl.match(/\.(zip|rar|gz|tar|7z|bz2|xz)$/) != null) {
+                ic = "file-archive";
             }
         }
+        node.find("i.fa").addClass("fa-" + ic + "-o");
         return node;
     }
 
