@@ -212,8 +212,8 @@ def fix_permissions(site):
             except FileNotFoundError:
                 client.captureException()
                 continue
-            os.chown(path, site.user.id, site.group.id)
+            os.lchown(path, site.user.id, site.group.id)
             if stat.S_ISDIR(st.st_mode):
-                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
+                os.lchmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
             else:
-                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
+                os.lchmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
