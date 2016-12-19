@@ -44,85 +44,85 @@ wss.on("connection", function(ws) {
         }
         delete terminals[id];
     });
-    ws.on("message", function(data, flags) {
-        if (!started) {
-            data = JSON.parse(data);
-            var postData = querystring.stringify({
-                uid: data.uid,
-                sid: data.site,
-                vmid: data.vm,
-                access_token: data.token
-            });
-            var req = https.request({
-                method: "POST",
-                hostname: "director.tjhsst.edu",
-                port: 443,
-                path: "/wsauth",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "Content-Length": postData.length
+    var message_init = function(data, flags) {
+        data = JSON.parse(data);
+        var postData = querystring.stringify({
+            uid: data.uid,
+            sid: data.site,
+            vmid: data.vm,
+            access_token: data.token
+        });
+        var req = https.request({
+            method: "POST",
+            hostname: "director.tjhsst.edu",
+            port: 443,
+            path: "/wsauth",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Content-Length": postData.length
+            }
+        }, function(resp) {
+            resp.setEncoding("utf8");
+            resp.on("data", function(authinfo) {
+                try {
+                    var auth = JSON.parse(authinfo);
                 }
-            }, function(resp) {
-                resp.setEncoding("utf8");
-                resp.on("data", function(authinfo) {
-                    try {
-                        var auth = JSON.parse(authinfo);
+                catch (err) {
+                    console.error(err);
+                    console.log(authinfo);
+                    ws.send(JSON.stringify({ error: "Failed to parse auth server response!" }));
+                    ws.close();
+                    return;
+                }
+                if (!auth.granted) {
+                    if (auth.exception) {
+                        console.error(auth.exception);
                     }
-                    catch (err) {
-                        console.error(err);
-                        console.log(authinfo);
-                        ws.send(JSON.stringify({ error: "Failed to parse auth server response!" }));
-                        ws.close();
-                        return;
-                    }
-                    if (!auth.granted) {
-                        if (auth.exception) {
-                            console.error(auth.exception);
-                        }
-                        ws.send(JSON.stringify({ error: auth.error }));
-                        ws.close();
-                    }
-                    else {
-                        if (data.site !== null) {
-                            term = pty.spawn(__dirname + "/shell.sh", [auth.site_user], {
-                                name: "xterm-color",
-                                cols: 80,
-                                rows: 30,
-                                cwd: auth.site_homedir,
-                                env: {
-                                    HOME: auth.site_homedir
-                                }
-                            });
-                        }
-                        else if (data.vm !== null) {
-                            term = pty.spawn(__dirname + "/ssh.sh", [auth.ip], {
-                                name: "xterm-color",
-                                cols: 80,
-                                rows: 30,
-                                env: {
-                                    SSHPASS: auth.password
-                                }
-                            });
-                        }
-                        term.on("close", function(e) {
-                            ws.close();
-                            delete terminals[id];
+                    ws.send(JSON.stringify({ error: auth.error }));
+                    ws.close();
+                }
+                else {
+                    if (data.site !== null) {
+                        term = pty.spawn(__dirname + "/shell.sh", [auth.site_user], {
+                            name: "xterm-color",
+                            cols: 80,
+                            rows: 30,
+                            cwd: auth.site_homedir,
+                            env: {
+                                HOME: auth.site_homedir
+                            }
                         });
-                        term.on("data", function(data) {
-                            ws.send(data);
-                        });
-                        terminals[id] = term;
-                        started = true;
-                        ws.send(JSON.stringify({ id: id, action: "START" }));
                     }
-                });
+                    else if (data.vm !== null) {
+                        term = pty.spawn(__dirname + "/ssh.sh", [auth.ip], {
+                            name: "xterm-color",
+                            cols: 80,
+                            rows: 30,
+                            env: {
+                                SSHPASS: auth.password
+                            }
+                        });
+                    }
+                    term.on("close", function(e) {
+                        ws.close();
+                        delete terminals[id];
+                    });
+                    term.on("data", function(data) {
+                        ws.send(data);
+                    });
+                    ws.removeListener("message", message_init);
+                    ws.on("message", function(data) {
+                        term.write(data);
+                    });
+                    terminals[id] = term;
+                    started = true;
+                    ws.send(JSON.stringify({ id: id, action: "START" }));
+                }
             });
-            req.write(postData);
-            req.end();
-        }
-        else {
-            term.write(data);
-        }
-    });
+        });
+        req.write(postData);
+        req.end();
+    };
+    ws.on("message", message_init);
 });
 
