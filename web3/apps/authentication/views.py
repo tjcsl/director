@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.signals import user_logged_in
+from django.db.models import Q
 
 from ..sites.models import Site
 from ..vms.models import VirtualMachine
@@ -20,7 +21,8 @@ def index_view(request):
     if request.user.is_authenticated():
         return render(request, "dashboard.html", {
             "sites": Site.objects.annotate(num_users=Count("group__users")).filter(group__users=request.user).order_by("name"),
-            "other_sites": Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name") if request.user.is_superuser else None
+            "other_sites": Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name") if request.user.is_superuser else None,
+            "site_requests": request.user.site_requests.filter(Q(teacher_approval=True, admin_approval=False) | Q(teacher=request.user, teacher_approval=False)) if request.user.is_superuser else request.user.site_requests.filter(teacher_approval=False)
         })
     else:
         return login_view(request)

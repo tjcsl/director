@@ -63,3 +63,13 @@
 #filtered {
     font-size: 12px;
 }
+.nav-warn {
+    background-color: #E65100;
+    padding: 3px 5px;
+    padding-right: 7px;
+    border-radius: 3px;
+    font-size: 14px;
+}
+a.nav-warn:hover {
+    color: white;
+}
