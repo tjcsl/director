@@ -10,7 +10,7 @@
     {{ block.super }}
     <script>
     $(document).ready(function() {
-        $("button[action='reject']").click(function(e) {
+        $("button[name='action'][value='reject']").click(function(e) {
             if (!confirm("Are you sure you want to delete this request?")) {
                 e.preventDefault();
             }
