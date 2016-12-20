@@ -27,7 +27,7 @@
             <label class="custom-control custom-checkbox">
                 <input type="checkbox" name="agreement" class="custom-control-input">
                 <span class="custom-control-indicator"></span>
-                <span class="custom-control-description">I am aware of the Guidelines for Web Pages and have reviewed this with the above student. This student is responsible and can be trusted with the requested services of the Computer Systems Lab.</span>
+                <span class="custom-control-description">I am aware of the <a href="#" data-toggle="modal" data-target="#guidelines-modal">Guidelines for Web Pages</a> and have reviewed this with the above student. This student is responsible and can be trusted with the requested services of the Computer Systems Lab.</span>
             </label>
             <br />
             <button type="submit" class="btn btn-ion"><i class="fa fa-check"></i> Approve</button>
@@ -42,4 +42,22 @@
 <hr />
 <a href="{% url 'request_site' %}">Site Request Form</a> - <a href="{% url 'admin_site' %}">Admin Approval</a>
 {% endif %}
+<div id="guidelines-modal" class="modal fade">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Website Guidelines</h4>
+            </div>
+            <div class="modal-body">
+                {% include "guidelines.html" %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
