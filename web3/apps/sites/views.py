@@ -1012,16 +1012,18 @@ def approve_view(request):
 def approve_admin_view(request):
     if request.method == "POST":
         site_request = get_object_or_404(SiteRequest, id=request.POST.get("request", None))
-        if not request.user.is_superuser:
-            messages.error(request, "Only administrators can mark requests as processed!")
-        else:
+        action = request.POST.get("action", None)
+        if action == "accept":
             site_request.admin_approval = True
             site_request.save()
             messages.success(request, "Request has been marked as processed!")
+        elif action == "reject":
+            site_request.delete()
+            messages.success(request, "Request deleted!")
         return redirect("admin_site")
 
     context = {
-        "requests": SiteRequest.objects.filter(teacher_approval=True).order_by("-request_date") if request.user.is_superuser else None
+        "requests": SiteRequest.objects.all().order_by("-request_date") if request.user.is_superuser else None
     }
 
     return render(request, "sites/admin_request.html", context)
