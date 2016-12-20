@@ -92,11 +92,13 @@
         <small class="form-text">You can specify any additional software you want installed on the web server here. Once your request is granted, you will have the option to create either a PostgreSQL or MySQL database.</small>
     </div>
     <h4>Teacher Authorization</h4>
-    <p>Please select the teacher you want to send the request to. Once this form is submitted, that teacher will be emailed with instructions on how to approve this website request.</p>
+    <p>Please select the teacher that you want to approve the request. Once this form is submitted, that teacher will be emailed with instructions on how to approve this website request.</p>
     <div class="form-group">
+        <label for="select-teacher">Teacher</label>
         <div class="input-group">
             <select id="select-teacher" placeholder="Please select a teacher" name="teacher" required></select>
         </div>
+        <small class="form-text">Type in the teacher's name into the box above. The dropdown will automatically populate after a few characters.</small>
     </div>
     <h4>Student Agreement</h4>
     <div id="guidelines">{% include "guidelines.html" %}</div>
