@@ -35,7 +35,7 @@ from ..vms.models import VirtualMachine
 
 from ..users.helpers import create_user
 
-from ...utils.emails import send_new_site_email
+from ...utils.emails import send_new_site_email, send_approval_request_email
 
 from raven.contrib.django.raven_compat.models import client
 
@@ -1047,13 +1047,16 @@ def request_view(request):
         if not teacher:
             messages.error(request, "Invalid teacher selected!")
         else:
-            SiteRequest.objects.create(
+            sr = SiteRequest.objects.create(
                 user=request.user,
                 teacher=teacher,
                 activity=activity,
                 extra_information=extra
             )
-            messages.success(request, "Website request created!")
+            if send_approval_request_email(sr) > 0:
+                messages.success(request, "Website request created!")
+            else:
+                messages.warning(request, "Website request created, but failed to email teacher.")
 
     context["requests"] = request.user.requested_sites.filter(admin_approval=False)
 
