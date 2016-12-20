@@ -998,6 +998,6 @@ def request_view(request):
             )
             messages.success(request, "Website request created!")
 
-    context["requests"] = request.user.requested_sites.all()
+    context["requests"] = request.user.requested_sites.filter(admin_approval=False)
 
     return render(request, "sites/create_request.html", context)
