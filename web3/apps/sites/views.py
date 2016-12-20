@@ -62,7 +62,13 @@ def create_view(request):
         }
         return render(request, "sites/create_site.html", context)
     else:
-        return render(request, "sites/create_info.html", {})
+        if request.user.is_staff:
+            if request.user.site_requests.filter(teacher_approval=False).exists():
+                return redirect("approve_site")
+            else:
+                return render(request, "sites/create_info.html")
+        else:
+            return redirect("request_site")
 
 
 def ping_site(name, url):
