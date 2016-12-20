@@ -6,6 +6,7 @@ urlpatterns = [
     url("^create$", views.create_view, name="create_site"),
     url("^request$", views.request_view, name="request_site"),
     url("^request/approve$", views.approve_view, name="approve_site"),
+    url("^request/admin$", views.approve_admin_view, name="admin_site"),
     url("^ping$", views.ping_view, name="ping_site"),
     url("^(?P<site_id>\d+)/$", views.info_view, name="info_site"),
     url("^(?P<site_id>\d+)/edit$", views.edit_view, name="edit_site"),

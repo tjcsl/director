@@ -980,6 +980,9 @@ def approve_view(request):
 
     if request.method == "POST":
         site_request = get_object_or_404(SiteRequest, id=request.POST.get("request", None))
+        if site_request.teacher != request.user:
+            messages.error(request, "You do not have permission to approve this request!")
+            return redirect("approve_site")
         agreement = request.POST.get("agreement", False) is not False
         if not agreement:
             messages.error(request, "You must agree to the conditions in order to approve a site!")
@@ -990,10 +993,30 @@ def approve_view(request):
         return redirect("approve_site")
 
     context = {
-        "requests": request.user.site_requests.all().order_by("-request_date")
+        "requests": request.user.site_requests.all().order_by("-request_date"),
+        "admin_requests": SiteRequest.objects.filter(teacher_approval=True).order_by("-request_date") if request.user.is_superuser else None
     }
 
     return render(request, "sites/approve_request.html", context)
+
+
+@superuser_required
+def approve_admin_view(request):
+    if request.method == "POST":
+        site_request = get_object_or_404(SiteRequest, id=request.POST.get("request", None))
+        if not request.user.is_superuser:
+            messages.error(request, "Only administrators can mark requests as processed!")
+        else:
+            site_request.admin_approval = True
+            site_request.save()
+            messages.success(request, "Request has been marked as processed!")
+        return redirect("admin_site")
+
+    context = {
+        "requests": SiteRequest.objects.filter(teacher_approval=True).order_by("-request_date") if request.user.is_superuser else None
+    }
+
+    return render(request, "sites/admin_request.html", context)
 
 
 @login_required

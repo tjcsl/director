@@ -60,7 +60,7 @@
 <a href="{% url 'approve_site' %}" class="pull-right">Approve Requests</a>
 {% endif %}
 <h3>Submitted Requests</h3>
-<div id="submitted">
+<div class="submitted">
     {% for r in requests %}
     <div class="submission">
         <span class="activity">{{ r.activity }}</span> - {{ r.request_date }} - {{ r.teacher.full_name }}<br />

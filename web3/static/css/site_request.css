@@ -14,27 +14,28 @@
 #teacher-list li {
     cursor: pointer;
 }
-#submitted {
+.submitted {
     margin-top: 15px;
 }
-#submitted .fa-check {
+.submitted .fa-check {
     color: #4CAF50;
 }
-#submitted .fa-times {
+.submitted .fa-times {
     color: #F44336;
 }
-#submitted .submission {
+.submitted .submission {
     padding: 5px 10px;
     background-color: rgba(0, 0, 0, 0.07);
+    margin-bottom: 15px;
 }
-#submitted .activity {
+.submitted .activity {
     font-weight: bold;
 }
-#submitted .approval {
+.submitted .approval {
     background-color: #eee;
     margin: 5px 0px;
     padding: 10px;
 }
-#submitted .approval .fa-check {
+.submitted .approval .fa-check {
     color: #484848;
 }

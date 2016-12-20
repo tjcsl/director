@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/site_request.css' %}" />
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+{% endblock %}
+
+{% block main %}
+<h3>Admin Requests</h3>
+<hr />
+<div class="submitted">
+{% for r in requests %}
+    <div class="submission">
+        <span class="activity">{{ r.activity }}</span> - {{ r.request_date }}<br />
+        Requested by <b>{{ r.user.full_name }}</b> ({{ r.user.email }})<br />
+        Approved by <b>{{ r.teacher.full_name }}</b> ({{ r.user.email }})<br />
+        {{ r.extra_information|default:"No Extra Information" }}<br />
+        <i class="fa fa-{% if r.teacher_approval %}check{% else %}times{% endif %}"></i> Approved - <i class="fa fa-{% if r.admin_approval %}check{% else %}times{% endif %}"></i> Processed
+        {% if not r.admin_approval %}
+        <form method="POST" class="approval">
+            {% csrf_token %}
+            <input type="hidden" name="request" value="{{ r.id }}" />
+            <p style="margin-bottom:5px">You can mark this request as processed after you are finished creating the site.</p>
+            <button type="submit" class="btn btn-ion"><i class="fa fa-check"></i> Mark as Processed</button>
+        </form>
+        {% endif %}
+    </div>
+{% empty %}
+    <div>No sites to process! <i class="fa fa-smile-o"></i></div>
+{% endfor %}
+</div>
+<hr />
+<a href="{% url 'request_site' %}">Site Request Form</a> - <a href="{% url 'approve_site' %}">Teacher Approval</a>
+{% endblock %}

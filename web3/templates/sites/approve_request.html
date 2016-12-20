@@ -13,7 +13,7 @@
 {% block main %}
 <p><b>Hi!</b> You're probably seeing this page because a student created a website request and it requires teacher approval. You can approve these requests below. If you do not want to approve one of the sites below, please email <a href="mailto:sysadmins@tjhsst.edu">sysadmins@tjhsst.edu</a>.</p>
 <hr />
-<div id="submitted">
+<div class="submitted">
     {% for r in requests %}
     <div class="submission">
         <span class="activity">{{ r.activity }}</span> - {{ r.request_date }}<br />
@@ -34,6 +34,12 @@
         </form>
         {% endif %}
     </div>
+    {% empty %}
+        <div>No sites to approve! <i class="fa fa-smile-o"></i></div>
     {% endfor %}
 </div>
+{% if request.user.is_superuser %}
+<hr />
+<a href="{% url 'request_site' %}">Site Request Form</a> - <a href="{% url 'admin_site' %}">Admin Approval</a>
+{% endif %}
 {% endblock %}
