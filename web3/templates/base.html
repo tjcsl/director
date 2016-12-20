@@ -54,11 +54,11 @@
         <a class="navbar-brand" href="/">
             <i class="fa fa-cloud"></i> Director
         </a>
+        <ul class="nav navbar-nav">
+        {% if request.user.is_authenticated %}
         {% if request.user.site_notifications %}
         <a class="nav-warn" href="{% if request.user.site_notifications.0.teacher_approval %}{% url 'admin_site' %}{% else %}{% url 'approve_site' %}{% endif %}"><b>{{ request.user.site_notifications.count }}</b> Request{{ request.user.site_notifications.count|pluralize }}</a>
         {% endif %}
-        <ul class="nav navbar-nav">
-        {% if request.user.is_authenticated %}
         <div class="dropdown pull-right" id="user-dropdown">
             <button class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ request.user.username }}</button>
             <ul class="dropdown-menu">
