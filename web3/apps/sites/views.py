@@ -975,6 +975,10 @@ def editor_exec_view(request, site_id):
 
 @login_required
 def request_view(request):
+    if request.user.is_staff and not request.user.is_superuser:
+        messages.error(request, "Only students can submit website request forms!")
+        return redirect("index")
+
     context = {}
 
     if request.method == "POST":
