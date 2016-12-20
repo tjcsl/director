@@ -44,7 +44,7 @@
     <div class="login-box">
         <p><b>Log in with your Intranet account</b> to access the Director management interface.</p>
         <center>
-            <a href="{% url 'social:begin' 'ion' %}" class="btn btn-ion">
+            <a href="{% url 'social:begin' 'ion' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="btn btn-ion">
                 Log In with Ion
             </a>
         </center>
