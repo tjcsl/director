@@ -11,40 +11,41 @@
     <script>
     var lookup_endpoint = "{% url 'teacher_lookup' %}";
     $(document).ready(function() {
-        $("#teacher-search").keydown(function(e) {
-            if (e.which == 13) {
-                $("#search-btn").click();
-            }
-        });
-        $("#search-btn").click(function(e) {
-            e.preventDefault();
-            $("#teacher-list li").remove();
-            var name = $("#teacher-search").val();
-            if (!name) {
-                return;
-            }
-            $("#search-btn, #teacher-search").prop("disabled", true);
-            $.get(lookup_endpoint + "?name=" + encodeURIComponent(name), function(data) {
-                var teachers = data.teachers;
-                if (teachers.length == 0) {
-                    Messenger().error("No teachers found with that search query!");
-                }
-                else if (teachers.length == 1) {
-                    $("#teacher-username").val(teachers[0].username);
-                    $("#teacher-name").text(teachers[0].name);
-                }
-                else {
-                    $.each(teachers, function(k, v) {
-                        var ele = $("<li />");
-                        ele.text(v.name);
-                        ele.attr("data-id", v.username);
-                        $("#teacher-list").append(ele);
+        $('#select-teacher').selectize({
+                valueField: 'username',
+                labelField: 'name',
+                searchField: 'name',
+                create: false,
+                render: {
+                    option: function(item, escape) {
+                        return '<div>' +
+                            '<span class="title">' +
+                                '<span class="name"><i class="fa fa-user"></i> ' + escape(item.name) + '</span><br />' +
+                                '<span class="by">' + escape(item.username) + '</span>' +
+                            '</span>' +
+                        '</div>';
+                    }
+                },
+                score: function(search) {
+                    var score = this.getScoreFunction(search);
+                    return function(item) {
+                        return score(item);
+                    };
+                },
+                load: function(query, callback) {
+                    if (!query.length) return callback();
+                    $.ajax({
+                        url: lookup_endpoint + "?name=" + encodeURIComponent(query),
+                        type: 'GET',
+                        error: function() {
+                            callback();
+                        },
+                        success: function(res) {
+                            callback(res.teachers.slice(0, 10));
+                        }
                     });
                 }
-            }).always(function() {
-                $("#search-btn, #teacher-search").prop("disabled", false);
             });
-        });
         $("#teacher-list").on("click", "li", function(e) {
             e.preventDefault();
             $("#teacher-username").val($(this).attr("data-id"));
@@ -99,15 +100,9 @@
     <p>You can use the tool below to search for the teacher you want to send the request to. Once this form is submitted, that teacher will be emailed with instructions on how to approve this website request.</p>
     <div class="form-group">
         <div class="input-group">
-            <input id="teacher-search" class="form-control" placeholder="Teacher Name" />
-            <span class="input-group-btn">
-                <button id="search-btn" class="btn btn-primary"><i class="fa fa-search"></i> Search</button>
-            </span>
+            <select id="select-teacher" name="teacher" required></select>
         </div>
     </div>
-    <input type="hidden" id="teacher-username" name="teacher" required />
-    <ul id="teacher-list"></ul>
-    <p>Selected Teacher: <b id="teacher-name">None</b></p>
     <h4>Student Agreement</h4>
     <div id="guidelines">{% include "guidelines.html" %}</div>
     <label class="custom-control custom-checkbox">
