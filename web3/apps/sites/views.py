@@ -63,7 +63,7 @@ def create_view(request):
         return render(request, "sites/create_site.html", context)
     else:
         if request.user.is_staff:
-            if request.user.is_superuser and request.user.site_requests.filter(teacher_approval=True, admin_approval=False).exists():
+            if request.user.is_superuser and SiteRequest.objects.filter(teacher_approval=True, admin_approval=False).exists():
                 return redirect("admin_site")
             if request.user.site_requests.filter(teacher_approval=False).exists():
                 return redirect("approve_site")
