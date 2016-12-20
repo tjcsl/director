@@ -4,6 +4,7 @@ from django.db import models
 from django.core import validators
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager as DjangoUserManager
 from django.utils import timezone
+from django.db.models import Q
 
 from social.apps.django_app.utils import load_strategy
 
@@ -49,6 +50,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_social_auth(self):
         return self.social_auth.get(provider='ion')
+
+    @property
+    def site_notifications(self):
+        return self.site_requests.filter(Q(teacher_approval=True, admin_approval=False) | Q(teacher=self, teacher_approval=False)) if self.is_superuser else self.site_requests.filter(teacher_approval=False)
 
     def api_request(self, url, params={}, refresh=True):
         s = self.get_social_auth()

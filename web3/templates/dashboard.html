@@ -13,9 +13,6 @@
 
 {% block navbar %}
 <input class="form-control search-box" id="select-site" type="text" placeholder="&#xf002; Search Sites" />
-{% if site_requests %}
-<a class="nav-warn" href="{% if site_requests.0.teacher_approval %}{% url 'admin_site' %}{% else %}{% url 'approve_site' %}{% endif %}"><b>{{ site_requests.count }}</b> Request{{ site_requests.count|pluralize }}</a>
-{% endif %}
 {% endblock %}
 {% block main %}
 <div class="subheading clearfix">
