@@ -1,0 +1,8 @@
+Hi {{ request.teacher.full_name }},
+
+A student, {{ request.user.full_name }}, has filed a website request form for {{ request.activity }} and marked you as the teacher sponsor.
+
+You can accept this request at https://director.tjhsst.edu/. If you have any questions, email sysadmins@tjhsst.edu.
+
+Thanks,
+The Director Team

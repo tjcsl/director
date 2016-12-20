@@ -14,3 +14,16 @@ def send_new_site_email(user, site):
         return send_mail("{} You've been added to a new website!".format(settings.EMAIL_SUBJECT_PREFIX),
                          plain_message, settings.EMAIL_FROM,
                          [user.email], html_message=html_message)
+
+
+def send_approval_request_email(request):
+    context = {"request": request}
+    plain_message = render_to_string("emails/approval_request.txt", context)
+    html_message = render_to_string("emails/approval_request.html", context)
+    if settings.DEBUG:
+        print(plain_message)
+        return 0
+    else:
+        return send_mail("{} A website request needs your approval!".format(settings.EMAIL_SUBJECT_PREFIX),
+                         plain_message, settings.EMAIL_FROM,
+                         [request.teacher.email], html_message=html_message)
