@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block main %}
+<a href="{% url 'request_site' %}" class="pull-right">Site Request Form</a>
 <h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Site</h4>
 <form method="POST">
     {% csrf_token %}
