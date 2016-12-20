@@ -19,11 +19,21 @@
     #teacher-list li {
         cursor: pointer;
     }
+    #submitted {
+        margin-top: 15px;
+    }
     #submitted .fa-check {
         color: #4CAF50;
     }
     #submitted .fa-times {
         color: #F44336;
+    }
+    #submitted .submission {
+        padding: 5px 10px;
+        background-color: rgba(0, 0, 0, 0.07);
+    }
+    #submitted .activity {
+        font-weight: bold;
     }
     </style>
 {% endblock %}
@@ -79,16 +89,14 @@
 {% block main %}
 {% if requests %}
 <h3>Submitted Requests</h3>
-<table id="submitted" class="table">
-    <thead>
-        <tr><th>Activity</th><th>Submission Date</th><th>Teacher</th><th>Authorization</th><th>Processed</th></tr>
-    </thead>
-    <tbody>
+<div id="submitted">
     {% for r in requests %}
-        <tr><td>{{ r.activity }}</td><td>{{ r.request_date }}</td><td>{{ r.teacher.full_name }}</td><td><i class="fa fa-{% if r.teacher_approval %}check{% else %}times{% endif %}"></i></td><td><i class="fa fa-{% if r.admin_approval %}check{% else %}times{% endif %}"></i></td></tr>
+    <div class="submission">
+        <span class="activity">{{ r.activity }}</span> - {{ r.request_date }} - {{ r.teacher.full_name }}<br />
+        <i class="fa fa-{% if r.teacher_approval %}check{% else %}times{% endif %}"></i> Teacher Authorization - <i class="fa fa-{% if r.admin_approval %}check{% else %}times{% endif %}"></i> Processed
+    </div>
     {% endfor %}
-    </tbody>
-</table>
+</div>
 <hr />
 {% endif %}
 <h3>Website Request Form</h3>
