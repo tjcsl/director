@@ -46,11 +46,6 @@
                     });
                 }
             });
-        $("#teacher-list").on("click", "li", function(e) {
-            e.preventDefault();
-            $("#teacher-username").val($(this).attr("data-id"));
-            $("#teacher-name").text($(this).text());
-        });
     });
     </script>
 {% endblock %}
@@ -100,7 +95,7 @@
     <p>You can use the tool below to search for the teacher you want to send the request to. Once this form is submitted, that teacher will be emailed with instructions on how to approve this website request.</p>
     <div class="form-group">
         <div class="input-group">
-            <select id="select-teacher" name="teacher" required></select>
+            <select id="select-teacher" placeholder="Please select a teacher" name="teacher" required></select>
         </div>
     </div>
     <h4>Student Agreement</h4>
