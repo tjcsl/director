@@ -1048,6 +1048,8 @@ def request_view(request):
         teacher = create_user(request, teacher)
         if not teacher:
             messages.error(request, "Invalid teacher selected!")
+        elif not teacher.is_staff and not teacher.is_superuser:
+            messages.error(request, "This user is not a teacher or staff member!")
         else:
             sr = SiteRequest.objects.create(
                 user=request.user,
