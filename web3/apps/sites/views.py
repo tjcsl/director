@@ -974,10 +974,32 @@ def editor_exec_view(request, site_id):
 
 
 @login_required
+def approve_view(request):
+    if not request.user.is_staff and not request.user.is_superuser:
+        return redirect("request_site")
+
+    if request.method == "POST":
+        site_request = get_object_or_404(SiteRequest, id=request.POST.get("request", None))
+        agreement = request.POST.get("agreement", False) is not False
+        if not agreement:
+            messages.error(request, "You must agree to the conditions in order to approve a site!")
+        else:
+            site_request.teacher_approval = True
+            site_request.save()
+            messages.success(request, "Your approval has been added and the site will be created shortly!")
+        return redirect("approve_site")
+
+    context = {
+        "requests": request.user.site_requests.all().order_by("-request_date")
+    }
+
+    return render(request, "sites/approve_request.html", context)
+
+
+@login_required
 def request_view(request):
     if request.user.is_staff and not request.user.is_superuser:
-        messages.error(request, "Only students can submit website request forms!")
-        return redirect("index")
+        return redirect("approve_site")
 
     context = {}
 

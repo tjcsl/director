@@ -1,0 +1,40 @@
+#guidelines {
+    max-width: 800px;
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 15px auto;
+    border: 1px solid black;
+    padding: 15px;
+    background-color: white;
+}
+#teacher-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+#teacher-list li {
+    cursor: pointer;
+}
+#submitted {
+    margin-top: 15px;
+}
+#submitted .fa-check {
+    color: #4CAF50;
+}
+#submitted .fa-times {
+    color: #F44336;
+}
+#submitted .submission {
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.07);
+}
+#submitted .activity {
+    font-weight: bold;
+}
+#submitted .approval {
+    background-color: #eee;
+    margin: 5px 0px;
+    padding: 10px;
+}
+#submitted .approval .fa-check {
+    color: #484848;
+}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/site_request.css' %}" />
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+{% endblock %}
+
+{% block main %}
+<p><b>Hi!</b> You're probably seeing this page because a student created a website request and it requires teacher approval. You can approve these requests below. If you do not want to approve one of the sites below, please email <a href="mailto:sysadmins@tjhsst.edu">sysadmins@tjhsst.edu</a>.</p>
+<hr />
+<div id="submitted">
+    {% for r in requests %}
+    <div class="submission">
+        <span class="activity">{{ r.activity }}</span> - {{ r.request_date }}<br />
+        Requested by {{ r.user.full_name }}<br />
+        {{ r.extra_information|default:"No Extra Information" }}<br />
+        <i class="fa fa-{% if r.teacher_approval %}check{% else %}times{% endif %}"></i> Approved - <i class="fa fa-{% if r.admin_approval %}check{% else %}times{% endif %}"></i> Processed
+        {% if not r.teacher_approval %}
+        <form method="POST" class="approval">
+            {% csrf_token %}
+            <input type="hidden" name="request" value="{{ r.id }}" />
+            <label class="custom-control custom-checkbox">
+                <input type="checkbox" name="agreement" class="custom-control-input">
+                <span class="custom-control-indicator"></span>
+                <span class="custom-control-description">I am aware of the Guidelines for Web Pages and have reviewed this with the above student. This student is responsible and can be trusted with the requested services of the Computer Systems Lab.</span>
+            </label>
+            <br />
+            <button type="submit" class="btn btn-ion"><i class="fa fa-check"></i> Approve</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
