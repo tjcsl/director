@@ -17,6 +17,7 @@ body {
 #files {
     float: left;
     padding: 10px;
+    box-sizing: content-box;
     overflow: auto;
     width: 250px;
     height: calc(100vh - 40px);
@@ -25,9 +26,12 @@ body {
     width: 15px;
     cursor: ew-resize;
 }
+#files .ui-resizable-e {
+    background-color: rgba(0, 0, 0, 0.02);
+}
 #editor-wrapper {
     float: right;
-    width: calc(100vw - 260px);
+    width: calc(100vw - 270px);
     height: calc(100vh - 40px);
 }
 #tabs {
