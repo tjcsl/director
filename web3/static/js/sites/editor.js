@@ -760,9 +760,9 @@ You can drag files and folders around to move them.");
     });
 
     $(window).resize(function() {
-        $("#files").resizable("option", "maxWidth", $(window).width() - 80);
+        $("#files").resizable("option", "maxWidth", $(window).width() - 120);
     });
-    $("#files").resizable("option", "maxWidth", $(window).width() - 80);
+    $("#files").resizable("option", "maxWidth", $(window).width() - 120);
 
     $("#tabs").sortable({
         items: ".tab:not(.tab-special)",
