@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "NodeJS Server for Director",
   "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tjcsl/director.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
