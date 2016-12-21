@@ -26,7 +26,7 @@ body {
     width: 15px;
     cursor: ew-resize;
 }
-#files .ui-resizable-e {
+#files .ui-resizable-e:hover {
     background-color: rgba(0, 0, 0, 0.02);
 }
 #editor-wrapper {
