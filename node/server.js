@@ -1,5 +1,6 @@
 #!/usr/bin/node
 
+var fs = require("fs");
 var pty = require("pty.js");
 var WebSocketServer = require('ws').Server;
 var express = require("express");
@@ -7,6 +8,9 @@ var app = express();
 var http = require("http");
 var https = require("https");
 var querystring = require("querystring");
+
+var raven = require("raven");
+raven.config(fs.readFileSync("raven.dsn", "utf8")).install();
 
 var uuid = require("uuid/v4");
 
@@ -68,15 +72,14 @@ wss.on("connection", function(ws) {
                     var auth = JSON.parse(authinfo);
                 }
                 catch (err) {
-                    console.error(err);
-                    console.log(authinfo);
+                    raven.captureException(err);
                     ws.send(JSON.stringify({ error: "Failed to parse auth server response!" }));
                     ws.close();
                     return;
                 }
                 if (!auth.granted) {
                     if (auth.exception) {
-                        console.error(auth.exception);
+                        Raven.captureMessage(auth.exception);
                     }
                     ws.send(JSON.stringify({ error: auth.error }));
                     ws.close();
