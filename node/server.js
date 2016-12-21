@@ -119,7 +119,9 @@ wss.on("connection", function(ws) {
                     });
                     terminals[id] = term;
                     started = true;
-                    ws.send(JSON.stringify({ id: id, action: "START" }));
+                    if (ws.readyState == 1) {
+                        ws.send(JSON.stringify({ id: id, action: "START" }));
+                    }
                 }
             });
         });
