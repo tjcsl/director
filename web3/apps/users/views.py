@@ -83,7 +83,7 @@ def manage_view(request):
     return render(request, "users/management.html", context)
 
 
-def setup_webdocs(username):
+def setup_webdocs(user):
     return bool(create_webdocs(user, batch=True))
 
 
@@ -103,7 +103,7 @@ def create_webdocs_view(request):
         for username in students:
             user = create_user(request, username)
             if user:
-                valid_students.append(username)
+                valid_students.append(user)
             else:
                 failure.append(username)
 
