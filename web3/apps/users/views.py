@@ -1,6 +1,8 @@
 import requests
 import json
 
+from multiprocessing import Pool
+
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -86,29 +88,38 @@ def create_webdocs_view(request):
     if not request.user.is_superuser and not request.user.is_staff:
         raise PermissionDenied
 
-    success = []
-    failure = []
-
     if request.method == "POST":
         students = [x.strip() for x in request.POST.get("students", "").split("\n")]
         students = [x for x in students if x]
-        for username in students:
+
+        def setup_webdocs(username):
             user = create_user(request, username)
             if user:
                 site = create_webdocs(user, batch=True)
                 if site:
-                    success.append(username)
-                else:
-                    failure.append(username)
+                    return True
+            return False
+
+        pool = Pool(3)
+        results = pool.map(setup_webdocs, students)
+        pool.close()
+        pool.join()
+
+        success = []
+        failure = []
+
+        for x in range(len(results)):
+            if results[x]:
+                success.append(students[x])
             else:
-                failure.append(username)
+                failure.append(students[x])
+
         flush_permissions()
         return render(request, "users/create_webdocs.html", {
             "finished": True,
             "success": success,
             "failure": failure
         })
-
 
     return render(request, "users/create_webdocs.html", {"finished": False})
 
