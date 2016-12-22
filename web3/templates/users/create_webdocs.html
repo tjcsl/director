@@ -25,6 +25,29 @@
 
 {% block js %}
     {{ block.super }}
+    <script>
+    $(document).ready(function() {
+        $("form").submit(function(e) {
+            e.preventDefault();
+            $("#form button, #form textarea").prop("disabled", true);
+            $("#form button").html("<i class='fa fa-cog fa-spin'></i> Processing...");
+            $.post("?json", { students: $("#students").val() }, function(data) {
+                $.each(data.success, function(k, v) {
+                    var item = $("<div class='yes' />");
+                    item.text(v);
+                    $("#success-list").append(item);
+                });
+                $.each(data.failure, function(k, v) {
+                    var item = $("<div class='no' />");
+                    item.text(v);
+                    $("#failure-list").append(item);
+                });
+                $("#form").hide();
+                $("#finished-container").show();
+            });
+        });
+    });
+    </script>
 {% endblock %}
 
 {% block main %}
