@@ -83,13 +83,8 @@ def manage_view(request):
     return render(request, "users/management.html", context)
 
 
-def setup_webdocs(request, username):
-    user = create_user(request, username)
-    if user:
-        site = create_webdocs(user, batch=True)
-        if site:
-            return True
-    return False
+def setup_webdocs(username):
+    return bool(create_webdocs(user, batch=True))
 
 
 @login_required
@@ -101,13 +96,21 @@ def create_webdocs_view(request):
         students = [x.strip() for x in request.POST.get("students", "").split("\n")]
         students = [x for x in students if x]
 
-        pool = Pool(3)
-        results = pool.map(setup_webdocs, [(request, x) for x in students])
-        pool.close()
-        pool.join()
-
         success = []
         failure = []
+        valid_students = []
+
+        for username in students:
+            user = create_user(request, username)
+            if user:
+                valid_students.append(username)
+            else:
+                failure.append(username)
+
+        pool = Pool(5)
+        results = pool.map(setup_webdocs, valid_students)
+        pool.close()
+        pool.join()
 
         for x in range(len(results)):
             if results[x]:
