@@ -23,29 +23,39 @@
     </style>
 {% endblock %}
 
+{% block js %}
+    {{ block.super }}
+{% endblock %}
+
 {% block main %}
 <h4>Create Student Websites</h4>
 {% if finished %}
-<p>Finished creating student websites!</p>
-<b>Successes</b>
-<div class="user-list">
-    {% for item in success %}
-    <div class="yes">{{ item }}</div>
-    {% empty %}
-    <div class="none">None</div>
-    {% endfor %}
-</div>
-<div class="user-list">
+<div id="finished-container" {% if not finished %}style="display:none"{% endif %}>
+    <p>Finished creating student websites!</p>
+    <b>Successes</b>
+    <div id="success-list" class="user-list">
+        {% if finished %}
+            {% for item in success %}
+            <div class="yes">{{ item }}</div>
+            {% empty %}
+            <div class="none">None</div>
+            {% endfor %}
+        {% endif %}
+    </div>
     <b>Failures</b>
-    {% for item in failure %}
-    <div class="no">{{ item }}</div>
-    {% empty %}
-    <div class="none">None</div>
-    {% endfor %}
+    <div id="failure-list" class="user-list">
+        {% if finished %}
+            {% for item in failure %}
+            <div class="no">{{ item }}</div>
+            {% empty %}
+            <div class="none">None</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <p>If any student websites could not be created, check to make sure that the username is correct.</p>
+    <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
 </div>
-<p>If any student websites could not be created, check to make sure that the username is correct.</p>
-<a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
-{% else %}
+{% if not finished %}
 <form method="POST">
     {% csrf_token %}
     <div class="form-group">
