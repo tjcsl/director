@@ -1,8 +1,6 @@
 import requests
 import json
 
-from multiprocessing import Pool
-
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -83,10 +81,6 @@ def manage_view(request):
     return render(request, "users/management.html", context)
 
 
-def setup_webdocs(user):
-    return bool(create_webdocs(user, batch=True))
-
-
 @login_required
 def create_webdocs_view(request):
     if not request.user.is_superuser and not request.user.is_staff:
@@ -98,27 +92,18 @@ def create_webdocs_view(request):
 
         success = []
         failure = []
-        valid_students = []
 
         for username in students:
             user = create_user(request, username)
             if user:
-                valid_students.append(user)
-            else:
-                failure.append(username)
-
-        pool = Pool(5)
-        results = pool.map(setup_webdocs, valid_students)
-        pool.close()
-        pool.join()
-
-        for x in range(len(results)):
-            if results[x]:
-                success.append(students[x])
-            else:
-                failure.append(students[x])
+                site = create_webdocs(user, batch=True)
+                if site:
+                    success.append(username)
+                    continue
+            failure.append(username)
 
         flush_permissions()
+
         return render(request, "users/create_webdocs.html", {
             "finished": True,
             "success": success,
