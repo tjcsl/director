@@ -33,19 +33,9 @@
     var exec_endpoint = "{% url 'editor_exec' site.id %}";
     var nginx_endpoint = "{% url 'edit_nginx' site.id %}";
     var is_dynamic = {% if site.category == 'dynamic' %}true{% else %}false{% endif %};
-    var csrftoken = "{{ csrf_token }}";
     var terminal_url = "/ws/terminal.html?uid={{ request.user.id }}&token={{ request.user.access_token }}&site={{ site.id }}";
-    function csrfSafeMethod(method) {
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
-    });
     </script>
+    {% include "ajax_csrf.html" %}
     {% if site.database %}
     <script type="text/javascript" src="{% static 'js/sql_console.js' %}"></script>
     <script type="text/javascript">
