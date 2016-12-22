@@ -36,7 +36,7 @@ def create_webdocs(user):
     if Site.objects.filter(name=user.username).exists():
         return Site.objects.get(name=user.username)
 
-    site = Site.objects.create(
+    site = Site(
         name=user.username,
         description=user.full_name,
         domain="{}.sites.tjhsst.edu".format(user.username),
