@@ -32,7 +32,7 @@ def create_user(request, username):
     return user
 
 
-def create_webdocs(user):
+def create_webdocs(user, batch=False):
     if Site.objects.filter(name=user.username).exists():
         return Site.objects.get(name=user.username)
 
@@ -49,5 +49,6 @@ def create_webdocs(user):
 
     make_site_dirs(site)
     create_config_files(site)
-    flush_permissions()
+    if not batch:
+        flush_permissions()
     return site

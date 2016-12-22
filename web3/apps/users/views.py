@@ -12,6 +12,7 @@ from django.core.exceptions import PermissionDenied
 from .forms import UserForm
 from .helpers import create_user, create_webdocs
 from ..authentication.decorators import superuser_required
+from ..sites.helpers import flush_permissions
 
 from requests.utils import quote
 from .models import User, Group
@@ -94,13 +95,14 @@ def create_webdocs_view(request):
         for username in students:
             user = create_user(request, username)
             if user:
-                site = create_webdocs(user)
+                site = create_webdocs(user, batch=True)
                 if site:
                     success.append(username)
                 else:
                     failure.append(username)
             else:
                 failure.append(username)
+        flush_permissions()
         return render(request, "users/create_webdocs.html", {
             "finished": True,
             "success": success,
