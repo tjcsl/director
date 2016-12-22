@@ -104,11 +104,14 @@ def create_webdocs_view(request):
 
         flush_permissions()
 
-        return render(request, "users/create_webdocs.html", {
-            "finished": True,
-            "success": success,
-            "failure": failure
-        })
+        if request.GET.get("json", False) is not False:
+            return JsonResponse({"success": success, "failure": failure})
+        else:
+            return render(request, "users/create_webdocs.html", {
+                "finished": True,
+                "success": success,
+                "failure": failure
+            })
 
     return render(request, "users/create_webdocs.html", {"finished": False})
 
