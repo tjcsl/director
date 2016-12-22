@@ -20,7 +20,7 @@ body {
     box-sizing: content-box;
     overflow: auto;
     width: 250px;
-    height: calc(100vh - 40px);
+    height: 100%;
 }
 #files .ui-resizable-e {
     width: 15px;
@@ -29,10 +29,13 @@ body {
 #files .ui-resizable-e:hover {
     background-color: rgba(0, 0, 0, 0.02);
 }
+#editor-container {
+    height: calc(100vh - 40px);
+}
 #editor-wrapper {
     float: right;
     width: calc(100vw - 270px);
-    height: calc(100vh - 40px);
+    height: 100%;
 }
 #tabs {
     width: 100%;

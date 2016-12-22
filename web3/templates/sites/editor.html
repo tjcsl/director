@@ -59,31 +59,33 @@
 {% endblock %}
 
 {% block main %}
-<div id="files"></div>
-<div id="editor-wrapper">
-    <div id="tabs">
-        <div class="tab active tab-special tab-help"><i class="fa fa-question-circle"></i></div>
-        <div class="tab tab-special tab-terminal pull-right"><i class="fa fa-terminal"></i></div>
-        {% if site.database %}
-        <div class="tab tab-special tab-console pull-right"><i class="fa fa-database"></i></div>
-        {% endif %}
-        {% if site.custom_nginx %}
-        <div class="tab tab-special tab-nginx pull-right"><i class="fa fa-cog"></i> Nginx</div>
-        {% endif %}
-    </div>
-    <div id="terminal" class="tab-pane"></div>
-    <div id="editor" class="tab-pane"></div>
-    {% if site.database %}
-    <div id="sql-console" class="tab-pane">
-        <div id="console">
-            <pre class="output"><b>database: {{ site.database.db_name }}, user: {{ site.database.username }}, type: {{ site.database.category }}</b>
-        </pre>
-            <table><tr><td class="ps">{{ site.database.db_name }}=&gt; </td><td class="input-td"><input autofocus class="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /></td></tr></table>
+<div id="editor-container">
+    <div id="files"></div>
+    <div id="editor-wrapper">
+        <div id="tabs">
+            <div class="tab active tab-special tab-help"><i class="fa fa-question-circle"></i></div>
+            <div class="tab tab-special tab-terminal pull-right"><i class="fa fa-terminal"></i></div>
+            {% if site.database %}
+            <div class="tab tab-special tab-console pull-right"><i class="fa fa-database"></i></div>
+            {% endif %}
+            {% if site.custom_nginx %}
+            <div class="tab tab-special tab-nginx pull-right"><i class="fa fa-cog"></i> Nginx</div>
+            {% endif %}
         </div>
+        <div id="terminal" class="tab-pane"></div>
+        <div id="editor" class="tab-pane"></div>
+        {% if site.database %}
+        <div id="sql-console" class="tab-pane">
+            <div id="console">
+                <pre class="output"><b>database: {{ site.database.db_name }}, user: {{ site.database.username }}, type: {{ site.database.category }}</b>
+            </pre>
+                <table><tr><td class="ps">{{ site.database.db_name }}=&gt; </td><td class="input-td"><input autofocus class="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /></td></tr></table>
+            </div>
+        </div>
+        {% endif %}
+        <div id="image" class="tab-pane"><img /></div>
+        <div id="embed" class="tab-pane"></div>
     </div>
-    {% endif %}
-    <div id="image" class="tab-pane"><img /></div>
-    <div id="embed" class="tab-pane"></div>
 </div>
 <iframe id="download" style="display:none"></iframe>
 {% endblock %}
