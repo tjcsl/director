@@ -83,6 +83,15 @@ def manage_view(request):
     return render(request, "users/management.html", context)
 
 
+def setup_webdocs(username):
+    user = create_user(request, username)
+    if user:
+        site = create_webdocs(user, batch=True)
+        if site:
+            return True
+    return False
+
+
 @login_required
 def create_webdocs_view(request):
     if not request.user.is_superuser and not request.user.is_staff:
@@ -91,14 +100,6 @@ def create_webdocs_view(request):
     if request.method == "POST":
         students = [x.strip() for x in request.POST.get("students", "").split("\n")]
         students = [x for x in students if x]
-
-        def setup_webdocs(username):
-            user = create_user(request, username)
-            if user:
-                site = create_webdocs(user, batch=True)
-                if site:
-                    return True
-            return False
 
         pool = Pool(3)
         results = pool.map(setup_webdocs, students)
