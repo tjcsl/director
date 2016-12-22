@@ -48,6 +48,6 @@ def create_webdocs(user):
     site.group.users.add(user)
 
     make_site_dirs(site)
-    crate_config_files(site)
+    create_config_files(site)
     flush_permissions()
     return site
