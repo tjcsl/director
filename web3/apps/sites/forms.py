@@ -112,13 +112,13 @@ class ProcessForm(forms.ModelForm):
         if not user.is_superuser:
             self.fields['site'].queryset = Site.objects.filter(group__users__id=user.id).filter(category="dynamic")
 
-    path_validator = RegexValidator(r"^/web/.*$", "Please enter a valid path starting with /web.")
+    path_validator = RegexValidator(r"^{}/.*$".format(settings.WEB_ROOT), "Please enter a valid path starting with {}.".format(settings.WEB_ROOT))
 
     site = forms.ModelChoiceField(queryset=Site.objects.filter(category="dynamic"), disabled=True)
 
     path = forms.CharField(max_length=255,
                            widget=forms.TextInput(attrs={"class": "form-control"}),
-                           help_text="Enter a valid path starting with /web.",
+                           help_text="Enter a valid path starting with {}.".format(settings.WEB_ROOT),
                            validators=[path_validator])
 
     def clean_path(self):

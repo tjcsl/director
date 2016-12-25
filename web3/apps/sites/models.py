@@ -33,13 +33,13 @@ class Site(models.Model):
     @property
     def path(self):
         if self.purpose == "user":
-            return "/web/user/{}/".format(self.name)
+            return "{}/user/{}/".format(settings.WEB_ROOT, self.name)
         elif self.purpose == "activity":
-            return "/web/activities/{}/".format(self.name)
+            return "{}/activities/{}/".format(settings.WEB_ROOT, self.name)
         elif self.purpose == "legacy":
-            return "/web/legacy/{}/".format(self.name)
+            return "{}/legacy/{}/".format(settings.WEB_ROOT, self.name)
         else:
-            return "/web/{}/".format(self.name)
+            return "{}/{}/".format(settings.WEB_ROOT, self.name)
 
     @property
     def url(self):
