@@ -685,10 +685,9 @@ def editor_path_view(request, site_id):
         raise PermissionDenied
 
     requested_path = request.GET.get("path", "")
-    base_path = site.path[:-1]
-    path = os.path.abspath(os.path.join(base_path, requested_path))
+    path = os.path.abspath(os.path.join(site.path, requested_path))
 
-    if not path.startswith(base_path) or not os.path.isdir(path):
+    if not path.startswith(site.path) or not os.path.isdir(path):
         return JsonResponse({"error": "Invalid or nonexistent path!", "path": path})
 
     filesystem = []
@@ -714,10 +713,9 @@ def editor_load_view(request, site_id):
         raise PermissionDenied
 
     requested_path = request.GET.get("name", "")
-    base_path = site.path[:-1]
-    path = os.path.abspath(os.path.join(base_path, requested_path))
+    path = os.path.abspath(os.path.join(site.path, requested_path))
 
-    if not path.startswith(base_path) or not os.path.isfile(path):
+    if not path.startswith(site.path) or not os.path.isfile(path):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
 
     try:
@@ -738,10 +736,9 @@ def editor_save_view(request, site_id):
         raise PermissionDenied
 
     requested_path = request.GET.get("name", "")
-    base_path = site.path[:-1]
-    path = os.path.abspath(os.path.join(base_path, requested_path))
+    path = os.path.abspath(os.path.join(site.path, requested_path))
 
-    if not path.startswith(base_path) or not os.path.isfile(path):
+    if not path.startswith(site.path) or not os.path.isfile(path):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
 
     with open(path, "w") as f:
@@ -758,10 +755,9 @@ def editor_delete_view(request, site_id):
         raise PermissionDenied
 
     requested_path = request.POST.getlist("name[]")
-    base_path = site.path[:-1]
-    path = [os.path.abspath(os.path.join(base_path, x)) for x in requested_path]
+    path = [os.path.abspath(os.path.join(site.path, x)) for x in requested_path]
 
-    if not all(x.startswith(base_path) for x in path) or not all(os.path.exists(x) for x in path):
+    if not all(x.startswith(site.path) for x in path) or not all(os.path.exists(x) for x in path):
         return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": path})
 
     for p in path:
@@ -784,10 +780,9 @@ def editor_create_view(request, site_id):
 
     requested_path = request.POST.get("path", "")
     requested_new = os.path.basename(request.POST.get("name", ""))
-    base_path = site.path[:-1]
-    path = os.path.abspath(os.path.join(base_path, requested_path))
+    path = os.path.abspath(os.path.join(site.path, requested_path))
 
-    if not path.startswith(base_path) or not os.path.isdir(path):
+    if not path.startswith(site.path) or not os.path.isdir(path):
         return JsonResponse({"error": "Invalid or nonexistent folder!", "path": path})
 
     new_path = os.path.join(path, requested_new)
@@ -812,10 +807,9 @@ def editor_download_view(request, site_id):
         raise PermissionDenied
 
     requested_path = request.GET.get("name", "")
-    base_path = site.path[:-1]
-    path = os.path.abspath(os.path.join(base_path, requested_path))
+    path = os.path.abspath(os.path.join(site.path, requested_path))
 
-    if not path.startswith(base_path) or not os.path.exists(path):
+    if not path.startswith(site.path) or not os.path.exists(path):
         raise Http404
 
     if os.path.isfile(path):
@@ -849,13 +843,12 @@ def editor_rename_view(request, site_id):
 
     new_name = os.path.basename(request.POST.get("newname", ""))
     requested_path = request.POST.get("name", "")
-    base_path = site.path[:-1]
-    path = os.path.abspath(os.path.join(base_path, requested_path))
+    path = os.path.abspath(os.path.join(site.path, requested_path))
 
     if not requested_path:
         return JsonResponse({"error": "You cannot rename the root directory!"})
 
-    if not path.startswith(base_path) or not os.path.exists(path):
+    if not path.startswith(site.path) or not os.path.exists(path):
         return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": path})
 
     if not new_name:
@@ -874,10 +867,9 @@ def editor_upload_view(request, site_id):
         raise PermissionDenied
 
     name = request.POST.get("path", "")
-    base_path = site.path[:-1]
-    path = os.path.abspath(os.path.join(base_path, name))
+    path = os.path.abspath(os.path.join(site.path, name))
 
-    if not path.startswith(base_path) or not os.path.isdir(path):
+    if not path.startswith(site.path) or not os.path.isdir(path):
         return JsonResponse({"error": "Invalid or nonexistent folder!", "path": path})
 
     fs = request.FILES.getlist("file[]")
@@ -905,14 +897,13 @@ def editor_move_view(request, site_id):
 
     old_path = request.POST.get("old", "")
     new_path = request.POST.get("new", "")
-    base_path = site.path[:-1]
-    old_path = os.path.abspath(os.path.join(base_path, old_path))
-    new_path = os.path.abspath(os.path.join(base_path, new_path))
+    old_path = os.path.abspath(os.path.join(site.path, old_path))
+    new_path = os.path.abspath(os.path.join(site.path, new_path))
 
-    if not old_path.startswith(base_path) or not os.path.exists(old_path):
+    if not old_path.startswith(site.path) or not os.path.exists(old_path):
         return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": old_path})
 
-    if not new_path.startswith(base_path) or os.path.isfile(new_path):
+    if not new_path.startswith(site.path) or os.path.isfile(new_path):
         return JsonResponse({"error": "Invalid destination!", "path": new_path})
 
     os.rename(old_path, os.path.join(new_path, os.path.basename(old_path)))
@@ -932,10 +923,9 @@ def editor_process_view(request, site_id):
     if not path:
         return JsonResponse({"error": "No file path received!"})
 
-    base_path = site.path[:-1]
-    path = os.path.abspath(os.path.join(base_path, path))
+    path = os.path.abspath(os.path.join(site.path, path))
 
-    if not path.startswith(base_path) or not os.path.isfile(path):
+    if not path.startswith(site.path) or not os.path.isfile(path):
         return JsonResponse({"error": "Invalid or nonexistent file!"})
 
     if not os.access(path, os.X_OK):
@@ -966,10 +956,9 @@ def editor_exec_view(request, site_id):
     if not path:
         return JsonResponse({"error": "No file path received!"})
 
-    base_path = site.path[:-1]
-    path = os.path.abspath(os.path.join(base_path, path))
+    path = os.path.abspath(os.path.join(site.path, path))
 
-    if not path.startswith(base_path) or not os.path.isfile(path):
+    if not path.startswith(site.path) or not os.path.isfile(path):
         return JsonResponse({"error": "Invalid or nonexistent file!"})
 
     st = os.stat(path)

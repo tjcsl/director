@@ -33,13 +33,13 @@ class Site(models.Model):
     @property
     def path(self):
         if self.purpose == "user":
-            return "{}/user/{}/".format(settings.WEB_ROOT, self.name)
+            return os.path.join(settings.WEB_ROOT, "user", self.name)
         elif self.purpose == "activity":
-            return "{}/activities/{}/".format(settings.WEB_ROOT, self.name)
+            return os.path.join(settings.WEB_ROOT, "activities", self.name)
         elif self.purpose == "legacy":
-            return "{}/legacy/{}/".format(settings.WEB_ROOT, self.name)
+            return os.path.join(settings.WEB_ROOT, "legacy", self.name)
         else:
-            return "{}/{}/".format(settings.WEB_ROOT, self.name)
+            return os.path.join(settings.WEB_ROOT, self.name)
 
     @property
     def url(self):
@@ -95,7 +95,7 @@ class Site(models.Model):
 
 class Process(models.Model):
     site = models.OneToOneField(Site)
-    path = models.FilePathField(path="/web")
+    path = models.FilePathField(path=settings.WEB_ROOT)
 
     def __str__(self):
         try:
