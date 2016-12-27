@@ -55,7 +55,7 @@ def create_config_files(site):
         with open("/etc/nginx/director.d/{}.conf".format(site.name), "w+") as f:
             f.write(render_to_string("config/nginx.conf", {"site": site}))
     if site.category == "php":
-        with open("/etc/php5/fpm/pool.d/{}.conf".format(site.name), "w+") as f:
+        with open("/etc/php/7.0/fpm/pool.d/{}.conf".format(site.name), "w+") as f:
             f.write(render_to_string("config/phpfpm.conf", {"site": site}))
     elif site.category == "dynamic" and hasattr(site, "process"):
         create_process_config(site.process)
@@ -67,7 +67,7 @@ def write_new_index_file(site):
 
 
 def delete_site_files(site):
-    files = ["/etc/nginx/director.d/{}.conf", "/etc/php5/fpm/pool.d/{}.conf", "/etc/supervisor/director.d/{}.conf"]
+    files = ["/etc/nginx/director.d/{}.conf", "/etc/php/7.0/fpm/pool.d/{}.conf", "/etc/supervisor/director.d/{}.conf"]
     files = [x.format(site.name) for x in files]
     for f in files:
         if os.path.isfile(f):
