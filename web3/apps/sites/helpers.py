@@ -113,7 +113,7 @@ def get_supervisor_status(site):
 
 def reload_services():
     Popen("systemctl reload nginx.service".split())
-    Popen("systemctl restart php5-fpm.service".split())
+    Popen("systemctl restart php7.0-fpm.service".split())
     Popen("supervisorctl update".split())
 
 
