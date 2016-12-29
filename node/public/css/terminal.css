@@ -4,7 +4,6 @@ body {
     background-color:black;
     color:white;
     font-family:"DejaVu Sans Mono", "Liberation Mono", monospace;
-    white-space:pre;
     overflow:hidden;
     font-size:16px;
 }
@@ -35,8 +34,8 @@ html, body, #console {
     display: none;
     color: red;
     position: fixed;
-    bottom: 5px;
-    right: 5px;
+    bottom: 10px;
+    right: 10px;
     padding: 5px;
     background-color: rgba(0, 0, 0, 0.8);
 }
