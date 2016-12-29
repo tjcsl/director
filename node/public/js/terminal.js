@@ -20,6 +20,7 @@ function main() {
     var termid;
     ws.onopen = function(e) {
         $("#console").empty();
+        $("#disconnect").hide();
         var term = new Terminal({ cursorBlink: true });
         term.on("data", function(data) {
             if (started) {
@@ -63,17 +64,9 @@ function main() {
             catch (ignore) {  }
             $(window).unbind("resize");
             $("#console").html(cache);
-            $($("#console .terminal div").get().reverse()).each(function(i, v) {
-                if ($(v).text().trim().length == 0) {
-                    $(v).remove();
-                }
-                else {
-                    return false;
-                }
-            });
             started = false;
             document.title = 'Terminal';
-            $("#console .terminal .xterm-rows").append('<div>&nbsp;</div><div style="color:red"><b>Connection Lost</b>, press ENTER to reconnect</b></div>');
+            $("#disconnect").show();
             restart = true;
         };
         $(window).resize(function(e) {
