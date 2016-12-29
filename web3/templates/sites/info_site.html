@@ -74,7 +74,7 @@
         {% if site.database %}
         <p>This site has a <b>{{ site.database.get_category_display }}</b> database associated with it.</p>
         <div class="form-group">
-            <div id="database-url" class="form-control" contenteditable="true" readonly="readonly" title="{{ site.database }}">
+            <div id="database-url" class="form-control" tabindex="0" title="{{ site.database }}">
                 {% with d=site.database %}
                     {{ d.db_type }}://{{ d.username }}:<span id="database-pass" class="hide"><span>{{ d.password }}</span></span>@{{ d.db_full_host }}/{{ d.db_name }}
                 {% endwith %}

@@ -50,16 +50,6 @@ $(document).ready(function() {
         $(this).selectText();
     }).on("blur",function() {
         $("#database-pass").addClass("hide");
-    }).bind("paste", function(e) {
-        e.preventDefault();
-    }).bind("cut", function(e) {
-        e.preventDefault();
-        document.execCommand("copy");
-    }).keydown(function(event) {
-        // prevent from entering text
-        return (event.ctrlKey || (33 <= event.keyCode && event.keyCode <= 40));
-    }).keyup(function(event) {
-        event.preventDefault();
     });
 });
 var select = function(el) {
