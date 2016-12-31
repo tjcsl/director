@@ -67,13 +67,11 @@ class Site(models.Model):
     def has_repo(self):
         if hasattr(self, "_has_repo"):
             return self._has_repo
-        self._has_repo = settings.DEBUG or os.path.isdir(os.path.join(self.public_path, ".git"))
+        self._has_repo = os.path.isdir(os.path.join(self.public_path, ".git"))
         return self._has_repo
 
     @property
     def public_key(self):
-        if settings.DEBUG:
-            return "<public key here>"
         with open(os.path.join(self.private_path, ".ssh/id_rsa.pub"), "r") as f:
             data = f.read()
         return data
@@ -82,7 +80,7 @@ class Site(models.Model):
     def has_rsa_key(self):
         if hasattr(self, "_has_rsa_key"):
             return self._has_rsa_key
-        self._has_rsa_key = settings.DEBUG or os.path.isfile(os.path.join(self.private_path, ".ssh/id_rsa"))
+        self._has_rsa_key = os.path.isfile(os.path.join(self.private_path, ".ssh/id_rsa"))
         return self._has_rsa_key
 
     @property

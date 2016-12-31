@@ -101,14 +101,14 @@ def restart_supervisor(site):
 
 
 def get_supervisor_status(site):
+    if not hasattr(site, "process"):
+        return "No Process"
+
     try:
-        site.process
         return check_output("supervisorctl status {}".format(site.name).split()).decode()
     except CalledProcessError:
         client.captureException()
         return "Status Retrieval Failure"
-    except Site.process.RelatedObjectDoesNotExist:
-        return "No Process"
 
 
 def reload_services():
@@ -179,27 +179,21 @@ def generate_ssh_key(site, overwrite=True):
 
 
 def do_git_pull(site):
-    if not settings.DEBUG:
-        fix_permissions(site)
-        output = run_as_site(site, "git pull", cwd=site.public_path, env={
-            "GIT_SSH_COMMAND": "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
-            "HOME": site.private_path
-        })
-        if site.category == "dynamic":
-            restart_supervisor(site)
-    else:
-        output = (0, None, None)
+    fix_permissions(site)
+    output = run_as_site(site, "git pull", cwd=site.public_path, env={
+        "GIT_SSH_COMMAND": "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
+        "HOME": site.private_path
+    })
+    if site.category == "dynamic":
+        restart_supervisor(site)
     return output
 
 
 def get_latest_commit(site):
-    if not settings.DEBUG:
-        output = run_as_site(site, ["git", "log", "-n", "1"], cwd=site.public_path)
-        if not output[0] == 0:
-            return "Error - {}".format(output[2].replace("\n", " ").replace("\r", ""))
-        return output[1]
-    else:
-        return "commit 77f43ce5c319564fd781ac25dc24da022c3ce15b\nAuthor: Example User <none@none.com>\nDate:   Mon Jan 1 00:00:00 2016 -0000\nexample commit"
+    output = run_as_site(site, ["git", "log", "-n", "1"], cwd=site.public_path)
+    if not output[0] == 0:
+        return "Error - {}".format(output[2].replace("\n", " ").replace("\r", ""))
+    return output[1]
 
 
 def fix_permissions(site):

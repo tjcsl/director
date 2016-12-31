@@ -550,8 +550,7 @@ def generate_key_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    if not settings.DEBUG:
-        generate_ssh_key(site)
+    generate_ssh_key(site)
 
     messages.success(request, "Generated new RSA public private key-pair!")
     return redirect(reverse("info_site", kwargs={"site_id": site_id}) + "#github-manual")
