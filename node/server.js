@@ -79,7 +79,7 @@ wss.on("connection", function(ws) {
                 }
                 if (!auth.granted) {
                     if (auth.exception) {
-                        Raven.captureMessage(auth.exception);
+                        raven.captureMessage(auth.exception);
                     }
                     ws.send(JSON.stringify({ error: auth.error }));
                     ws.close();
