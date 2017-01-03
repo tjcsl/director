@@ -43,8 +43,9 @@ user_logged_in.connect(grant_access_token)
 
 
 def logout_view(request):
-    request.user.access_token = None
-    request.user.save()
+    if request.user.is_authenticated():
+        request.user.access_token = None
+        request.user.save()
     logout(request)
     return redirect("index")
 
