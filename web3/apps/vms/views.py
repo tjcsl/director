@@ -122,9 +122,10 @@ def create_view(request):
             instance = form.save()
             if instance:
                 messages.success(request, "Virtual machine created!")
+                return redirect("vm_info", vm_id=instance.id)
             else:
                 messages.error(request, "Failed to create virtual machine!")
-            return redirect("vm_list")
+                return redirect("vm_list")
     else:
         form = VirtualMachineForm()
     return render(request, "vms/create_vm.html", {"form": form})
