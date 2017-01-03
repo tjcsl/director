@@ -86,7 +86,7 @@ wss.on("connection", function(ws) {
                 }
                 else {
                     if (data.site !== null) {
-                        term = pty.spawn(__dirname + "/shell.sh", [auth.site_user], {
+                        term = pty.spawn(__dirname + "/shell.sh", [auth.user], {
                             name: "xterm-color",
                             cols: 80,
                             rows: 30,

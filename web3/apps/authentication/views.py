@@ -64,7 +64,7 @@ def node_auth_view(request):
                 site = Site.objects.get(id=int(siteid))
                 if not user.is_superuser and not site.group.users.filter(id=user.id).exists():
                     return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status=403)
-                return JsonResponse({"granted": True, "site_homedir": site.path, "site_user": site.user.username})
+                return JsonResponse({"granted": True, "site_homedir": site.path, "site_user": site.user.username, "user": request.user.username})
 
             if vmid is not None and vmid != "":
                 vm = VirtualMachine.objects.get(id=int(vmid))
