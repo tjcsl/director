@@ -54,6 +54,9 @@ def logout_view(request):
 def node_auth_view(request):
     if request.method == "POST":
         try:
+            if not request.POST.get("uid", None):
+                return JsonResponse({"granted": False, "error": "No user id sent to server!"})
+
             user = User.objects.get(id=int(request.POST.get("uid")))
             siteid = request.POST.get("sid", None)
             vmid = request.POST.get("vmid", None)
