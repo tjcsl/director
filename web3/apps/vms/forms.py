@@ -38,7 +38,7 @@ class VirtualMachineForm(forms.ModelForm):
                 return None
             else:
                 if ret[0] != 2:
-                    instance.uuid = uuid.UUID(ret[1])
+                    instance.uuid = uuid.UUID(ret[1].split("\n")[-1])
                     instance.save()
 
         return instance
