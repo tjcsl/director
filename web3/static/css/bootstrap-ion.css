@@ -46,10 +46,10 @@ body {
     color: #c9302c;
     border-color: #c12e2a;
 }
-.btn.btn-ion.btn-danger:hover {
+.btn.btn-ion.btn-danger:hover:enabled {
     color: #c12e2a;
 }
-.btn.btn-ion:hover {
+.btn.btn-ion:hover:enabled {
     text-decoration: none;
     color: #484848;
     background: #eaeaea;
