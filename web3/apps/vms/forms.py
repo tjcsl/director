@@ -21,8 +21,8 @@ class VirtualMachineForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(VirtualMachineForm, self).__init__(*args, **kwargs)
         if not(self.instance and self.instance.pk):
-            self.fields["template"] = forms.ChoiceField(choices=(("debian", "Debian"), ("node", "NodeJS")),
-                                      widget=forms.Select(attrs={"class": "form-control"}))
+            self.fields["template"] = forms.ChoiceField(choices=[(x, x.title()) for x in call_api("container.templates")],
+                                                        widget=forms.Select(attrs={"class": "form-control"}))
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
