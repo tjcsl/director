@@ -86,15 +86,21 @@ wss.on("connection", function(ws) {
                 }
                 else {
                     if (data.site !== null) {
-                        term = pty.spawn(__dirname + "/shell.sh", [auth.user], {
-                            name: "xterm-color",
-                            cols: 80,
-                            rows: 30,
-                            cwd: auth.site_homedir,
-                            env: {
-                                HOME: auth.site_homedir
-                            }
-                        });
+                        if (!auth.user) {
+                            ws.send(JSON.stringify({ error: "Invalid user id passed!" }));
+                            ws.close();
+                        }
+                        else {
+                            term = pty.spawn(__dirname + "/shell.sh", [auth.user], {
+                                name: "xterm-color",
+                                cols: 80,
+                                rows: 30,
+                                cwd: auth.site_homedir,
+                                env: {
+                                    HOME: auth.site_homedir
+                                }
+                            });
+                        }
                     }
                     else if (data.vm !== null) {
                         term = pty.spawn(__dirname + "/ssh.sh", [auth.ip], {
