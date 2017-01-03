@@ -18,9 +18,11 @@ class VirtualMachineForm(forms.ModelForm):
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
     site = forms.ModelChoiceField(required=False, queryset=Site.objects.filter(category="vm"), widget=forms.Select(attrs={"class": "form-control"}))
 
-    class Meta:
-        model = VirtualMachine
-        fields = ["name", "description", "users", "site"]
+    def __init__(self, *args, **kwargs):
+        super(VirtualMachineForm, self).__init__(*args, **kwargs)
+        if not(self.instance and self.instance.pk):
+            self.fields["template"] = forms.ChoiceField(choices=(("debian", "Debian"), ("node", "NodeJS")),
+                                      widget=forms.Select(attrs={"class": "form-control"}))
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
@@ -29,7 +31,7 @@ class VirtualMachineForm(forms.ModelForm):
         if commit:
             instance.save()
             self.save_m2m()
-            ret = call_api("container.create", name=hostname)
+            ret = call_api("container.create", name=hostname, template=self.cleaned_data.get("template", "debian"))
             if ret is None or ret[0] == 1:
                 client.captureMessage("Failed to create VM: {}".format(ret))
                 instance.delete()
@@ -40,3 +42,7 @@ class VirtualMachineForm(forms.ModelForm):
                     instance.save()
 
         return instance
+
+    class Meta:
+        model = VirtualMachine
+        fields = ["name", "description", "users", "site"]
