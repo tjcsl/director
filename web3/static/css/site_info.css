@@ -47,6 +47,7 @@
     position: relative;
 }
 #database-pass.hide > span {
+    -webkit-filter: blur(3px);
     filter: blur(3px);
     cursor: pointer;
     min-width: 120px;
