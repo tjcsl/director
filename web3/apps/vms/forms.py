@@ -3,6 +3,7 @@ import uuid
 from django import forms
 from django.conf import settings
 from django.utils.text import slugify
+from django.core.cache import cache
 
 from ..users.models import User
 from ..sites.models import Site
@@ -21,7 +22,12 @@ class VirtualMachineForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(VirtualMachineForm, self).__init__(*args, **kwargs)
         if not(self.instance and self.instance.pk):
-            self.fields["template"] = forms.ChoiceField(choices=[(x, x.title()) for x in call_api("container.templates")],
+            vm_key = "vm:templates"
+            vm_templates = cache.get(vm_key)
+            if not vm_templates:
+                vm_templates = call_api("container.templates")
+                cache.set(vm_key, vm_templates)
+            self.fields["template"] = forms.ChoiceField(choices=[(x, x.title()) for x in vm_templates],
                                                         widget=forms.Select(attrs={"class": "form-control"}))
 
     def save(self, commit=True):

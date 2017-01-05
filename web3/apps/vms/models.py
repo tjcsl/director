@@ -20,7 +20,7 @@ class VirtualMachine(models.Model):
 
     @property
     def ips(self):
-        key = "vm_ip_{}".format(self.id)
+        key = "vm:ip:{}".format(self.id)
         obj = cache.get(key)
         if obj:
             return obj
