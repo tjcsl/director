@@ -2,8 +2,8 @@
 {% load staticfiles %}
 
 {% block css %}
-{{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}" />
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}" />
 {% endblock %}
 
 {% block js %}
@@ -14,6 +14,7 @@
 {% block navbar %}
 <input class="form-control search-box" id="select-site" type="text" placeholder="&#xf002; Search Sites" />
 {% endblock %}
+
 {% block main %}
 <div class="subheading clearfix">
     <h3 class="pull-left hidden-xs-down">Your Sites <span id="filtered"></span></h3>

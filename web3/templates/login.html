@@ -2,42 +2,7 @@
 
 {% block css %}
     {{ block.super }}
-    <style type="text/css">
-    h1 {
-        margin: 6px 0;
-    }
-
-    .main {
-        width: 100%;
-        max-width: none;
-        position: initial;
-    }
-
-    .login-box {
-        background: white;
-        padding: 15px;
-        border: 1px solid #0048ab;
-        margin: 0 auto;
-        width: 438px;
-    }
-
-    .login-box p {
-        text-align: center;
-    }
-
-    .footer {
-        position: fixed;
-        font-size: 13px;
-        bottom: 5px;
-        left: 5px;
-    }
-
-    @media (max-width:576px) {
-        .login-box {
-            width: 100%;
-        }
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}" />
 {% endblock %}
 
 {% block main %}
