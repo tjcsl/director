@@ -37,7 +37,7 @@
 {% with status=vm_status|lookup:vm.uuid %}
 <a href="{% url 'vm_info' vm.id %}" class="vm clearfix">
     {% if vm.num_users == 0 %}<span class="pull-right tag tag-danger">No Users</span>{% endif %}
-    <span class="pull-right tag tag-warning">Superuser</span>
+    <span class="pull-right tag tag-warning">Admin</span>
     <i class="pull-left fa fa-2x fa-fw fa-cube"><span class="{% if status == "RUNNING" %}green{% elif status == "STOPPED" %}red{% endif %}" /></i>
     <b class="name">{{ vm.name }}</b>
     <div class="sub">{{ vm.description|default:"No Description" }}</div>

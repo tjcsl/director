@@ -37,7 +37,7 @@
 {% if other_sites %}
     {% for site in other_sites %}
     <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.id }}">
-        <span data-toggle="tooltip"  data-placement="left" title="You can see this website because you are a superuser." class="pull-right tag tag-warning">Superuser</span>
+        <span data-toggle="tooltip"  data-placement="left" title="You can see this website because you are a superuser." class="pull-right tag tag-warning">Admin</span>
         {% if site.has_repo %}<span data-toggle="tooltip"  data-placement="left" title="This site uses Git for version control." class="pull-right tag tag-default"><i class="fa fa-github-alt"></i> Git</span>{% endif %}
         {% if site.custom_nginx %}<span data-toggle="tooltip" data-placement="left" title="This site has a custom nginx configuration." class="pull-right tag tag-info">Nginx</span>{% endif %}
         {% if site.num_users <= 1 %}<span data-toggle="tooltip" data-placement="left" title="There are no users, other than superusers, that can access this site." class="pull-right tag tag-danger">No Users</span>{% endif %}
