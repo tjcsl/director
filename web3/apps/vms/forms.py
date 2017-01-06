@@ -38,7 +38,7 @@ class VirtualMachineForm(forms.ModelForm):
             editing = bool(instance.pk)
             instance.save()
             self.save_m2m()
-            if editing:
+            if not editing:
                 ret = call_api("container.create", name=hostname, template=self.cleaned_data.get("template", "debian"))
                 if ret is None or ret[0] == 1:
                     client.captureMessage("Failed to create VM: {}".format(ret))
