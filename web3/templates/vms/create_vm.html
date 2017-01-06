@@ -18,7 +18,7 @@
     {% include "form.html" with form=form %}
     <div class="form-actions">
         <a href="{% url 'vm_list' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
-        <button type="submit" class="btn btn-ion"><i class="fa fa-plus"></i> Create</button>
+        <button type="submit" class="btn btn-ion">{% if "create" in request.path %}<i class="fa fa-plus"></i> Create{% else %}<i class="fa fa-pencil"></i> Edit{% endif %}</button>
     </div>
 </form>
 {% endblock %}
