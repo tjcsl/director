@@ -40,7 +40,7 @@ class VirtualMachineForm(forms.ModelForm):
             self.save_m2m()
             if editing:
                 ret = call_api("container.set_hostname", name=str(instance.uuid), new_hostname=hostname)
-                if ret is None or ret[0] != 0:
+                if ret is None or ret != 0:
                     client.captureMessage("Failed to change VM hostname: {}".format(ret))
                     return instance
             else:
