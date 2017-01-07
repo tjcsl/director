@@ -12,7 +12,6 @@ from subprocess import Popen, PIPE
 
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.core.exceptions import PermissionDenied
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse, Http404
@@ -49,10 +48,9 @@ def create_view(request):
                 site = form.save()
                 for user in site.group.users.filter(service=False):
                     send_new_site_email(user, site)
-                if not settings.DEBUG:
-                    if not site.category == "dynamic":
-                        write_new_index_file(site)
-                    reload_services()
+                if not site.category == "dynamic":
+                    write_new_index_file(site)
+                reload_services()
                 return redirect("index")
         else:
             form = SiteForm(user=request.user)
@@ -107,8 +105,7 @@ def edit_view(request, site_id):
             site = form.save()
             for user in site.group.users.filter(service=False).exclude(id__in=current_members):
                 send_new_site_email(user, site)
-            if not settings.DEBUG:
-                reload_services()
+            reload_services()
             return redirect("info_site", site_id=site_id)
     else:
         form = SiteForm(instance=site, user=request.user)
@@ -158,9 +155,8 @@ def delete_view(request, site_id):
         if not request.POST.get("confirm", None) == site.name:
             messages.error(request, "Delete confirmation failed!")
             return redirect("delete_site", site_id=site_id)
-        if not settings.DEBUG:
-            delete_site_files(site)
-            reload_services()
+        delete_site_files(site)
+        reload_services()
 
         site.user.delete()
         site.group.delete()
@@ -185,9 +181,8 @@ def modify_process_view(request, site_id):
             form = ProcessForm(request.user, request.POST, initial={"site": site.id})
         if form.is_valid():
             proc = form.save()
-            if not settings.DEBUG:
-                create_process_config(proc)
-                reload_services()
+            create_process_config(proc)
+            reload_services()
             messages.success(request, "Process modified!")
             return redirect("info_site", site_id=proc.site.id)
     else:
@@ -223,9 +218,8 @@ def modify_vm_view(request, site_id):
             new_vm.site = site
             new_vm.save()
 
-        if not settings.DEBUG:
-            create_config_files(site)
-            reload_nginx_config()
+        create_config_files(site)
+        reload_nginx_config()
 
         messages.success(request, "Virtual machine successfully linked!")
         return redirect("info_site", site_id=site.id)
@@ -293,9 +287,6 @@ def sql_database_view(request, site_id):
     if not site.database:
         return HttpResponse("ERROR: no database provisioned", content_type="text/plain")
 
-    if settings.DEBUG:
-        return HttpResponse("WARNING: debug environment\n\n", content_type="text/plain")
-
     sql = request.POST.get("sql", "")
     version = request.POST.get("version", False) is not False
 
@@ -347,10 +338,6 @@ def load_database_view(request, site_id):
         messages.error(request, "You must upload a .sql file!")
         return redirect("backup_database", site_id=site.id)
 
-    if settings.DEBUG:
-        messages.warning(request, "Cannot import in debug mode!")
-        return redirect("backup_database", site_id=site.id)
-
     if site.database.category == "postgresql":
         proc = Popen(["psql", str(site.database)], preexec_fn=demote(
             site.user.id, site.group.id), cwd=site.path, stdin=PIPE, stdout=PIPE, stderr=PIPE)
@@ -385,10 +372,6 @@ def dump_database_view(request, site_id):
         messages.error(request, "No database provisioned!")
         return redirect("info_site", site_id=site.id)
 
-    if settings.DEBUG:
-        messages.warning(request, "Cannot export in debug mode!")
-        return redirect("backup_database", site_id=site.id)
-
     if site.database.category == "postgresql":
         # --cluster 9.6/main fixes the server version mismatch error
         ret, out, err = run_as_site(site, ["pg_dump", "--cluster", "9.6/main", str(site.database)], timeout=60)
@@ -422,15 +405,14 @@ def delete_database_view(request, site_id):
             messages.error(request, "Delete confirmation failed!")
             return redirect("delete_database", site_id=site_id)
         if site.database:
-            if not settings.DEBUG:
-                flag = False
-                if site.database.category == "postgresql":
-                    flag = delete_postgres_database(site.database)
-                elif site.database.category == "mysql":
-                    flag = delete_mysql_database(site.database)
-                if not flag:
-                    messages.error(request, "Failed to delete database!")
-                    return redirect("info_site", site_id=site.id)
+            flag = False
+            if site.database.category == "postgresql":
+                flag = delete_postgres_database(site.database)
+            elif site.database.category == "mysql":
+                flag = delete_mysql_database(site.database)
+            if not flag:
+                messages.error(request, "Failed to delete database!")
+                return redirect("info_site", site_id=site.id)
             site.database.delete()
             create_config_files(site)
             messages.success(request, "Database deleted!")
@@ -440,7 +422,7 @@ def delete_database_view(request, site_id):
     else:
         return render(request, "sites/delete_database.html", {
             "site": site,
-            "tables": list_tables(site.database) if not settings.DEBUG else None
+            "tables": list_tables(site.database)
         })
 
 
@@ -454,11 +436,12 @@ def regenerate_database_view(request, site_id):
     site.database.password = User.objects.make_random_password(length=24)
     site.database.save()
     flag = True
-    if not settings.DEBUG:
-        if site.database.category == "postgresql":
-            flag = change_postgres_password(site.database)
-        elif site.database.category == "mysql":
-            flag = change_mysql_password(site.database)
+
+    if site.database.category == "postgresql":
+        flag = change_postgres_password(site.database)
+    elif site.database.category == "mysql":
+        flag = change_mysql_password(site.database)
+
     if flag:
         create_config_files(site)
         messages.success(request, "Database credentials regenerated!")
@@ -474,9 +457,8 @@ def delete_process_view(request, site_id):
         raise PermissionDenied
     if request.method == "POST":
         try:
-            if not settings.DEBUG:
-                delete_process_config(site.process)
-                reload_services()
+            delete_process_config(site.process)
+            reload_services()
             site.process.delete()
             messages.success(request, "Process deleted!")
         except Site.process.RelatedObjectDoesNotExist:
@@ -492,9 +474,8 @@ def config_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    if not settings.DEBUG:
-        create_config_files(site)
-        reload_services()
+    create_config_files(site)
+    reload_services()
 
     messages.success(request, "Configuration files regenerated!")
     return redirect("info_site", site_id=site_id)
@@ -506,9 +487,8 @@ def permission_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    if not settings.DEBUG:
-        make_site_dirs(site)
-        fix_permissions(site)
+    make_site_dirs(site)
+    fix_permissions(site)
 
     messages.success(request, "File permissions regenerated!")
     return redirect("info_site", site_id=site.id)
@@ -520,8 +500,7 @@ def restart_process_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    if not settings.DEBUG:
-        restart_supervisor(site)
+    restart_supervisor(site)
 
     messages.success(request, "Restarted supervisor application!")
     return redirect("info_site", site_id=site_id)
@@ -536,8 +515,8 @@ def info_view(request, site_id):
     context = {
         "site": site,
         "users": site.group.users.filter(service=False).order_by("username"),
-        "status": get_supervisor_status(site) if not settings.DEBUG else None,
-        "latest_commit": get_latest_commit(site) if site.has_repo else None,
+        "status": get_supervisor_status(site),
+        "latest_commit": get_latest_commit(site),
         "webhook_url": request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
     }
     return render(request, "sites/info_site.html", context)
@@ -606,60 +585,59 @@ def git_setup_view(request, site_id):
     if not request.user.github_token:
         messages.error(request, "You must connect your GitHub account first!")
     else:
-        if not settings.DEBUG:
-            generate_ssh_key(site, overwrite=False)
-            ret, out, err = run_as_site(site, "git remote -v", cwd=site.public_path)
-            if ret != 0:
-                messages.error(request, "Failed to detect the remote repository!")
+        generate_ssh_key(site, overwrite=False)
+        ret, out, err = run_as_site(site, "git remote -v", cwd=site.public_path)
+        if ret != 0:
+            messages.error(request, "Failed to detect the remote repository!")
+        else:
+            out = [[y for y in x.replace("\t", " ").split(" ") if y] for x in out.split("\n") if x]
+            out = [x[1] for x in out if x[2] == "(fetch)"]
+            out = [x for x in out if x.startswith("git@github.com") or x.startswith("https://github.com")]
+            if not out:
+                messages.error(request, "Did not find any remote repositories to pull from!")
             else:
-                out = [[y for y in x.replace("\t", " ").split(" ") if y] for x in out.split("\n") if x]
-                out = [x[1] for x in out if x[2] == "(fetch)"]
-                out = [x for x in out if x.startswith("git@github.com") or x.startswith("https://github.com")]
-                if not out:
-                    messages.error(request, "Did not find any remote repositories to pull from!")
+                out = out[0]
+                if out.startswith("git@github.com"):
+                    out = out.split(":", 1)[1].rsplit(".", 1)[0]
                 else:
-                    out = out[0]
-                    if out.startswith("git@github.com"):
-                        out = out.split(":", 1)[1].rsplit(".", 1)[0]
-                    else:
-                        a = out.rsplit("/", 2)
-                        out = "{}/{}".format(a[-2], a[-1].rsplit(".", 1)[0])
-                    repo_info = request.user.github_api_request("/repos/{}".format(out))
-                    if repo_info is not None:
-                        resp = request.user.github_api_request("/repos/{}/keys".format(out))
-                        if resp is not None:
-                            for i in resp:
-                                if i["title"] == "Director" or i["key"].strip().split(" ")[1] == site.public_key.strip().split(" ")[1]:
-                                    request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
-                            resp = request.user.github_api_request("/repos/{}/keys".format(out), method="POST", data={"title": "Director", "key": site.public_key.strip(), "read_only": True})
+                    a = out.rsplit("/", 2)
+                    out = "{}/{}".format(a[-2], a[-1].rsplit(".", 1)[0])
+                repo_info = request.user.github_api_request("/repos/{}".format(out))
+                if repo_info is not None:
+                    resp = request.user.github_api_request("/repos/{}/keys".format(out))
+                    if resp is not None:
+                        for i in resp:
+                            if i["title"] == "Director" or i["key"].strip().split(" ")[1] == site.public_key.strip().split(" ")[1]:
+                                request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
+                        resp = request.user.github_api_request("/repos/{}/keys".format(out), method="POST", data={"title": "Director", "key": site.public_key.strip(), "read_only": True})
+                        if resp:
+                            resp = request.user.github_api_request("/repos/{}/hooks".format(out))
                             if resp:
-                                resp = request.user.github_api_request("/repos/{}/hooks".format(out))
-                                if resp:
-                                    webhook_url = request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
-                                    for i in resp:
-                                        if i["config"]["url"] == webhook_url:
-                                            break
-                                    else:
-                                        request.user.github_api_request("/repos/{}/hooks".format(out), method="POST", data={
-                                            "name": "web",
-                                            "config": {
-                                                "url": webhook_url,
-                                                "content_type": "json"
-                                            },
-                                            "active": True
-                                        })
-                                    messages.success(request, "The integration was set up!")
+                                webhook_url = request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
+                                for i in resp:
+                                    if i["config"]["url"] == webhook_url:
+                                        break
                                 else:
-                                    messages.error(request, "Failed to retrieve repository webhooks!")
+                                    request.user.github_api_request("/repos/{}/hooks".format(out), method="POST", data={
+                                        "name": "web",
+                                        "config": {
+                                            "url": webhook_url,
+                                            "content_type": "json"
+                                        },
+                                        "active": True
+                                    })
+                                messages.success(request, "The integration was set up!")
                             else:
-                                messages.error(request, "Failed to add new deploy key!")
+                                messages.error(request, "Failed to retrieve repository webhooks!")
                         else:
-                            if not repo_info["permissions"]["admin"]:
-                                messages.error(request, "You do not have permission to add deploy keys. Ask the owner of the repository to set this integration up for you.")
-                            else:
-                                messages.error(request, "Failed to retrieve deploy keys!")
+                            messages.error(request, "Failed to add new deploy key!")
                     else:
-                        messages.error(request, "Failed to retrieve repository information from GitHub! Do you have access to this repository?")
+                        if not repo_info["permissions"]["admin"]:
+                            messages.error(request, "You do not have permission to add deploy keys. Ask the owner of the repository to set this integration up for you.")
+                        else:
+                            messages.error(request, "Failed to retrieve deploy keys!")
+                else:
+                    messages.error(request, "Failed to retrieve repository information from GitHub! Do you have access to this repository?")
 
     return redirect(reverse("info_site", kwargs={"site_id": site.id}) + "#github-automatic")
 

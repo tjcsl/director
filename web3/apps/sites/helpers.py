@@ -7,7 +7,6 @@ import shlex
 from subprocess import Popen, check_output, PIPE, CalledProcessError
 from threading import Timer
 
-from django.conf import settings
 from .models import Site
 from ..users.models import User, Group
 

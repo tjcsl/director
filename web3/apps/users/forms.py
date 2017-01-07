@@ -5,6 +5,7 @@ from .models import User, Group
 
 from ...utils.tjldap import get_uid
 
+
 class UserForm(forms.ModelForm):
     username = forms.CharField(max_length=32,
                                widget=forms.TextInput(attrs={"class": "form-control"}))

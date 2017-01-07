@@ -13,9 +13,6 @@ def call_api(action=None, **kwargs):
         return None
 
     if resp.status_code == 500 or resp.status_code == 400:
-        if settings.DEBUG:
-            print("{} {}\n{} {}".format(resp.status_code, resp.text, action, kwargs))
-        else:
-            client.captureMessage("Conductor API Request Failure: {} {}\n{} {}\n".format(resp.status_code, resp.text, action, kwargs))
+        client.captureMessage("Conductor API Request Failure: {} {}\n{} {}\n".format(resp.status_code, resp.text, action, kwargs))
         return None
     return json.loads(resp.text)

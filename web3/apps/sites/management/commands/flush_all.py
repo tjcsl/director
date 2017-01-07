@@ -5,9 +5,6 @@ from django.core.management.base import BaseCommand
 from web3.apps.sites.models import Site
 from web3.apps.sites.helpers import make_site_dirs, fix_permissions, reload_services, reload_nginx_config, create_config_files
 
-import shutil
-import os
-
 
 class Command(BaseCommand):
     help = "Rewrite all site configurations and reset all permissions"

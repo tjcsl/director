@@ -1,7 +1,6 @@
 import uuid
 
 from django import forms
-from django.conf import settings
 from django.utils.text import slugify
 from django.core.cache import cache
 

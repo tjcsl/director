@@ -71,23 +71,21 @@ class SiteForm(forms.ModelForm):
             except (User.DoesNotExist, Group.DoesNotExist):
                 create_site_users(instance)
 
-            if not settings.DEBUG:
-                if self._old_path and not instance.path == self._old_path:
-                    os.rename(self._old_path, instance.path)
-                    if instance.category == "dynamic" and hasattr(instance, "process"):
-                        proc = instance.process
-                        proc.path = proc.path.replace(self._old_path, instance.path)
-                        proc.save()
-                        reload_services()
+            if self._old_path and not instance.path == self._old_path:
+                os.rename(self._old_path, instance.path)
+                if instance.category == "dynamic" and hasattr(instance, "process"):
+                    proc = instance.process
+                    proc.path = proc.path.replace(self._old_path, instance.path)
+                    proc.save()
+                    reload_services()
 
-                make_site_dirs(instance)
-                create_config_files(instance)
-                flush_permissions()
+            make_site_dirs(instance)
+            create_config_files(instance)
+            flush_permissions()
 
             if instance.category != "dynamic" and hasattr(instance, "process"):
-                if not settings.DEBUG:
-                    delete_process_config(instance.process)
-                    reload_services()
+                delete_process_config(instance.process)
+                reload_services()
                 instance.process.delete()
 
             if instance.category != "vm" and hasattr(instance, "virtual_machine"):
@@ -128,7 +126,7 @@ class ProcessForm(forms.ModelForm):
         else:
             root_path = Site.objects.get(id=self.initial["site"]).path
 
-        if not settings.DEBUG and not os.path.isfile(value):
+        if not os.path.isfile(value):
             raise forms.ValidationError("The script you are trying to reference does not exist!")
 
         if not value.startswith(root_path):
@@ -159,16 +157,15 @@ class DatabaseForm(forms.ModelForm):
 
         if commit:
             instance.save()
-            if not settings.DEBUG:
-                flag = False
-                if instance.category == "postgresql":
-                    flag = create_postgres_database(instance)
-                elif instance.category == "mysql":
-                    flag = create_mysql_database(instance)
-                if not flag:
-                    instance.delete()
-                    return None
-                create_config_files(instance.site)
+            flag = False
+            if instance.category == "postgresql":
+                flag = create_postgres_database(instance)
+            elif instance.category == "mysql":
+                flag = create_mysql_database(instance)
+            if not flag:
+                instance.delete()
+                return None
+            create_config_files(instance.site)
 
         return instance
 

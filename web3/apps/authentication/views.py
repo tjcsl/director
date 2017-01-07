@@ -1,6 +1,5 @@
 import json
 
-from django.utils.crypto import get_random_string
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.db.models import Count
