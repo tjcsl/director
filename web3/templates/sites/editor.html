@@ -53,7 +53,6 @@
     <div id="files"></div>
     <div id="editor-wrapper">
         <div id="tabs">
-            <div class="tab active tab-special tab-help"><i class="fa fa-question-circle"></i></div>
             <div class="tab tab-special tab-terminal pull-right"><i class="fa fa-terminal"></i></div>
             {% if site.database %}
             <div class="tab tab-special tab-console pull-right"><i class="fa fa-database"></i></div>
@@ -61,6 +60,7 @@
             {% if site.custom_nginx %}
             <div class="tab tab-special tab-nginx pull-right"><i class="fa fa-cog"></i> Nginx</div>
             {% endif %}
+            <div class="tab active tab-special tab-help"><i class="fa fa-question-circle"></i></div>
         </div>
         <div id="terminal" class="tab-pane"></div>
         <div id="editor" class="tab-pane"></div>
