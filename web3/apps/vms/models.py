@@ -14,6 +14,7 @@ class VirtualMachine(models.Model):
     name = models.CharField(max_length=255, unique=True)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     description = models.TextField(blank=True)
+    owner = models.ForeignKey(User, null=True)
     users = models.ManyToManyField(User, related_name='vms')
     password = models.TextField(blank=True)
     site = models.OneToOneField(Site, related_name="virtual_machine", blank=True, null=True)

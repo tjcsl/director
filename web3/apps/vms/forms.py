@@ -19,6 +19,7 @@ class VirtualMachineForm(forms.ModelForm):
     site = forms.ModelChoiceField(required=False, queryset=Site.objects.filter(category="vm"), widget=forms.Select(attrs={"class": "form-control"}))
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
         super(VirtualMachineForm, self).__init__(*args, **kwargs)
         if not(self.instance and self.instance.pk):
             vm_key = "vm:templates"
@@ -35,6 +36,8 @@ class VirtualMachineForm(forms.ModelForm):
 
         if commit:
             editing = bool(instance.pk)
+            if not editing:
+                instance.owner = self.user
             instance.save()
             self.save_m2m()
             if editing:

@@ -20,6 +20,7 @@
         <p>
             <b>UUID:</b> {{ vm.uuid }}<br />
             <b>Description:</b> {{ vm.description|default:"None" }}<br />
+            <b>Owner:</b> {{ vm.owner.username|default:"None" }}<br />
             <b>Users:</b> {{ vm.users.all|join:", "|default:"None" }}<br />
             <b>State:</b> {% if vm_state == 0 %}<span style="color:#4CAF50">Running</a>{% elif vm_state == None %}<span style="color:#FBC02D">Unknown</span>{% else %}<span style="color:#F44336">Not Running{% endif %}</span><br />
             {% if vm_state == 0 %}
@@ -38,7 +39,7 @@
         <br /><br />
 
         <a href="{% url 'vm_list' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
-        {% if request.user.is_superuser %}
+        {% if owner %}
         <a href="{% url 'vm_edit' vm.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Edit VM</a>
         <a href="{% url 'vm_delete' vm.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete VM</a>
         {% endif %}

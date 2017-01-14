@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from ..authentication.decorators import superuser_required
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_http_methods
-from django.db.models import Count
+from django.db.models import Count, Q
 
 from .forms import VirtualMachineForm
 from .models import VirtualMachine
@@ -13,11 +13,11 @@ from .helpers import call_api
 
 @login_required
 def list_view(request):
-    vm_list = request.user.vms.all().annotate(num_users=Count("users")).order_by("name")
+    vm_list = VirtualMachine.objects.filter(Q(users=request.user) | Q(owner=request.user)).annotate(num_users=Count("users")).order_by("name")
     statuses = call_api("container.list", status=True) or {}
 
     if request.user.is_superuser:
-        su_vm_list = VirtualMachine.objects.annotate(num_users=Count("users")).exclude(users=request.user).order_by("name")
+        su_vm_list = VirtualMachine.objects.annotate(num_users=Count("users")).exclude(Q(users=request.user) | Q(owner=request.user)).order_by("name")
     else:
         su_vm_list = None
 
@@ -27,7 +27,10 @@ def list_view(request):
 @login_required
 def info_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
-    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists():
+
+    is_owner = vm.owner == request.user or request.user.is_superuser
+
+    if not vm.users.filter(id=request.user.id).exists() and not is_owner:
         raise PermissionDenied
 
     vm_state = call_api("container.state", name=str(vm.uuid))
@@ -40,14 +43,14 @@ def info_view(request, vm_id):
     else:
         vm_ips = []
 
-    return render(request, "vms/info.html", {"vm": vm, "vm_state": vm_state, "vm_ips": vm_ips})
+    return render(request, "vms/info.html", {"vm": vm, "vm_state": vm_state, "vm_ips": vm_ips, "owner": is_owner})
 
 
 @require_http_methods(["POST"])
 @login_required
 def start_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
-    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists():
+    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists() and not vm.owner == request.user:
         raise PermissionDenied
 
     ret = call_api("container.power", state=1, name=str(vm.uuid))
@@ -63,7 +66,7 @@ def start_view(request, vm_id):
 @login_required
 def stop_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
-    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists():
+    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists() and not vm.owner == request.user:
         raise PermissionDenied
 
     if call_api("container.power", state=0, name=str(vm.uuid)) == 0:
@@ -78,7 +81,7 @@ def stop_view(request, vm_id):
 @login_required
 def password_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
-    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists():
+    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists() and not vm.owner == request.user:
         raise PermissionDenied
 
     ret = call_api("container.reset_root_password", name=str(vm.uuid))
@@ -92,9 +95,12 @@ def password_view(request, vm_id):
     return redirect("vm_info", vm_id=vm_id)
 
 
-@superuser_required
+@login_required
 def delete_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
+
+    if not request.user.is_superuser and not vm.owner == request.user:
+        raise PermissionDenied
 
     if request.method == "POST":
         if request.POST.get("confirm", None) == vm.name:
@@ -111,13 +117,10 @@ def delete_view(request, vm_id):
     return render(request, "vms/delete.html", {"vm": vm})
 
 
-@superuser_required
+@login_required
 def create_view(request):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-
     if request.method == "POST":
-        form = VirtualMachineForm(request.POST)
+        form = VirtualMachineForm(request.POST, user=request.user)
         if form.is_valid():
             instance = form.save()
             if instance:
@@ -127,21 +130,24 @@ def create_view(request):
                 messages.error(request, "Failed to create virtual machine!")
                 return redirect("vm_list")
     else:
-        form = VirtualMachineForm()
+        form = VirtualMachineForm(user=request.user)
     return render(request, "vms/create_vm.html", {"form": form})
 
 
-@superuser_required
+@login_required
 def edit_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
 
+    if not request.user.is_superuser and not vm.owner == request.user:
+        raise PermissionDenied
+
     if request.method == "POST":
-        form = VirtualMachineForm(request.POST, instance=vm)
+        form = VirtualMachineForm(request.POST, user=request.user, instance=vm)
         if form.is_valid():
             vm = form.save()
             return redirect("vm_info", vm_id=vm.id)
     else:
-        form = VirtualMachineForm(instance=vm)
+        form = VirtualMachineForm(user=request.user, instance=vm)
     context = {
         "form": form
     }
@@ -152,7 +158,7 @@ def edit_view(request, vm_id):
 def terminal_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
 
-    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists():
+    if not request.user.is_superuser and not vm.users.filter(id=request.user.id).exists() and not vm.owner == request.user:
         raise PermissionDenied
 
     if not vm.password:
