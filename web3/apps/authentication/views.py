@@ -30,7 +30,7 @@ def about_view(request):
 
 
 def login_view(request):
-    return render(request, "login.html", {})
+    return render(request, "login.html", { "needs_superuser": request.resolver_match.url_name == "login_superuser" })
 
 
 def grant_access_token(sender, user, request, **kwargs):
