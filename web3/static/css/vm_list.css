@@ -41,6 +41,9 @@
     white-space: nowrap;
     display: block;
 }
+.owner {
+    color: #bbb;
+}
 .pull-left.fa {
     position: relative;
 }
