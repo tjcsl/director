@@ -21,11 +21,11 @@ class VirtualMachineForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
+        super(VirtualMachineForm, self).__init__(*args, **kwargs)
         if not self.user.is_superuser:
             self.fields["owner"].queryset = User.objects.filter(id=self.user.id)
             self.fields["owner"].default = self.user.id
             self.fields["owner"].disabled = True
-        super(VirtualMachineForm, self).__init__(*args, **kwargs)
         if not(self.instance and self.instance.pk):
             vm_key = "vm:templates"
             vm_templates = cache.get(vm_key)
