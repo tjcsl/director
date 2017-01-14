@@ -6,7 +6,7 @@
     {{ block.super }}
     <script type="text/javascript">
         $(document).ready(function() {
-            $("#id_users").selectize();
+            $("#id_users, #id_owner, #id_site").selectize();
         });
     </script>
 {% endblock %}

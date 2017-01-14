@@ -16,8 +16,8 @@ class VirtualMachineForm(forms.ModelForm):
     name = forms.CharField(max_length=255, widget=forms.TextInput(attrs={"class": "form-control"}))
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
-    site = forms.ModelChoiceField(required=False, queryset=Site.objects.filter(category="vm"), widget=forms.Select(attrs={"class": "form-control"}))
-    owner = forms.ModelChoiceField(required=True, queryset=User.objects.filter(service=False), widget=forms.Select(attrs={"class": "form-control"}))
+    site = forms.ModelChoiceField(required=False, queryset=Site.objects.filter(category="vm"))
+    owner = forms.ModelChoiceField(required=True, queryset=User.objects.filter(service=False))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
