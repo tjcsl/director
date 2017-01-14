@@ -32,7 +32,7 @@
             {% if vm_state == 0 %}
             <b>IP(s):</b> {{ vm_ips|join:", "|default:"None" }}<br />
             {% endif %}
-            <b>Root Password:</b> {% if vm.pasword %}<span tabindex="0" class="vm-password">{{ vm.password }}</span>{% else %}Not set{% endif %}
+            <b>Root Password:</b> {% if vm.password %}<span tabindex="0" class="vm-password">{{ vm.password }}</span>{% else %}Not set{% endif %}
         </p>
 
         {% if vm_state == 0 %}
