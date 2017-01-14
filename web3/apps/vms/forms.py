@@ -24,7 +24,7 @@ class VirtualMachineForm(forms.ModelForm):
         super(VirtualMachineForm, self).__init__(*args, **kwargs)
         if not self.user.is_superuser:
             self.fields["owner"].queryset = User.objects.filter(id=self.user.id)
-            self.fields["owner"].default = self.user.id
+            self.fields["owner"].initial = self.user.id
             self.fields["owner"].disabled = True
             self.fields["site"].queryset = Site.objects.filter(group__users=self.user, category="vm")
         if not(self.instance and self.instance.pk):
