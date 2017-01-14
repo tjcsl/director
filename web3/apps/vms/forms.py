@@ -17,9 +17,14 @@ class VirtualMachineForm(forms.ModelForm):
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
     site = forms.ModelChoiceField(required=False, queryset=Site.objects.filter(category="vm"), widget=forms.Select(attrs={"class": "form-control"}))
+    owner = forms.ModelChoiceField(required=True, queryset=User.objects.filter(service=False), widget=forms.Select(attrs={"class": "form-control"}))
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
+        if not self.user.is_superuser:
+            self.fields["owner"].queryset = User.objects.filter(id=self.user.id)
+            self.fields["owner"].default = self.user.id
+            self.fields["owner"].disabled = True
         super(VirtualMachineForm, self).__init__(*args, **kwargs)
         if not(self.instance and self.instance.pk):
             vm_key = "vm:templates"
@@ -36,8 +41,6 @@ class VirtualMachineForm(forms.ModelForm):
 
         if commit:
             editing = bool(instance.pk)
-            if not editing:
-                instance.owner = self.user
             instance.save()
             self.save_m2m()
             if editing:
@@ -61,4 +64,4 @@ class VirtualMachineForm(forms.ModelForm):
 
     class Meta:
         model = VirtualMachine
-        fields = ["name", "description", "users", "site"]
+        fields = ["name", "description", "owner", "users", "site"]
