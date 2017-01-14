@@ -6,6 +6,12 @@
 
 {% block css %}
     {{ block.super }}
+    <style>
+    .vm-password:not(:focus) {
+        -webkit-filter: blur(5px);
+        filter: blur(5px);
+    }
+    </style>
 {% endblock %}
 
 {% block js %}
@@ -26,7 +32,7 @@
             {% if vm_state == 0 %}
             <b>IP(s):</b> {{ vm_ips|join:", "|default:"None" }}<br />
             {% endif %}
-            <b>Root Password:</b> {{ vm.password|default:"Not set" }}
+            <b>Root Password:</b> <span tabindex="0" class="vm-password">{{ vm.password|default:"Not set" }}</span>
         </p>
 
         {% if vm_state == 0 %}
