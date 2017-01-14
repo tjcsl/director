@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^$', auth_views.index_view, name='index'),
     url('^about$', auth_views.about_view, name='about'),
     url(r'^login/$', auth_views.login_view, name='login'),
-    url(r'^login/superuser/', auth_views.login_view, name='login_superuser'),
+    url(r'^login/superuser/$', auth_views.login_view, name='login_superuser'),
     url(r'^logout/$', auth_views.logout_view, name='logout'),
     url(r'^wsauth$', auth_views.node_auth_view, name='node_auth'),
     url(r"^user/", include("web3.apps.users.urls")),
