@@ -26,8 +26,8 @@
 {% with status=vm_status|lookup:vm.uuid %}
 <a href="{% url 'vm_info' vm.id %}" class="vm clearfix">
     <i class="pull-left fa fa-2x fa-fw fa-cube"><span class="{% if status == "RUNNING" %}green{% elif status == "STOPPED" %}red{% endif %}" /></i>
-    <b class="name">{{ vm.name }}</b>
-    <div class="sub">{{ vm.description|default:"No Description" }}<span class="owner">, owned by {{ vm.owner.username|default:"nobody" }}</span></div>
+    <b class="name">{{ vm.name }}</b> <span class="owner">{{ vm.owner.username|default:"No Owner" }}</span>
+    <div class="sub">{{ vm.description|default:"No Description" }}</div>
 </a>
 {% endwith %}
 {% endfor %}
@@ -37,8 +37,8 @@
     {% if vm.num_users == 0 %}<span class="pull-right tag tag-danger">No Users</span>{% endif %}
     <span class="pull-right tag tag-warning">Admin</span>
     <i class="pull-left fa fa-2x fa-fw fa-cube"><span class="{% if status == "RUNNING" %}green{% elif status == "STOPPED" %}red{% endif %}" /></i>
-    <b class="name">{{ vm.name }}</b>
-    <div class="sub">{{ vm.description|default:"No Description" }}<span class="owner">, owned by {{ vm.owner.username|default:"nobody" }}</span></div>
+    <b class="name">{{ vm.name }}</b> <span class="owner">{{ vm.owner.username|default:"No Owner" }}</span>
+    <div class="sub">{{ vm.description|default:"No Description" }}</div>
 </a>
 {% endwith %}
 {% endfor %}
