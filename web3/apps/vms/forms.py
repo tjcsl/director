@@ -26,6 +26,7 @@ class VirtualMachineForm(forms.ModelForm):
             self.fields["owner"].queryset = User.objects.filter(id=self.user.id)
             self.fields["owner"].default = self.user.id
             self.fields["owner"].disabled = True
+            self.fields["site"].queryset = Site.objects.filter(group__users=self.user, category="vm")
         if not(self.instance and self.instance.pk):
             vm_key = "vm:templates"
             vm_templates = cache.get(vm_key)
