@@ -35,6 +35,7 @@
         <h3>{{ vm.name }}</h3>
         <p>
             <b>UUID:</b> {{ vm.uuid }}<br />
+            <b>Hostname:</b> {{ vm.hostname }}<br />
             <b>Description:</b> {{ vm.description|default:"None" }}<br />
             <b>Owner:</b> {{ vm.owner.username|default:"None" }}<br />
             <b>Users:</b> {{ vm.users.all|join:", "|default:"None" }}<br />
