@@ -43,6 +43,7 @@ class VirtualMachineForm(forms.ModelForm):
         hostname = slugify(instance.name).replace("_", "-")
 
         if commit:
+            editing = bool(instance.pk)
             instance.save()
             self.save_m2m()
             if not self.old_hostname == hostname:
@@ -51,7 +52,7 @@ class VirtualMachineForm(forms.ModelForm):
                     if ret is None or ret != 0:
                         client.captureMessage("Failed to change VM hostname: {}".format(ret))
                         return instance
-            else:
+            elif not editing:
                 ret = call_api("container.create", name=hostname, template=self.cleaned_data.get("template", "debian"))
                 if ret is None or ret[0] == 1:
                     client.captureMessage("Failed to create VM: {}".format(ret))
