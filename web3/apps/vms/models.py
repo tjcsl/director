@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.utils.text import slugify
 
 from ..users.models import User
 from ..sites.models import Site
@@ -34,3 +35,8 @@ class VirtualMachine(models.Model):
     def ip_address(self):
         ips = self.ips
         return ips[0] if len(ips) else None
+
+
+    @property
+    def hostname(self):
+        return slugify(self.name).replace("_", "-")

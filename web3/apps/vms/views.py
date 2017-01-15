@@ -105,8 +105,10 @@ def delete_view(request, vm_id):
     if request.method == "POST":
         if request.POST.get("confirm", None) == vm.name:
             ret = call_api("container.destroy", name=str(vm.uuid))
+            hostname = vm.hostname
             if ret == 0:
                 vm.delete()
+                call_api("dns.remove", host=hostname)
                 messages.success(request, "Virtual machine deleted!")
             else:
                 messages.error(request, "Failed to delete VM! ({})".format(ret))

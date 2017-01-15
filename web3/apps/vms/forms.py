@@ -1,7 +1,6 @@
 import uuid
 
 from django import forms
-from django.utils.text import slugify
 from django.core.cache import cache
 
 from ..users.models import User
@@ -28,7 +27,7 @@ class VirtualMachineForm(forms.ModelForm):
             self.fields["owner"].disabled = True
             self.fields["site"].queryset = Site.objects.filter(group__users=self.user, category="vm")
         if self.instance and self.instance.pk:
-            self.old_hostname = slugify(self.instance.name).replace("_", "-")
+            self.old_hostname = self.instance.hostname
         else:
             vm_key = "vm:templates"
             vm_templates = cache.get(vm_key)
@@ -40,7 +39,7 @@ class VirtualMachineForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
-        hostname = slugify(instance.name).replace("_", "-")
+        hostname = instance.hostname
 
         if commit:
             editing = bool(instance.pk)
