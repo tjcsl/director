@@ -6,6 +6,8 @@ from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_http_methods
 from django.db.models import Count, Q
 
+from threading import Thread
+
 from .forms import VirtualMachineForm
 from .models import VirtualMachine
 from .helpers import call_api
@@ -55,7 +57,8 @@ def start_view(request, vm_id):
 
     ret = call_api("container.power", state=1, name=str(vm.uuid))
     if ret == 0:
-        call_api("dns.add", host=vm.hostname, ip=vm.ip_address)
+        t = Thread(target=call_api, args=["dns.add"], kwargs={"host": vm.hostname, "ip": vm.ip_address})
+        t.start()
         messages.success(request, "Virtual machine started!")
     else:
         messages.error(request, "Failed to start virtual machine! ({})".format(ret))
@@ -109,7 +112,8 @@ def delete_view(request, vm_id):
             hostname = vm.hostname
             if ret == 0:
                 vm.delete()
-                call_api("dns.remove", host=hostname)
+                t = Thread(target=call_api, args=["dns.remove"], kwargs={"host": hostname})
+                t.start()
                 messages.success(request, "Virtual machine deleted!")
             else:
                 messages.error(request, "Failed to delete VM! ({})".format(ret))
