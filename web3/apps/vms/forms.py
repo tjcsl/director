@@ -27,7 +27,9 @@ class VirtualMachineForm(forms.ModelForm):
             self.fields["owner"].initial = self.user.id
             self.fields["owner"].disabled = True
             self.fields["site"].queryset = Site.objects.filter(group__users=self.user, category="vm")
-        if not(self.instance and self.instance.pk):
+        if self.instance and self.instance.pk:
+            self.old_hostname = slugify(self.instance.name).replace("_", "-")
+        else:
             vm_key = "vm:templates"
             vm_templates = cache.get(vm_key)
             if not vm_templates:
@@ -41,12 +43,11 @@ class VirtualMachineForm(forms.ModelForm):
         hostname = slugify(instance.name).replace("_", "-")
 
         if commit:
-            editing = bool(instance.pk)
             instance.save()
             self.save_m2m()
-            if editing:
+            if not self.old_hostname == hostname:
                 if "name" in self.changed_data:
-                    ret = call_api("container.set_hostname", name=str(instance.uuid), new_hostname=hostname)
+                    ret = call_api("container.set_hostname", name=str(instance.uuid), old_hostname=self.old_hostname, new_hostname=hostname)
                     if ret is None or ret != 0:
                         client.captureMessage("Failed to change VM hostname: {}".format(ret))
                         return instance
