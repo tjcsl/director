@@ -55,6 +55,7 @@ def start_view(request, vm_id):
 
     ret = call_api("container.power", state=1, name=str(vm.uuid))
     if ret == 0:
+        call_api("dns.add", host=vm.hostname, ip=vm.ip_address)
         messages.success(request, "Virtual machine started!")
     else:
         messages.error(request, "Failed to start virtual machine! ({})".format(ret))
