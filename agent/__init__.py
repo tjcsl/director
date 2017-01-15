@@ -37,3 +37,4 @@ def dispatch():
 import agent.views.ping  # noqa
 import agent.views.container  # noqa
 import agent.views.hypervisor  # noqa
+import agent.views.updatedns  # noqa
