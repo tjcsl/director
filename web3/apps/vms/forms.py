@@ -22,9 +22,9 @@ class VirtualMachineForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
         super(VirtualMachineForm, self).__init__(*args, **kwargs)
+        self.fields["owner"].initial = self.user.id
         if not self.user.is_superuser:
             self.fields["owner"].queryset = User.objects.filter(id=self.user.id)
-            self.fields["owner"].initial = self.user.id
             self.fields["owner"].disabled = True
             self.fields["site"].queryset = Site.objects.filter(group__users=self.user, category="vm")
         if self.instance and self.instance.pk:
@@ -46,13 +46,7 @@ class VirtualMachineForm(forms.ModelForm):
             editing = bool(instance.pk)
             instance.save()
             self.save_m2m()
-            if not self.old_hostname == hostname:
-                if "name" in self.changed_data:
-                    ret = call_api("container.set_hostname", name=str(instance.uuid), old_hostname=self.old_hostname, new_hostname=hostname)
-                    if ret is None or ret != 0:
-                        client.captureMessage("Failed to change VM hostname: {}".format(ret))
-                        return instance
-            elif not editing:
+            if not editing:
                 ret = call_api("container.create", name=hostname, template=self.cleaned_data.get("template", "debian"))
                 if ret is None or ret[0] == 1:
                     client.captureMessage("Failed to create VM: {}".format(ret))
@@ -62,6 +56,12 @@ class VirtualMachineForm(forms.ModelForm):
                     if ret[0] != 2:
                         instance.uuid = uuid.UUID(ret[1].split("\n")[-1])
                         instance.save()
+            elif not self.old_hostname == hostname:
+                if "name" in self.changed_data:
+                    ret = call_api("container.set_hostname", name=str(instance.uuid), old_hostname=self.old_hostname, new_hostname=hostname)
+                    if ret is None or ret != 0:
+                        client.captureMessage("Failed to change VM hostname: {}".format(ret))
+                        return instance
 
         return instance
 
