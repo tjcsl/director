@@ -58,6 +58,7 @@ def start_view(request, vm_id):
     ret = call_api("container.power", state=1, name=str(vm.uuid))
     if ret == 0:
         t = Thread(target=call_api, args=["dns.add"], kwargs={"host": vm.hostname, "ip": vm.ip_address})
+        t.daemon = True
         t.start()
         messages.success(request, "Virtual machine started!")
     else:
@@ -113,6 +114,7 @@ def delete_view(request, vm_id):
             if ret == 0:
                 vm.delete()
                 t = Thread(target=call_api, args=["dns.remove"], kwargs={"host": hostname})
+                t.daemon = True
                 t.start()
                 messages.success(request, "Virtual machine deleted!")
             else:
