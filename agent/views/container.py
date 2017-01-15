@@ -96,7 +96,7 @@ def container_ips(name):
 
 
 @rpc.method("container.set_hostname")
-def container_set_hostname(name, new_hostname):
+def container_set_hostname(name, old_hostname, new_hostname):
     container = lxc.Container(name)
     if not container.defined:
         return 3
