@@ -45,7 +45,7 @@ class VirtualMachineForm(forms.ModelForm):
             editing = bool(instance.pk)
             instance.save()
             self.save_m2m()
-            instance.users.remove(self.user)
+            instance.users.remove(instance.owner)
             if not editing:
                 ret = call_api("container.create", name=hostname, template=self.cleaned_data.get("template", "debian"))
                 if ret is None or ret[0] == 1:
