@@ -43,6 +43,7 @@ class VirtualMachineForm(forms.ModelForm):
 
         if commit:
             editing = bool(instance.pk)
+            instance.users.remove(self.user)
             instance.save()
             self.save_m2m()
             if not editing:
