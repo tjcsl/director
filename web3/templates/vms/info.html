@@ -6,22 +6,7 @@
 
 {% block css %}
     {{ block.super }}
-    <style>
-    .vm-password:not(:focus) {
-        color: transparent;
-        text-shadow: 0 0 20px #55657a;
-        position: relative;
-    }
-    .vm-password:not(:focus)::after {
-        display: block;
-        position: absolute;
-        line-height: 1;
-        color: #484848;
-        top: 3px;
-        left: 5px;
-        content: "Click to show password";
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vm_info.css' %}" />
 {% endblock %}
 
 {% block js %}
