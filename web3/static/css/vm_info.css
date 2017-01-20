@@ -1,4 +1,5 @@
 .vm-password:not(:focus) {
+    cursor: pointer;
     color: transparent;
     text-shadow: 0 0 20px #55657a;
     position: relative;
@@ -14,5 +15,5 @@
     background-color: white;
     padding: 3px;
     border: 1px solid black;
-    font-size: 12px;
+    font-size: 11.5px;
 }
