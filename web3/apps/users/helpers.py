@@ -32,7 +32,7 @@ def create_user(request, username):
     return user
 
 
-def create_webdocs(user, batch=False):
+def create_webdocs(user, batch=False, purpose="user"):
     if Site.objects.filter(name=user.username).exists():
         return Site.objects.get(name=user.username)
 
@@ -41,7 +41,7 @@ def create_webdocs(user, batch=False):
         description=user.full_name,
         domain="{}.sites.tjhsst.edu".format(user.username),
         category="php",
-        purpose="user",
+        purpose=purpose,
         custom_nginx=False
     )
     create_site_users(site)

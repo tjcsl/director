@@ -33,7 +33,7 @@
             $("form button").html("<i class='fa fa-cog fa-spin'></i> Processing...");
             var students = $("#students").val().split("\n");
             var create_webdocs = function() {
-                $.post("?json", { students: students.splice(0, 10).join("\n") }, function(data) {
+                $.post("?json", { students: students.splice(0, 10).join("\n"), legacy: !!$("#legacy-checkbox").val() }, function(data) {
                     $.each(data.success, function(k, v) {
                         var item = $("<div class='yes' />");
                         item.text(v);
@@ -95,6 +95,13 @@
         <textarea class="form-control" id="students" name="students"></textarea>
         <small class="form-text">Please enter a list of student IDs (ex: 2017ewang) separated by newlines.</small>
     </div>
+    {% if request.user.is_superuser %}
+    <label class="custom-control custom-checkbox">
+        <input id="legacy-checkbox" name="legacy" type="checkbox" class="custom-control-input">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Create as Legacy</span>
+    </label>
+    {% endif %}
     <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
     <button class="btn btn-ion"><i class="fa fa-plus"></i> Create Websites</button>
 </form>

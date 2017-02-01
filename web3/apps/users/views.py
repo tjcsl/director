@@ -87,6 +87,8 @@ def create_webdocs_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
+        import_legacy = request.POST.get("legacy", False)
+
         students = [x.strip() for x in request.POST.get("students", "").split("\n")]
         students = [x for x in students if x]
 
@@ -96,7 +98,7 @@ def create_webdocs_view(request):
         for username in students:
             user = create_user(request, username)
             if user:
-                site = create_webdocs(user, batch=True)
+                site = create_webdocs(user, batch=True, purpose="legacy" if import_legacy else "user")
                 if site:
                     success.append(username)
                     continue
