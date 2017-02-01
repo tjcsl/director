@@ -51,6 +51,10 @@
                         $("form").hide();
                         $("#finished-container").show();
                     }
+                }).fail(function() {
+                    Messenger().error("An error occured while creating webdocs.");
+                    $("form").hide();
+                    $("#finished-container").show();
                 });
             };
             create_webdocs();
