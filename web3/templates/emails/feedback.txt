@@ -3,4 +3,4 @@ Email: {{ request.user.email }}
 
 Comments
 
-{{ comments }}
+{{ feedback }}
