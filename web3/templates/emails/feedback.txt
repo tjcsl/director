@@ -1,0 +1,6 @@
+Username: {{ request.user.username }}
+Email: {{ request.user.email }}
+
+Comments
+
+{{ comments }}
