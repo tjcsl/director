@@ -67,7 +67,7 @@
                     <li><a href="{% url 'vm_list' %}"><i class="fa fa-fw fa-server"></i> Virtual Machines</a></li>
                 {% if request.user.is_superuser %}
                     <li><a href="{% url 'user_management' %}"><i class="fa fa-fw fa-users"></i> User Admin</a></li>
-                    <li><a href="{% url 'admin:index' %}"><i class="fa fa-fw fa-star"></i> Django Admin</li>
+                    <li><a href="{% url 'admin:index' %}"><i class="fa fa-fw fa-star"></i> Django Admin</a></li>
                 {% endif %}
                 <li class="feedback"><a href="{% url 'feedback' %}"><i class="fa fa-fw fa-smile-o"></i> Send Feedback</a></li>
                 <li><a href="{% url 'about' %}"><i class="fa fa-fw fa-info-circle"></i> About/Credits</a></li>
