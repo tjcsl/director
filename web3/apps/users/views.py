@@ -59,8 +59,12 @@ def edit_view(request, user_id):
         if form.is_valid():
             user = form.save()
             if not user.full_name:
-                profile = request.user.api_request("profile/{}".format(user.username))
-                user.full_name = profile.get("common_name", get_full_name(user.username))
+                ldap_full_name = get_full_name(user.username)
+                if ldap_full_name:
+                    user.full_name = ldap_full_name
+                else:
+                    profile = request.user.api_request("profile/{}".format(user.username))
+                    user.full_name = profile.get("common_name", "")
                 user.save()
             messages.success(request, "User {} edited!".format(user.username))
             return redirect("user_management")
