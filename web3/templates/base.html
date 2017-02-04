@@ -60,7 +60,7 @@
         <a class="nav-warn" href="{% if request.user.site_notifications.0.teacher_approval %}{% url 'admin_site' %}{% else %}{% url 'approve_site' %}{% endif %}"><b>{{ request.user.site_notifications.count }}</b> Request{{ request.user.site_notifications.count|pluralize }}</a>
         {% endif %}
         <div class="dropdown pull-right" id="user-dropdown">
-            <button class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ request.user.username }}</button>
+            <button class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ request.user.full_name }}</button>
             <ul class="dropdown-menu">
                 <div class="arrow"></div>
                     <li><a href="{% url 'user_settings' %}"><i class="fa fa-fw fa-cog"></i> Settings</a></li>
@@ -69,6 +69,7 @@
                     <li><a href="{% url 'user_management' %}"><i class="fa fa-fw fa-users"></i> User Admin</a></li>
                     <li><a href="{% url 'admin:index' %}"><i class="fa fa-fw fa-star"></i> Django Admin</li>
                 {% endif %}
+                <li><a href="{% url 'feedback' %}"><i class="fa fa-fw fa-smile-o"></i> Send Feedback</a></li>
                 <li><a href="{% url 'about' %}"><i class="fa fa-fw fa-info-circle"></i> About/Credits</a></li>
                 <li><a href="{% url 'logout' %}"><i class="fa fa-fw fa-sign-out"></i> Logout</a></li>
             </ul>
