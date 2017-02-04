@@ -4,6 +4,10 @@
     {{ block.super }}
 {% endblock %}
 
+{% block js %}
+    {{ block.super }}
+{% endblock %}
+
 {% block main %}
 <h4>Send Director Feedback</h4>
 <p>Please use this form to send feedback about Director. We may follow up with you via the email address under Settings. Thanks!</p>
@@ -12,7 +16,7 @@
     {% csrf_token %}
     <div class="form-group">
         <label for="id_feedback">Comments</label>
-        <textarea id="id_feedback" name="feedback" class="form-control"></textarea>
+        <textarea id="id_feedback" name="feedback" class="form-control" cols="40" rows="10" required></textarea>
     </div>
     <button type="submit" class="btn btn-ion">Submit</button>
 </form>
