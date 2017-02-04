@@ -19,6 +19,7 @@ from django.conf import settings
 
 from .apps.authentication import views as auth_views
 from .apps.users import views as user_views
+from .apps.feedback import views as feedback_views
 
 from .apps.error.views import (handle_404_view, handle_500_view, handle_503_view)
 
@@ -33,6 +34,7 @@ urlpatterns = [
     url(r"^site/", include("web3.apps.sites.urls")),
     url(r'^vm/', include("web3.apps.vms.urls")),
     url(r'^admin/', admin.site.urls),
+    url(r'^feedback$', feedback_views.feedback_view, name='feedback'),
     url(r'^github_oauth/$', user_views.github_oauth_view)
 ]
 
