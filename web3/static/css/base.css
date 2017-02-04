@@ -39,6 +39,9 @@
 a.nav-warn:hover {
     color: white;
 }
-.dropdown-menu li.feedback {
+.dropdown-menu li.feedback a {
     color: green;
+}
+.dropdown-menu li.feedback a:hover {
+    color: #00c800;
 }
