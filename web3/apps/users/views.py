@@ -13,6 +13,7 @@ from .forms import UserForm
 from .helpers import create_user, create_webdocs
 from ..authentication.decorators import superuser_required
 from ..sites.helpers import flush_permissions
+from ...utils.tjldap import get_full_name
 
 from requests.utils import quote
 from .models import User, Group
@@ -36,7 +37,7 @@ def create_view(request):
             user = form.save()
             if not user.full_name:
                 profile = request.user.api_request("profile/{}".format(user.username))
-                user.full_name = profile.get("common_name", "")
+                user.full_name = profile.get("common_name", get_full_name(user.username))
                 user.save()
             messages.success(request, "User {} created!".format(user.username))
             return redirect("user_management")
@@ -59,7 +60,7 @@ def edit_view(request, user_id):
             user = form.save()
             if not user.full_name:
                 profile = request.user.api_request("profile/{}".format(user.username))
-                user.full_name = profile.get("common_name", "")
+                user.full_name = profile.get("common_name", get_full_name(user.username))
                 user.save()
             messages.success(request, "User {} edited!".format(user.username))
             return redirect("user_management")

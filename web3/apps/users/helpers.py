@@ -1,7 +1,7 @@
 from .models import User, Group
 from ..sites.models import Site
 from ..sites.helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions
-from ...utils.tjldap import get_uid
+from ...utils.tjldap import get_uid, get_full_name
 
 
 def create_user(request, username):
@@ -18,7 +18,7 @@ def create_user(request, username):
     user = User.objects.create(
         id=uid,
         username=username,
-        full_name=profile.get("common_name", ""),
+        full_name=profile.get("common_name", get_full_name(username)),
         email=profile.get("tj_email", "{}@tjhsst.edu".format(username)),
         is_staff=profile.get("is_teacher", False),
         is_superuser=profile.get("is_eighth_admin", False)
