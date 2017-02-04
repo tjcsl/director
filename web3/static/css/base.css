@@ -39,3 +39,6 @@
 a.nav-warn:hover {
     color: white;
 }
+.feedback {
+    color: green;
+}

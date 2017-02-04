@@ -5,5 +5,15 @@
 {% endblock %}
 
 {% block main %}
-<h3>Director Feedback</h3>
+<h4>Send Director Feedback</h4>
+<p>Please use this form to send feedback about Director. We may follow up with you via the email address under Settings. Thanks!</p>
+<p>If you'd like to add a screenshot, use "Snipping Tool" on Windows or Cmd-Shift-4 on a Mac, upload the file to <a target="_blank" href="https://imgur.com/">Imgur</a> or another file host, and share the public link below.</p>
+<form action="{% url 'feedback' %}" method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_feedback">Comments</label>
+        <textarea id="id_feedback" name="feedback" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-ion">Submit</button>
+</form>
 {% endblock %}
