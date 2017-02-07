@@ -128,6 +128,18 @@ def github_link_view(request):
     return redirect("https://github.com/login/oauth/authorize?client_id={}&scope={}".format(settings.GITHUB_CLIENT_ID, "repo"))
 
 
+@login_required
+def github_unlink_view(request):
+    u = request.user
+    grants = u.github_api_request("/applications/grants")
+    for grant in grants:
+        u.github_api_request("/applications/grants/{}".format(grant["id"]), method="DELETE")
+    u.github_token = ""
+    u.save()
+    messages.success(request, "Your GitHub account has been unlinked!")
+    return redirect("user_settings")
+
+
 @csrf_exempt
 @login_required
 def github_oauth_view(request):
