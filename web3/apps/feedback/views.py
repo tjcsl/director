@@ -3,10 +3,12 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from ...utils.emails import send_feedback_email
+from .models import Feedback
 
 def feedback_view(request):
     if request.method == "POST":
         comments = request.POST.get("feedback", None)
+        Feedback.objects.create(user=request.user, comments=comments)
         send_feedback_email(request, comments)
         messages.success(request, "Your feedback has been received! Thanks!")
         return redirect("index")
