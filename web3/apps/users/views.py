@@ -104,7 +104,7 @@ def create_webdocs_view(request):
         for username in students:
             if not no_users:
                 user = create_user(request, username)
-            if user or no_users:
+            if no_users or user:
                 site = create_webdocs(username if no_users else user, batch=True, purpose="legacy" if import_legacy else "user")
                 if site:
                     success.append(username)
