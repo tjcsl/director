@@ -93,6 +93,7 @@ def create_webdocs_view(request):
 
     if request.method == "POST":
         import_legacy = request.POST.get("legacy", False)
+        no_users = request.POST.get("no_user", False)
 
         students = [x.strip() for x in request.POST.get("students", "").split("\n")]
         students = [x for x in students if x]
@@ -101,9 +102,10 @@ def create_webdocs_view(request):
         failure = []
 
         for username in students:
-            user = create_user(request, username)
-            if user:
-                site = create_webdocs(user, batch=True, purpose="legacy" if import_legacy else "user")
+            if not no_users:
+                user = create_user(request, username)
+            if user or no_users:
+                site = create_webdocs(username if no_users else user, batch=True, purpose="legacy" if import_legacy else "user")
                 if site:
                     success.append(username)
                     continue
