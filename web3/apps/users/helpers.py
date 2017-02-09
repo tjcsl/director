@@ -51,7 +51,7 @@ def create_webdocs(user, batch=False, purpose="user"):
     site = Site(
         name=username,
         description=full_name,
-        domain="{}.sites.tjhsst.edu".format(user.username),
+        domain="{}.sites.tjhsst.edu".format(username),
         category="php",
         purpose=purpose,
         custom_nginx=False
