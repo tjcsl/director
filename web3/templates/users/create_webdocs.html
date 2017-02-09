@@ -33,7 +33,7 @@
             $("form button").html("<i class='fa fa-cog fa-spin'></i> Processing...");
             var students = $("#students").val().split("\n");
             var create_webdocs = function() {
-                $.post("?json", { students: students.splice(0, 10).join("\n"), legacy: !!$("#legacy-checkbox").val(), no-user: !!$("#no-user-checkbox").val() }, function(data) {
+                $.post("?json", { students: students.splice(0, 10).join("\n"), legacy: !!$("#legacy-checkbox").val(), "no-user": !!$("#no-user-checkbox").val() }, function(data) {
                     $.each(data.success, function(k, v) {
                         var item = $("<div class='yes' />");
                         item.text(v);

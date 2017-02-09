@@ -38,12 +38,19 @@ def create_user(request, username):
 
 
 def create_webdocs(user, batch=False, purpose="user"):
-    if Site.objects.filter(name=user.username).exists():
-        return Site.objects.get(name=user.username)
+    if isinstance(user, str):
+        username = user
+        full_name = user
+    else:
+        username = user.username
+        full_name = user.full_name
+
+    if Site.objects.filter(name=username).exists():
+        return Site.objects.get(name=username)
 
     site = Site(
-        name=user.username,
-        description=user.full_name,
+        name=username,
+        description=full_name,
         domain="{}.sites.tjhsst.edu".format(user.username),
         category="php",
         purpose=purpose,
