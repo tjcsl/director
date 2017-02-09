@@ -105,7 +105,7 @@ def create_webdocs_view(request):
             if not no_users:
                 user = create_user(request, username)
             if no_users or user:
-                site = create_webdocs(username if no_users else user, batch=True, purpose="legacy" if import_legacy else "user")
+                site = create_webdocs(username if no_users else user, batch=True, purpose=("legacy" if import_legacy else "user"))
                 if site:
                     success.append(username)
                     continue
