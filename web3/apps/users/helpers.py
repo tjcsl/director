@@ -57,7 +57,9 @@ def create_webdocs(user, batch=False, purpose="user"):
         custom_nginx=False
     )
     create_site_users(site)
-    site.group.users.add(user)
+
+    if not isinstance(user, str):
+        site.group.users.add(user)
 
     make_site_dirs(site)
     create_config_files(site)
