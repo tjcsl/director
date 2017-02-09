@@ -5,7 +5,8 @@ $(document).ready(function() {
         $("form button").html("<i class='fa fa-cog fa-spin'></i> Processing...");
         var students = $("#students").val().split("\n");
         var create_webdocs = function() {
-            $.post("?json", { students: students.splice(0, 10).join("\n"), legacy: !!$("#legacy-checkbox").val(), "no-user": !!$("#no-user-checkbox").val() }, function(data) {
+            var students = students.splice(0, 10).join("\n");
+            $.post("?json", { students: students, legacy: !!$("#legacy-checkbox").val(), "no-user": !!$("#no-user-checkbox").val() }, function(data) {
                 $.each(data.success, function(k, v) {
                     var item = $("<div class='yes' />");
                     item.text(v);
@@ -25,6 +26,11 @@ $(document).ready(function() {
                 }
             }).fail(function() {
                 Messenger().error("An error occured while creating webdocs.");
+                $.each(students, function(k, v) {
+                    var item = $("<div class='none' />");
+                    item.text(v);
+                    $("#failure-list").append(item);
+                });
                 $("form").hide();
                 $("#finished-container").show();
             });
