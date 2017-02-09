@@ -95,6 +95,12 @@ def create_webdocs_view(request):
         import_legacy = request.POST.get("legacy", False)
         no_users = request.POST.get("no-user", False)
 
+        if import_legacy == "false":
+            import_legacy = False
+
+        if no_users == "false":
+            no_users = False
+
         students = [x.strip() for x in request.POST.get("students", "").split("\n")]
         students = [x for x in students if x]
 
