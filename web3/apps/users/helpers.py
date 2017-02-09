@@ -15,10 +15,15 @@ def create_user(request, username):
 
     profile = request.user.api_request("profile/{}".format(username))
 
+    full_name = profile.get("common_name", get_full_name(username))
+
+    if not full_name:
+        return None
+
     user = User.objects.create(
         id=uid,
         username=username,
-        full_name=profile.get("common_name", get_full_name(username)),
+        full_name=full_name,
         email=profile.get("tj_email", "{}@tjhsst.edu".format(username)),
         is_staff=profile.get("is_teacher", False),
         is_superuser=profile.get("is_eighth_admin", False)
