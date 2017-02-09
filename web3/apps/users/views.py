@@ -92,8 +92,8 @@ def create_webdocs_view(request):
         raise PermissionDenied
 
     if request.method == "POST":
-        import_legacy = request.POST.get("legacy", False) is not False
-        no_users = request.POST.get("no-user", False) is not False
+        import_legacy = request.POST.get("legacy", False)
+        no_users = request.POST.get("no-user", False)
 
         students = [x.strip() for x in request.POST.get("students", "").split("\n")]
         students = [x for x in students if x]
