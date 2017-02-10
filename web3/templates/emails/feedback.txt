@@ -1,5 +1,6 @@
 Username: {{ request.user.username }}
 Email: {{ request.user.email }}
+User Agent: {{ useragent }}
 
 Comments
 

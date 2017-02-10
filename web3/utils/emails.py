@@ -30,7 +30,11 @@ def send_approval_request_email(request):
 
 
 def send_feedback_email(request, comments):
-    context = {"request": request, "feedback": comments}
+    context = {
+        "request": request,
+        "feedback": comments,
+        "useragent": request.META["HTTP_USER_AGENT"]
+    }
     plain_message = render_to_string("emails/feedback.txt", context)
     html_message = render_to_string("emails/feedback.html", context)
     if settings.DEBUG:
