@@ -30,7 +30,7 @@
         {% if site.has_repo %}<span data-toggle="tooltip"  data-placement="left" title="This site uses Git for version control." class="pull-right tag tag-default"><i class="fa fa-github-alt"></i> Git</span>{% endif %}
         {% if site.has_vm %}<span data-toggle="tooltip"  data-placement="left" title="This site has a virtual machine for its website." class="pull-right tag tag-info"><i class="fa fa-server"></i> VM</span>{% endif %}
         {% if site.custom_nginx %}<span data-toggle="tooltip" data-placement="left" title="This site has a custom nginx configuration." class="pull-right tag tag-info">Nginx</span>{% endif %}
-        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% else %}fa-cube{% endif %}"></i>
+        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% elif site.purpose == 'legacy' %}fa-snowflake-o{% else %}fa-cube{% endif %}"></i>
         <b class="name">{{ site.name }}</b><span class="sub"><span class="type">{{ site.get_category_display }}</span> - <span class="desc">{{ site.description|default:"No Description" }}</span> - <span class="users">{{ site.num_users|add:"-1" }} user{% if site.num_users != 2 %}s{% endif %}</span></span>
     </a>
 {% endfor %}
@@ -42,7 +42,7 @@
         {% if site.custom_nginx %}<span data-toggle="tooltip" data-placement="left" title="This site has a custom nginx configuration." class="pull-right tag tag-info">Nginx</span>{% endif %}
         {% if site.num_users <= 1 %}<span data-toggle="tooltip" data-placement="left" title="There are no users, other than superusers, that can access this site." class="pull-right tag tag-danger">No Users</span>{% endif %}
         {% if site.database %}<span class="pull-right tag tag-primary">{{ site.database.get_category_display }}</span>{% endif %}
-        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% else %}fa-globe{% endif %}"></i>
+        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% elif site.purpose == 'legacy' %}fa-snowflake-o{% else %}fa-cube{% endif %}"></i>
         <b class="name">{{ site.name }}</b><span class="sub"><span class="type">{{ site.get_category_display }}</span> - <span class="desc">{{ site.description|default:"No Description" }}</span> - <span class="users">{{ site.num_users|add:"-1" }} user{% if site.num_users != 2 %}s{% endif %}</span></span>
     </a>
     {% endfor %}
