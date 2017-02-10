@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $("#select-site").on("input", function(){
+    $(".search-box").on("input", function(){
         var val = $(this).val().toLowerCase();
 
         var notags = [];
@@ -19,7 +19,8 @@ $(document).ready(function() {
             });
         }
         val = $.trim(val.replace(/\s*tag:\w+/g, ""));
-        $("#sites .site").each(function(k, v) {
+        var search_objects = $(".search-box").data("search");
+        $(search_objects).each(function(k, v) {
             var name = $(this).find(".name").text();
             var desc = $(this).find(".desc").text();
             var type = $(this).find(".type").text();
@@ -59,8 +60,8 @@ $(document).ready(function() {
                 $(this).hide();
             }
         });
-        var sites_shown = $("#sites .site:visible").length;
-        var sites_total = $("#sites .site").length;
+        var sites_shown = $(search_objects + ":visible").length;
+        var sites_total = $(search_objects).length;
         if (sites_shown < sites_total) {
             $("#filtered").html("(<b>" + sites_shown + "</b> shown out of <b>" + sites_total + "</b>)");
         }
