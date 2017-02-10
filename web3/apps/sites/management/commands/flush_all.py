@@ -9,10 +9,8 @@ from web3.apps.sites.helpers import make_site_dirs, fix_permissions, reload_serv
 class Command(BaseCommand):
     help = "Rewrite all site configurations and reset all permissions"
 
-
     def add_arguments(self, parser):
         parser.add_argument('--no-permissions', action='store_true', dest='noperms', default=False, help="Don't reset permissions.")
-
 
     def handle(self, **options):
         for site in Site.objects.all():

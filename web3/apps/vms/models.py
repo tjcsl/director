@@ -36,7 +36,6 @@ class VirtualMachine(models.Model):
         ips = self.ips
         return ips[0] if len(ips) else None
 
-
     @property
     def hostname(self):
         return slugify(self.name).replace("_", "-")

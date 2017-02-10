@@ -69,19 +69,3 @@ $(document).ready(function() {
         }
     });
 });
-function pingSites() {
-    $.get("/site/ping", function(data) {
-        for (var key in data) {
-            var t = $("#sites #" + key + ".site .fa.pull-left");
-            if (data[key][0]) {
-                t.append("<span class='green' />");
-            }
-            else {
-                var tag = $("<span class='red' data-toggle='tooltip' data-placement='right' />");
-                tag.attr("title", data[key][1]);
-                tag.appendTo(t);
-                tag.tooltip();
-            }
-        }
-    });
-}

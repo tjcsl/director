@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from ..authentication.decorators import superuser_required
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_http_methods
 from django.db.models import Count, Q

@@ -3,11 +3,9 @@ import io
 import shutil
 import stat
 import datetime
-import requests
 import zipfile
 import mimetypes
 
-from multiprocessing import Pool
 from subprocess import Popen, PIPE
 
 from django.shortcuts import render, redirect, get_object_or_404, reverse
@@ -69,28 +67,6 @@ def create_view(request):
                 return render(request, "sites/create_info.html")
         else:
             return redirect("request_site")
-
-
-def ping_site(name, url):
-    try:
-        code = requests.head(url, timeout=10, allow_redirects=True).status_code
-        is_up = not str(code).startswith("4") and not str(code).startswith("5")
-    except Exception as e:
-        code = str(e)
-        is_up = False
-    return (name, is_up, code)
-
-
-@login_required
-def ping_view(request):
-    if request.user.is_superuser:
-        sites = Site.objects.all()
-    else:
-        sites = Site.objects.filter(group__users=request.user)
-
-    with Pool(10) as p:
-        results = p.starmap(ping_site, [(x.id, x.url) for x in sites])
-    return JsonResponse({x[0]: x[1:] for x in results})
 
 
 @login_required

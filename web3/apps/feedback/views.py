@@ -5,6 +5,7 @@ from django.contrib import messages
 from ...utils.emails import send_feedback_email
 from .models import Feedback
 
+
 def feedback_view(request):
     if request.method == "POST":
         comments = request.POST.get("feedback", None)
