@@ -39,3 +39,6 @@ class VirtualMachine(models.Model):
     @property
     def hostname(self):
         return slugify(self.name).replace("_", "-")
+
+    def __str__(self):
+        return self.name
