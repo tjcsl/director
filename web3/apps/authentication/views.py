@@ -69,7 +69,7 @@ def node_auth_view(request):
 
             if vmid is not None and vmid != "":
                 vm = VirtualMachine.objects.get(id=int(vmid))
-                if not user.is_superuser and not vm.users.filter(id=user.id).exists():
+                if not user.is_superuser and not vm.owner == user and not vm.users.filter(id=user.id).exists():
                     return JsonResponse({"granted": False, "error": "User does not have permission to access this virtual machine."}, status=403)
                 if not vm.ip_address or not vm.password:
                     return JsonResponse({"granted": False, "error": "No IP address or root password set!"})
