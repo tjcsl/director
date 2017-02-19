@@ -224,9 +224,14 @@ def list_executable_files(path, level):
     out = []
 
     for root, dirs, files in os.walk(path):
-        # ignore hidden files and folders
+        # ignore hidden files and folders, ignore common npm install path
         files = [f for f in files if not f[0] == "."]
-        dirs[:] = [d for d in dirs if not d[0] == "."]
+        dirs[:] = [d for d in dirs if not d[0] == "." and not d == "node_modules"]
+
+        # ignore files in virtual environments
+        if "pip-selfcheck.json" in files:
+            del dirs[:]
+            continue
 
         for f in files:
             p = os.path.abspath(os.path.join(root, f))
