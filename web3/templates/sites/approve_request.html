@@ -40,7 +40,7 @@
 </div>
 {% if request.user.is_superuser %}
 <hr />
-<a href="{% url 'request_site' %}">Site Request Form</a> - <a href="{% url 'admin_site' %}">Admin Approval</a>
+<div class="nav-links"><a href="{% url 'request_site' %}">Site Request Form</a> - <a href="{% url 'admin_site' %}">Admin Approval</a></div>
 {% endif %}
 <div id="guidelines-modal" class="modal fade">
     <div class="modal-dialog" role="document">

@@ -5,6 +5,9 @@ div.main {
 .alert.alert-warning {
     margin-top: 1rem;
 }
+.nav-links {
+    text-align: center;
+}
 #guidelines {
     max-width: 800px;
     max-height: 400px;

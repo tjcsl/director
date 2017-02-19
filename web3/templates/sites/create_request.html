@@ -113,6 +113,6 @@
 </form>
 {% if request.user.is_superuser %}
 <hr />
-<a href="{% url 'approve_site' %}">Teacher Approval</a> - <a href="{% url 'admin_site' %}">Admin Approval</a>
+<div class="nav-links"><a href="{% url 'approve_site' %}">Teacher Approval</a> - <a href="{% url 'admin_site' %}">Admin Approval</a></div>
 {% endif %}
 {% endblock %}
