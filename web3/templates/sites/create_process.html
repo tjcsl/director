@@ -7,13 +7,31 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $("#id_site").selectize();
+            $("#files li").click(function(e) {
+                e.preventDefault();
+                $("#id_path").val($(this).text());
+            });
         });
     </script>
 {% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <style>
+    #files {
+        max-height: 120px;
+        overflow: auto;
+        border: 1px solid #ccc;
+    }
+    #files li {
+        cursor: pointer;
+    }
+    </style>
+{% endblock %}
+
 {% block main %}
 <h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Process</h4>
-<p>Before adding or editing a process, make sure that your script file:</p>
+<div>Before adding or editing a process, make sure that your script file:</div>
 <ul>
     <li>Is marked as executable (<span class="path">chmod +x &lt;script&gt;</span>)</li>
     <li>Contains a shebang (<span class="path">#!/bin/sh</span> or similar)</li>
@@ -23,8 +41,8 @@
     {% csrf_token %}
     {% include "form.html" with form=form %}
     {% if files %}
-    <p>Executable files:</p>
-    <ul>
+    <div>Executable files:</div>
+    <ul id="files">
     {% for file in files %}
         <li>{{ file }}</li>
     {% endfor %}
