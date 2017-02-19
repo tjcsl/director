@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_http_methods
 
-from .models import Site, Process, SiteRequest
+from .models import Site, Process
 from .forms import SiteForm, ProcessForm, DatabaseForm
 from .helpers import (reload_services, delete_site_files, create_config_files,
                       make_site_dirs, create_process_config, restart_supervisor,
@@ -30,6 +30,7 @@ from .database_helpers import delete_postgres_database, change_postgres_password
 from ..authentication.decorators import superuser_required
 from ..users.models import User
 from ..vms.models import VirtualMachine
+from ..request.models import SiteRequest
 
 from ..users.helpers import create_user
 
@@ -923,89 +924,3 @@ def editor_exec_view(request, site_id):
         os.chmod(path, stat.S_IMODE(st.st_mode) & ~stat.S_IXUSR & ~stat.S_IXGRP & ~stat.S_IXOTH)
 
     return JsonResponse({"success": True})
-
-
-@login_required
-def approve_view(request):
-    if not request.user.is_staff and not request.user.is_superuser:
-        return redirect("request_site")
-
-    if request.method == "POST":
-        site_request = get_object_or_404(SiteRequest, id=request.POST.get("request", None))
-        if site_request.teacher != request.user:
-            messages.error(request, "You do not have permission to approve this request!")
-            return redirect("approve_site")
-        agreement = request.POST.get("agreement", False) is not False
-        if not agreement:
-            messages.error(request, "You must agree to the conditions in order to approve a site!")
-        else:
-            site_request.teacher_approval = True
-            site_request.save()
-            messages.success(request, "Your approval has been added and the site will be created shortly!")
-        return redirect("approve_site")
-
-    context = {
-        "requests": request.user.site_requests.all().order_by("-request_date"),
-        "admin_requests": SiteRequest.objects.filter(teacher_approval=True).order_by("-request_date") if request.user.is_superuser else None
-    }
-
-    return render(request, "sites/approve_request.html", context)
-
-
-@superuser_required
-def approve_admin_view(request):
-    if request.method == "POST":
-        site_request = get_object_or_404(SiteRequest, id=request.POST.get("request", None))
-        action = request.POST.get("action", None)
-        if action == "accept":
-            site_request.admin_approval = True
-            site_request.save()
-            messages.success(request, "Request has been marked as processed!")
-        elif action == "reject":
-            site_request.delete()
-            messages.success(request, "Request deleted!")
-        return redirect("admin_site")
-
-    context = {
-        "requests": SiteRequest.objects.all().order_by("-request_date") if request.user.is_superuser else None
-    }
-
-    return render(request, "sites/admin_request.html", context)
-
-
-@login_required
-def request_view(request):
-    if request.user.is_staff and not request.user.is_superuser:
-        return redirect("approve_site")
-
-    context = {}
-
-    if request.method == "POST":
-        activity = request.POST.get("name", None)
-        extra = request.POST.get("extra", None)
-        teacher = request.POST.get("teacher", None)
-        agreement = request.POST.get("agreement", None)
-        if not activity or not teacher:
-            messages.error(request, "You must fill out all of the fields before submitting this form!")
-        if not agreement:
-            messages.error(request, "You must accept the agreement before submitting this form!")
-        teacher = create_user(request, teacher)
-        if not teacher:
-            messages.error(request, "Invalid teacher selected!")
-        elif not teacher.is_staff and not teacher.is_superuser:
-            messages.error(request, "This user is not a teacher or staff member!")
-        else:
-            sr = SiteRequest.objects.create(
-                user=request.user,
-                teacher=teacher,
-                activity=activity,
-                extra_information=extra
-            )
-            if send_approval_request_email(sr) > 0:
-                messages.success(request, "Website request created!")
-            else:
-                messages.warning(request, "Website request created, but failed to email teacher.")
-
-    context["requests"] = request.user.requested_sites.filter(admin_approval=False)
-
-    return render(request, "sites/create_request.html", context)

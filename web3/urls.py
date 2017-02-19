@@ -34,6 +34,7 @@ urlpatterns = [
     url(r"^site/", include("web3.apps.sites.urls")),
     url(r'^vm/', include("web3.apps.vms.urls")),
     url(r'^admin/', admin.site.urls),
+    url(r'^request/', include("web3.apps.request.urls")),
     url(r'^feedback$', feedback_views.feedback_view, name='feedback'),
     url(r'^github_oauth/$', user_views.github_oauth_view)
 ]
