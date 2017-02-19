@@ -19,6 +19,7 @@ h1 {
 .alert {
     margin: 0 auto;
     max-width: 438px;
+    margin-bottom: 15px;
 }
 
 .login-box p {
