@@ -1,5 +1,5 @@
-<p>Hi {{ request.teacher.full_name }},</p>
+<p>{{ request.teacher.full_name }},</p>
 <p>A student, <b>{{ request.user.full_name }}</b>, has filed a website request form for <b>{{ request.activity }}</b> and marked you as the teacher sponsor.</p>
-<p>You can accept this request at <a href="https://director.tjhsst.edu/">https://director.tjhsst.edu/</a>. If you have any questions, email sysadmins@tjhsst.edu.</p>
+<p>You can accept this request at <a href="https://director.tjhsst.edu{% url 'approve_site' %}">https://director.tjhsst.edu{% url 'approve_site' %}</a>. If you have any questions, email sysadmins@tjhsst.edu.</p>
 <p>Thanks,<br />
 The Director Team</p>
