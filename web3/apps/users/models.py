@@ -53,7 +53,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def site_notifications(self):
-        return self.site_requests.filter(Q(teacher_approval=True, admin_approval=False) | Q(teacher=self, teacher_approval=False)) if self.is_superuser else self.site_requests.filter(teacher_approval=False)
+        if self.is_superuser:
+            return self.site_requests.filter(Q(teacher_approval=True, admin_approval=False) | Q(teacher=self, teacher_approval=False))
+        else:
+            return self.site_requests.filter(teacher_approval=False)
 
     def api_request(self, url, params={}, refresh=True):
         s = self.get_social_auth()
