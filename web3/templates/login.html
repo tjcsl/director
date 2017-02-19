@@ -7,6 +7,9 @@
 {% endblock %}
 
 {% block main %}
+    {% if request.user.is_authenticated and request.GET.next %}
+    <div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> You are already logged in as <b>{{ request.user.username }}</b>, but you are not authorized to access this page. Would you like to login to a different account?</div>
+    {% endif %}
     <div class="login-box">
         <p><b>Log in with your Intranet account</b> to access the Director management interface.</p>
         <center>

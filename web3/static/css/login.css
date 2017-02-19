@@ -13,7 +13,12 @@ h1 {
     padding: 15px;
     border: 1px solid #0048ab;
     margin: 0 auto;
-    width: 438px;
+    max-width: 438px;
+}
+
+.alert {
+    margin: 0 auto;
+    max-width: 438px;
 }
 
 .login-box p {
