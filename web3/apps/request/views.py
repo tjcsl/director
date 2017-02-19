@@ -5,6 +5,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from ..authentication.decorators import superuser_required
 
+from ..users.helpers import create_user
+
 from ...utils.emails import send_approval_request_email
 from .models import SiteRequest
 

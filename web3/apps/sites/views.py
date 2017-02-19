@@ -32,9 +32,7 @@ from ..users.models import User
 from ..vms.models import VirtualMachine
 from ..request.models import SiteRequest
 
-from ..users.helpers import create_user
-
-from ...utils.emails import send_new_site_email, send_approval_request_email
+from ...utils.emails import send_new_site_email
 
 from raven.contrib.django.raven_compat.models import client
 
