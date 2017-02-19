@@ -216,3 +216,26 @@ def fix_permissions(site):
                 os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
             else:
                 os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
+
+
+def list_executable_files(path, level):
+    path = path.rstrip(os.path.sep)
+    num_sep = path.count(os.path.sep)
+    out = []
+
+    for root, dirs, files in os.walk(path):
+        # ignore hidden files and folders
+        files = [f for f in files if not f[0] == "."]
+        dirs[:] = [d for d in dirs if not d[0] == "."]
+
+        for f in files:
+            p = os.path.abspath(os.path.join(root, f))
+            if os.access(p, os.X_OK):
+                out.append(p)
+
+        # limit folder recursion
+        cur_num_sep = root.count(os.path.sep)
+        if num_sep + level <= cur_num_sep:
+            del dirs[:]
+
+    return out
