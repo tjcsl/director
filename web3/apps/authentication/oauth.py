@@ -42,7 +42,7 @@ class IonOauth2(BaseOAuth2):
             'email': profile['tj_email'],
             'service': False,
             'is_superuser': False,
-            'is_staff': profile['is_teacher']
+            'staff': profile['is_teacher']
         }
 
     def get_user_id(self, details, response):

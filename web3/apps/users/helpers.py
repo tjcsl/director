@@ -25,7 +25,7 @@ def create_user(request, username):
         username=username,
         full_name=full_name,
         email=profile.get("tj_email", "{}@tjhsst.edu".format(username)),
-        is_staff=profile.get("is_teacher", False),
+        staff=profile.get("is_teacher", False),
         is_superuser=profile.get("is_eighth_admin", False)
     )
 

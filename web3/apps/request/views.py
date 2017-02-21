@@ -13,7 +13,7 @@ from .models import SiteRequest
 
 @login_required
 def approve_view(request):
-    if not request.user.is_staff and not request.user.is_superuser:
+    if not request.user.is_staff:
         return redirect("request_site")
 
     if request.method == "POST":
