@@ -25,7 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     full_name = models.CharField(max_length=60)
     email = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
     github_token = models.CharField(max_length=40, blank=True)
     access_token = models.CharField(max_length=64, blank=True, null=True)
@@ -37,6 +37,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     def has_webdocs(self):
         from ..sites.models import Site
         return Site.objects.filter(name=self.username, purpose="user").count() > 0
+
+    @property
+    def is_staff(self):
+        return self.staff or self.is_superuser
+
+    @is_staff.setter
+    def is_staff(self, value):
+        self.staff = True
 
     @property
     def short_name(self):
