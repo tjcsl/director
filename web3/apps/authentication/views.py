@@ -89,7 +89,7 @@ def verify_permission_view(request):
             site = Site.objects.get(name=request.GET.get("site"))
         except (User.DoesNotExist, Site.DoesNotExist):
             return JsonResponse({"granted": False, "error": "Invalid user or site."})
-        if not user.is_superuser and not site.group.users.filter(id=user.id).exists():
+        if not user.is_staff and not site.group.users.filter(id=user.id).exists():
             return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status=403)
         return JsonResponse({"granted": True})
 
