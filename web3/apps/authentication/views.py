@@ -80,3 +80,19 @@ def node_auth_view(request):
             return JsonResponse({"granted": False, "error": "Malformed request.", "exception": str(e)}, status=400)
     else:
         return JsonResponse({"error": "Method not allowed."}, status=405)
+
+@csrf_exempt
+def verify_permission_view(request):
+    try:
+        try:
+            user = User.objects.get(username=request.GET.get("username"))
+            site = Site.objects.get(name=request.GET.get("site"))
+        except (User.DoesNotExist, Site.DoesNotExist):
+            return JsonResponse({"granted": False, "error": "Invalid user or site."})
+        if not user.is_superuser and not site.group.users.filter(id=user.id).exists():
+            return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status=403)
+        return JsonResponse({"granted": True})
+
+    except Exception as e:
+        client.captureException()
+        return JsonResponse({"granted": False, "error": "Malformed request.", "exception": str(e)}, status=400)
