@@ -19,7 +19,7 @@ function main() {
     var ws = new WebSocket(host + "/ws/");
     var termid;
     ws.onopen = function(e) {
-        $("#console").empty();
+        $("#console").empty().removeClass("disconnected");
         $("#disconnect").hide();
         var term = new Terminal({ cursorBlink: true });
         term.on("data", function(data) {
@@ -63,7 +63,7 @@ function main() {
             }
             catch (ignore) {  }
             $(window).unbind("resize");
-            $("#console").html(cache);
+            $("#console").html(cache).addClass("disconnected");
             started = false;
             document.title = 'Terminal';
             $("#disconnect").show();
