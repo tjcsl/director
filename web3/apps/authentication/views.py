@@ -109,8 +109,6 @@ def set_access_cookie_view(request):
 def check_access_cookie_view(request):
     site_name = request.META.get("HTTP_DIRECTOR_SITE_NAME")
     site_cookie = request.COOKIES.get("site_{}".format(site_name))
-    with open("/tmp/test.txt", "w") as f:
-        f.write(str(site_name) + "\n" + str(site_cookie))
     if not site_cookie:
         return HttpResponse("Unauthorized", status=401)
     if not len(site_cookie.split("_")) == 2:
