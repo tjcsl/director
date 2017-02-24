@@ -37,7 +37,8 @@ urlpatterns = [
     url(r'^request/', include("web3.apps.request.urls")),
     url(r'^feedback$', feedback_views.feedback_view, name='feedback'),
     url(r'^github_oauth/$', user_views.github_oauth_view),
-    url(r'^verify_permission/$', auth_views.verify_permission_view),
+    url(r'^set_cookie$', auth_views.set_access_cookie_view, name='set_cookie'),
+    url(r'^check_cookie$', auth_views.check_access_cookie_view, name='check_cookie')
 ]
 
 if settings.DEBUG:
