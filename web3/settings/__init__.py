@@ -26,7 +26,7 @@ PROJECT_ROOT = BASE_DIR
 SECRET_KEY = 's-gh_-#s^oq^0*5=y8k&*^l8m9540mvo@m*tazzw%3*o7$y&m0'
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["director.tjhsst.edu", "127.0.0.1", "localhost"]
 
 try:
     from .secret import *
