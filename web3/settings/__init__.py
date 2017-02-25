@@ -100,15 +100,8 @@ WSGI_APPLICATION = 'web3.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-DATABASES = {}
-
-if DEBUG:
-    DATABASES["default"] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite',
-    }
-else:
-    DATABASES["default"] = {
+DATABASES = {
+    "default": {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'web3',
         'USER': 'web3',
@@ -116,6 +109,7 @@ else:
         'HOST': '127.0.0.1',
         'PORT': '5432'
     }
+}
 
 
 # Password validation

@@ -31,6 +31,7 @@ apt-get update
 apt-get upgrade -y
 
 apt-get install -y git
+apt-get install -y php-fpm
 
 apt-get install -y sudo python python-dev python3 python3-dev python3-pip virtualenv libnss-pgsql2 nodejs nodejs-legacy supervisor
 apt-get install -y postgresql postgresql-contrib libpq-dev libmysqlclient-dev nginx
@@ -49,8 +50,8 @@ nginx -s reload
 # Set the database password
 sed -i 's/^DB_PASSWORD.*/DB_PASSWORD = "'"$DB_PASS"'"/' web3/settings/secret.py
 
-# Turn off DEBUG to use the postgresql database
-sed -i 's/^DEBUG.*/DEBUG = False/' web3/settings/secret.py
+# Turn on debug to see more detailed error messages
+sed -i 's/^DEBUG.*/DEBUG = True/' web3/settings/secret.py
 
 # Remove Raven logging
 sed -i '/dsn/d' web3/settings/secret.py
