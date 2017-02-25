@@ -8,7 +8,12 @@ from raven.contrib.django.raven_compat.models import client
 
 def call_api(action=None, **kwargs):
     try:
-        resp = requests.request(method=("POST" if action else "GET"), json={"method": action, "args": kwargs}, url=settings.CONDUCTOR_AGENT_PATH, cert=settings.CONDUCTOR_CERT_PATH, verify=False)
+        resp = requests.request(method=("POST" if action else "GET"),
+                                json={"method": action, "args": kwargs},
+                                url=settings.CONDUCTOR_AGENT_PATH,
+                                cert=settings.CONDUCTOR_CERT_PATH,
+                                verify=False,
+                                timeout=10)
     except requests.exceptions.ConnectionError:
         return None
 
