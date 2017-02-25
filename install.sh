@@ -17,7 +17,10 @@ apt-get update
 apt-get upgrade -y
 
 apt-get install -y sudo python3 python3-dev python3-pip virtualenv libnss-pgsql2 nodejs supervisor
-apt-get install -y postgresql postgresql-contrib libpq-dev libmysqlclient-dev
+apt-get install -y postgresql postgresql-contrib libpq-dev libmysqlclient-dev nginx
+
+mkdir /etc/nginx/director.d/
+mkdir /etc/supervisor/director.d/
 
 cp web3/settings/secret.sample web3/settings/secret.py
 
