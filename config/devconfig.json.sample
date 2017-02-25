@@ -1,0 +1,6 @@
+{
+    "ssh_key": "id_rsa",
+    "network_interface": null,
+    "ion_key": null,
+    "ion_secret": null
+}
