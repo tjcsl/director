@@ -15,6 +15,10 @@ def call_api(action=None, **kwargs):
                                 verify=False,
                                 timeout=10)
     except requests.exceptions.ConnectionError:
+        client.captureException()
+        return None
+    except requests.exceptions.ReadTimeout:
+        client.captureException()
         return None
 
     if resp.status_code == 500 or resp.status_code == 400:
