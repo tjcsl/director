@@ -621,6 +621,9 @@ $(document).ready(function() {
             "fontSize": "12pt",
             "showPrintMargin": false
         });
+        container.on("resize", function() {
+            editor.resize();
+        });
         container.getElement().keydown(function(e) {
             if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
                 if (!editor.getSession().getUndoManager().isClean()) {
@@ -676,6 +679,9 @@ $(document).ready(function() {
                 "fontSize": "12pt",
                 "showPrintMargin": false,
                 "enableBasicAutocompletion": true
+            });
+            container.on("resize", function() {
+                editor.resize();
             });
             container.getElement().keydown(function(e) {
                 if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
