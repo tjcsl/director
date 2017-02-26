@@ -29,6 +29,9 @@ body {
 .console-wrapper .terminal {
     font-size: 16px;
 }
+.console-wrapper .terminal .xterm-viewport, .console-wrapper .terminal .xterm-rows {
+    line-height: 19px !important;
+}
 .console-wrapper ::-webkit-scrollbar {
     width: 8px;
 }
