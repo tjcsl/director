@@ -44,7 +44,35 @@ $(document).ready(function() {
             componentName: 'sql'
         });
     }
+
+    if (typeof localStorage !== 'undefined') {
+        var savedState = localStorage.getItem("editor-state-" + site_name);
+        if (savedState) {
+            layout_config = JSON.parse(savedState);
+            Messenger().post({
+                "message": "Your editor layout has been restored from your last session.",
+                "actions": {
+                    "reset": {
+                        "label": "Reset Layout",
+                        "action": function() {
+                            localStorage.removeItem("editor-state-" + site_name);
+                            window.location.reload();
+                        }
+                    }
+                },
+                "showCloseButton": true
+            });
+        }
+    }
+
     var layout = new GoldenLayout(layout_config, $("#editor-container"));
+
+    layout.on("stateChanged", function() {
+        if (typeof localStorage !== 'undefined') {
+            var state = JSON.stringify(layout.toConfig());
+            localStorage.setItem("editor-state-" + site_name, state);
+        }
+    });
 
     // #files code
     function triggerDelete(item) {
@@ -217,7 +245,7 @@ $(document).ready(function() {
                 id: "file-" + filepath,
                 type: "component",
                 componentName: "file",
-                componentState: { file: t.attr("data-name"), path: filepath, obj: $(this) }
+                componentState: { file: t.attr("data-name"), path: filepath, isImage: $(this).hasClass("image"), isMedia: $(this).hasClass("media") }
             };
             var existing = layout.root.getItemsById("file-" + filepath);
             if (existing.length) {
@@ -676,7 +704,7 @@ $(document).ready(function() {
         }, "text");
     });
     layout.registerComponent("file", function(container, componentState) {
-        if (componentState.obj.hasClass("image")) {
+        if (componentState.isImage) {
             container.setTitle(componentState.file);
             var img = $("<img />");
             img.attr("src", download_endpoint + "?name=" + encodeURIComponent(componentState.path) + "&embed=true");
@@ -684,7 +712,7 @@ $(document).ready(function() {
             img_container.append(img);
             container.getElement().append(img_container);
         }
-        else if (componentState.obj.hasClass("media")) {
+        else if (componentState.isMedia) {
             container.setTitle(componentState.file);
             var obj;
             if (componentState.path.toLowerCase().match(/\.pdf$/) != null) {
