@@ -82,11 +82,11 @@ fi
 source venv/bin/activate
 pip install -U -r requirements.txt
 
-./manage.py migrate
+./manage.py migrate --no-input
 
 # Give nss user specific permissions
 sudo -u postgres psql -c "GRANT CONNECT ON DATABASE web3 TO nss;"
-sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_user TO nss;"
+sudo -u postgres psql -d "web3" -c "GRANT SELECT (id, username, staff, is_superuser) ON TABLE users_user TO nss;"
 sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_group TO nss;"
 sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_group_users TO nss;"
 sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_user_groups TO nss;"
