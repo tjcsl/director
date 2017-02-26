@@ -1,7 +1,7 @@
 $(document).ready(function() {
     var modelist = ace.require("ace/ext/modelist");
     ace.require("ace/ext/language_tools");
-    var layout = new GoldenLayout({
+    var layout_config = {
         settings: {
             showPopoutIcon: false
         },
@@ -37,7 +37,15 @@ $(document).ready(function() {
                 }]
             }]
         }]
-    }, $("#editor-container"));
+    };
+    if (typeof registerConsole !== 'undefined') {
+        console.log(layout_config);
+        layout_config["content"][0]["content"][1]["content"][1]["content"].push({
+            type: 'component',
+            componentName: 'sql'
+        });
+    }
+    var layout = new GoldenLayout(layout_config, $("#editor-container"));
 
     // #files code
     function triggerDelete(item) {
@@ -436,14 +444,14 @@ $(document).ready(function() {
                     if (key == "open") {
                         window.open(site_url, "_blank");
                     }
-                    if (key == "new_terminal" || key == "new_nginx") {
+                    if (key == "new_terminal" || key == "new_nginx" || key == "new_sql") {
                         var c = layout.root.getItemsById("default-terminal");
                         if (!c.length) {
                             c = layout.root.getItemsById("default-file");
                         }
                         var newTab = {
                             type: "component",
-                            componentName: (key == "new_terminal" ? "terminal" : "nginx")
+                            componentName: (key == "new_terminal" ? "terminal" : key == "new_nginx" ? "nginx" : "sql")
                         };
                         c[0].addChild(newTab);
                     }
@@ -456,6 +464,7 @@ $(document).ready(function() {
                     "sep2": "--------",
                     "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
                     "new_nginx": {name: "Edit Nginx Config", icon: "fa-wrench"},
+                    "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
                     "sep3": "--------",
                     "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
@@ -599,6 +608,11 @@ $(document).ready(function() {
         var frame = $("<iframe class='terminal' />");
         frame.attr("src", terminal_url);
         container.getElement().append(frame);
+    });
+    layout.registerComponent("sql", function(container, componentState) {
+        container.setTitle("SQL");
+        container.getElement().html($("#sql-console-template").html());
+        registerConsole(container.getElement().find(".sql-console"));
     });
     layout.registerComponent("nginx", function(container, componentState) {
         container.setTitle("<span class='file-indicator fa fa-circle-o saved'></span> " + "Nginx");

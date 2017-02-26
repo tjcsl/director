@@ -1,5 +1,12 @@
 $(document).ready(function() {
-    $(".sql-console").click(function() {
+    var consoles = $("#sql-console-wrapper .sql-console");
+    consoles.each(function() {
+        registerConsole($(this));
+    });
+});
+
+function registerConsole(console) {
+    console.click(function() {
         var sel = window.getSelection().toString();
         if (!sel) {
             $(this).find(".input").focus();
@@ -7,7 +14,7 @@ $(document).ready(function() {
     });
     var history = [];
     var history_point = 0;
-    $(".sql-console").keydown(function(e) {
+    console.keydown(function(e) {
         if (e.which == 38) {
             history_point += 1;
             if (history_point < history.length) {
@@ -30,10 +37,7 @@ $(document).ready(function() {
             e.preventDefault();
         }
     });
-    $.post(sql_endpoint, {"version": true}, function(data) {
-        $(".sql-console .output").append(data + "\n");
-    });
-    $(".sql-console .input").keydown(function(e) {
+    console.find(".input").keydown(function(e) {
         var console = $(this).closest(".sql-console");
         if (e.ctrlKey && e.keyCode == 67 && !window.getSelection().toString()) {
             console.find(".output").append(console.find(".ps").text() + $(this).val() + "^C\n");
@@ -42,7 +46,7 @@ $(document).ready(function() {
             e.preventDefault();
         }
     });
-    $(".sql-console .input").keypress(function(e) {
+    console.find(".input").keypress(function(e) {
         var console = $(this).closest(".sql-console");
         if (e.which == 13) {
             var val = $(this).val();
@@ -79,4 +83,11 @@ $(document).ready(function() {
             console.scrollTop(console[0].scrollHeight);
         }
     });
-});
+    printVersion(console);
+}
+
+function printVersion(console) {
+    $.post(sql_endpoint, {"version": true}, function(data) {
+        console.find(".output").append(data + "\n");
+    });
+}

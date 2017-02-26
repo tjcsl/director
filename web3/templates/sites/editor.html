@@ -40,6 +40,12 @@
     var terminal_url = "/ws/terminal.html?uid={{ request.user.id }}&token={{ request.user.access_token }}&site={{ site.id }}";
     </script>
     {% include "ajax_csrf.html" %}
+    {% if site.database %}
+    <script type="text/javascript">
+    var sql_endpoint = "{% url 'sql_database' site.id %}";
+    </script>
+    <script type="text/javascript" src="{% static 'js/sql_console.js' %}"></script>
+    {% endif %}
 {% endblock %}
 
 {% block navbar %}
@@ -49,4 +55,13 @@
 {% block main %}
 <div id="editor-container"></div>
 <iframe id="download" style="display:none"></iframe>
+{% if site.database %}
+<div id="sql-console-template" style="display:none">
+    <div class="sql-console">
+        <pre class="output"><b>database: {{ site.database.db_name }}, user: {{ site.database.username }}, type: {{ site.database.category }}</b>
+    </pre>
+        <table><tr><td class="ps">{{ site.database.db_name }}=&gt; </td><td class="input-td"><input autofocus class="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" /></td></tr></table>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

@@ -1,7 +1,7 @@
 .main {
     padding: 0;
 }
-.sql-console-wrapper {
+#sql-console-wrapper {
     position: absolute;
     top: 40px;
     left: 0;
