@@ -1,6 +1,7 @@
 .console-wrapper {
     padding: 0;
     margin: 0;
+    position: relative;
     background-color:black;
     color:white;
     font-family:"DejaVu Sans Mono", "Liberation Mono", monospace;
@@ -43,7 +44,7 @@ body {
 .console-wrapper .disconnect {
     display: none;
     color: red;
-    position: fixed;
+    position: absolute;
     bottom: 10px;
     right: 10px;
     padding: 5px;

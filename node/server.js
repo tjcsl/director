@@ -19,7 +19,6 @@ var uuid = require("uuid/v4");
 var terminals = {};
 
 app.set("port", (process.env.PORT || 8301));
-app.use("/ws", express.static(__dirname + "/public"));
 
 var server = require("http").createServer(app);
 server.listen(app.get("port"));

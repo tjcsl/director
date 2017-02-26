@@ -648,10 +648,15 @@ $(document).ready(function() {
         registerFileHandlers(files);
     });
     layout.registerComponent("terminal", function(container, componentState) {
-        container.setTitle("Terminal");
-        var frame = $("<iframe class='terminal' />");
-        frame.attr("src", terminal_url);
-        container.getElement().append(frame);
+        container.setTitle("<span class='fa fa-terminal'></span> Terminal");
+        var term = $($("#console-wrapper-template").html());
+        container.getElement().append(term);
+        registerTerminal(term, terminal_auth, function(title) {
+            container.setTitle("<span class='fa fa-terminal'></span> " + title);
+        });
+        container.on("resize", function() {
+            term.trigger("terminal:resize");
+        });
     });
     layout.registerComponent("preview", function(container, componentState) {
         container.setTitle("<span class='fa fa-eye'></span> " + componentState.file);

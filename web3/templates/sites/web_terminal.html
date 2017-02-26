@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block css %}
     {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/terminal/xterm.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/terminal/terminal.css' %}" type="text/css" />
     <style>
     body {
         overflow-y: hidden;
@@ -11,13 +14,25 @@
         background-color: black;
         padding-right: 0;
     }
-    iframe {
-        border: none;
+    .console-wrapper {
         width: 100%;
         height: 100%;
-        height: calc(100vh - 40px);
+        height: calc(100vh - 45px);
+        overflow-y: hidden;
     }
     </style>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/terminal/xterm.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/terminal/fit.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/terminal/terminal.js' %}"></script>
+    <script>
+    $(document).ready(function() {
+        registerTerminal($(".console-wrapper"), { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}" });
+    });
+    </script>
 {% endblock %}
 
 {% block navbar %}
@@ -25,5 +40,10 @@
 {% endblock %}
 
 {% block main %}
-<iframe src="/ws/terminal.html?uid={{ request.user.id }}&token={{ request.user.access_token }}&site={{ site.id }}"></iframe>
+<div class="console-wrapper" tabindex="0">
+    <div class="console"></div>
+    <div class="disconnect">
+        <b>Connection Lost</b>, press <kbd>ENTER</kbd> to reconnect
+    </div>
+</div>
 {% endblock %}

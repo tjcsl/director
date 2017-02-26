@@ -7,20 +7,30 @@
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/golden-layout/1.5.7/css/goldenlayout-base.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/golden-layout/1.5.7/css/goldenlayout-light-theme.css" />
+
     {% if site.database %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/sql_console.css' %}" />
     {% endif %}
+
+    <link rel="stylesheet" href="{% static 'css/terminal/xterm.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/terminal/terminal.css' %}" type="text/css" />
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/site_editor.css' %}" />
 {% endblock %}
 
 {% block js %}
     {{ block.super }}
+    <script type="text/javascript" src="{% static 'js/terminal/xterm.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/terminal/fit.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/terminal/terminal.js' %}"></script>
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-modelist.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/golden-layout/1.5.7/goldenlayout.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.2/jquery.ui.position.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.2/jquery.contextMenu.min.js"></script>
+
     <script type="text/javascript" src="{% static 'js/sites/editor.js' %}"></script>
     <script type="text/javascript">
     var site_url = "{{ site.url }}";
@@ -38,7 +48,7 @@
     var exec_endpoint = "{% url 'editor_exec' site.id %}";
     var nginx_endpoint = "{% url 'edit_nginx' site.id %}";
     var is_dynamic = {% if site.category == 'dynamic' %}true{% else %}false{% endif %};
-    var terminal_url = "/ws/terminal.html?uid={{ request.user.id }}&token={{ request.user.access_token }}&site={{ site.id }}";
+    var terminal_auth = { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}" };
     </script>
     {% include "ajax_csrf.html" %}
     {% if site.database %}
@@ -65,4 +75,12 @@
     </div>
 </div>
 {% endif %}
+<div id="console-wrapper-template" style="display:none">
+    <div class="console-wrapper" tabindex="0">
+        <div class="console"></div>
+        <div class="disconnect">
+            <b>Connection Lost</b>, press <kbd>ENTER</kbd> to reconnect
+        </div>
+    </div>
+</div>
 {% endblock %}

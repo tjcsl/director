@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $(window).resize(function() {
-        $(".console-wrapper").trigger("resize");
+        $(".console-wrapper").trigger("terminal:resize");
     });
 });
 function registerTerminal(wrapper, auth, titlecallback) {
@@ -60,9 +60,9 @@ function registerTerminal(wrapper, auth, titlecallback) {
             wrapper.off("resize");
             console.html(cache).addClass("disconnected");
             started = false;
-            titlecallback("Terminal");
             wrapper.focus();
             disconnect.show();
+            titlecallback("Terminal");
         };
         wrapper.keypress(function(e) {
             if (e.which == 13) {
@@ -71,7 +71,9 @@ function registerTerminal(wrapper, auth, titlecallback) {
                 registerTerminal(wrapper, auth, titlecallback);
             }
         });
-        wrapper.resize(function(e) {
+        wrapper.on("terminal:resize", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             if (started) {
                 term.fit();
             }
