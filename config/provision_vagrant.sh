@@ -44,7 +44,7 @@ cd director/
 
 cp web3/settings/secret.sample web3/settings/secret.py
 
-cp config/nginx.conf /etc/nginx/nginx.conf
+cp config/dev-nginx.conf /etc/nginx/nginx.conf
 nginx -s reload
 
 # Set the database password
@@ -87,7 +87,7 @@ sed -i 's/^group:.*/group: compat pgsql/' /etc/nsswitch.conf
 /usr/sbin/nscd -i group
 /usr/sbin/nscd -i passwd
 
-cp config/supervisord.conf /etc/supervisor/supervisord.conf
+cp config/dev-supervisord.conf /etc/supervisor/supervisord.conf
 supervisorctl reread
 supervisorctl update
 
