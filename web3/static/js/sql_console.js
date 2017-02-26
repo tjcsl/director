@@ -31,7 +31,7 @@ $(document).ready(function() {
         }
     });
     $.post(sql_endpoint, {"version": true}, function(data) {
-        console.find(".output").append(data + "\n");
+        $(".sql-console .output").append(data + "\n");
     });
     $(".sql-console .input").keydown(function(e) {
         var console = $(this).parent();
