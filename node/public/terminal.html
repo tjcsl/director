@@ -8,11 +8,18 @@
         <script src="js/xterm.js"></script>
         <script src="js/fit.js"></script>
         <script src="js/terminal.js"></script>
+        <script>
+        $(document).ready(function() {
+            registerTerminal($(".console-wrapper"), { uid: gup("uid"), token: gup("token"), site: gup("site"), vm: gup("vm") });
+        });
+        </script>
     </head>
     <body>
-        <div id="console"></div>
-        <div id="disconnect">
-            <b>Connection Lost</b>, press ENTER to reconnect
+        <div class="console-wrapper" tabindex="0">
+            <div class="console"></div>
+            <div class="disconnect">
+                <b>Connection Lost</b>, press <kbd>ENTER</kbd> to reconnect
+            </div>
         </div>
     </body>
 </html>

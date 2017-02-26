@@ -1,26 +1,21 @@
 $(document).ready(function() {
-    if (!window.WebSocket) {
-        $("#console").text('No WebSocket support!');
-    }
-    else {
-        main();
-    }
-    $(document).keypress(function(e) {
-        if (e.which == 13 && restart) {
-            main();
-        }
+    $(window).resize(function() {
+        $(".console-wrapper").trigger("resize");
     });
 });
-var restart = false;
-function main() {
-    restart = false;
+function registerTerminal(wrapper, auth, titlecallback) {
+    titlecallback = titlecallback || function(title) {
+        document.title = title;
+    };
+    var console = wrapper.find(".console");
+    var disconnect = wrapper.find(".disconnect");
     var started = false;
     var host = location.origin.replace(/^http/, 'ws');
     var ws = new WebSocket(host + "/ws/");
     var termid;
     ws.onopen = function(e) {
-        $("#console").empty().removeClass("disconnected");
-        $("#disconnect").hide();
+        console.empty().removeClass("disconnected");
+        disconnect.hide();
         var term = new Terminal({ cursorBlink: true });
         term.on("data", function(data) {
             if (started) {
@@ -34,9 +29,9 @@ function main() {
             $.post("/ws/terminal/" + encodeURIComponent(termid) + "/size?cols=" + size.cols + "&rows=" + size.rows);
         });
         term.on("title", function(title) {
-            document.title = title;
+            titlecallback(title);
         });
-        ws.send(JSON.stringify({ uid: gup("uid"), token: gup("token"), site: gup("site"), vm: gup("vm") }));
+        ws.send(JSON.stringify(auth));
         ws.onmessage = function(e) {
             if (started) {
                 term.write(e.data);
@@ -44,11 +39,11 @@ function main() {
             else {
                 var data = JSON.parse(e.data);
                 if (data.error) {
-                    $("#console").append("<div style='color:red'>Error: " + $("<div />").text(data.error).html() + "</div>");
+                    console.append("<div style='color:red'>Error: " + $("<div />").text(data.error).html() + "</div>");
                 }
                 if (data.id) {
                     termid = data.id;
-                    term.open(document.getElementById("console"));
+                    term.open(console[0]);
                     term.fit();
                 }
                 if (data.action == "START") {
@@ -57,19 +52,26 @@ function main() {
             }
         };
         ws.onclose = function(e) {
-            var cache = $("#console").html();
+            var cache = console.html();
             try {
                 term.destroy();
             }
             catch (ignore) {  }
-            $(window).unbind("resize");
-            $("#console").html(cache).addClass("disconnected");
+            wrapper.off("resize");
+            console.html(cache).addClass("disconnected");
             started = false;
-            document.title = 'Terminal';
-            $("#disconnect").show();
-            restart = true;
+            titlecallback("Terminal");
+            wrapper.focus();
+            disconnect.show();
         };
-        $(window).resize(function(e) {
+        wrapper.keypress(function(e) {
+            if (e.which == 13) {
+                wrapper.off("keypress");
+                wrapper.off("resize");
+                registerTerminal(wrapper, auth, titlecallback);
+            }
+        });
+        wrapper.resize(function(e) {
             if (started) {
                 term.fit();
             }

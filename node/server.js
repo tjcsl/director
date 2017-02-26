@@ -58,10 +58,10 @@ wss.on("connection", function(ws) {
             vmid: data.vm,
             access_token: data.token
         });
-        var req = https.request({
+        var req = http.request({
             method: "POST",
-            hostname: "director.tjhsst.edu",
-            port: 443,
+            hostname: "localhost",
+            port: 601,
             path: "/wsauth",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",

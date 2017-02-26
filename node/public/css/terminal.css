@@ -1,4 +1,4 @@
-body {
+.console-wrapper {
     padding: 0;
     margin: 0;
     background-color:black;
@@ -7,33 +7,40 @@ body {
     overflow:hidden;
     font-size:16px;
 }
-.terminal {
+.console-wrapper:focus {
+    outline: none;
+}
+.console-wrapper .terminal {
     font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
 }
-html, body, #console {
+html, body, .console-wrapper, .console-wrapper .console {
     width: 100%;
     height: 100%;
 }
-::selection {
+body {
+    padding: 0;
+    margin: 0;
+}
+.console-wrapper ::selection {
     background-color:white;
     color:black;
 }
-.terminal {
+.console-wrapper .terminal {
     font-size: 16px;
 }
-::-webkit-scrollbar {
+.console-wrapper ::-webkit-scrollbar {
     width: 8px;
 }
-::-webkit-scrollbar-track {
+.console-wrapper ::-webkit-scrollbar-track {
     background-color: rgba(255, 255, 255, 0.4);
 }
-::-webkit-scrollbar-thumb {
+.console-wrapper ::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.6);
 }
-#console.disconnected {
+.console-wrapper .console.disconnected {
     filter: grayscale(100%);
 }
-#disconnect {
+.console-wrapper .disconnect {
     display: none;
     color: red;
     position: fixed;
