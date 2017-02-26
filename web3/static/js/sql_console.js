@@ -33,7 +33,7 @@ $(document).ready(function() {
     $.post(sql_endpoint, {"version": true}, function(data) {
         console.find(".output").append(data + "\n");
     });
-    console.find(".input").keydown(function(e) {
+    $(".sql-console .input").keydown(function(e) {
         var console = $(this).parent();
         if (e.ctrlKey && e.keyCode == 67 && !window.getSelection().toString()) {
             console.find(".output").append(console.find(".ps").text() + $(this).val() + "^C\n");
@@ -42,7 +42,7 @@ $(document).ready(function() {
             e.preventDefault();
         }
     });
-    console.find(".input").keypress(function(e) {
+    $(".sql-console .input").keypress(function(e) {
         var console = $(this).parent();
         if (e.which == 13) {
             var val = $(this).val();
