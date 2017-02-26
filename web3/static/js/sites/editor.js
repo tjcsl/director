@@ -545,18 +545,23 @@ $(document).ready(function() {
                     }
                     if (key == "preview") {
                         var filepath = get_path(trigger) + trigger.attr("data-name");
-                        var newTab = {
-                            id: "preview-" + filepath,
-                            type: "component",
-                            componentName: "preview",
-                            componentState: { path: filepath, file: trigger.attr("data-name") }
-                        };
-                        var existing = layout.root.getItemsById("preview-" + filepath);
-                        if (existing.length) {
-                            existing[0].parent.setActiveContentItem(existing[0]);
+                        if (filepath.startsWith("public/")) {
+                            var newTab = {
+                                id: "preview-" + filepath,
+                                type: "component",
+                                componentName: "preview",
+                                componentState: { path: filepath, file: trigger.attr("data-name") }
+                            };
+                            var existing = layout.root.getItemsById("preview-" + filepath);
+                            if (existing.length) {
+                                existing[0].parent.setActiveContentItem(existing[0]);
+                            }
+                            else {
+                                layout.root.getItemsById("default-file")[0].addChild(newTab);
+                            }
                         }
                         else {
-                            layout.root.getItemsById("default-file")[0].addChild(newTab);
+                            Messenger().error("This file cannot be previewed.");
                         }
                     }
                 },
