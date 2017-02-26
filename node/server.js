@@ -86,7 +86,7 @@ wss.on("connection", function(ws) {
                     ws.close();
                 }
                 else {
-                    if (data.site !== null) {
+                    if (data.site) {
                         if (!auth.user) {
                             ws.send(JSON.stringify({ error: "Invalid user id passed!" }));
                             ws.close();
@@ -103,7 +103,7 @@ wss.on("connection", function(ws) {
                             });
                         }
                     }
-                    else if (data.vm !== null) {
+                    else if (data.vm) {
                         term = pty.spawn(__dirname + "/ssh.sh", [auth.ip], {
                             name: "xterm-color",
                             cols: 80,
