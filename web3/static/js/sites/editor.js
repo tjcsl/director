@@ -39,7 +39,6 @@ $(document).ready(function() {
         }]
     };
     if (typeof registerConsole !== 'undefined') {
-        console.log(layout_config);
         layout_config["content"][0]["content"][1]["content"][1]["content"].push({
             type: 'component',
             componentName: 'sql'
@@ -718,6 +717,11 @@ $(document).ready(function() {
                             else {
                                 editor.getSession().getUndoManager().markClean();
                                 container.tab.element.find("span.file-indicator").addClass("saved");
+
+                                $.each(layout.root.getItemsById("preview-" + componentState.path), function(k, v) {
+                                    var frame = v.element.find("iframe");
+                                    frame.attr("src", frame.attr("src"));
+                                });
                             }
                         });
                     }
