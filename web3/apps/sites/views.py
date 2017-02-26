@@ -108,6 +108,8 @@ def edit_nginx_view(request, site_id):
     if request.method == "POST":
         if not request.user.is_superuser:
             return JsonResponse({"error": "You are not allowed to make changes to this file!"})
+        if not site.custom_nginx:
+            return JsonResponse({"error": "You must enable custom nginx configuration before editing this file."})
         if request.POST.get("editor", None):
             with open(nginx_path, "w") as f:
                 f.write(request.POST["editor"])
