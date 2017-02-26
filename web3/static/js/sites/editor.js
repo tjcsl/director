@@ -760,7 +760,7 @@ $(document).ready(function() {
             $.get(load_endpoint + "?name=" + encodeURIComponent(componentState.path), function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
-                    container.remove();
+                    container.close();
                 }
                 else {
                     var session = ace.createEditSession(data.contents);
