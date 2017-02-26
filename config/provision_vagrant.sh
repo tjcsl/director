@@ -20,12 +20,14 @@ with open('/home/ubuntu/director/config/devconfig.json', 'r') as f:
 
 export DEBIAN_FRONTEND=noninteractive
 
+# Add DNS entry for LDAP server
 if ! grep -Fxq "openldap1.csl.tjhsst.edu" /etc/hosts
 then
     echo 198.38.16.70 openldap1.csl.tjhsst.edu >> /etc/hosts
 fi
 
 DB_PASS='web3'
+NSS_PASS='web3'
 
 apt-get update
 apt-get upgrade -y
@@ -56,13 +58,25 @@ sed -i 's/^DEBUG.*/DEBUG = True/' web3/settings/secret.py
 # Remove Raven logging
 sed -i '/dsn/d' web3/settings/secret.py
 
+# Setup Ion OAuth
 sed -i 's/^SOCIAL_AUTH_ION_KEY.*/SOCIAL_AUTH_ION_KEY = "'"$(devconfig ion_key)"'"/' web3/settings/secret.py
 sed -i 's/^SOCIAL_AUTH_ION_SECRET.*/SOCIAL_AUTH_ION_SECRET = "'"$(devconfig ion_secret)"'"/' web3/settings/secret.py
 
 # Create web3 user and database
-sudo -u postgres createuser -D -A "web3" || echo "User already exists"
+sudo -u postgres createuser -D -A "web3" || echo "web3 user already exists"
 sudo -u postgres psql -c "ALTER USER web3 WITH PASSWORD '$DB_PASS';"
 sudo -u postgres createdb -O "web3" "web3" || echo "Database already exists"
+
+# Create nss user and give access
+sudo -u postgres createuser -D -A "nss" || echo "nss user already exists"
+sudo -u postgres psql -c "ALTER USER nss WITH PASSWORD '$NSS_PASS';"
+
+# Give nss user specific permissions
+sudo -u postgres psql -c "GRANT CONNECT ON DATABASE web3 TO nss;"
+sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_user TO nss;"
+sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_group TO nss;"
+sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_group_users TO nss;"
+sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_user_groups TO nss;"
 
 # Create www-data user
 useradd www-data || echo "www-data user already exists"
@@ -77,16 +91,17 @@ pip install -U -r requirements.txt
 
 ./manage.py migrate
 
-# Set up nss-pgsql
+# Setup nss-pgsql
 apt-get -y install nscd
 cp config/nss-pgsql.conf /etc/nss-pgsql.conf
 chmod 644 /etc/nss-pgsql.conf
-sed -i 's/^connectionstring.*/connectionstring = hostaddr=127.0.0.1 dbname=web3 user=web3 password='"$DB_PASS"' connect_timeout=1/' /etc/nss-pgsql.conf
+sed -i 's/^connectionstring.*/connectionstring = hostaddr=127.0.0.1 dbname=web3 user=nss password='"$NSS_PASS"' connect_timeout=1/' /etc/nss-pgsql.conf
 sed -i 's/^passwd:.*/passwd: compat pgsql/' /etc/nsswitch.conf
 sed -i 's/^group:.*/group: compat pgsql/' /etc/nsswitch.conf
 /usr/sbin/nscd -i group
 /usr/sbin/nscd -i passwd
 
+# Setup supervisor
 cp config/dev-supervisord.conf /etc/supervisor/supervisord.conf
 supervisorctl reread
 supervisorctl update
