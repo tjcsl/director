@@ -516,9 +516,26 @@ $(document).ready(function() {
                             }
                         });
                     }
+                    if (key == "preview") {
+                        var filepath = get_path(trigger) + trigger.attr("data-name");
+                        var newTab = {
+                            id: "preview-" + filepath,
+                            type: "component",
+                            componentName: "preview",
+                            componentState: { path: filepath, file: trigger.attr("data-name") }
+                        };
+                        var existing = layout.root.getItemsById("preview-" + filepath);
+                        if (existing.length) {
+                            existing[0].parent.setActiveContentItem(existing[0]);
+                        }
+                        else {
+                            layout.root.getItemsById("default-file")[0].addChild(newTab);
+                        }
+                    }
                 },
                 items: {
                     "open": {name: "Open", icon: "fa-pencil"},
+                    "preview": {name: "Preview", icon: "fa-eye"},
                     "download": {name: "Download", icon: "fa-download"},
                     "sep1": "--------",
                     "set_exec": {name: (trigger.hasClass("exec") ? "Unset Executable" : "Set Executable"), icon: "fa-cog"},
@@ -607,6 +624,14 @@ $(document).ready(function() {
         container.setTitle("Terminal");
         var frame = $("<iframe class='terminal' />");
         frame.attr("src", terminal_url);
+        container.getElement().append(frame);
+    });
+    layout.registerComponent("preview", function(container, componentState) {
+        container.setTitle("<span class='fa fa-eye'></span> " + componentState.file);
+        var frame = $("<iframe class='embedded' />");
+        frame.attr("sandbox", "allow-forms allow-pointer-lock allow-popups allow-scripts");
+        var final_url = site_url + componentState.path.replace(/^public\//, "");
+        frame.attr("src", final_url);
         container.getElement().append(frame);
     });
     layout.registerComponent("sql", function(container, componentState) {
