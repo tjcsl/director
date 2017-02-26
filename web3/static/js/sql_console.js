@@ -34,7 +34,7 @@ $(document).ready(function() {
         $(".sql-console .output").append(data + "\n");
     });
     $(".sql-console .input").keydown(function(e) {
-        var console = $(this).parent();
+        var console = $(this).closest(".sql-console");
         if (e.ctrlKey && e.keyCode == 67 && !window.getSelection().toString()) {
             console.find(".output").append(console.find(".ps").text() + $(this).val() + "^C\n");
             $(this).val("");
@@ -43,7 +43,7 @@ $(document).ready(function() {
         }
     });
     $(".sql-console .input").keypress(function(e) {
-        var console = $(this).parent();
+        var console = $(this).closest(".sql-console");
         if (e.which == 13) {
             var val = $(this).val();
             if (val) {
