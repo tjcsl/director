@@ -1,40 +1,45 @@
-var editor;
-
 $(document).ready(function() {
-    var tabs = {};
-    var tab_nginx;
     var modelist = ace.require("ace/ext/modelist");
-    var help_session = ace.createEditSession(" ____  _               _             \n\
-|  _ \\(_)_ __ ___  ___| |_ ___  _ __ \n\
-| | | | | '__/ _ \\/ __| __/ _ \\| '__|\n\
-| |_| | | | |  __/ (__| || (_) | |   \n\
-|____/|_|_|  \\___|\\___|\\__\\___/|_|   \n\
-\n\
-Use the panel on the right to select a file to edit.\n\
-Press Ctrl + S to save your changes.\n\
-\n\
-You can right click files and folders for more options.\n\
-You can also drag and drop files to folders to upload them.\n\
-You can drag files and folders around to move them.");
+    ace.require("ace/ext/language_tools");
+    var layout = new GoldenLayout({
+        settings: {
+            showPopoutIcon: false
+        },
+        labels: {
+            close: "Close",
+            maximise: "Maximize",
+            minimise: "Minimize"
+        },
+        content: [{
+            type: 'row',
+            content:[{
+                type: 'component',
+                componentName: 'files',
+                width: 25,
+                isClosable: false
+            },{
+                type: 'column',
+                content:[{
+                    type: 'stack',
+                    isClosable: false,
+                    id: "default-file"
+                },{
+                    type: 'stack',
+                    id: "default-terminal",
+                    height: 30,
+                    content: [{
+                        type: 'component',
+                        componentName: 'terminal'
+                    }, {
+                        type: 'component',
+                        componentName: 'nginx'
+                    }]
+                }]
+            }]
+        }]
+    }, $("#editor-container"));
 
-    editor = ace.edit("editor");
-    editor.setSession(help_session);
-    editor.setOptions({
-        "fontSize": "12pt",
-        "showPrintMargin": false
-    });
-    $("#editor").show();
-    function checkTabClean(tab) {
-        if (tab.length) {
-            var clean = tabs[tab.attr("data-file")].getUndoManager().isClean();
-            tab.toggleClass("unsaved", !clean);
-            return clean;
-        }
-        return false;
-    }
-    editor.on("input", function() {
-        checkTabClean($("#tabs .tab.active:not(.tab-special)"));
-    });
+    // #files code
     function triggerDelete(item) {
         var filepaths = [];
         var items = $("#files div.active");
@@ -117,191 +122,303 @@ You can drag files and folders around to move them.");
                 }
             });
         }
-
     }
-    var path_obj;
-    $("#files").on("dragstart", "div", function(e) {
-        var item = $(this);
-        var filepath = get_path(item);
-        if (item.hasClass("file")) {
-            filepath += item.attr("data-name");
+    function makeNode(v, depth) {
+        depth = depth || 0;
+        var c = (v.type == "f" ? "file" : "folder");
+        var ic = c;
+        var node = $("<div draggable='true' style='padding-left:" + (depth*20) + "px'><i class='fa fa-fw'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
+        node.addClass(c);
+        node.attr("data-name", v.name);
+        node.attr("data-depth", depth);
+        if (v.executable) {
+            node.addClass("exec");
         }
-        e.originalEvent.dataTransfer.setData("path", filepath);
-        path_obj = item;
-    });
-    $("#files").on("dragover", function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (e.target !== $("#files")[0]) {
-            $(e.target).closest("div").addClass("dragover");
+        if (v.link) {
+            node.addClass("link");
         }
-    });
-    $("#files").on("dragleave", "div", function(e) {
-        $(this).removeClass("dragover");
-    });
-    $("#files").on("drop", function(e) {
-        if (e.target !== $("#files")[0]) {
-            $(e.target).closest("div").removeClass("dragover");
+        if (v.name.charAt(0) == ".") {
+            node.addClass("hidden");
         }
-        if (e.originalEvent.dataTransfer) {
-            if (e.originalEvent.dataTransfer.files.length) {
-                e.preventDefault();
-                e.stopPropagation();
-                var files = e.originalEvent.dataTransfer.files;
-                var folder;
-                var path = "";
-                if (e.target !== $("#files")[0]) {
-                    folder = $(e.target).closest("div.folder");
-                    if (folder.length) {
-                        path = get_path(folder);
+        if (v.type == "f") {
+            var vnl = v.name.toLowerCase();
+            if (vnl.match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
+                node.addClass("image");
+                ic = "file-image";
+            }
+            if (vnl.match(/\.(mp3|mp4|pdf|swf)$/) != null) {
+                node.addClass("media");
+                if (vnl.match(/\.pdf$/)) {
+                    ic = "file-pdf";
+                }
+                else {
+                    ic = "file-video";
+                }
+            }
+            if (vnl.match(/\.(doc|docx|odt)$/) != null) {
+                ic = "file-word";
+            }
+            if (vnl.match(/\.(py|php|js|html|css)$/) != null) {
+                ic = "file-code";
+            }
+            if (vnl.match(/\.(txt|log)/) != null) {
+                ic = "file-text";
+            }
+            if (vnl.match(/\.(zip|rar|gz|tar|7z|bz2|xz)$/) != null) {
+                ic = "file-archive";
+            }
+        }
+        node.find("i.fa").addClass("fa-" + ic + "-o");
+        return node;
+    }
+
+    function initFiles(firstRun) {
+        firstRun = firstRun || false;
+        if (firstRun) {
+            $("#files div").remove();
+        }
+        $.get(path_endpoint, function(data) {
+            if (data.error) {
+                Messenger().error(data.error);
+            }
+            else {
+                $.each(data.files, function(k, v) {
+                    var node = makeNode(v);
+                    if (!$("#files div[data-depth=0][data-name='" + v.name.replace("'", "\\'") + "']").length) {
+                        $("#files").append(node);
+                    }
+                });
+                if (firstRun) {
+                    $("div.folder[data-name='public']").click();
+                }
+            }
+        });
+    }
+    function registerFileHandlers(files) {
+        files.on("click", ".file", function(e) {
+            e.preventDefault();
+            if (e.ctrlKey) {
+                $(this).addClass("active");
+                return;
+            }
+            else {
+                $("#files div").removeClass("active");
+            }
+            var t = $(this);
+            var filepath = get_path(t) + t.attr("data-name");
+            var newTab = {
+                id: "file-" + filepath,
+                type: "component",
+                componentName: "file",
+                componentState: { file: t.attr("data-name"), path: filepath, obj: $(this) }
+            };
+            var existing = layout.root.getItemsById("file-" + filepath);
+            if (existing.length) {
+                existing[0].parent.setActiveContentItem(existing[0]);
+            }
+            else {
+                layout.root.getItemsById("default-file")[0].addChild(newTab);
+            }
+        });
+        files.on("click", ".folder", function(e) {
+            e.preventDefault();
+            if (e.ctrlKey) {
+                $(this).addClass("active");
+                return;
+            }
+            else {
+                $("#files div").removeClass("active");
+            }
+            var t = $(this);
+            if (t.hasClass("loaded")) {
+                var contracted = t.find(".fa-fw").hasClass("fa-folder-o");
+                var children = getChildren(t);
+                if (contracted) {
+                    t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
+                    children.show();
+                    children.find(".fa-fw").each(function(k, v) {
+                        var folder = $(this).parent();
+                        if (!folder.hasClass("folder")) {
+                            return;
+                        }
+                        var expand = $(this).hasClass("fa-folder-open-o");
+                        var children = getChildren(folder);
+                        if (!expand) {
+                            children.hide();
+                        }
+                    });
+                }
+                else {
+                    t.find(".fa-fw").removeClass("fa-folder-open-o").addClass("fa-folder-o");
+                    children.hide();
+                }
+            }
+            else {
+                var depth = parseInt(t.attr("data-depth"));
+                t.addClass("loaded");
+                $.get(path_endpoint + "?path=" + encodeURIComponent(get_path(t)), function(data) {
+                    if (data.error) {
+                        Messenger().error(data.error);
                     }
                     else {
-                        folder = $(e.target).closest("div.file");
-                        if (folder.length) {
-                            folder = folder.prevAll("div.folder[data-depth=" + (parseInt(folder.attr("data-depth")) - 1) + "]:first");
-                            if (folder.length) {
-                                path = get_path(folder);
+                        $.each(data.files, function(k, v) {
+                            var node = makeNode(v, depth + 1);
+                            if (!getChildren(t).filter("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
+                                t.after(node);
                             }
-                            else {
-                                folder = null;
-                            }
-                        }
-                    }
-                }
-                var formData = new FormData();
-                formData.append("path", path);
-                for (var i = 0; i < files.length; i++) {
-                    formData.append("file[]", files[i], files[i].name);
-                }
-                $.ajax({
-                    url: upload_endpoint,
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(data) {
-                        if (data.error) {
-                            Messenger().error(data.error);
-                        }
-                        else {
-                            if (path == "") {
-                                initFiles();
-                            }
-                            else {
-                                var depth = 0;
-                                if (folder) {
-                                    folder.removeClass("loaded");
-                                    folder.click();
-                                }
-                                else {
-                                    initFiles();
-                                }
-                            }
-                        }
+                        });
+                        t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
                     }
                 });
             }
-            else {
-                var old_path = e.originalEvent.dataTransfer.getData("path");
-                if (old_path) {
+        });
+        var path_obj;
+        files.on("dragstart", "div", function(e) {
+            var item = $(this);
+            var filepath = get_path(item);
+            if (item.hasClass("file")) {
+                filepath += item.attr("data-name");
+            }
+            e.originalEvent.dataTransfer.setData("path", filepath);
+            path_obj = item;
+        });
+        files.on("dragover", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.target !== $("#files")[0]) {
+                $(e.target).closest("div").addClass("dragover");
+            }
+        });
+        files.on("dragleave", "div", function(e) {
+            $(this).removeClass("dragover");
+        });
+        files.on("drop", function(e) {
+            if (e.target !== $("#files")[0]) {
+                $(e.target).closest("div").removeClass("dragover");
+            }
+            if (e.originalEvent.dataTransfer) {
+                if (e.originalEvent.dataTransfer.files.length) {
                     e.preventDefault();
                     e.stopPropagation();
-                    var new_path = "";
+                    var files = e.originalEvent.dataTransfer.files;
+                    var folder;
+                    var path = "";
                     if (e.target !== $("#files")[0]) {
-                        var f = $(e.target).closest("div.folder");
-                        if (f.length) {
-                            new_path = get_path(f);
+                        folder = $(e.target).closest("div.folder");
+                        if (folder.length) {
+                            path = get_path(folder);
                         }
                         else {
-                            f = $(e.target).closest("div.file");
-                            if (f.length) {
-                                f = f.prevAll("div.folder[data-depth=" + (parseInt(f.attr("data-depth")) - 1) + "]:first");
-                                new_path = get_path(f);
-                            }
-                            if (!f.length) {
-                                f = $("#files");
+                            folder = $(e.target).closest("div.file");
+                            if (folder.length) {
+                                folder = folder.prevAll("div.folder[data-depth=" + (parseInt(folder.attr("data-depth")) - 1) + "]:first");
+                                if (folder.length) {
+                                    path = get_path(folder);
+                                }
+                                else {
+                                    folder = null;
+                                }
                             }
                         }
                     }
-                    if (old_path != new_path) {
-                        $.post(move_endpoint, { old: old_path, new: new_path }, function(data) {
+                    var formData = new FormData();
+                    formData.append("path", path);
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append("file[]", files[i], files[i].name);
+                    }
+                    $.ajax({
+                        url: upload_endpoint,
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(data) {
                             if (data.error) {
                                 Messenger().error(data.error);
                             }
                             else {
-                                if (path_obj.hasClass("folder")) {
-                                    var children = getChildren(path_obj);
-                                }
-                                if (f.hasClass("folder") && !f.find(".fa-fw").hasClass("fa-folder-open-o")) {
-                                    f.click();
-                                }
-                                if (typeof f == "undefined" || f.attr("id") == "files") {
-                                    newdepth = 0;
-                                    path_obj.insertAfter($("#files div:last"));
+                                if (path == "") {
+                                    initFiles();
                                 }
                                 else {
-                                    var newdepth = parseInt(f.attr("data-depth")) + 1;
-                                    var dest_children = getChildren(f);
-                                    if (dest_children.length) {
-                                        f = dest_children[dest_children.length-1];
+                                    var depth = 0;
+                                    if (folder) {
+                                        folder.removeClass("loaded");
+                                        folder.click();
                                     }
-                                    path_obj.insertAfter(f);
+                                    else {
+                                        initFiles();
+                                    }
                                 }
-                                path_obj.css("padding-left", newdepth*20 + "px");
-                                path_obj.attr("data-depth", newdepth);
-                                if (path_obj.hasClass("folder")) {
-                                    $.each(children.get().reverse(), function(k, v) {
-                                        var cdepth = newdepth + (parseInt($(this).attr("data-depth")) - depth);
-                                        $(this).insertAfter(path_obj);
-                                        $(this).attr("data-depth", cdepth);
-                                        $(this).css("padding-left", cdepth*20 + "px");
-                                    });
-                                }
-                                path_obj = null;
                             }
-                        });
+                        }
+                    });
+                }
+                else {
+                    var old_path = e.originalEvent.dataTransfer.getData("path");
+                    if (old_path) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var new_path = "";
+                        if (e.target !== $("#files")[0]) {
+                            var f = $(e.target).closest("div.folder");
+                            if (f.length) {
+                                new_path = get_path(f);
+                            }
+                            else {
+                                f = $(e.target).closest("div.file");
+                                if (f.length) {
+                                    f = f.prevAll("div.folder[data-depth=" + (parseInt(f.attr("data-depth")) - 1) + "]:first");
+                                    new_path = get_path(f);
+                                }
+                                if (!f.length) {
+                                    f = $("#files");
+                                }
+                            }
+                        }
+                        if (old_path != new_path) {
+                            $.post(move_endpoint, { old: old_path, new: new_path }, function(data) {
+                                if (data.error) {
+                                    Messenger().error(data.error);
+                                }
+                                else {
+                                    if (path_obj.hasClass("folder")) {
+                                        var children = getChildren(path_obj);
+                                    }
+                                    if (f.hasClass("folder") && !f.find(".fa-fw").hasClass("fa-folder-open-o")) {
+                                        f.click();
+                                    }
+                                    if (typeof f == "undefined" || f.attr("id") == "files") {
+                                        newdepth = 0;
+                                        path_obj.insertAfter($("#files div:last"));
+                                    }
+                                    else {
+                                        var newdepth = parseInt(f.attr("data-depth")) + 1;
+                                        var dest_children = getChildren(f);
+                                        if (dest_children.length) {
+                                            f = dest_children[dest_children.length-1];
+                                        }
+                                        path_obj.insertAfter(f);
+                                    }
+                                    path_obj.css("padding-left", newdepth*20 + "px");
+                                    path_obj.attr("data-depth", newdepth);
+                                    if (path_obj.hasClass("folder")) {
+                                        $.each(children.get().reverse(), function(k, v) {
+                                            var cdepth = newdepth + (parseInt($(this).attr("data-depth")) - depth);
+                                            $(this).insertAfter(path_obj);
+                                            $(this).attr("data-depth", cdepth);
+                                            $(this).css("padding-left", cdepth*20 + "px");
+                                        });
+                                    }
+                                    path_obj = null;
+                                }
+                            });
+                        }
                     }
                 }
             }
-        }
-    });
-    $.contextMenu({
-        "selector": ".tab:not(.tab-special)",
-        build: function(trigger, e) {
-            return {
-                callback: function(key, options) {
-                    if (key == "close") {
-                        trigger.find(".fa-times").click();
-                    }
-                    if (key == "close_other") {
-                        $("#tabs .tab:not(.tab-special):not([data-file='" + trigger.attr("data-file").replace("'", "\\'") + "']) .fa-times").click();
-                    }
-                    if (key == "close_right") {
-                        trigger.nextAll(":not(.tab-special)").find(".fa-times").click();
-                    }
-                    if (key == "close_left") {
-                        trigger.prevAll(":not(.tab-special)").find(".fa-times").click();
-                    }
-                    if (key == "save") {
-                        saveTab(trigger);
-                    }
-                    if (key == "open") {
-                        trigger.click();
-                    }
-                },
-                items: {
-                    "open": {name: "Show", icon: "fa-pencil-square-o"},
-                    "save": {name: "Save", icon: "fa-pencil"},
-                    "sep1": "--------",
-                    "close": {name: "Close Tab", icon: "fa-times"},
-                    "close_other": {name: "Close Other Tabs", icon: "fa-times-circle-o"},
-                    "sep2": "--------",
-                    "close_left": {name: "Close Tabs to Left", icon: "fa-chevron-left"},
-                    "close_right": {name: "Close Tabs to Right", icon: "fa-chevron-right"}
-                }
-            }
-        }
-    });
+        });
+    }
     $.contextMenu({
         "selector": "#files",
         build: function(trigger, e) {
@@ -319,6 +436,17 @@ You can drag files and folders around to move them.");
                     if (key == "open") {
                         window.open(site_url, "_blank");
                     }
+                    if (key == "new_terminal" || key == "new_nginx") {
+                        var c = layout.root.getItemsById("default-terminal");
+                        if (!c.length) {
+                            c = layout.root.getItemsById("default-file");
+                        }
+                        var newTab = {
+                            type: "component",
+                            componentName: (key == "new_terminal" ? "terminal" : "nginx")
+                        };
+                        c[0].addChild(newTab);
+                    }
                 },
                 items: {
                     "open": {name: "Open Website", icon: "fa-globe"},
@@ -326,6 +454,9 @@ You can drag files and folders around to move them.");
                     "new_file": {name: "New File", icon: "fa-file"},
                     "new_folder": {name: "New Folder", icon: "fa-folder"},
                     "sep2": "--------",
+                    "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
+                    "new_nginx": {name: "Edit Nginx Config", icon: "fa-wrench"},
+                    "sep3": "--------",
                     "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
             }
@@ -454,323 +585,124 @@ You can drag files and folders around to move them.");
             }
         }
     });
-    function saveTab(tab) {
-        if (tab.length) {
-            if (tab.hasClass("tab-nginx")) {
-                $.post(nginx_endpoint, { "editor": tab_nginx.getValue() }, function(data) {
-                    if (data.error) {
-                        Messenger().error(data.error);
-                    }
-                    if (data.success) {
-                        Messenger().success(data.success);
-                    }
-                });
-            }
-            else if (tab.hasClass("tab-image") || tab.hasClass("tab-media")) {
-                Messenger().error("Image and media editing is not supported!");
-            }
-            else if (!tab.hasClass("tab-special")) {
-                if (!checkTabClean(tab)) {
-                    var filepath = tab.attr("data-file");
-                    $.post(save_endpoint + "?name=" + encodeURIComponent(filepath), { contents: tabs[filepath].getValue() }, function(data) {
+    // end #files code
+
+    layout.registerComponent("files", function(container, componentState) {
+        container.setTitle("Files");
+        var files = $("<div id='files' />");
+        container.getElement().append(files);
+        initFiles(true);
+        registerFileHandlers(files);
+    });
+    layout.registerComponent("terminal", function(container, componentState) {
+        container.setTitle("Terminal");
+        var frame = $("<iframe class='terminal' />");
+        frame.attr("src", terminal_url);
+        container.getElement().append(frame);
+    });
+    layout.registerComponent("nginx", function(container, componentState) {
+        container.setTitle("<span class='file-indicator fa fa-circle-o saved'></span> " + "Nginx");
+        var editor = ace.edit(container.getElement()[0]);
+        editor.setOptions({
+            "fontSize": "12pt",
+            "showPrintMargin": false
+        });
+        container.getElement().keydown(function(e) {
+            if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
+                if (!editor.getSession().getUndoManager().isClean()) {
+                    $.post(nginx_endpoint, { editor: editor.getSession().getValue() }, function(data) {
                         if (data.error) {
                             Messenger().error(data.error);
                         }
                         else {
-                            tabs[filepath].getUndoManager().markClean();
-                            checkTabClean(tab);
+                            editor.getSession().getUndoManager().markClean();
+                            container.tab.element.find("span.file-indicator").addClass("saved");
                         }
                     });
                 }
+                e.preventDefault();
+                e.stopPropagation();
             }
-            else {
-                Messenger().error("No file selected to save!");
-            }
-        }
-    }
-    function doEmbed(path) {
-        var obj;
-        if (path.toLowerCase().match(/\.pdf$/) != null) {
-            obj = $("<embed class='pdfobject' type='application/pdf' />");
-            obj.attr("src", download_endpoint + "?name=" + encodeURIComponent(path) + "&embed=true");
-        }
-        else {
-            obj = $("<iframe />");
-            obj.attr("src", download_endpoint + "?name=" + encodeURIComponent(path) + "&embed=true");
-        }
-        $("#embed").children().remove();
-        $("#embed").append(obj);
-    }
-    editor.setTheme("ace/theme/chrome");
-    $(document).keydown(function(e) {
-        if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
-            var tab = $("#tabs .tab.active");
-            saveTab(tab);
-            e.preventDefault();
-            e.stopPropagation();
-        }
+        });
+        $.get(nginx_endpoint, function(data) {
+            var nginx_session = ace.createEditSession(data);
+            nginx_session.setMode("ace/mode/space");
+            nginx_session.on("change", function() {
+                container.tab.element.find("span.file-indicator").removeClass("saved");
+            });
+            nginx_session.getUndoManager().markClean();
+            editor.setSession(nginx_session);
+        }, "text");
     });
-    $("#tabs").on("click", ".tab", function(e) {
-        var t = $(this);
-        $("#tabs .tab").removeClass("active");
-        t.addClass("active");
-        $(".tab-pane").hide();
-        if (t.hasClass("tab-image")) {
-            $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(t.attr("data-file")) + "&embed=true");
-            $("#image").show();
+    layout.registerComponent("file", function(container, componentState) {
+        if (componentState.obj.hasClass("image")) {
+            container.setTitle(componentState.file);
+            var img = $("<img />");
+            img.attr("src", download_endpoint + "?name=" + encodeURIComponent(componentState.path) + "&embed=true");
+            var img_container = $("<div class='image-container' />");
+            img_container.append(img);
+            container.getElement().append(img_container);
         }
-        else if (t.hasClass("tab-media")) {
-            doEmbed(t.attr("data-file"));
-            $("#embed").show();
-        }
-        else if (t.hasClass("tab-console")) {
-            $("#sql-console").show();
-        }
-        else if (t.hasClass("tab-terminal")) {
-            if (!$("#terminal iframe").length) {
-                var frame = $("<iframe />");
-                frame.attr("src", terminal_url);
-                $("#terminal").append(frame);
-            }
-            $("#terminal").show();
-        }
-        else if (t.hasClass("tab-nginx")) {
-            $("#editor").show();
-            if (!tab_nginx) {
-                $.get(nginx_endpoint, function(data) {
-                    tab_nginx = ace.createEditSession(data);
-                    tab_nginx.setMode("ace/mode/space");
-                    editor.setSession(tab_nginx);
-                }, "text");
+        else if (componentState.obj.hasClass("media")) {
+            container.setTitle(componentState.file);
+            var obj;
+            if (componentState.path.toLowerCase().match(/\.pdf$/) != null) {
+                obj = $("<embed class='embedded' type='application/pdf' />");
             }
             else {
-                editor.setSession(tab_nginx);
+                obj = $("<iframe class='embedded' />");
             }
-        }
-        else if (t.hasClass("tab-help") || !t.hasClass("tab-special")) {
-            $("#editor").show();
-            if (t.hasClass("tab-help")) {
-                editor.setSession(help_session);
-            }
-            else {
-                var filepath = t.attr("data-file");
-                editor.setSession(tabs[filepath]);
-            }
-        }
-        e.preventDefault();
-    });
-    $("#tabs").on("click", ".tab .fa-times", function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var t = $(this).parent();
-        delete tabs[t.attr("data-file")];
-        t.remove();
-        var next_tab = $("#tabs .tab:not(.tab-terminal):not(.tab-console):last")
-        if (next_tab) {
-            next_tab.click();
+            obj.attr("src", download_endpoint + "?name=" + encodeURIComponent(componentState.path) + "&embed=true");
+            container.getElement().append(obj);
         }
         else {
-            $(".tab-pane").hide();
-        }
-    });
-    $("#files").on("click", ".file", function(e) {
-        e.preventDefault();
-        if (e.ctrlKey) {
-            $(this).addClass("active");
-            return;
-        }
-        else {
-            $("#files div").removeClass("active");
-        }
-        var t = $(this);
-        var filepath = get_path(t) + t.attr("data-name");
-        var existing_tab = $("#tabs .tab[data-file='" + filepath.replace("'", "\\'") + "']");
-        if (existing_tab.length) {
-            existing_tab.click();
-        }
-        else {
-            $("#tabs .tab").removeClass("active");
-            var tab = $("<div />");
-            tab.addClass("tab active");
-            tab.text(t.attr("data-name"));
-            tab.attr("data-file", filepath);
-            tab.prepend("<i class='fa fa-circle'></i> ");
-            tab.append(" <i class='fa fa-times'></i>");
-            $("#tabs").append(tab);
-            $(".tab-pane").hide();
-            if (t.hasClass("image")) {
-                tab.addClass("tab-image");
-                $("#image img").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath) + "&embed=true");
-                $("#image").show();
-            }
-            else if (t.hasClass("media")) {
-                tab.addClass("tab-media");
-                doEmbed(filepath);
-                $("#embed").show();
-            }
-            else {
-                $.get(load_endpoint + "?name=" + encodeURIComponent(filepath), function(data) {
-                    $("#editor").show();
-                    if (data.error) {
-                        Messenger().error(data.error);
-                        tab.remove();
+            container.setTitle("<span class='file-indicator fa fa-circle-o saved'></span> " + componentState.file);
+            var editor = ace.edit(container.getElement()[0]);
+            editor.setOptions({
+                "fontSize": "12pt",
+                "showPrintMargin": false,
+                "enableBasicAutocompletion": true
+            });
+            container.getElement().keydown(function(e) {
+                if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
+                    if (!editor.getSession().getUndoManager().isClean()) {
+                        $.post(save_endpoint + "?name=" + encodeURIComponent(componentState.path), { contents: editor.getSession().getValue() }, function(data) {
+                            if (data.error) {
+                                Messenger().error(data.error);
+                            }
+                            else {
+                                editor.getSession().getUndoManager().markClean();
+                                container.tab.element.find("span.file-indicator").addClass("saved");
+                            }
+                        });
                     }
-                    else {
-                        var session = ace.createEditSession(data.contents);
-                        session.setMode(modelist.getModeForPath(t.attr("data-name")).mode);
-                        editor.setSession(session);
-                        tabs[filepath] = session;
-                    }
-                });
-            }
-        }
-    });
-    $("#files").on("click", ".folder", function(e) {
-        e.preventDefault();
-        if (e.ctrlKey) {
-            $(this).addClass("active");
-            return;
-        }
-        else {
-            $("#files div").removeClass("active");
-        }
-        var t = $(this);
-        if (t.hasClass("loaded")) {
-            var contracted = t.find(".fa-fw").hasClass("fa-folder-o");
-            var children = getChildren(t);
-            if (contracted) {
-                t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
-                children.show();
-                children.find(".fa-fw").each(function(k, v) {
-                    var folder = $(this).parent();
-                    if (!folder.hasClass("folder")) {
-                        return;
-                    }
-                    var expand = $(this).hasClass("fa-folder-open-o");
-                    var children = getChildren(folder);
-                    if (!expand) {
-                        children.hide();
-                    }
-                });
-            }
-            else {
-                t.find(".fa-fw").removeClass("fa-folder-open-o").addClass("fa-folder-o");
-                children.hide();
-            }
-        }
-        else {
-            var depth = parseInt(t.attr("data-depth"));
-            t.addClass("loaded");
-            $.get(path_endpoint + "?path=" + encodeURIComponent(get_path(t)), function(data) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+            $.get(load_endpoint + "?name=" + encodeURIComponent(componentState.path), function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
+                    container.remove();
                 }
                 else {
-                    $.each(data.files, function(k, v) {
-                        var node = makeNode(v, depth + 1);
-                        if (!getChildren(t).filter("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
-                            t.after(node);
-                        }
+                    var session = ace.createEditSession(data.contents);
+                    session.setMode(modelist.getModeForPath(componentState.file).mode);
+                    session.on("change", function() {
+                        container.tab.element.find("span.file-indicator").removeClass("saved");
                     });
-                    t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
+                    session.getUndoManager().markClean();
+                    editor.setSession(session);
                 }
             });
         }
     });
-
-    function makeNode(v, depth) {
-        depth = depth || 0;
-        var c = (v.type == "f" ? "file" : "folder");
-        var ic = c;
-        var node = $("<div draggable='true' style='padding-left:" + (depth*20) + "px'><i class='fa fa-fw'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
-        node.addClass(c);
-        node.attr("data-name", v.name);
-        node.attr("data-depth", depth);
-        if (v.executable) {
-            node.addClass("exec");
-        }
-        if (v.link) {
-            node.addClass("link");
-        }
-        if (v.name.charAt(0) == ".") {
-            node.addClass("hidden");
-        }
-        if (v.type == "f") {
-            var vnl = v.name.toLowerCase();
-            if (vnl.match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
-                node.addClass("image");
-                ic = "file-image";
-            }
-            if (vnl.match(/\.(mp3|mp4|pdf|swf)$/) != null) {
-                node.addClass("media");
-                if (vnl.match(/\.pdf$/)) {
-                    ic = "file-pdf";
-                }
-                else {
-                    ic = "file-video";
-                }
-            }
-            if (vnl.match(/\.(doc|docx|odt)$/) != null) {
-                ic = "file-word";
-            }
-            if (vnl.match(/\.(py|php|js|html|css)$/) != null) {
-                ic = "file-code";
-            }
-            if (vnl.match(/\.(txt|log)/) != null) {
-                ic = "file-text";
-            }
-            if (vnl.match(/\.(zip|rar|gz|tar|7z|bz2|xz)$/) != null) {
-                ic = "file-archive";
-            }
-        }
-        node.find("i.fa").addClass("fa-" + ic + "-o");
-        return node;
-    }
-
-    function initFiles(firstRun) {
-        firstRun = firstRun || false;
-        if (firstRun) {
-            $("#files div").remove();
-        }
-        $.get(path_endpoint, function(data) {
-            if (data.error) {
-                Messenger().error(data.error);
-            }
-            else {
-                $.each(data.files, function(k, v) {
-                    var node = makeNode(v);
-                    if (!$("#files div[data-depth=0][data-name='" + v.name.replace("'", "\\'") + "']").length) {
-                        $("#files").append(node);
-                    }
-                });
-                if (firstRun) {
-                    $("div.folder[data-name='public']").click();
-                }
-            }
-        });
-    }
-    initFiles(true);
-
-    $("#files").resizable({
-        handles: "e",
-        minWidth: 35,
-        resize: function() {
-            $("#editor-wrapper").css("width", "calc(100vw - 20px - " + $("#files").width() + "px)");
-        }
-    });
-
     $(window).resize(function() {
-        $("#files").resizable("option", "maxWidth", $(window).width() - 120);
+        layout.updateSize();
     });
-    $("#files").resizable("option", "maxWidth", $(window).width() - 120);
-
-    $("#tabs").sortable({
-        items: ".tab:not(.tab-special)",
-        axis: "x",
-        containment: "#tabs"
-    });
-    $("#tabs").disableSelection();
+    layout.init();
 });
+
 function get_path(t) {
     var depth = parseInt(t.attr("data-depth"));
     var loop_depth = depth;

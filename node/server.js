@@ -10,7 +10,9 @@ var https = require("https");
 var querystring = require("querystring");
 
 var raven = require("raven");
-raven.config(fs.readFileSync("raven.dsn", "utf8")).install();
+if (fs.existsSync("raven.dsn")) {
+    raven.config(fs.readFileSync("raven.dsn", "utf8")).install();
+}
 
 var uuid = require("uuid/v4");
 

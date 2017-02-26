@@ -1,6 +1,30 @@
 body {
     overflow: hidden;
 }
+.main {
+    padding: 0;
+}
+#editor-container {
+    width: 100%;
+    height: calc(100vh - 40px);
+}
+iframe.terminal {
+    border: none;
+    background-color: black;
+    padding: 5px;
+    padding-right: 0px;
+    width: 100%;
+    height: 100%;
+}
+.embedded {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+#files {
+    width: 100%;
+    height: 100%;
+}
 #files .folder, #files .file {
     cursor: pointer;
     white-space: nowrap;
@@ -10,98 +34,6 @@ body {
 }
 #files div.active {
     background-color: #ccc;
-}
-.main {
-    padding: 0;
-}
-#files {
-    float: left;
-    padding: 10px;
-    box-sizing: content-box;
-    overflow: auto;
-    width: 250px;
-    height: 100%;
-}
-#files .ui-resizable-e {
-    width: 15px;
-    cursor: ew-resize;
-}
-#files .ui-resizable-e:hover {
-    background-color: rgba(0, 0, 0, 0.02);
-}
-#editor-container {
-    height: calc(100vh - 40px);
-}
-#editor-wrapper {
-    float: right;
-    width: calc(100vw - 270px);
-    height: 100%;
-}
-#tabs {
-    width: 100%;
-    height: 35px;
-    white-space: nowrap;
-}
-.tab-pane {
-    display: none;
-    width: 100%;
-    height: calc(100% - 35px);
-}
-#tabs .tab {
-    display: inline-block;
-    margin-top: 5px;
-    padding-top: 2px;
-    padding-left: 6px;
-    padding-right: 6px;
-    padding-bottom: 5px;
-    margin-right: 5px;
-    background-color: #ddd;
-    border-radius: 5px 5px 0 0;
-    cursor: pointer;
-    vertical-align: top;
-}
-#tabs .tab .fa-times {
-    color: #ccc;
-}
-#tabs .tab .fa-times:hover {
-    color: #bbb;
-}
-#tabs .tab.active .fa-times {
-    cursor: pointer;
-    color: #303F9F;
-}
-#tabs .tab.active .fa-times:hover {
-    color: #1A237E;
-}
-#tabs .tab .fa-circle {
-    color: #4CAF50;
-}
-#tabs .tab.unsaved .fa-circle {
-    color: #FF9800;
-}
-#tabs .tab.active {
-    cursor: default;
-    color: white;
-    background-color: #3F51B5;
-}
-.context-menu-list {
-    z-index: 5 !important;
-}
-.dragover {
-    border: 1px solid #999;
-}
-#terminal iframe {
-    border: none;
-    background-color: black;
-    padding: 5px;
-    padding-right: 0px;
-    width: 100%;
-    height: 100%;
-}
-#embed iframe, #embed embed {
-    border: none;
-    width: 100%;
-    height: 100%;
 }
 #files div.hidden span {
     color: #888;
@@ -115,14 +47,29 @@ body {
 #files div.link span {
     color: #00BCD4;
 }
-#image {
+span.file-indicator.saved {
+    color: #4CAF50;
+}
+span.file-indicator {
+    color: #FF9800;
+}
+.context-menu-list {
+    z-index: 5 !important;
+}
+.dragover {
+    border: 1px solid #999;
+}
+.image-container {
+    width: 100%;
+    height: 100%;
+
     text-align: center;
-    overflow-y: scroll;
+    overflow: auto;
     padding: 30px;
 
     background-image: url("/static/images/transparent.png");
     background-repeat: repeat;
 }
-#image img {
+.image-container img {
     border: 1px solid black;
 }
