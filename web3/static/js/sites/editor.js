@@ -667,12 +667,12 @@ $(document).ready(function() {
         container.getElement().append(frame);
     });
     layout.registerComponent("sql", function(container, componentState) {
-        container.setTitle("SQL");
+        container.setTitle("<span class='fa fa-database'></span> SQL");
         container.getElement().html($("#sql-console-template").html());
         registerConsole(container.getElement().find(".sql-console"));
     });
     layout.registerComponent("nginx", function(container, componentState) {
-        container.setTitle("<span class='file-indicator fa fa-circle-o saved'></span> " + "Nginx");
+        container.setTitle("<span class='file-indicator fa fa-wrench saved'></span> " + "Nginx");
         var editor = ace.edit(container.getElement()[0]);
         editor.setOptions({
             "fontSize": "12pt",
