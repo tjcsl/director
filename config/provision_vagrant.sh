@@ -71,13 +71,6 @@ sudo -u postgres createdb -O "web3" "web3" || echo "Database already exists"
 sudo -u postgres createuser -D -A "nss" || echo "nss user already exists"
 sudo -u postgres psql -c "ALTER USER nss WITH PASSWORD '$NSS_PASS';"
 
-# Give nss user specific permissions
-sudo -u postgres psql -c "GRANT CONNECT ON DATABASE web3 TO nss;"
-sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_user TO nss;"
-sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_group TO nss;"
-sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_group_users TO nss;"
-sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_user_groups TO nss;"
-
 # Create www-data user
 useradd www-data || echo "www-data user already exists"
 
@@ -91,6 +84,13 @@ pip install -U -r requirements.txt
 
 ./manage.py migrate
 
+# Give nss user specific permissions
+sudo -u postgres psql -c "GRANT CONNECT ON DATABASE web3 TO nss;"
+sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_user TO nss;"
+sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_group TO nss;"
+sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_group_users TO nss;"
+sudo -u postgres psql -d "web3" -c "GRANT SELECT ON TABLE users_user_groups TO nss;"
+
 # Setup nss-pgsql
 apt-get -y install nscd
 cp config/nss-pgsql.conf /etc/nss-pgsql.conf
@@ -103,6 +103,7 @@ sed -i 's/^group:.*/group: compat pgsql/' /etc/nsswitch.conf
 
 # Setup supervisor
 cp config/dev-supervisord.conf /etc/supervisor/supervisord.conf
+systemctl start supervisor
 supervisorctl reread
 supervisorctl update
 
