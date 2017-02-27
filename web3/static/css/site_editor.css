@@ -16,10 +16,16 @@ iframe.terminal {
     width: 100%;
     height: 100%;
 }
-.embedded {
+embed.embedded, iframe.embedded {
     width: 100%;
     height: 100%;
     background-color: black;
+    border: none;
+}
+iframe.preview {
+    width: 100%;
+    height: 100%;
+    background-color: white;
     border: none;
 }
 #files {

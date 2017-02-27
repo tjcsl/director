@@ -665,7 +665,7 @@ $(document).ready(function() {
     });
     layout.registerComponent("preview", function(container, componentState) {
         container.setTitle("<span class='fa fa-eye'></span> " + componentState.file);
-        var frame = $("<iframe class='embedded' />");
+        var frame = $("<iframe class='preview' />");
         frame.attr("sandbox", "allow-forms allow-pointer-lock allow-popups allow-scripts");
         var final_url = site_url + componentState.path.replace(/^public\//, "");
         frame.attr("src", final_url);
