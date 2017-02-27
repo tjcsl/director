@@ -8,4 +8,4 @@ Before starting development for Director, obtain Ion OAuth credentials and a VPN
 
 To develop for Director, you will need to download [Vagrant](https://www.vagrantup.com/downloads.html). After it is downloaded, you can run `vagrant up` in the folder with the `Vagrantfile`. This will create a virtual machine to run the Director development environment. After provisioning is finished, you should be able to access Director at `localhost:8000`.
 
-To stop the virtual machine, you can use the `vagrant halt` command. You can also suspend and resume the machine using the commands `vagrant suspend` and `vagrant resume`. You can SSH into the virtual machine using the command `vagrant ssh`.
+To stop the virtual machine, you can use the `vagrant halt` command. You can also suspend and resume the machine using the commands `vagrant suspend` and `vagrant resume`. You can SSH into the virtual machine using the command `vagrant ssh`. You can restart the server using the commands `sudo supervisorctl restart director` or `sudo supervisorctl restart directornode`.
