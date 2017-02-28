@@ -376,7 +376,6 @@ $(document).ready(function() {
                                     initFiles();
                                 }
                                 else {
-                                    var depth = 0;
                                     if (folder) {
                                         folder.removeClass("loaded");
                                         folder.click();
@@ -454,6 +453,43 @@ $(document).ready(function() {
             }
         });
     }
+    var uploader_folder = null;
+    $("#uploader").on("change", function(e) {
+        if (!this.files.length) {
+            return;
+        }
+        var formData = new FormData();
+        if (uploader_folder) {
+            formData.append("path", get_path(uploader_folder));
+        }
+        else {
+            formData.append("path", "");
+        }
+        for (var i = 0; i < this.files.length; i++) {
+            formData.append("file[]", this.files[i], this.files[i].name);
+        }
+        $.ajax({
+            url: upload_endpoint,
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                if (data.error) {
+                    Messenger().error(data.error);
+                }
+                else {
+                    if (uploader_folder) {
+                        uploader_folder.removeClass("loaded");
+                        uploader_folder.click();
+                    }
+                    else {
+                        initFiles();
+                    }
+                }
+            }
+        });
+    });
     $.contextMenu({
         "selector": "#files",
         build: function(trigger, e) {
@@ -482,10 +518,15 @@ $(document).ready(function() {
                         };
                         c[0].addChild(newTab);
                     }
+                    if (key == "upload") {
+                        uploader_folder = null;
+                        $("#uploader").trigger("click");
+                    }
                 },
                 items: {
                     "open": {name: "Open Website", icon: "fa-globe"},
                     "sep1": "--------",
+                    "upload": {name: "Upload", icon: "fa-upload"},
                     "new_file": {name: "New File", icon: "fa-file"},
                     "new_folder": {name: "New Folder", icon: "fa-folder"},
                     "sep2": "--------",
@@ -619,9 +660,14 @@ $(document).ready(function() {
                         getChildren(trigger).remove();
                         trigger.click();
                     }
+                    if (key == "upload") {
+                        uploader_folder = trigger;
+                        $("#uploader").trigger("click");
+                    }
                 },
                 items: {
                     "toggle": {name: "Toggle", icon: "fa-expand"},
+                    "upload": {name: "Upload", icon: "fa-upload"},
                     "download": {name: "Download as ZIP", icon: "fa-download"},
                     "sep1": "--------",
                     "rename": {name: "Rename", icon: "fa-pencil-square-o"},
@@ -672,9 +718,14 @@ $(document).ready(function() {
         container.getElement().append(frame);
     });
     layout.registerComponent("sql", function(container, componentState) {
-        container.setTitle("<span class='fa fa-database'></span> SQL");
-        container.getElement().html($("#sql-console-template").html());
-        registerConsole(container.getElement().find(".sql-console"));
+        if (typeof registerConsole !== 'undefined') {
+            container.setTitle("<span class='fa fa-database'></span> SQL");
+            container.getElement().html($("#sql-console-template").html());
+            registerConsole(container.getElement().find(".sql-console"));
+        }
+        else {
+            container.getElement().html("<b>No database provisioned!</b> Add a database in order to use the SQL console.");
+        }
     });
     layout.registerComponent("nginx", function(container, componentState) {
         container.setTitle("<span class='file-indicator fa fa-wrench saved'></span> " + "Nginx");
