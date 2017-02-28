@@ -44,4 +44,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     destination: ".ssh/#{devconfig['ssh_key']}.pub"
 
   config.vm.provision "shell", path: "config/provision_vagrant.sh"
+  config.vm.provision "shell", path: "config/run_vagrant.sh", run: "always"
 end

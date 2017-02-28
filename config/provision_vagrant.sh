@@ -109,6 +109,3 @@ supervisorctl update
 
 # Automatically start supervisor on boot
 systemctl enable supervisor
-
-supervisorctl restart director
-supervisorctl restart directornode
