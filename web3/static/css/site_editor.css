@@ -31,6 +31,7 @@ iframe.preview {
 #files {
     width: 100%;
     height: 100%;
+    overflow-y: auto;
 }
 #files .folder, #files .file {
     cursor: pointer;
