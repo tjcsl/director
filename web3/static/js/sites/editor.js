@@ -619,7 +619,7 @@ $(document).ready(function() {
                 },
                 items: {
                     "open": {name: "Open", icon: "fa-pencil"},
-                    "preview": {name: "Preview", icon: "fa-eye"},
+                    "preview": (is_dynamic ? undefined : {name: "Preview", icon: "fa-eye"}),
                     "download": {name: "Download", icon: "fa-download"},
                     "sep1": "--------",
                     "set_exec": {name: (trigger.hasClass("exec") ? "Unset Executable" : "Set Executable"), icon: "fa-cog"},
