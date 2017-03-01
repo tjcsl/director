@@ -236,6 +236,17 @@ $(document).ready(function() {
                 $(this).addClass("active");
                 return;
             }
+            else if (e.shiftKey) {
+                var depth = $(this).attr("data-depth");
+                if ($(this).prevAll(".file.active[data-depth='" + depth + "']").length) {
+                    $(this).prevUntil(".file.active[data-depth='" + depth + "']").addClass("active");
+                }
+                if ($(this).nextAll(".file.active[data-depth='" + depth + "']").length) {
+                    $(this).nextUntil(".file.active[data-depth='" + depth + "']").addClass("active");
+                }
+                $(this).addClass("active");
+                return;
+            }
             else {
                 $("#files div").removeClass("active");
             }
