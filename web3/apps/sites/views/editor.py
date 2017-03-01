@@ -54,7 +54,7 @@ def editor_path_view(request, site_id):
             obj["link"] = True
         filesystem.append(obj)
 
-    return JsonResponse({"files": filesystem})
+    return JsonResponse({"files": sorted(filesystem, key=lambda x: (x["type"], x["name"][0] == ".", x["name"]))})
 
 
 @login_required
