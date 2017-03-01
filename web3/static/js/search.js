@@ -19,11 +19,12 @@ $(document).ready(function() {
             });
         }
         val = $.trim(val.replace(/\s*tag:\w+/g, ""));
-        var search_objects = $(".search-box").data("search");
+        var search_objects = $(this).data("search");
+        var search_fields = $(this).data("fields").split(",");
         $(search_objects).each(function(k, v) {
-            var name = $(this).find(".name").text();
-            var desc = $(this).find(".desc").text();
-            var type = $(this).find(".type").text();
+            var fields = $.map(search_fields, function(val, i) {
+                return $(this).find(val).text().toLowerCase();
+            });
             var show = true;
             var site_tags = null;
             if (tags.length || notags.length) {
@@ -53,7 +54,14 @@ $(document).ready(function() {
                     });
                 });
             }
-            if (show && (desc.toLowerCase().includes(val) || name.toLowerCase().includes(val) || type.toLowerCase().includes(val))) {
+            var matches = false;
+            $.each(search_fields, function(k, v) {
+                if (v.includes(val)) {
+                    matches = true;
+                    return false;
+                }
+            });
+            if (show && matches) {
                 $(this).show();
             }
             else {

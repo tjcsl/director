@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block navbar %}
-<input class="form-control search-box" id="select-user" type="text" placeholder="&#xf002; Search Users" />
+<input class="form-control search-box" data-search="#users .user" data-fields=".name" type="text" placeholder="&#xf002; Search Users" />
 {% endblock %}
 
 {% block css %}
@@ -12,7 +12,7 @@
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="{% static 'js/users/search.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/search.js' %}"></script>
 {% endblock %}
 
 {% block main %}
