@@ -35,8 +35,9 @@ $(document).ready(function() {
         var search_objects = $(this).data("search");
         var search_fields = $(this).data("fields").split(",");
         $(search_objects).each(function(k, v) {
+            var t = $(this);
             var fields = $.map(search_fields, function(val, i) {
-                return $(this).find(val).text().toLowerCase();
+                return t.find(val).text().toLowerCase();
             });
             var show = true;
             var site_tags = null;
