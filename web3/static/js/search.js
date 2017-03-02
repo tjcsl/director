@@ -69,7 +69,7 @@ $(document).ready(function() {
                 });
             }
             var matches = false;
-            $.each(search_fields, function(k, v) {
+            $.each(fields, function(k, v) {
                 if (v.includes(val)) {
                     matches = true;
                     return false;
