@@ -38,7 +38,8 @@ def create_view(request):
             form = SiteForm(user=request.user)
 
         context = {
-            "form": form
+            "form": form,
+            "site": None
         }
         return render(request, "sites/create_site.html", context)
     else:
@@ -70,7 +71,8 @@ def edit_view(request, site_id):
     else:
         form = SiteForm(instance=site, user=request.user)
     context = {
-        "form": form
+        "form": form,
+        "site": site
     }
     return render(request, "sites/create_site.html", context)
 

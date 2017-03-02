@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block navbar %}
+<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
+{% endblock %}
+
 {% block main %}
 <h3>Confirm Site Deletion</h3>
 <p>Are you sure you want to delete <b>{{ site.name }}</b>? <span style="color:red">This action is permanant and irreversible!</span></p>

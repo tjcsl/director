@@ -2,6 +2,10 @@
 {% load staticfiles %}
 {% load formfilters %}
 
+{% block navbar %}
+{% if site %}<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>{% endif %}
+{% endblock %}
+
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="{% static 'js/sites/creation.js' %}"></script>
@@ -14,7 +18,7 @@
 
 {% block main %}
 <a href="{% url 'request_site' %}" class="pull-right">Site Request Form</a>
-<h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Site</h4>
+<h4>{% if site %}Edit{% else %}Create New{% endif %} Site</h4>
 <form method="POST">
     {% csrf_token %}
     {% include "form.html" with form=form %}
