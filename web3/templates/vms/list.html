@@ -3,7 +3,7 @@
 {% load simplefilters %}
 
 {% block navbar %}
-<input class="form-control search-box" id="select-vm" type="text" placeholder="&#xf002; Search Virtual Machines" />
+<input class="form-control search-box" data-search="#vms .vm" data-fields=".name,.owner,.sub" type="text" placeholder="&#xf002; Search Virtual Machines" />
 {% endblock %}
 
 {% block css %}
@@ -13,7 +13,7 @@
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="{% static 'js/vms/search.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/search.js' %}"></script>
 {% endblock %}
 
 {% block main %}
