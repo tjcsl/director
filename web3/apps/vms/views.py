@@ -14,11 +14,11 @@ from .helpers import call_api
 
 @login_required
 def list_view(request):
-    vm_list = VirtualMachine.objects.filter(Q(users=request.user) | Q(owner=request.user)).order_by("name")
+    vm_list = VirtualMachine.objects.filter(Q(users=request.user) | Q(owner=request.user)).distinct().order_by("name")
     statuses = call_api("container.list", status=True) or {}
 
     if request.user.is_superuser:
-        su_vm_list = VirtualMachine.objects.exclude(Q(users=request.user) | Q(owner=request.user)).order_by("name")
+        su_vm_list = VirtualMachine.objects.exclude(Q(users=request.user) | Q(owner=request.user)).distinct().order_by("name")
     else:
         su_vm_list = None
 
