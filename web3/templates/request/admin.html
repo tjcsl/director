@@ -27,7 +27,7 @@
     <div class="submission">
         <span class="activity">{{ r.activity }}</span> - {{ r.request_date }}<br />
         Requested by <b>{{ r.user.full_name }}</b> ({{ r.user.email }})<br />
-        Approved by <b>{{ r.teacher.full_name }}</b> ({{ r.user.email }})<br />
+        Approved by <b>{{ r.teacher.full_name }}</b> ({{ r.teacher.email }})<br />
         {{ r.extra_information|default:"No Extra Information" }}<br />
         <i class="fa fa-{% if r.teacher_approval %}check{% else %}times{% endif %}"></i> Approved - <i class="fa fa-{% if r.admin_approval %}check{% else %}times{% endif %}"></i> Processed
         {% if not r.admin_approval %}
