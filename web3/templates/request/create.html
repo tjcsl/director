@@ -21,7 +21,7 @@
                         return '<div>' +
                             '<span class="title">' +
                                 '<span class="name"><i class="fa fa-user"></i> ' + escape(item.name) + '</span><br />' +
-                                '<span class="username">' + escape(item.username) + '</span> - <span class="email">' + escape(item.email) + '</span>' +
+                                '<span class="username">' + escape(item.username) + '</span> - <span class="email">' + escape(item.email || "None") + '</span>' +
                             '</span>' +
                         '</div>';
                     }
