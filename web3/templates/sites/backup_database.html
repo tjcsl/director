@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block navbar %}
+<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
+{% endblock %}
+
 {% block main %}
 <h3>Export Database</h3>
 <p>You can use the feature below to download a copy of the database in .sql format.</p>
