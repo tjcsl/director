@@ -139,7 +139,7 @@ def create_view(request):
                 return redirect("vm_list")
     else:
         form = VirtualMachineForm(user=request.user)
-    return render(request, "vms/create_vm.html", {"form": form})
+    return render(request, "vms/create_vm.html", {"form": form, "vm": None})
 
 
 @login_required
@@ -157,7 +157,8 @@ def edit_view(request, vm_id):
     else:
         form = VirtualMachineForm(user=request.user, instance=vm)
     context = {
-        "form": form
+        "form": form,
+        "vm": vm
     }
     return render(request, "vms/create_vm.html", context)
 

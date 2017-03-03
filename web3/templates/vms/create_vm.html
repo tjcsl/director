@@ -11,14 +11,18 @@
     </script>
 {% endblock %}
 
+{% block navbar %}
+{% if vm %}<a href="{% url 'vm_info' vm.id %}">{{ vm.name }}</a>{% endif %}
+{% endblock %}
+
 {% block main %}
-<h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Virtual Machine</h4>
+<h4>{% if vm %}Edit{% else %}Create New{% endif %} Virtual Machine</h4>
 <form method="POST">
     {% csrf_token %}
     {% include "form.html" with form=form %}
     <div class="form-actions">
-        <a href="{% if "create" in request.path %}{% url 'vm_list' %}{% else %}{% url 'vm_info' form.instance.id %}{% endif %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
-        <button type="submit" class="btn btn-ion">{% if "create" in request.path %}<i class="fa fa-plus"></i> Create{% else %}<i class="fa fa-pencil"></i> Edit{% endif %}</button>
+        <a href="{% if vm %}{% url 'vm_info' form.instance.id %}{% else %}{% url 'vm_list' %}{% endif %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+        <button type="submit" class="btn btn-ion">{% if vm %}<i class="fa fa-pencil"></i> Edit{% else %}<i class="fa fa-plus"></i> Create{% endif %}</button>
     </div>
 </form>
 {% endblock %}
