@@ -34,8 +34,9 @@ class VirtualMachineForm(forms.ModelForm):
             if not vm_templates:
                 vm_templates = call_api("container.templates")
                 cache.set(vm_key, vm_templates)
-            self.fields["template"] = forms.ChoiceField(choices=[(x, x.title()) for x in vm_templates],
-                                                        widget=forms.Select(attrs={"class": "form-control"}))
+            if vm_templates:
+                self.fields["template"] = forms.ChoiceField(choices=[(x, x.title()) for x in vm_templates],
+                                                            widget=forms.Select(attrs={"class": "form-control"}))
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
