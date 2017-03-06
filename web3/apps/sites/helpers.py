@@ -76,7 +76,7 @@ def delete_site_files(site):
                 client.captureException()
     try:
         shutil.rmtree(site.path)
-    except FileNotFoundError:
+    except:
         client.captureException()
 
 
@@ -207,7 +207,7 @@ def fix_permissions(site):
             path = os.path.join(root, f)
             try:
                 st = os.lstat(path)
-            except FileNotFoundError:
+            except:
                 client.captureException()
                 continue
             os.lchown(path, site.user.id, site.group.id)
