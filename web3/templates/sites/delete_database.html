@@ -4,6 +4,8 @@
 <a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
 {% endblock %}
 
+{% block mainclass %}narrow{% endblock %}
+
 {% block main %}
 <h3>Confirm Process Deletion</h3>
 <p>Are you sure you want to delete <b>{{ site.name }}</b>'s database? <span style="color:red">This action is permanant and irreversible!</span></p>

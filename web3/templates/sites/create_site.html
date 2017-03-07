@@ -16,6 +16,8 @@
     </script>
 {% endblock %}
 
+{% block mainclass %}narrow{% endblock %}
+
 {% block main %}
 <a href="{% url 'request_site' %}" class="pull-right">Site Request Form</a>
 <h4>{% if site %}Edit{% else %}Create New{% endif %} Site</h4>

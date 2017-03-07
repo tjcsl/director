@@ -4,6 +4,8 @@
 <a href="{% url 'vm_info' vm.id %}">{{ vm.name }}</a>
 {% endblock %}
 
+{% block mainclass %}narrow{% endblock %}
+
 {% block main %}
 <h3>Confirm Virtual Machine Deletion</h3>
 <p>Are you sure you want to delete <b>{{ vm.name }}</b>? <span style="color:red">This action is permanant and irreversible!</span></p>

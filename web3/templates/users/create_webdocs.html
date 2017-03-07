@@ -14,7 +14,6 @@
         color: #888;
     }
     textarea {
-        max-width: 600px;
         min-height: 150px;
     }
     .user-list {
@@ -28,6 +27,8 @@
     <script type="text/javascript" src="{% static 'js/users/create_webdocs.js' %}"></script>
     {% include "ajax_csrf.html" %}
 {% endblock %}
+
+{% block mainclass %}narrow{% endblock %}
 
 {% block main %}
 <h4>Create Student Websites</h4>
