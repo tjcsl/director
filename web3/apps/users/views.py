@@ -7,7 +7,8 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.validators import validate_email
 
 from .forms import UserForm
 from .helpers import create_user, create_webdocs
@@ -21,6 +22,18 @@ from .models import User, Group
 
 @login_required
 def settings_view(request):
+    if request.method == "POST":
+        email = request.POST.get("email", None)
+        try:
+            validate_email(email)
+        except ValidationError as e:
+            messages.error(request, "You entered an invalid email address!")
+            return redirect("user_settings")
+        request.user.email = email
+        request.user.save()
+        messages.success(request, "Your email address has been updated!")
+        return redirect("user_settings")
+
     github_info = get_github_info(request) if request.user.github_token else None
     context = {
         "groups": Group.objects.filter(users__id=request.user.id).order_by("name"),

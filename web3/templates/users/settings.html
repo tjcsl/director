@@ -1,23 +1,54 @@
 {% extends "base.html" %}
 
+{% block css %}
+    {{ block.super }}
+    <style>
+    div.main {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    </style>
+</div>
+{% endblock %}
+
 {% block main %}
-<h5>{{ request.user.full_name }}</h5>
+<h3>{{ request.user.full_name }}</h3>
+<hr />
+<h5>Your Information</h5>
 <p>
     <b>Username:</b> {{ request.user.username }}<br />
-    <b>Email:</b> {{ request.user.email }}<br />
-    <b>User ID:</b> {{ request.user.id }}<br />
     <b>Account Type:</b> {% if request.user.is_superuser %}Superuser{% elif request.user.is_staff %}Staff{% else %}Normal Account{% endif %}<br />
+    <b>User ID:</b> {{ request.user.id }}<br />
 </p>
+
+<h5>Settings</h5>
+<div style="margin-bottom:15px">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id-email">Email</label>
+            <input type="email" class="form-control" id="id-email" name="email" value="{{ request.user.email }}" />
+            <small class="form-text">We will use this email to send you notifications about site changes and other updates.</small>
+        </div>
+        <button type="submit" class="btn btn-ion"><i class="fa fa-pencil"></i> Save Settings</button>
+    </form>
+</div>
+
+<h5>GitHub</h5>
+<p>If you link your Director account to your GitHub account, you can use Director to automatically set up webhooks and deploy your code when you push.</p>
 {% if request.user.github_token %}
 <p><i class="fa fa-check" style="color:green"></i> Your Director account is linked to your GitHub account! <a href="https://github.com/{{ github_username }}">@{{ github_username }}</a></p>
 <p><a class="btn btn-ion" href="{% url 'unlink_github' %}"><i class="fa fa-github"></i> Unlink GitHub Account</a></p>
 {% else %}
 <p><a class="btn btn-ion" href="{% url 'link_github' %}"><i class="fa fa-github"></i> Link GitHub Account</a></p>
 {% endif %}
+
 <h5>Your Groups</h5>
-{% for group in groups %}
-    <div>{{ group.name }}</div>
-{% empty %}
-<p>You are not in any groups!</p>
-{% endfor %}
+<div style="margin-bottom:15px">
+    {% for group in groups %}
+        <div>{{ group.name }}</div>
+    {% empty %}
+    <p>You are not in any groups!</p>
+    {% endfor %}
+</div>
 {% endblock %}
