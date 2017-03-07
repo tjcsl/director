@@ -45,3 +45,7 @@ a.nav-warn:hover {
 .dropdown-menu li.feedback a:hover {
     color: #00c800;
 }
+.main.narrow {
+    max-width: 600px;
+    margin: 0 auto;
+}

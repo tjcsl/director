@@ -1,15 +1,6 @@
 {% extends "base.html" %}
 
-{% block css %}
-    {{ block.super }}
-    <style>
-    div.main {
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    </style>
-</div>
-{% endblock %}
+{% block mainclass %}narrow{% endblock %}
 
 {% block main %}
 <h3>{{ request.user.full_name }}</h3>
