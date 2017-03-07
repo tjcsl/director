@@ -160,7 +160,7 @@ def edit_view(request, vm_id):
         "form": form,
         "vm": vm
     }
-    return render(request, "vms/create_vm.html", context)
+    return render(request, "vms/create.html", context)
 
 
 @login_required
