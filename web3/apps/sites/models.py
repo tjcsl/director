@@ -74,7 +74,7 @@ class Site(models.Model):
     def has_repo(self):
         if hasattr(self, "_has_repo"):
             return self._has_repo
-        self._has_repo = os.path.isdir(self.git_path, ".git")
+        self._has_repo = os.path.isdir(os.path.join(self.git_path, ".git"))
         return self._has_repo
 
     @property
