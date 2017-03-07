@@ -29,6 +29,7 @@ class Site(models.Model):
     group = models.OneToOneField(Group)
 
     custom_nginx = models.BooleanField(default=False)
+    repo_path = models.TextField(blank=True, null=True, default=None)
 
     @property
     def path(self):
@@ -64,10 +65,16 @@ class Site(models.Model):
         return os.path.join(self.path, "public")
 
     @property
+    def git_path(self):
+        if not self.repo_path:
+            return self.public_path
+        return os.path.join(self.path, self.repo_path)
+
+    @property
     def has_repo(self):
         if hasattr(self, "_has_repo"):
             return self._has_repo
-        self._has_repo = os.path.isdir(os.path.join(self.public_path, ".git"))
+        self._has_repo = os.path.isdir(self.git_path)
         return self._has_repo
 
     @property

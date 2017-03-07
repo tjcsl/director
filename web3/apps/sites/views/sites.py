@@ -289,7 +289,7 @@ def git_setup_view(request, site_id):
         messages.error(request, "You must connect your GitHub account first!")
     else:
         generate_ssh_key(site, overwrite=False)
-        ret, out, err = run_as_site(site, "git remote -v", cwd=site.public_path)
+        ret, out, err = run_as_site(site, "git remote -v", cwd=site.git_path)
         if ret != 0:
             messages.error(request, "Failed to detect the remote repository!")
         else:

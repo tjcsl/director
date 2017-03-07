@@ -180,7 +180,7 @@ def generate_ssh_key(site, overwrite=True):
 
 def do_git_pull(site):
     fix_permissions(site)
-    output = run_as_site(site, "git pull", cwd=site.public_path, env={
+    output = run_as_site(site, "git pull", cwd=site.git_path, env={
         "GIT_SSH_COMMAND": "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
         "HOME": site.private_path
     })
@@ -191,7 +191,7 @@ def do_git_pull(site):
 
 def get_latest_commit(site):
     try:
-        output = run_as_site(site, ["git", "log", "-n", "1"], cwd=site.public_path)
+        output = run_as_site(site, ["git", "log", "-n", "1"], cwd=site.git_path)
     except:
         client.captureException()
         return "Error"
