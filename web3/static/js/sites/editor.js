@@ -557,7 +557,7 @@ $(document).ready(function() {
                     "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
                     "new_nginx": {name: "Edit Nginx Config", icon: "fa-wrench"},
                     "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
-                    "new_help": {name: "Help", icon: "fa-question-circle"},
+                    "new_help": {name: "Help Guide", icon: "fa-question-circle"},
                     "sep3": "--------",
                     "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
