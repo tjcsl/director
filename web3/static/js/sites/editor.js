@@ -22,7 +22,11 @@ $(document).ready(function() {
                 content:[{
                     type: 'stack',
                     isClosable: false,
-                    id: "default-file"
+                    id: "default-file",
+                    content: [{
+                        type: 'component',
+                        componentName: 'help'
+                    }]
                 },{
                     type: 'stack',
                     id: "default-terminal",
@@ -430,14 +434,14 @@ $(document).ready(function() {
                                     if (path_obj.hasClass("folder")) {
                                         var children = getChildren(path_obj);
                                     }
-                                    if (f.hasClass("folder") && !f.find(".fa-fw").hasClass("fa-folder-open-o")) {
-                                        f.click();
-                                    }
                                     if (typeof f == "undefined" || f.attr("id") == "files") {
                                         newdepth = 0;
                                         path_obj.insertAfter($("#files div:last"));
                                     }
                                     else {
+                                        if (f.hasClass("folder") && !f.find(".fa-fw").hasClass("fa-folder-open-o")) {
+                                            f.click();
+                                        }
                                         var newdepth = parseInt(f.attr("data-depth")) + 1;
                                         var dest_children = getChildren(f);
                                         if (dest_children.length) {
@@ -445,6 +449,7 @@ $(document).ready(function() {
                                         }
                                         path_obj.insertAfter(f);
                                     }
+                                    var depth = path_obj.attr("data-depth");
                                     path_obj.css("padding-left", newdepth*20 + "px");
                                     path_obj.attr("data-depth", newdepth);
                                     if (path_obj.hasClass("folder")) {
@@ -703,7 +708,7 @@ $(document).ready(function() {
     // end #files code
 
     layout.registerComponent("files", function(container, componentState) {
-        container.setTitle("Files");
+        container.setTitle("<span class='fa fa-folder-open'></span> Files");
         var files = $("<div id='files' />");
         container.getElement().append(files);
         initFiles(true);
@@ -727,6 +732,10 @@ $(document).ready(function() {
         var final_url = site_url + componentState.path.replace(/^public\//, "");
         frame.attr("src", final_url);
         container.getElement().append(frame);
+    });
+    layout.registerComponent("help", function(container, componentState) {
+        container.setTitle("<span class='fa fa-question-circle'></span> Help");
+        container.getElement().html($("#help-template").html());
     });
     layout.registerComponent("sql", function(container, componentState) {
         if (typeof registerConsole !== 'undefined') {

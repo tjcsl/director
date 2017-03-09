@@ -83,5 +83,18 @@
         </div>
     </div>
 </div>
+<div id="help-template" style="display:none">
+    <div class="help-pane">
+        <h3><i class="fa fa-cloud"></i> Director Help Guide</h3>
+        <hr />
+        <div class="alert alert-success"><i class="fa fa-lightbulb-o"></i> Have a suggestion? Found a bug? Give feedback <a target="_blank" href="{% url 'feedback' %}">here</a>!</div>
+        <h5>Online Editor</h5>
+        <p>You can right click files in folders in the Files tab, or right click the blank space in the Files tab for more options. Clicking a file will open up the file for editing. Drag files on to the Files tab in order to upload them.</p>
+        <p>You can drag and drop files and folders to move them to different folders. You can drag around tabs to reorder them and create new panels. Your editor layout will automatically save if you make any changes.</p>
+        <p>If you open a preview panel, it will automatically refresh when you edit the associated file in the editor.</p>
+        <p>If you create a <span class="path">.secure</span> file in a folder, that folder will be only accessible to you after a login. If you add a <span class="path">.index</span> file to a folder, the folder will list all of its contents when you navigate to it.</p>
+        <p>The Nginx tab is not editable for security reasons. If you want to make a change, ask a sysadmin.</p>
+    </div>
+</div>
 <input id="uploader" type="file" multiple style="display:none" />
 {% endblock %}
