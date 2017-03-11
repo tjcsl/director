@@ -90,7 +90,7 @@ $(document).ready(function() {
             }
             filepaths.push(filepath);
         });
-        if (confirm("Are you sure you want to delete:\n" + filepaths.join("\n"))) {
+        modalConfirm("Are you sure you want to delete these files?", "Are you sure you want to delete:\n" + filepaths.join("\n"), function() {
             $.post(delete_endpoint, { name: filepaths }, function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
@@ -106,7 +106,7 @@ $(document).ready(function() {
                     });
                 }
             });
-        }
+        });
     }
     function triggerCreate(item, type) {
         if (item[0] == $("#files")[0]) {
@@ -115,8 +115,7 @@ $(document).ready(function() {
         else {
             var filepath = get_path(item);
         }
-        var name = prompt("Enter a name for your new " + (type ? "file" : "directory") + ".");
-        if (name) {
+        var name = modalPrompt("New " + (type ? "File" : "Folder"), "Enter a name for your new " + (type ? "file" : "directory") + ".", function(name) {
             $.post(create_endpoint, { name: name, path: filepath, type: (type ? "f" : "d") }, function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
@@ -135,7 +134,7 @@ $(document).ready(function() {
                     }
                 }
             });
-        }
+        });
     }
     function triggerDownload(item) {
         var filepath = get_path(item);
@@ -149,8 +148,7 @@ $(document).ready(function() {
         if (item.hasClass("file")) {
             filepath += item.attr("data-name");
         }
-        var name = prompt("Enter a new name for the file or directory:\n" + filepath);
-        if (name) {
+        modalPrompt("Rename " + (item.hasClass("file") ? "File" : "Folder"), "Enter a new name for the file or directory:\n" + filepath, function(name) {
             $.post(rename_endpoint, { name: filepath, newname: name }, function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
@@ -160,7 +158,7 @@ $(document).ready(function() {
                     item.find("span").text(name);
                 }
             });
-        }
+        }, item.attr("data-name"));
     }
     function makeNode(v, depth) {
         depth = depth || 0;
@@ -868,6 +866,16 @@ $(document).ready(function() {
         layout.updateSize();
     });
     layout.init();
+
+    $("#modal-confirm").on("shown.bs.modal", function() {
+        var field = $("#modal-confirm .modal-prompt");
+        if (field.length) {
+            field.focus().select();
+        }
+        else {
+            $("#modal-confirm .btn-primary").focus();
+        }
+    });
 });
 
 function get_path(t) {
@@ -890,5 +898,31 @@ function getChildren(item) {
     var depth = parseInt(item.attr("data-depth"));
     return item.nextUntil(function() {
         return parseInt($(this).attr("data-depth")) <= depth;
+    });
+}
+function modalConfirm(title, body, callback) {
+    $("#modal-confirm").modal("show");
+    $("#modal-confirm .modal-title").text(title);
+    $("#modal-confirm .modal-body").text(body);
+    $("#modal-confirm .btn-primary").off("click").on("click", callback);
+}
+function modalPrompt(title, body, callback, existing) {
+    $("#modal-confirm").modal("show");
+    $("#modal-confirm .modal-title").text(title);
+    var bodytext = $("<p />");
+    bodytext.text(body);
+    $("#modal-confirm .modal-body").html(bodytext);
+    $("#modal-confirm .modal-body").append("<input type='text' class='modal-prompt form-control' />");
+    $("#modal-confirm .modal-prompt").on("keypress", function(e) {
+        if (e.which == 13) {
+            $("#modal-confirm .btn-primary").click();
+            e.preventDefault();
+        }
+    }).val(existing || "");
+    $("#modal-confirm .btn-primary").off("click").on("click", function() {
+        var input = $("#modal-confirm .modal-prompt").val();
+        if (input) {
+            callback(input);
+        }
     });
 }

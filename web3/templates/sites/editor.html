@@ -96,5 +96,21 @@
         <p>The Nginx tab is not editable for security reasons. If you want to make a change, ask a sysadmin.</p>
     </div>
 </div>
+<div id="modal-confirm" class="modal fade">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Are you sure?</h5>
+            </div>
+            <div class="modal-body" style="white-space:pre">
+                <p>Are you sure you want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 <input id="uploader" type="file" multiple style="display:none" />
 {% endblock %}
