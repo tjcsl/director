@@ -235,7 +235,7 @@ $(document).ready(function() {
         files.on("click", ".file", function(e) {
             e.preventDefault();
             if (e.ctrlKey) {
-                $(this).addClass("active");
+                $(this).toggleClass("active");
                 return;
             }
             else if (e.shiftKey) {
