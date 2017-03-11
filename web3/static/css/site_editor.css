@@ -43,6 +43,9 @@ iframe.preview {
 #files div.active {
     background-color: #ccc;
 }
+#files div.active:hover {
+    background-color: #bbb;
+}
 #files div.hidden span {
     color: #888;
 }
