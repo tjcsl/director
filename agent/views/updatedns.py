@@ -12,6 +12,8 @@ keyring = dns.tsigkeyring.from_text({
 
 @rpc.method("dns.add")
 def add_dns(host, ip):
+    if not ip:
+        return
     update = dns.update.Update('vm.sites.tjhsst.edu', keyring=keyring)
     if ip_address(ip).version == 6:
         update.add(host, 86400, 'AAAA', ip)
