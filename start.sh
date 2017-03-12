@@ -1,3 +1,3 @@
 #!/bin/bash
 cd /root/conductor-agent
-python3 runapp.py
+gunicorn -w 4 -b 127.0.0.1:4998 agent:app
