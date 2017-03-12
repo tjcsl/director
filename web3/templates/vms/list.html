@@ -25,6 +25,7 @@
 {% for vm in vm_list %}
 {% with status=vm_status|lookup:vm.uuid %}
 <a href="{% url 'vm_info' vm.id %}" class="vm clearfix">
+    {% if vm.site %}<span class="pull-right tag tag-success">Site</span>{% endif %}
     <i class="pull-left fa fa-2x fa-fw fa-cube"><span class="{% if status == "RUNNING" %}green{% elif status == "STOPPED" %}red{% endif %}" /></i>
     <b class="name">{{ vm.name }}</b> <span class="owner">{{ vm.owner.username|default:"No Owner" }}</span>
     <div class="sub">{{ vm.description|default:"No Description" }}</div>
@@ -35,6 +36,7 @@
 {% with status=vm_status|lookup:vm.uuid %}
 <a href="{% url 'vm_info' vm.id %}" class="vm clearfix">
     <span class="pull-right tag tag-warning">Admin</span>
+    {% if vm.site %}<span class="pull-right tag tag-success">Site</span>{% endif %}
     <i class="pull-left fa fa-2x fa-fw fa-cube"><span class="{% if status == "RUNNING" %}green{% elif status == "STOPPED" %}red{% endif %}" /></i>
     <b class="name">{{ vm.name }}</b> <span class="owner">{{ vm.owner.username|default:"No Owner" }}</span>
     <div class="sub">{{ vm.description|default:"No Description" }}</div>
