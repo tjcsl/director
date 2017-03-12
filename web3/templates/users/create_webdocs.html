@@ -4,6 +4,14 @@
 {% block css %}
     {{ block.super }}
     <style>
+    #guidelines {
+        max-height: 400px;
+        overflow-y: auto;
+        margin: 15px auto;
+        border: 1px solid black;
+        padding: 15px;
+        background-color: white;
+    }
     .yes {
         color: #4CAF50;
     }
@@ -24,62 +32,81 @@
 
 {% block js %}
     {{ block.super }}
-    <script type="text/javascript" src="{% static 'js/users/create_webdocs.js' %}"></script>
-    {% include "ajax_csrf.html" %}
+    {% if request.user.is_staff %}
+        <script type="text/javascript" src="{% static 'js/users/create_webdocs.js' %}"></script>
+        {% include "ajax_csrf.html" %}
+    {% endif %}
 {% endblock %}
 
 {% block mainclass %}narrow{% endblock %}
 
 {% block main %}
-<h4>Create Student Websites</h4>
-<div id="finished-container" {% if not finished %}style="display:none"{% endif %}>
-    <p>Finished creating student websites!</p>
-    <b>Successes</b>
-    <div id="success-list" class="user-list">
-        {% if finished %}
-            {% for item in success %}
-            <div class="yes">{{ item }}</div>
-            {% empty %}
-            <div class="none">None</div>
-            {% endfor %}
+{% if request.user.is_staff %}
+    <h4>Create Student Websites</h4>
+    <div id="finished-container" {% if not finished %}style="display:none"{% endif %}>
+        <p>Finished creating student websites!</p>
+        <b>Successes</b>
+        <div id="success-list" class="user-list">
+            {% if finished %}
+                {% for item in success %}
+                <div class="yes">{{ item }}</div>
+                {% empty %}
+                <div class="none">None</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <b>Failures</b>
+        <div id="failure-list" class="user-list">
+            {% if finished %}
+                {% for item in failure %}
+                <div class="no">{{ item }}</div>
+                {% empty %}
+                <div class="none">None</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <p>If any student websites could not be created, check to make sure that the username is correct.</p>
+        <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+    </div>
+    {% if not finished %}
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="students">Student IDs</label>
+            <textarea class="form-control" id="students" name="students"></textarea>
+            <small class="form-text">Please enter a list of student IDs (ex: 2017ewang) separated by newlines.</small>
+        </div>
+        {% if request.user.is_superuser %}
+        <label class="custom-control custom-checkbox">
+            <input id="legacy-checkbox" name="legacy" type="checkbox" class="custom-control-input">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">Create as legacy</span>
+        </label>
+        <label class="custom-control custom-checkbox">
+            <input id="no-user-checkbox" name="no-user" type="checkbox" class="custom-control-input">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">Don't create users</span>
+        </label>
+        <br />
         {% endif %}
-    </div>
-    <b>Failures</b>
-    <div id="failure-list" class="user-list">
-        {% if finished %}
-            {% for item in failure %}
-            <div class="no">{{ item }}</div>
-            {% empty %}
-            <div class="none">None</div>
-            {% endfor %}
-        {% endif %}
-    </div>
-    <p>If any student websites could not be created, check to make sure that the username is correct.</p>
-    <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
-</div>
-{% if not finished %}
-<form method="POST">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="students">Student IDs</label>
-        <textarea class="form-control" id="students" name="students"></textarea>
-        <small class="form-text">Please enter a list of student IDs (ex: 2017ewang) separated by newlines.</small>
-    </div>
-    {% if request.user.is_superuser %}
-    <label class="custom-control custom-checkbox">
-        <input id="legacy-checkbox" name="legacy" type="checkbox" class="custom-control-input">
-        <span class="custom-control-indicator"></span>
-        <span class="custom-control-description">Create as legacy</span>
-    </label>
-    <label class="custom-control custom-checkbox">
-        <input id="no-user-checkbox" name="no-user" type="checkbox" class="custom-control-input">
-        <span class="custom-control-indicator"></span>
-        <span class="custom-control-description">Don't create users</span>
-    </label>
-    <br />
+        <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+        <button class="btn btn-ion"><i class="fa fa-plus"></i> Create Websites</button>
+    </form>
     {% endif %}
-    <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
-    <button class="btn btn-ion"><i class="fa fa-plus"></i> Create Websites</button>
-</form>
+{% else %}
+    <form method="POST">
+        {% csrf_token %}
+        <h4>Create Webdocs</h4>
+        <p>You can use this form to create a personal website. You must read and accept the agreement below in order to do so.</p>
+        <h4>Student Agreement</h4>
+        <div id="guidelines">{% include "guidelines.html" %}</div>
+        <label class="custom-control custom-checkbox">
+            <input type="checkbox" name="agreement" class="custom-control-input" required />
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">I have read, understood, and agree to abide by the rules outlined in the Computer Systems Lab Policy, the TJHSST World-Wide Website Guidelines, the FCPS Acceptable Use Policy, and the FCPS Student Rights and Responsibilities. I understand that the above services may be revoked at any time and other disciplinary actions may occur if I directly or indirectly violate any guidelines as outlined in the above policies.</span>
+        </label>
+        <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+        <button type="submit" class="btn btn-ion"><i class="fa fa-user-plus"></i> Create Webdocs</button>
+    </form>
 {% endif %}
 {% endblock %}

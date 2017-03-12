@@ -18,6 +18,7 @@ from ...utils.tjldap import get_full_name
 
 from requests.utils import quote
 from .models import User, Group
+from ..sites.models import Site
 
 
 @login_required
@@ -102,7 +103,20 @@ def manage_view(request):
 @login_required
 def create_webdocs_view(request):
     if not request.user.is_staff:
-        raise PermissionDenied
+        if request.user.has_webdocs:
+            return redirect("info_site", site_id=Site.objects.get(name=request.user.username, purpose="user").id)
+        if request.method == "POST":
+            accepted = request.POST.get("agreement", False)
+
+            if not accepted:
+                messages.error(request, "You must accept the agreement to create a webdocs!")
+                return redirect("create_webdocs")
+
+            site = create_webdocs(request.user, purpose="user")
+            messages.success(request, "Your webdocs has been created!")
+            return redirect("info_site", site_id=site.id)
+
+        return render(request, "users/create_webdocs.html", {"finished": False})
 
     if request.method == "POST":
         import_legacy = request.POST.get("legacy", False)
