@@ -219,10 +219,17 @@ $(document).ready(function() {
                 Messenger().error(data.error);
             }
             else {
+                var file_set = {};
                 $.each(data.files, function(k, v) {
+                    file_set[v.name] = true;
                     var node = makeNode(v);
                     if (!$("#files div[data-depth=0][data-name='" + v.name.replace("'", "\\'") + "']").length) {
                         $("#files").append(node);
+                    }
+                });
+                $("#files div[data-depth=0]").each(function() {
+                    if (!file_set[$(this).attr("data-name")]) {
+                        $(this).remove();
                     }
                 });
                 if (firstRun) {
