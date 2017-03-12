@@ -154,8 +154,8 @@ $(document).ready(function() {
                     Messenger().error(data.error);
                 }
                 else {
-                    item.attr("data-name", name);
-                    item.find("span").text(name);
+                    var newNode = makeNode({name: name, type: item.hasClass("file") ? "f" : "d"}, item.attr("data-depth"));
+                    item.replaceWith(newNode);
                 }
             });
         }, item.attr("data-name"));
