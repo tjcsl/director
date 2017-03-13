@@ -141,7 +141,12 @@ $(document).ready(function() {
         if (item.hasClass("file")) {
             filepath += item.attr("data-name");
         }
-        $("#download").attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath));
+        var frame = $("<iframe class='download' />");
+        frame.load(function() {
+            $(this).remove();
+        });
+        frame.attr("src", download_endpoint + "?name=" + encodeURIComponent(filepath));
+        $("body").append(frame);
     }
     function triggerRename(item) {
         var filepath = get_path(item);
@@ -572,6 +577,7 @@ $(document).ready(function() {
     $.contextMenu({
         "selector": "#files .file",
         build: function(trigger, e) {
+            var multiple_selected = $("#files div.file.active").length > 1;
             return {
                 callback: function(key, options) {
                     if (key == "open") {
@@ -584,7 +590,9 @@ $(document).ready(function() {
                         triggerCreate(trigger, true);
                     }
                     if (key == "download") {
-                        triggerDownload(trigger);
+                        $("#files div.file.active").each(function() {
+                            triggerDownload($(this));
+                        });
                     }
                     if (key == "new_folder") {
                         triggerCreate(trigger, false);
@@ -604,36 +612,42 @@ $(document).ready(function() {
                         });
                     }
                     if (key == "set_exec") {
-                        var filepath = get_path(trigger) + trigger.attr("data-name");
-                        $.post(exec_endpoint, {name: filepath}, function(data) {
-                            if (data.error) {
-                                Messenger().error(data.error);
-                            }
-                            else {
-                                trigger.toggleClass("exec");
-                            }
+                        $("#files div.file.active").each(function() {
+                            var trigger = $(this);
+                            var filepath = get_path(trigger) + trigger.attr("data-name");
+                            $.post(exec_endpoint, {name: filepath}, function(data) {
+                                if (data.error) {
+                                    Messenger().error(data.error);
+                                }
+                                else {
+                                    trigger.toggleClass("exec");
+                                }
+                            });
                         });
                     }
                     if (key == "preview") {
-                        var filepath = get_path(trigger) + trigger.attr("data-name");
-                        if (filepath.startsWith("public/")) {
-                            var newTab = {
-                                id: "preview-" + filepath,
-                                type: "component",
-                                componentName: "preview",
-                                componentState: { path: filepath, file: trigger.attr("data-name") }
-                            };
-                            var existing = layout.root.getItemsById("preview-" + filepath);
-                            if (existing.length) {
-                                existing[0].parent.setActiveContentItem(existing[0]);
+                        $("#files div.file.active").each(function() {
+                            var fileobj = $(this);
+                            var filepath = get_path(fileobj) + fileobj.attr("data-name");
+                            if (filepath.startsWith("public/")) {
+                                var newTab = {
+                                    id: "preview-" + filepath,
+                                    type: "component",
+                                    componentName: "preview",
+                                    componentState: { path: filepath, file: fileobj.attr("data-name") }
+                                };
+                                var existing = layout.root.getItemsById("preview-" + filepath);
+                                if (existing.length) {
+                                    existing[0].parent.setActiveContentItem(existing[0]);
+                                }
+                                else {
+                                    layout.root.getItemsById("default-file")[0].addChild(newTab);
+                                }
                             }
                             else {
-                                layout.root.getItemsById("default-file")[0].addChild(newTab);
+                                Messenger().error("This file cannot be previewed.");
                             }
-                        }
-                        else {
-                            Messenger().error("This file cannot be previewed.");
-                        }
+                        });
                     }
                 },
                 items: {
@@ -642,9 +656,9 @@ $(document).ready(function() {
                     "download": {name: "Download", icon: "fa-download"},
                     "sep1": "--------",
                     "set_exec": {name: (trigger.hasClass("exec") ? "Unset Executable" : "Set Executable"), icon: "fa-cog"},
-                    "set_process": (is_dynamic ? {name: "Set Process", icon: "fa-cogs"} : undefined),
+                    "set_process": ((is_dynamic && !multiple_selected) ? {name: "Set Process", icon: "fa-cogs"} : undefined),
                     "sep2": "--------",
-                    "rename": {name: "Rename", icon: "fa-pencil-square-o"},
+                    "rename": (multiple_selected ? undefined : {name: "Rename", icon: "fa-pencil-square-o"}),
                     "delete": {name: "Delete", icon: "fa-trash-o"},
                     "sep3": "--------",
                     "new_file": {name: "New File", icon: "fa-file"},
