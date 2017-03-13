@@ -302,21 +302,26 @@ def editor_exec_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    path = request.POST.get("name", None)
+    paths = request.POST.getlist("name[]", [])
 
-    if not path:
+    if request.POST.get("name", False):
+        paths.append(request.POST.get("name"))
+
+    if not paths:
         return JsonResponse({"error": "No file path received!"})
 
-    path = os.path.abspath(os.path.join(site.path, path))
+    paths = [os.path.abspath(os.path.join(site.path, x)) for x in paths]
 
-    if not path.startswith(site.path) or not os.path.isfile(path):
-        return JsonResponse({"error": "Invalid or nonexistent file!"})
+    for path in paths:
+        if not path.startswith(site.path) or not os.path.isfile(path):
+            return JsonResponse({"error": "Invalid or nonexistent file!"})
 
-    st = os.stat(path)
-    if not os.access(path, os.X_OK):
-        os.chmod(path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-    else:
-        os.chmod(path, stat.S_IMODE(st.st_mode) & ~stat.S_IXUSR & ~stat.S_IXGRP & ~stat.S_IXOTH)
+    for path in paths:
+        st = os.stat(path)
+        if not os.access(path, os.X_OK):
+            os.chmod(path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+        else:
+            os.chmod(path, stat.S_IMODE(st.st_mode) & ~stat.S_IXUSR & ~stat.S_IXGRP & ~stat.S_IXOTH)
 
     return JsonResponse({"success": True})
 

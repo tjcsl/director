@@ -612,17 +612,20 @@ $(document).ready(function() {
                         });
                     }
                     if (key == "set_exec") {
-                        $("#files div.file.active").each(function() {
+                        var paths = [];
+                        var fobjs = $("#files div.file.active");
+                        fobjs.each(function() {
                             var trigger = $(this);
                             var filepath = get_path(trigger) + trigger.attr("data-name");
-                            $.post(exec_endpoint, {name: filepath}, function(data) {
-                                if (data.error) {
-                                    Messenger().error(data.error);
-                                }
-                                else {
-                                    trigger.toggleClass("exec");
-                                }
-                            });
+                            paths.push(filepath);
+                        });
+                        $.post(exec_endpoint, {name: paths}, function(data) {
+                            if (data.error) {
+                                Messenger().error(data.error);
+                            }
+                            else {
+                                fobjs.toggleClass("exec");
+                            }
                         });
                     }
                     if (key == "preview") {
