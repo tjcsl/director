@@ -24,9 +24,13 @@ def send_approval_request_email(request):
         print(plain_message)
         return 0
     else:
-        return send_mail("{} A website request needs your approval!".format(settings.EMAIL_SUBJECT_PREFIX),
-                         plain_message, settings.EMAIL_FROM,
-                         [request.teacher.email], html_message=html_message)
+        msg = EmailMultiAlternatives(subject="{} A website request ({}) needs your approval!".format(settings.EMAIL_SUBJECT_PREFIX, request.activity),
+                                     body=plain_message,
+                                     from_email=settings.EMAIL_FROM,
+                                     to=[request.teacher.email],
+                                     reply_to=[settings.EMAIL_FEEDBACK])
+        msg.attach_alternative(html_message, "text/html")
+        return msg.send()
 
 
 def send_feedback_email(request, comments):
