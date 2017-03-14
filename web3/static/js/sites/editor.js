@@ -765,20 +765,37 @@ $(document).ready(function() {
                             }
                         });
                     }
+                    if (key.startsWith("new_")) {
+                        var newTab = {
+                            type: "component",
+                            componentName: key.substring(4)
+                        };
+                        trigger.trigger("tab:new", [newTab]);
+                    }
                 },
                 items: {
                     "save": can_save ? {name: "Save", icon: "fa-save"} : undefined,
                     "sep1": can_save ? "--------" : undefined,
                     "close": can_close ? {name: "Close", icon: "fa-times-circle-o"} : undefined,
                     "close_left": {name: "Close Tabs to Left", icon: "fa-chevron-left"},
-                    "close_right": {name: "Close Tabs to Right", icon: "fa-chevron-right"}
+                    "close_right": {name: "Close Tabs to Right", icon: "fa-chevron-right"},
+                    "sep2": "--------",
+                    "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
+                    "new_nginx": {name: "Edit Nginx Config", icon: "fa-wrench"},
+                    "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
+                    "new_help": {name: "Help Guide", icon: "fa-question-circle"}
                 }
             };
         }
     });
     // end #files code
-
+    function addContextHandlers(tab) {
+        tab.element.on("tab:new", function(e, item) {
+            tab.contentItem.parent.addChild(item);
+        });
+    }
     layout.registerComponent("files", function(container, componentState) {
+        container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-folder-open'></span> Files");
         var files = $("<div id='files' />");
         container.getElement().append(files);
@@ -786,6 +803,7 @@ $(document).ready(function() {
         registerFileHandlers(files);
     });
     layout.registerComponent("terminal", function(container, componentState) {
+        container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-terminal'></span> Terminal");
         var term = $($("#console-wrapper-template").html());
         container.getElement().append(term);
@@ -797,6 +815,7 @@ $(document).ready(function() {
         });
     });
     layout.registerComponent("preview", function(container, componentState) {
+        container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-eye'></span> " + componentState.file);
         var frame = $("<iframe class='preview' />");
         frame.attr("sandbox", "allow-forms allow-pointer-lock allow-popups allow-scripts");
@@ -805,10 +824,12 @@ $(document).ready(function() {
         container.getElement().append(frame);
     });
     layout.registerComponent("help", function(container, componentState) {
+        container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-question-circle'></span> Help");
         container.getElement().html($("#help-template").html());
     });
     layout.registerComponent("sql", function(container, componentState) {
+        container.on("tab", addContextHandlers);
         if (typeof registerConsole !== 'undefined') {
             container.setTitle("<span class='fa fa-database'></span> SQL");
             container.getElement().html($("#sql-console-template").html());
@@ -820,6 +841,7 @@ $(document).ready(function() {
     });
     layout.registerComponent("nginx", function(container, componentState) {
         container.setTitle("<span class='file-indicator fa fa-wrench saved'></span> " + "Nginx");
+        container.on("tab", addContextHandlers);
         var editor = ace.edit(container.getElement()[0]);
         editor.setOptions({
             "fontSize": "12pt",
@@ -856,6 +878,7 @@ $(document).ready(function() {
         }, "text");
     });
     layout.registerComponent("file", function(container, componentState) {
+        container.on("tab", addContextHandlers);
         if (componentState.isImage) {
             container.setTitle(componentState.file);
             var img = $("<img />");

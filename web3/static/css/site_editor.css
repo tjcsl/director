@@ -93,6 +93,7 @@ span.file-indicator {
 }
 .context-menu-list {
     z-index: 9999 !important;
+    border-radius: 0;
 }
 #context-menu-layer {
     z-index: 9998 !important;
