@@ -736,6 +736,46 @@ $(document).ready(function() {
             }
         }
     });
+    $.contextMenu({
+        "selector": ".lm_tab",
+        build: function(trigger, e) {
+            var can_save = trigger.hasClass("tab-file");
+            var can_close = trigger.find(".lm_close_tab").length > 0;
+            return {
+                callback: function(key, options) {
+                    if (key == "save") {
+                        trigger.trigger("tab:save");
+                    }
+                    if (key == "close") {
+                        trigger.find(".lm_close_tab").click();
+                    }
+                    if (key == "close_left") {
+                        trigger.prevAll().each(function() {
+                            var close = $(this).find(".lm_close_tab");
+                            if (close.length) {
+                                close.click();
+                            }
+                        });
+                    }
+                    if (key == "close_right") {
+                        trigger.nextAll().each(function() {
+                            var close = $(this).find(".lm_close_tab");
+                            if (close.length) {
+                                close.click();
+                            }
+                        });
+                    }
+                },
+                items: {
+                    "save": can_save ? {name: "Save", icon: "fa-save"} : undefined,
+                    "sep1": can_save ? "--------" : undefined,
+                    "close": can_close ? {name: "Close", icon: "fa-times-circle-o"} : undefined,
+                    "close_left": {name: "Close Tabs to Left", icon: "fa-chevron-left"},
+                    "close_right": {name: "Close Tabs to Right", icon: "fa-chevron-right"}
+                }
+            };
+        }
+    });
     // end #files code
 
     layout.registerComponent("files", function(container, componentState) {
@@ -789,7 +829,7 @@ $(document).ready(function() {
             editor.resize();
         });
         container.getElement().keydown(function(e) {
-            if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
+            if (((e.which == 115 || e.which == 83) && (e.ctrlKey || e.metaKey)) || e.which == 19) {
                 if (!editor.getSession().getUndoManager().isClean()) {
                     $.post(nginx_endpoint, { editor: editor.getSession().getValue() }, function(data) {
                         if (data.error) {
@@ -847,24 +887,33 @@ $(document).ready(function() {
             container.on("resize", function() {
                 editor.resize();
             });
+            container.on("tab", function(tab) {
+                tab.element.addClass("tab-file");
+                tab.element.on("tab:save", function() {
+                    container.getElement().trigger("tab:save");
+                });
+            });
+            container.getElement().on("tab:save", function() {
+                if (!editor.getSession().getUndoManager().isClean()) {
+                    $.post(save_endpoint + "?name=" + encodeURIComponent(componentState.path), { contents: editor.getSession().getValue() }, function(data) {
+                        if (data.error) {
+                            Messenger().error(data.error);
+                        }
+                        else {
+                            editor.getSession().getUndoManager().markClean();
+                            container.tab.element.find("span.file-indicator").addClass("saved");
+
+                            $.each(layout.root.getItemsById("preview-" + componentState.path), function(k, v) {
+                                var frame = v.element.find("iframe");
+                                frame.attr("src", frame.attr("src"));
+                            });
+                        }
+                    });
+                }
+            });
             container.getElement().keydown(function(e) {
                 if (((e.which == 115 || e.which == 83) && (e.ctrlKey || e.metaKey)) || e.which == 19) {
-                    if (!editor.getSession().getUndoManager().isClean()) {
-                        $.post(save_endpoint + "?name=" + encodeURIComponent(componentState.path), { contents: editor.getSession().getValue() }, function(data) {
-                            if (data.error) {
-                                Messenger().error(data.error);
-                            }
-                            else {
-                                editor.getSession().getUndoManager().markClean();
-                                container.tab.element.find("span.file-indicator").addClass("saved");
-
-                                $.each(layout.root.getItemsById("preview-" + componentState.path), function(k, v) {
-                                    var frame = v.element.find("iframe");
-                                    frame.attr("src", frame.attr("src"));
-                                });
-                            }
-                        });
-                    }
+                    $(this).trigger("tab:save");
                     e.preventDefault();
                     e.stopPropagation();
                 }

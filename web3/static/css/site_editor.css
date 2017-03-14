@@ -67,9 +67,6 @@ span.file-indicator.saved {
 span.file-indicator {
     color: #FF9800;
 }
-.context-menu-list {
-    z-index: 5 !important;
-}
 .dragover {
     border: 1px solid #999;
 }
@@ -93,4 +90,10 @@ span.file-indicator {
     padding: 15px;
     background-color: white;
     overflow-y: auto;
+}
+.context-menu-list {
+    z-index: 9999 !important;
+}
+#context-menu-layer {
+    z-index: 9998 !important;
 }
