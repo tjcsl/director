@@ -1,5 +1,6 @@
-<p>Username: {{ request.user.username }}</p>
-<p>Email: {{ request.user.email }}</p>
-<p>User Agent: {{ useragent }}</p>
-<b>Comments</b>
+<p>{{ request.user.full_name }} ({{ request.user.username }}) sent the following feedback:</p>
 <p>{{ feedback }}</p>
+
+Email: {{ request.user.email }}<br />
+Remote IP: {{ remote_ip }}<br />
+User Agent: {{ useragent }}<br />

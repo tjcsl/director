@@ -1,7 +1,7 @@
-Username: {{ request.user.username }}
-Email: {{ request.user.email }}
-User Agent: {{ useragent }}
-
-Comments
+{{ request.user.full_name }} ({{ request.user.username }}) sent the following feedback:
 
 {{ feedback }}
+
+Email: {{ request.user.email }}
+Remote IP: {{ remote_ip }}
+User Agent: {{ useragent }}
