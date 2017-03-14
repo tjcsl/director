@@ -848,7 +848,7 @@ $(document).ready(function() {
                 editor.resize();
             });
             container.getElement().keydown(function(e) {
-                if (((e.which == 115 || e.which == 83) && e.ctrlKey) || e.which == 19) {
+                if (((e.which == 115 || e.which == 83) && (e.ctrlKey || e.metaKey)) || e.which == 19) {
                     if (!editor.getSession().getUndoManager().isClean()) {
                         $.post(save_endpoint + "?name=" + encodeURIComponent(componentState.path), { contents: editor.getSession().getValue() }, function(data) {
                             if (data.error) {
