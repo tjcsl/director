@@ -95,13 +95,13 @@ $(document).ready(function() {
                     show = false;
                 }
             }
-            if (types) {
+            if (types.length) {
                 var cmpObj = $(this).find(".fa.pull-left");
                 var cmp = "other";
                 if (cmpObj.hasClass("fa-user")) {
                     cmp = "user";
                 }
-                else if (cmpObj.hasClass("fa-snowflake")) {
+                else if (cmpObj.hasClass("fa-snowflake-o")) {
                     cmp = "legacy";
                 }
                 else if (cmpObj.hasClass("fa-globe")) {
