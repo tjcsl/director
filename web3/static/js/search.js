@@ -32,6 +32,16 @@ $(document).ready(function() {
             });
         }
         val = $.trim(val.replace(/\s*tag:\w+/g, ""));
+
+        matches = val.match(/type:\w+/g);
+        var types = [];
+        if (matches) {
+            $.each(matches, function(k, v) {
+                types.push(v.substring(5).toLowerCase());
+            });
+        }
+        val = $.trim(val.replace(/\s*type:\w+/g, ""));
+
         var search_objects = $(this).data("search");
         var search_fields = $(this).data("fields").split(",");
         $(search_objects).each(function(k, v) {
@@ -82,6 +92,22 @@ $(document).ready(function() {
             }
             if (show_online) {
                 if (!$(this).find(".fa.pull-left span").hasClass("green")) {
+                    show = false;
+                }
+            }
+            if (types) {
+                var cmpObj = $(this).find(".fa.pull-left");
+                var cmp = "other";
+                if (cmpObj.hasClass("fa-user")) {
+                    cmp = "user";
+                }
+                else if (cmpObj.hasClass("fa-snowflake")) {
+                    cmp = "legacy";
+                }
+                else if (cmpObj.hasClass("fa-globe")) {
+                    cmp = "activity";
+                }
+                if (types.indexOf(cmp) == -1) {
                     show = false;
                 }
             }
