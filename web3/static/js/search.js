@@ -109,9 +109,12 @@ $(document).ready(function() {
                 else if (cmpObj.hasClass("fa-globe")) {
                     cmp = "activity";
                 }
-                if (types.indexOf(cmp) == -1) {
-                    show = false;
-                }
+                $.each(types, function(k, v) {
+                    if (v.includes(cmp)) {
+                        matches = true;
+                        return false;
+                    }
+                });
             }
             if (show && matches) {
                 $(this).show();
