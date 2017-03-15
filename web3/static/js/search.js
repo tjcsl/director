@@ -114,7 +114,7 @@ $(document).ready(function() {
                 }
                 var ok = false;
                 $.each(types, function(k, v) {
-                    if (v.includes(cmp)) {
+                    if (cmp.includes(v)) {
                         ok = true;
                         return false;
                     }
