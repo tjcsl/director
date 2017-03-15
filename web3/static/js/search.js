@@ -87,6 +87,9 @@ $(document).ready(function() {
                     return false;
                 }
             });
+            if (!matches) {
+                show = false;
+            }
             if (show_offline) {
                 if (!$(this).find(".fa.pull-left span").hasClass("red")) {
                     show = false;
@@ -109,14 +112,18 @@ $(document).ready(function() {
                 else if (cmpObj.hasClass("fa-globe")) {
                     cmp = "activity";
                 }
+                var ok = false;
                 $.each(types, function(k, v) {
                     if (v.includes(cmp)) {
-                        matches = true;
+                        ok = true;
                         return false;
                     }
                 });
+                if (!ok) {
+                    show = false;
+                }
             }
-            if (show && matches) {
+            if (show) {
                 $(this).show();
                 sites_shown++;
             }
