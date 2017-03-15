@@ -7,13 +7,13 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 
 from .forms import UserForm
 from .helpers import create_user, create_webdocs
 from ..authentication.decorators import superuser_required
-from ..sites.helpers import flush_permissions
+from ..sites.helpers import flush_permissions, write_new_index_file
 from ...utils.tjldap import get_full_name
 
 from requests.utils import quote
@@ -27,7 +27,7 @@ def settings_view(request):
         email = request.POST.get("email", None)
         try:
             validate_email(email)
-        except ValidationError as e:
+        except ValidationError:
             messages.error(request, "You entered an invalid email address!")
             return redirect("user_settings")
         request.user.email = email
@@ -113,6 +113,7 @@ def create_webdocs_view(request):
                 return redirect("create_webdocs")
 
             site = create_webdocs(request.user, purpose="user")
+            write_new_index_file(site)
             messages.success(request, "Your webdocs has been created!")
             return redirect("info_site", site_id=site.id)
 
