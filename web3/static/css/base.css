@@ -49,3 +49,6 @@ a.nav-warn:hover {
     max-width: 600px;
     margin: 0 auto;
 }
+#filtered {
+    font-size: 12px;
+}
