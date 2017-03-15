@@ -44,6 +44,8 @@ $(document).ready(function() {
 
         var search_objects = $(this).data("search");
         var search_fields = $(this).data("fields").split(",");
+        var sites_shown = 0;
+        var sites_total = 0;
         $(search_objects).each(function(k, v) {
             var t = $(this);
             var fields = $.map(search_fields, function(val, i) {
@@ -113,13 +115,13 @@ $(document).ready(function() {
             }
             if (show && matches) {
                 $(this).show();
+                sites_shown++;
             }
             else {
                 $(this).hide();
             }
+            sites_total++;
         });
-        var sites_shown = $(search_objects + ":visible").length;
-        var sites_total = $(search_objects).length;
         if (sites_shown < sites_total) {
             $("#filtered").html("(<b>" + sites_shown + "</b> shown out of <b>" + sites_total + "</b>)");
         }
