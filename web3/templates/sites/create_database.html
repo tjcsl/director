@@ -11,10 +11,14 @@
     </script>
 {% endblock %}
 
+{% block navbar %}
+<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
+{% endblock %}
+
 {% block mainclass %}narrow{% endblock %}
 
 {% block main %}
-<h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Database</h4>
+<h4>{% if site.database %}Edit{% else %}Create{% endif %} Database</h4>
 <form method="POST">
     {% csrf_token %}
     {% include "form.html" with form=form %}
