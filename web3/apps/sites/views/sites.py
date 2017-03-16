@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
@@ -249,6 +251,28 @@ def generate_key_view(request, site_id):
 
     messages.success(request, "Generated new RSA public private key-pair!")
     return redirect(reverse("info_site", kwargs={"site_id": site_id}) + "#github-manual")
+
+
+@login_required
+def set_git_path_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    if request.method == "POST":
+        path = request.POST.get("path", site.git_path)
+
+        if not path.startswith(site.path) or not os.path.isdir(path):
+            messages.error(request, "You entered a invalid or nonexistent path!")
+            return redirect("set_git_path", site_id=site_id)
+
+        site.repo_path = path
+        site.save()
+
+        messages.success(request, "The git repository path has been changed!")
+        return redirect("info_site", site_id=site_id)
+
+    return render(request, "sites/set_git_path.html", {"site": site})
 
 
 @login_required

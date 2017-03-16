@@ -35,6 +35,8 @@
     </style>
 {% endblock %}
 
+{% block mainclass %}narrow{% endblock %}
+
 {% block main %}
 <h4>{% if "create" in request.path %}Create New{% elif "edit" in request.path %}Edit{% else %}Create/Edit{% endif %} Process</h4>
 <div>Before adding or editing a process, make sure that your script file:</div>

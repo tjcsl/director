@@ -46,5 +46,6 @@ urlpatterns = [
     url("^(?P<site_id>\d+)/action/generate_key$", sites.generate_key_view, name="generate_rsa_key"),
     url("^(?P<site_id>\d+)/action/git_pull$", sites.git_pull_view, name="git_pull"),
     url("^(?P<site_id>\d+)/action/git_setup$", sites.git_setup_view, name="github_automatic_setup"),
+    url("^(?P<site_id>\d+)/action/git_path$", sites.set_git_path_view, name="set_git_path"),
     url("^(?P<site_id>\d+)/webhook$", sites.webhook_view, name="git_webhook")
 ]
