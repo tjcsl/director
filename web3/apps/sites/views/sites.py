@@ -105,6 +105,9 @@ def modify_process_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
+    if site.category != "dynamic":
+        messages.error(request, "You must set your site type to dynamic before adding a process.")
+        return redirect("info_site", site_id=site_id)
     if request.method == "POST":
         try:
             form = ProcessForm(request.user, request.POST, instance=site.process)
