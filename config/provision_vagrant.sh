@@ -20,12 +20,6 @@ with open('/home/ubuntu/director/config/devconfig.json', 'r') as f:
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Add DNS entry for LDAP server
-if ! grep -Fxq "openldap1.csl.tjhsst.edu" /etc/hosts
-then
-    echo 198.38.16.70 openldap1.csl.tjhsst.edu >> /etc/hosts
-fi
-
 DB_PASS='web3'
 NSS_PASS='web3'
 

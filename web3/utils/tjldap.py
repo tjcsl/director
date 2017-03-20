@@ -9,7 +9,7 @@ def get_uid(username):
 
         return generate_debug_id(username)
 
-    connection = Connection(Server('ldap://openldap1.csl.tjhsst.edu'))
+    connection = Connection(Server(settings.LDAP_SERVER))
     connection.bind()
     connection.search("ou=people,dc=csl,dc=tjhsst,dc=edu",
                       "(&(objectClass=posixAccount)(uid={}))".format(username), attributes=["uidNumber"])
@@ -20,7 +20,7 @@ def get_full_name(username):
     if settings.DEBUG:
         return None
 
-    connection = Connection(Server('ldap://openldap1.csl.tjhsst.edu'))
+    connection = Connection(Server(settings.LDAP_SERVER))
     connection.bind()
     connection.search("ou=students,ou=people,dc=csl,dc=tjhsst,dc=edu",
                       "(&(objectClass=posixAccount)(uid={}))".format(username), attributes=["cn"])
