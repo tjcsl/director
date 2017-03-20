@@ -556,9 +556,30 @@ $(document).ready(function() {
                         uploader_folder = null;
                         $("#uploader").trigger("click");
                     }
+                    if (key.startsWith("site_type_")) {
+                        var type = key.substring(10);
+                        $.post(site_type_endpoint, { type: type }, function(data) {
+                            if (data.error) {
+                                Messenger().error(data.error);
+                            }
+                            else {
+                                is_dynamic = type == "dynamic";
+                                Messenger().success("Site type changed to " + type + "!");
+                            }
+                        });
+                    }
                 },
                 items: {
                     "open": {name: "Open Website", icon: "fa-globe"},
+                    "site_type": {
+                        name: "Site Type",
+                        icon: "fa-cogs",
+                        items: {
+                            "site_type_static": {name: "Static", icon: "fa-cog"},
+                            "site_type_php": {name: "PHP", icon: "fa-cog"},
+                            "site_type_dynamic": {name: "Dynamic", icon: "fa-cog"}
+                        }
+                    },
                     "sep1": "--------",
                     "upload": {name: "Upload", icon: "fa-upload"},
                     "new_file": {name: "New File", icon: "fa-file"},

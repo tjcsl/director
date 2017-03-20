@@ -13,7 +13,8 @@ from django.views.decorators.http import require_http_methods
 
 from ..models import Site, Process
 from ..helpers import (fix_permissions, create_process_config, reload_services,
-                       render_to_string, check_nginx_config, reload_nginx_config)
+                       render_to_string, check_nginx_config, reload_nginx_config,
+                       create_config_files, delete_process_config)
 
 
 @login_required
@@ -372,3 +373,25 @@ def web_terminal_view(request, site_id):
     }
 
     return render(request, "sites/web_terminal.html", context)
+
+
+@require_http_methods(["POST"])
+@login_required
+def site_type_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    if request.POST.get("type") not in ["static", "php", "dynamic"]:
+        return JsonResponse({"error": "Invalid site type!"})
+
+    site.category = request.POST.get("type")
+    site.save()
+
+    create_config_files(site)
+    if site.category != "dynamic" and hasattr(site, "process"):
+        delete_process_config(site.process)
+        reload_services()
+        site.process.delete()
+
+    return JsonResponse({"success": True})

@@ -49,6 +49,7 @@
     var process_endpoint = "{% url 'editor_process' site.id %}";
     var exec_endpoint = "{% url 'editor_exec' site.id %}";
     var nginx_endpoint = "{% url 'edit_nginx' site.id %}";
+    var site_type_endpoint = "{% url 'editor_site_type' site.id %}";
     var is_dynamic = {% if site.category == 'dynamic' %}true{% else %}false{% endif %};
     var terminal_auth = { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}" };
     hljs.initHighlightingOnLoad();
