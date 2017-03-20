@@ -1,7 +1,14 @@
+from django.conf import settings
+
 from ldap3 import Server, Connection
 
 
 def get_uid(username):
+    if settings.DEBUG:
+        from ..apps.users.helpers import generate_debug_id  # necessary to prevent recursive import
+
+        return generate_debug_id(username)
+
     connection = Connection(Server('ldap://openldap1.csl.tjhsst.edu'))
     connection.bind()
     connection.search("ou=people,dc=csl,dc=tjhsst,dc=edu",
@@ -10,6 +17,9 @@ def get_uid(username):
 
 
 def get_full_name(username):
+    if settings.DEBUG:
+        return None
+
     connection = Connection(Server('ldap://openldap1.csl.tjhsst.edu'))
     connection.bind()
     connection.search("ou=students,ou=people,dc=csl,dc=tjhsst,dc=edu",

@@ -4,6 +4,16 @@ from ..sites.helpers import create_site_users, make_site_dirs, create_config_fil
 from ...utils.tjldap import get_uid, get_full_name
 
 
+def generate_debug_id(username):
+    if User.objects.filter(username=username).exists():
+        return User.objects.get(username=username).id
+
+    if User.objects.filter(service=False).count() == 0:
+        return 30000
+
+    return User.objects.filter(service=False).order_by('-id')[0].id + 1
+
+
 def create_user(request, username):
     if User.objects.filter(username=username).exists():
         return User.objects.get(username=username)
