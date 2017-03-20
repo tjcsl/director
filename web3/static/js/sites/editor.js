@@ -572,7 +572,7 @@ $(document).ready(function() {
                 items: {
                     "open": {name: "Open Website", icon: "fa-globe"},
                     "site_type": {
-                        name: "Site Type",
+                        name: "Set Site Type",
                         icon: "fa-cogs",
                         items: {
                             "site_type_static": {name: "Static", icon: "fa-cog"},
