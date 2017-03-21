@@ -959,7 +959,7 @@ function addFileListener() {
                 var data = JSON.parse(e.data);
                 if (data.action == "create") {
                     if (!data.path) {
-                        var newNode = makeNode({name: data.name, type: data.type ? "d" : "f"}, 0);
+                        var newNode = makeNode({name: data.name, type: data.type ? "d" : "f", executable: data.exec, link: data.link}, 0);
                         if (!$("div." + (data.type ? "folder" : "file") + "[data-depth=0][data-name='" + data.name.replace("'", "\\'") + "']").length) {
                             $("#files").append(newNode);
                             if (data.type) {
@@ -969,7 +969,7 @@ function addFileListener() {
                     }
                     else {
                         var node = get_element(data.path);
-                        var newNode = makeNode({name: data.name, type: data.type ? "d" : "f"}, parseInt(node.attr("data-depth")) + 1);
+                        var newNode = makeNode({name: data.name, type: data.type ? "d" : "f", executable: data.exec, link: data.link}, parseInt(node.attr("data-depth")) + 1);
                         if (!node.nextUntil("div.folder[data-depth=" + node.attr("data-depth") + "]").filter("div." + (data.type ? "folder" : "file") + "[data-depth=" + (parseInt(node.attr("data-depth") + 1)) + "][data-name='" + data.name.replace("'", "\\'") + "']").length) {
                             node.after(newNode);
                             if (data.type) {

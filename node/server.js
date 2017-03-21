@@ -91,36 +91,47 @@ wss.on("connection", function(ws) {
                 }
                 else {
                     if (data.editor) {
-                        var hooks = [];
+                        var hooks = {};
                         function addHook(p) {
                             if (!path.join(auth.site_homedir, p).startsWith(auth.site_homedir)) {
                                 return;
                             }
-                            hooks.push(inotify.addWatch({
+                            hooks[p] = inotify.addWatch({
                                 path: path.join(auth.site_homedir, p),
                                 watch_for: Inotify.IN_CREATE | Inotify.IN_DELETE | Inotify.IN_MOVED_FROM | Inotify.IN_MOVED_TO,
                                 callback: function(e) {
                                     var act = null;
+                                    var stat = null;
                                     if (e.mask & (Inotify.IN_DELETE | Inotify.IN_MOVED_FROM)) {
                                         act = "delete";
                                     }
                                     if (e.mask & (Inotify.IN_CREATE | Inotify.IN_MOVED_TO)) {
                                         act = "create";
+                                        stat = fs.lstatSync(path.join(auth.site_homedir, p, e.name));
                                     }
                                     if (act) {
-                                        ws.send(JSON.stringify({ path: (p ? p : undefined), type: !!(e.mask & Inotify.IN_ISDIR), name: e.name, action: act }));
+                                        ws.send(JSON.stringify({
+                                            path: (p ? p : undefined),
+                                            type: !!(e.mask & Inotify.IN_ISDIR),
+                                            name: e.name,
+                                            action: act,
+                                            exec: (stat ? !!(stat["mode"] & 1) : undefined),
+                                            link: (stat ? stat.isSymbolicLink() : undefined)
+                                        }));
                                     }
                                 }
-                            }));
+                            });
                         }
                         addHook("");
                         addHook("public");
                         ws.on("close", function() {
                             for (var hook in hooks) {
                                 try {
-                                    inotify.removeWatch(hook);
+                                    inotify.removeWatch(hooks[hook]);
                                 }
-                                catch (e) {}
+                                catch (e) {
+                                    raven.captureException(e);
+                                }
                             }
                         });
                         ws.removeListener("message", message_init);
