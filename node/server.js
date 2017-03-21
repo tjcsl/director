@@ -98,16 +98,30 @@ wss.on("connection", function(ws) {
                             }
                             hooks[p] = inotify.addWatch({
                                 path: path.join(auth.site_homedir, p),
-                                watch_for: Inotify.IN_CREATE | Inotify.IN_DELETE | Inotify.IN_MOVED_FROM | Inotify.IN_MOVED_TO,
+                                watch_for: Inotify.IN_CREATE | Inotify.IN_DELETE | Inotify.IN_MOVED_FROM | Inotify.IN_MOVED_TO | Inotify.IN_IGNORED | Inotify.IN_DELETE_SELF,
                                 callback: function(e) {
                                     var act = null;
                                     var stat = null;
+                                    if (e.mask & (Inotify.IN_DELETE_SELF | Inotify.IN_IGNORED)) {
+                                        delete hooks[p];
+                                        return;
+                                    }
                                     if (e.mask & (Inotify.IN_DELETE | Inotify.IN_MOVED_FROM)) {
                                         act = "delete";
                                     }
                                     if (e.mask & (Inotify.IN_CREATE | Inotify.IN_MOVED_TO)) {
                                         act = "create";
-                                        stat = fs.lstatSync(path.join(auth.site_homedir, p, e.name));
+                                        try {
+                                            stat = fs.lstatSync(path.join(auth.site_homedir, p, e.name));
+                                        }
+                                        catch (err) {
+                                            if (err && err.code == "ENOENT") {
+                                                return;
+                                            }
+                                            else {
+                                                raven.captureException(err);
+                                            }
+                                        }
                                     }
                                     if (act) {
                                         ws.send(JSON.stringify({
@@ -115,7 +129,7 @@ wss.on("connection", function(ws) {
                                             type: !!(e.mask & Inotify.IN_ISDIR),
                                             name: e.name,
                                             action: act,
-                                            exec: (stat ? !!(stat["mode"] & 1) : undefined),
+                                            exec: (stat ? ((stat["mode"] & 1) && !stat.isDirectory()) : undefined),
                                             link: (stat ? stat.isSymbolicLink() : undefined)
                                         }));
                                     }
