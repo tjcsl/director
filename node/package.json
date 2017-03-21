@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.14.0",
+    "inotify": "^1.4.1",
     "pty.js": "^0.3.1",
     "raven": "^1.1.1",
     "uuid": "^3.0.1",

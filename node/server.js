@@ -1,6 +1,7 @@
 #!/usr/bin/node
 
 var fs = require("fs");
+var path = require("path");
 var pty = require("pty.js");
 var WebSocketServer = require('ws').Server;
 var express = require("express");
@@ -8,6 +9,9 @@ var app = express();
 var http = require("http");
 var https = require("https");
 var querystring = require("querystring");
+
+var Inotify = require("inotify").Inotify;
+var inotify = new Inotify();
 
 var raven = require("raven");
 if (fs.existsSync("raven.dsn")) {
@@ -86,48 +90,91 @@ wss.on("connection", function(ws) {
                     ws.close();
                 }
                 else {
-                    if (data.site) {
-                        if (!auth.user) {
-                            ws.send(JSON.stringify({ error: "Invalid user id passed!" }));
-                            ws.close();
-                        }
-                        else {
-                            term = pty.spawn(__dirname + "/shell.sh", [auth.user], {
-                                name: "xterm-color",
-                                cols: 80,
-                                rows: 30,
-                                cwd: auth.site_homedir,
-                                env: {
-                                    HOME: auth.site_homedir
+                    if (data.editor) {
+                        var hooks = [];
+                        function addHook(p) {
+                            if (!path.join(auth.site_homedir, p).startsWith(auth.site_homedir)) {
+                                return;
+                            }
+                            hooks.push(inotify.addWatch({
+                                path: path.join(auth.site_homedir, p),
+                                watch_for: Inotify.IN_CREATE | Inotify.IN_DELETE | Inotify.IN_MOVED_FROM | Inotify.IN_MOVED_TO,
+                                callback: function(e) {
+                                    var act = null;
+                                    if (e.mask & (Inotify.IN_DELETE | Inotify.IN_MOVED_FROM)) {
+                                        act = "delete";
+                                    }
+                                    if (e.mask & (Inotify.IN_CREATE | Inotify.IN_MOVED_TO)) {
+                                        act = "create";
+                                    }
+                                    if (act) {
+                                        ws.send(JSON.stringify({ path: (p ? p : undefined), type: !!(e.mask & Inotify.IN_ISDIR), name: e.name, action: act }));
+                                    }
                                 }
-                            });
+                            }));
                         }
-                    }
-                    else if (data.vm) {
-                        term = pty.spawn(__dirname + "/ssh.sh", [auth.ip], {
-                            name: "xterm-color",
-                            cols: 80,
-                            rows: 30,
-                            env: {
-                                SSHPASS: auth.password
+                        addHook("");
+                        addHook("public");
+                        ws.on("close", function() {
+                            for (var hook in hooks) {
+                                try {
+                                    inotify.removeWatch(hook);
+                                }
+                                catch (e) {}
+                            }
+                        });
+                        ws.removeListener("message", message_init);
+                        ws.on("message", function(d) {
+                            var data = JSON.parse(d);
+                            if (data.action == "listen") {
+                                addHook(data.path);
                             }
                         });
                     }
-                    term.on("close", function(e) {
-                        ws.close();
-                        delete terminals[id];
-                    });
-                    term.on("data", function(data) {
-                        ws.send(data);
-                    });
-                    ws.removeListener("message", message_init);
-                    ws.on("message", function(data) {
-                        term.write(data);
-                    });
-                    terminals[id] = term;
-                    started = true;
-                    if (ws.readyState == 1) {
-                        ws.send(JSON.stringify({ id: id, action: "START" }));
+                    else {
+                        if (data.site) {
+                            if (!auth.user) {
+                                ws.send(JSON.stringify({ error: "Invalid user id passed!" }));
+                                ws.close();
+                            }
+                            else {
+                                term = pty.spawn(__dirname + "/shell.sh", [auth.user], {
+                                    name: "xterm-color",
+                                    cols: 80,
+                                    rows: 30,
+                                    cwd: auth.site_homedir,
+                                    env: {
+                                        HOME: auth.site_homedir
+                                    }
+                                });
+                            }
+                        }
+                        else if (data.vm) {
+                            term = pty.spawn(__dirname + "/ssh.sh", [auth.ip], {
+                                name: "xterm-color",
+                                cols: 80,
+                                rows: 30,
+                                env: {
+                                    SSHPASS: auth.password
+                                }
+                            });
+                        }
+                        term.on("close", function(e) {
+                            ws.close();
+                            delete terminals[id];
+                        });
+                        term.on("data", function(data) {
+                            ws.send(data);
+                        });
+                        ws.removeListener("message", message_init);
+                        ws.on("message", function(data) {
+                            term.write(data);
+                        });
+                        terminals[id] = term;
+                        started = true;
+                        if (ws.readyState == 1) {
+                            ws.send(JSON.stringify({ id: id, action: "START" }));
+                        }
                     }
                 }
             });

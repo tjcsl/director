@@ -99,7 +99,6 @@ $(document).ready(function() {
                     items.each(function(k, v) {
                         var item = $(this);
                         if (item.hasClass("folder")) {
-                            var depth = parseInt(item.attr("data-depth"));
                             getChildren(item).remove();
                         }
                         item.remove();
@@ -164,54 +163,6 @@ $(document).ready(function() {
                 }
             });
         }, item.attr("data-name"));
-    }
-    function makeNode(v, depth) {
-        depth = depth || 0;
-        var c = (v.type == "f" ? "file" : "folder");
-        var ic = c;
-        var node = $("<div draggable='true' style='padding-left:" + (depth*20) + "px'><i class='fa fa-fw'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
-        node.addClass(c);
-        node.attr("data-name", v.name);
-        node.attr("data-depth", depth);
-        if (v.executable) {
-            node.addClass("exec");
-        }
-        if (v.link) {
-            node.addClass("link");
-        }
-        if (v.name.charAt(0) == ".") {
-            node.addClass("hidden");
-        }
-        if (v.type == "f") {
-            var vnl = v.name.toLowerCase();
-            if (vnl.match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
-                node.addClass("image");
-                ic = "file-image";
-            }
-            if (vnl.match(/\.(mp3|mp4|pdf|swf)$/) != null) {
-                node.addClass("media");
-                if (vnl.match(/\.pdf$/)) {
-                    ic = "file-pdf";
-                }
-                else {
-                    ic = "file-video";
-                }
-            }
-            if (vnl.match(/\.(doc|docx|odt)$/) != null) {
-                ic = "file-word";
-            }
-            if (vnl.match(/\.(py|php|js|html|css)$/) != null) {
-                ic = "file-code";
-            }
-            if (vnl.match(/\.(txt|log)/) != null) {
-                ic = "file-text";
-            }
-            if (vnl.match(/\.(zip|rar|gz|tar|7z|bz2|xz)$/) != null) {
-                ic = "file-archive";
-            }
-        }
-        node.find("i.fa").addClass("fa-" + ic + "-o");
-        return node;
     }
 
     function initFiles(firstRun) {
@@ -330,6 +281,7 @@ $(document).ready(function() {
                         t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
                     }
                 });
+                $(this).trigger("folder:load");
             }
         });
         var path_obj;
@@ -993,8 +945,80 @@ $(document).ready(function() {
             $("#modal-confirm .btn-primary").focus();
         }
     });
+
+    addFileListener();
 });
 
+function addFileListener() {
+    try {
+        var host = location.origin.replace(/^http/, 'ws');
+        var ws = new WebSocket(host + "/ws/");
+        ws.onopen = function(e) {
+            ws.send(JSON.stringify({ uid: terminal_auth.uid, token: terminal_auth.token, site: terminal_auth.site, editor: true }));
+            ws.onmessage = function(e) {
+                var data = JSON.parse(e.data);
+                if (data.action == "create") {
+                    if (!data.path) {
+                        var newNode = makeNode({name: data.name, type: data.type ? "d" : "f"}, 0);
+                        if (!$("div." + (data.type ? "folder" : "file") + "[data-depth=0][data-name='" + data.name.replace("'", "\\'") + "']").length) {
+                            $("#files").append(newNode);
+                            if (data.type) {
+                                newNode.trigger("click");
+                            }
+                        }
+                    }
+                    else {
+                        var node = get_element(data.path);
+                        var newNode = makeNode({name: data.name, type: data.type ? "d" : "f"}, parseInt(node.attr("data-depth")) + 1);
+                        if (!node.nextUntil("div.folder[data-depth=" + node.attr("data-depth") + "]").filter("div." + (data.type ? "folder" : "file") + "[data-depth=" + (parseInt(node.attr("data-depth") + 1)) + "][data-name='" + data.name.replace("'", "\\'") + "']").length) {
+                            node.after(newNode);
+                            if (data.type) {
+                                newNode.trigger("click");
+                            }
+                        }
+                    }
+                }
+                else if (data.action == "delete") {
+                    var del = get_element(data.name);
+                    if (del) {
+                        if (del.hasClass("folder")) {
+                            getChildren(del).remove();
+                        }
+                        del.remove();
+                    }
+                }
+            };
+        };
+        $(document).on("folder:load", "#files div.folder", function() {
+            ws.send(JSON.stringify({action: "listen", path: get_path($(this))}));
+        });
+        ws.onclose = function() {
+            $(document).off("folder:load", "#files div.folder");
+            setTimeout(addFileListener, 1000);
+        };
+    }
+    catch (e) {
+        console.error(e);
+    }
+}
+function get_element(path) {
+    var p = path.split("/");
+    var ele = $("#files").children("div.folder, div.file");
+    var depth = 0;
+    while (p.length) {
+        var next = p.shift();
+        ele = ele.filter("[data-name='" + next.replace("'", "\\'") + "']");
+        if (!ele.length) {
+            return false;
+        }
+        if (!p.length) {
+            return ele;
+        }
+        ele = $(ele[0]).nextUntil("div.folder[data-depth=" + depth + "]");
+        depth++;
+    }
+    return false;
+}
 function get_path(t) {
     var depth = parseInt(t.attr("data-depth"));
     var loop_depth = depth;
@@ -1042,4 +1066,52 @@ function modalPrompt(title, body, callback, existing) {
             callback(input);
         }
     });
+}
+function makeNode(v, depth) {
+    depth = depth || 0;
+    var c = (v.type == "f" ? "file" : "folder");
+    var ic = c;
+    var node = $("<div draggable='true' style='padding-left:" + (depth*20) + "px'><i class='fa fa-fw'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
+    node.addClass(c);
+    node.attr("data-name", v.name);
+    node.attr("data-depth", depth);
+    if (v.executable) {
+        node.addClass("exec");
+    }
+    if (v.link) {
+        node.addClass("link");
+    }
+    if (v.name.charAt(0) == ".") {
+        node.addClass("hidden");
+    }
+    if (v.type == "f") {
+        var vnl = v.name.toLowerCase();
+        if (vnl.match(/\.(jpeg|jpg|gif|png|ico)$/) != null) {
+            node.addClass("image");
+            ic = "file-image";
+        }
+        if (vnl.match(/\.(mp3|mp4|pdf|swf)$/) != null) {
+            node.addClass("media");
+            if (vnl.match(/\.pdf$/)) {
+                ic = "file-pdf";
+            }
+            else {
+                ic = "file-video";
+            }
+        }
+        if (vnl.match(/\.(doc|docx|odt)$/) != null) {
+            ic = "file-word";
+        }
+        if (vnl.match(/\.(py|php|js|html|css)$/) != null) {
+            ic = "file-code";
+        }
+        if (vnl.match(/\.(txt|log)/) != null) {
+            ic = "file-text";
+        }
+        if (vnl.match(/\.(zip|rar|gz|tar|7z|bz2|xz)$/) != null) {
+            ic = "file-archive";
+        }
+    }
+    node.find("i.fa").addClass("fa-" + ic + "-o");
+    return node;
 }
