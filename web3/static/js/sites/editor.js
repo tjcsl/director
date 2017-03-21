@@ -988,10 +988,10 @@ function addFileListener() {
                     }
                 }
             };
+            $(document).on("folder:load", "#files div.folder", function() {
+                ws.send(JSON.stringify({action: "listen", path: get_path($(this))}));
+            });
         };
-        $(document).on("folder:load", "#files div.folder", function() {
-            ws.send(JSON.stringify({action: "listen", path: get_path($(this))}));
-        });
         ws.onclose = function() {
             $(document).off("folder:load", "#files div.folder");
             setTimeout(addFileListener, 1000);
