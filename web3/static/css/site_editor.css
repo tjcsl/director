@@ -111,3 +111,9 @@ span.file-indicator {
     border-radius: 5px 5px 0 0;
     font-family: monospace;
 }
+#modal-confirm pre {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+}

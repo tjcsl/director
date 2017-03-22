@@ -90,7 +90,7 @@ $(document).ready(function() {
             }
             filepaths.push(filepath);
         });
-        modalConfirm("Are you sure you want to delete these files?", "Are you sure you want to delete:\n" + filepaths.join("\n"), function() {
+        modalConfirm("Are you sure you want to delete these files?", "<p>Are you sure you want to delete <b>" + filepaths.length  + "</b> file(s):</p><pre>" + $("<div />").text(filepaths.join("\n")).html() + "</pre>", function() {
             $.post(delete_endpoint, { name: filepaths }, function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
@@ -1044,7 +1044,7 @@ function getChildren(item) {
 function modalConfirm(title, body, callback) {
     $("#modal-confirm").modal("show");
     $("#modal-confirm .modal-title").text(title);
-    $("#modal-confirm .modal-body").text(body);
+    $("#modal-confirm .modal-body").html(body);
     $("#modal-confirm .btn-primary").off("click").on("click", callback);
 }
 function modalPrompt(title, body, callback, existing) {
