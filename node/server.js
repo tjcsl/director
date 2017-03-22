@@ -98,7 +98,7 @@ wss.on("connection", function(ws) {
                             }
                             hooks[p] = inotify.addWatch({
                                 path: path.join(auth.site_homedir, p),
-                                watch_for: Inotify.IN_CREATE | Inotify.IN_DELETE | Inotify.IN_MOVED_FROM | Inotify.IN_MOVED_TO | Inotify.IN_IGNORED | Inotify.IN_DELETE_SELF,
+                                watch_for: Inotify.IN_CREATE | Inotify.IN_DELETE | Inotify.IN_MOVED_FROM | Inotify.IN_MOVED_TO | Inotify.IN_IGNORED | Inotify.IN_DELETE_SELF | Inotify.IN_MODIFY,
                                 callback: function(e) {
                                     var act = null;
                                     var stat = null;
@@ -109,8 +109,13 @@ wss.on("connection", function(ws) {
                                     if (e.mask & (Inotify.IN_DELETE | Inotify.IN_MOVED_FROM)) {
                                         act = "delete";
                                     }
+                                    if (e.mask & Inotify.IN_MODIFY) {
+                                        act = "modify";
+                                    }
                                     if (e.mask & (Inotify.IN_CREATE | Inotify.IN_MOVED_TO)) {
                                         act = "create";
+                                    }
+                                    if (act == "create" || act == "modify") {
                                         try {
                                             stat = fs.lstatSync(path.join(auth.site_homedir, p, e.name));
                                         }
