@@ -90,11 +90,26 @@ def editor_save_view(request, site_id):
     requested_path = request.GET.get("name", "")
     path = os.path.abspath(os.path.join(site.path, requested_path))
 
-    if not path.startswith(site.path) or not os.path.isfile(path):
+    if not path.startswith(site.path):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
+
+    set_perms = False
+
+    if not os.path.isfile(path):
+        if os.path.exists(path):
+            return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
+        if not request.POST.get("force", False):
+            return JsonResponse({"error": "The file you are editing does not exist anymore!", "path": path, "force": True})
+        else:
+            set_perms = True
 
     with open(path, "w") as f:
         f.write(request.POST.get("contents"))
+
+    if set_perms:
+        st = os.lstat(path)
+        os.lchown(path, site.user.id, site.group.id)
+        os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
 
     return JsonResponse({"success": True})
 
