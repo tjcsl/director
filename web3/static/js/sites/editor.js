@@ -551,6 +551,7 @@ $(document).ready(function() {
         "selector": "#files .file",
         build: function(trigger, e) {
             var multiple_selected = $("#files div.file.active").length > 1;
+            var is_public = get_path(trigger).startsWith("public/");
             return {
                 callback: function(key, options) {
                     if (key == "open") {
@@ -621,14 +622,28 @@ $(document).ready(function() {
                                 }
                             }
                             else {
-                                Messenger().error("This file cannot be previewed.");
+                                Messenger().error("<b>" + $("<div />").text(fileobj.attr("data-name")).html() + "</b> cannot be previewed.");
+                            }
+                        });
+                    }
+                    if (key == "open_browser") {
+                        $("#files div.file.active").each(function() {
+                            var fileobj = $(this);
+                            var filepath = get_path(fileobj) + fileobj.attr("data-name");
+                            if (filepath.startsWith("public/")) {
+                                var final_url = site_url + filepath.replace(/^public\//, "");
+                                window.open(final_url, "_blank");
+                            }
+                            else {
+                                Messenger().error("<b>" + $("<div />").text(fileobj.attr("data-name")).html() + "</b> cannot be displayed.");
                             }
                         });
                     }
                 },
                 items: {
                     "open": {name: "Open", icon: "fa-pencil"},
-                    "preview": (is_dynamic ? undefined : {name: "Preview", icon: "fa-eye"}),
+                    "preview": ((is_dynamic || !is_public) ? undefined : {name: "Preview", icon: "fa-eye"}),
+                    "open_browser": ((is_dynamic || !is_public) ? undefined : {name: "Open in Browser", icon: "fa-globe"}),
                     "download": {name: "Download", icon: "fa-download"},
                     "sep1": "--------",
                     "set_exec": {name: (trigger.hasClass("exec") ? "Unset Executable" : "Set Executable"), icon: "fa-cog"},
