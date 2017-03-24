@@ -79,7 +79,7 @@ $(document).ready(function() {
     });
 
     // #files code
-    function triggerDelete(item) {
+    function triggerDelete() {
         var filepaths = [];
         var items = $("#files div.active");
         items.each(function(k, v) {
@@ -338,7 +338,7 @@ $(document).ready(function() {
                     for (var i = 0; i < files.length; i++) {
                         formData.append("file[]", files[i], files[i].name);
                     }
-                    var msg = Messenger().info("Uploading file(s)...");
+                    var msg = Messenger().info("Uploading " + files.length + " file(s)...");
                     $.ajax({
                         url: upload_endpoint,
                         type: "POST",
@@ -464,7 +464,7 @@ $(document).ready(function() {
         for (var i = 0; i < this.files.length; i++) {
             formData.append("file[]", this.files[i], this.files[i].name);
         }
-        var msg = Messenger().info("Uploading file(s)...");
+        var msg = Messenger().info("Uploading " + this.files.length + " file(s)...");
         $.ajax({
             url: upload_endpoint,
             type: "POST",
@@ -599,7 +599,7 @@ $(document).ready(function() {
                         $("#files div.file.active").click();
                     }
                     if (key == "delete") {
-                        triggerDelete(trigger);
+                        triggerDelete();
                     }
                     if (key == "new_file") {
                         triggerCreate(trigger, true);
@@ -716,7 +716,7 @@ $(document).ready(function() {
                         trigger.click();
                     }
                     if (key == "delete") {
-                        triggerDelete(trigger);
+                        triggerDelete();
                     }
                     if (key == "download") {
                         triggerDownload(trigger);
@@ -826,7 +826,15 @@ $(document).ready(function() {
     layout.registerComponent("files", function(container, componentState) {
         container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-folder-open'></span> Files");
-        var files = $("<div id='files' />");
+        var files = $("<div id='files' tabindex='0' />");
+        files.keydown(function(e) {
+            if (e.keyCode == 46) {
+                if ($("#files div.active").length > 0) {
+                    triggerDelete();
+                    e.preventDefault();
+                }
+            }
+        });
         container.getElement().append(files);
         initFiles(true);
         registerFileHandlers(files);
