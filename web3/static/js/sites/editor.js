@@ -1113,7 +1113,11 @@ function addFileListener() {
                     }
                 }
                 else if (data.action == "delete") {
-                    var del = getElement(data.name);
+                    var full_path = data.name;
+                    if (data.path) {
+                        full_path = data.path + "/" + data.name;
+                    }
+                    var del = getElement(full_path);
                     if (del) {
                         if (del.hasClass("folder")) {
                             getChildren(del).remove();
