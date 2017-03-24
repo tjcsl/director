@@ -84,7 +84,7 @@ $(document).ready(function() {
         var items = $("#files div.active");
         items.each(function(k, v) {
             var item = $(this);
-            var filepath = get_path(item);
+            var filepath = getPath(item);
             if (item.hasClass("file")) {
                 filepath += item.attr("data-name");
             }
@@ -112,7 +112,7 @@ $(document).ready(function() {
             filepath = "";
         }
         else {
-            var filepath = get_path(item);
+            var filepath = getPath(item);
         }
         var name = modalPrompt("New " + (type ? "File" : "Folder"), "Enter a name for your new " + (type ? "file" : "directory") + ".", function(name) {
             $.post(create_endpoint, { name: name, path: filepath, type: (type ? "f" : "d") }, function(data) {
@@ -136,7 +136,7 @@ $(document).ready(function() {
         });
     }
     function triggerDownload(item) {
-        var filepath = get_path(item);
+        var filepath = getPath(item);
         if (item.hasClass("file")) {
             filepath += item.attr("data-name");
         }
@@ -148,7 +148,7 @@ $(document).ready(function() {
         $("body").append(frame);
     }
     function triggerRename(item) {
-        var filepath = get_path(item);
+        var filepath = getPath(item);
         if (item.hasClass("file")) {
             filepath += item.attr("data-name");
         }
@@ -198,7 +198,7 @@ $(document).ready(function() {
         files.on("dblclick", ".file", function(e) {
             e.preventDefault();
             var t = $(this);
-            var filepath = get_path(t) + t.attr("data-name");
+            var filepath = getPath(t) + t.attr("data-name");
             var newTab = {
                 id: "file-" + filepath,
                 type: "component",
@@ -263,7 +263,7 @@ $(document).ready(function() {
             else {
                 var depth = parseInt(t.attr("data-depth"));
                 t.addClass("loaded");
-                $.get(path_endpoint + "?path=" + encodeURIComponent(get_path(t)), function(data) {
+                $.get(path_endpoint + "?path=" + encodeURIComponent(getPath(t)), function(data) {
                     if (data.error) {
                         Messenger().error(data.error);
                     }
@@ -290,7 +290,7 @@ $(document).ready(function() {
         var path_obj;
         files.on("dragstart", "div", function(e) {
             var item = $(this);
-            var filepath = get_path(item);
+            var filepath = getPath(item);
             if (item.hasClass("file")) {
                 filepath += item.attr("data-name");
             }
@@ -321,14 +321,14 @@ $(document).ready(function() {
                     if (e.target !== $("#files")[0]) {
                         folder = $(e.target).closest("div.folder");
                         if (folder.length) {
-                            path = get_path(folder);
+                            path = getPath(folder);
                         }
                         else {
                             folder = $(e.target).closest("div.file");
                             if (folder.length) {
                                 folder = folder.prevAll("div.folder[data-depth=" + (parseInt(folder.attr("data-depth")) - 1) + "]:first");
                                 if (folder.length) {
-                                    path = get_path(folder);
+                                    path = getPath(folder);
                                 }
                                 else {
                                     folder = null;
@@ -395,13 +395,13 @@ $(document).ready(function() {
                         if (e.target !== $("#files")[0]) {
                             var f = $(e.target).closest("div.folder");
                             if (f.length) {
-                                new_path = get_path(f);
+                                new_path = getPath(f);
                             }
                             else {
                                 f = $(e.target).closest("div.file");
                                 if (f.length) {
                                     f = f.prevAll("div.folder[data-depth=" + (parseInt(f.attr("data-depth")) - 1) + "]:first");
-                                    new_path = get_path(f);
+                                    new_path = getPath(f);
                                 }
                                 if (!f.length) {
                                     f = $("#files");
@@ -414,12 +414,16 @@ $(document).ready(function() {
                                     Messenger().error(data.error);
                                 }
                                 else {
-                                    if (path_obj.hasClass("folder")) {
-                                        var children = getChildren(path_obj);
-                                    }
+                                    var children = getChildren(path_obj);
                                     if (typeof f == "undefined" || f.attr("id") == "files") {
                                         newdepth = 0;
-                                        path_obj.insertAfter($("#files div:last"));
+                                        var existing = $("[data-depth=0][data-name='" + path_obj.attr("data-name").replace("'", "\\'") + "']");
+                                        if (!existing.length) {
+                                            path_obj.insertAfter($("#files div:last"));
+                                        }
+                                        else {
+                                            path_obj = existing;
+                                        }
                                     }
                                     else {
                                         if (f.hasClass("folder") && !f.find(".fa-fw").hasClass("fa-folder-open-o")) {
@@ -430,17 +434,26 @@ $(document).ready(function() {
                                         if (dest_children.length) {
                                             f = dest_children[dest_children.length-1];
                                         }
-                                        path_obj.insertAfter(f);
+                                        var existing = dest_children.filter("[data-name='" + path_obj.attr("data-name").replace("'", "\\'") + "']");
+                                        if (!existing.length) {
+                                            path_obj.insertAfter(f);
+                                        }
+                                        else {
+                                            path_obj = existing;
+                                        }
                                     }
                                     var depth = path_obj.attr("data-depth");
                                     path_obj.css("padding-left", newdepth*20 + "px");
                                     path_obj.attr("data-depth", newdepth);
+                                    var existing_children = getChildren(path_obj);
                                     if (path_obj.hasClass("folder")) {
                                         $.each(children.get().reverse(), function(k, v) {
                                             var cdepth = newdepth + (parseInt($(this).attr("data-depth")) - depth);
-                                            $(this).insertAfter(path_obj);
-                                            $(this).attr("data-depth", cdepth);
-                                            $(this).css("padding-left", cdepth*20 + "px");
+                                            if (!existing_children.filter("[data-name='" + $(this).attr("data-name").replace("'", "\\'") + "']").length) {
+                                                $(this).insertAfter(path_obj);
+                                                $(this).attr("data-depth", cdepth);
+                                                $(this).css("padding-left", cdepth*20 + "px");
+                                            }
                                         });
                                     }
                                     path_obj = null;
@@ -459,7 +472,7 @@ $(document).ready(function() {
         }
         var formData = new FormData();
         if (uploader_folder) {
-            formData.append("path", get_path(uploader_folder));
+            formData.append("path", getPath(uploader_folder));
         }
         else {
             formData.append("path", "");
@@ -595,7 +608,7 @@ $(document).ready(function() {
         "selector": "#files .file",
         build: function(trigger, e) {
             var multiple_selected = $("#files div.file.active").length > 1;
-            var is_public = get_path(trigger).startsWith("public/");
+            var is_public = getPath(trigger).startsWith("public/");
             return {
                 callback: function(key, options) {
                     if (key == "open") {
@@ -619,7 +632,7 @@ $(document).ready(function() {
                         triggerRename(trigger);
                     }
                     if (key == "set_process") {
-                        var filepath = get_path(trigger) + trigger.attr("data-name");
+                        var filepath = getPath(trigger) + trigger.attr("data-name");
                         $.post(process_endpoint, {name: filepath}, function(data) {
                             if (data.error) {
                                 Messenger().error(data.error);
@@ -634,7 +647,7 @@ $(document).ready(function() {
                         var fobjs = $("#files div.file.active");
                         fobjs.each(function() {
                             var trigger = $(this);
-                            var filepath = get_path(trigger) + trigger.attr("data-name");
+                            var filepath = getPath(trigger) + trigger.attr("data-name");
                             paths.push(filepath);
                         });
                         $.post(exec_endpoint, {name: paths}, function(data) {
@@ -649,7 +662,7 @@ $(document).ready(function() {
                     if (key == "preview") {
                         $("#files div.file.active").each(function() {
                             var fileobj = $(this);
-                            var filepath = get_path(fileobj) + fileobj.attr("data-name");
+                            var filepath = getPath(fileobj) + fileobj.attr("data-name");
                             if (filepath.startsWith("public/")) {
                                 var newTab = {
                                     id: "preview-" + filepath,
@@ -673,7 +686,7 @@ $(document).ready(function() {
                     if (key == "open_browser") {
                         $("#files div.file.active").each(function() {
                             var fileobj = $(this);
-                            var filepath = get_path(fileobj) + fileobj.attr("data-name");
+                            var filepath = getPath(fileobj) + fileobj.attr("data-name");
                             if (filepath.startsWith("public/")) {
                                 var final_url = site_url + filepath.replace(/^public\//, "");
                                 window.open(final_url, "_blank");
@@ -1084,7 +1097,7 @@ function addFileListener() {
                         }
                     }
                     else {
-                        var node = get_element(data.path);
+                        var node = getElement(data.path);
                         var newNode = makeNode({name: data.name, type: data.type ? "d" : "f", executable: data.exec, link: data.link}, parseInt(node.attr("data-depth")) + 1);
                         if (!node.nextUntil("div.folder[data-depth=" + node.attr("data-depth") + "]").filter("div." + (data.type ? "folder" : "file") + "[data-depth=" + (parseInt(node.attr("data-depth") + 1)) + "][data-name='" + data.name.replace("'", "\\'") + "']").length) {
                             node.after(newNode);
@@ -1095,7 +1108,7 @@ function addFileListener() {
                     }
                 }
                 else if (data.action == "delete") {
-                    var del = get_element(data.name);
+                    var del = getElement(data.name);
                     if (del) {
                         if (del.hasClass("folder")) {
                             getChildren(del).remove();
@@ -1105,7 +1118,7 @@ function addFileListener() {
                 }
             };
             $(document).on("folder:load", "#files div.folder", function() {
-                ws.send(JSON.stringify({action: "listen", path: get_path($(this))}));
+                ws.send(JSON.stringify({action: "listen", path: getPath($(this))}));
             });
         };
         ws.onclose = function() {
@@ -1117,7 +1130,7 @@ function addFileListener() {
         console.error(e);
     }
 }
-function get_element(path) {
+function getElement(path) {
     var p = path.split("/");
     var ele = $("#files").children("div.folder, div.file");
     var depth = 0;
@@ -1135,7 +1148,7 @@ function get_element(path) {
     }
     return false;
 }
-function get_path(t) {
+function getPath(t) {
     var depth = parseInt(t.attr("data-depth"));
     var loop_depth = depth;
     var loop_path = "";
@@ -1156,6 +1169,12 @@ function getChildren(item) {
     return item.nextUntil(function() {
         return parseInt($(this).attr("data-depth")) <= depth;
     });
+}
+function getSiblings(item) {
+    var depth = parseInt(item.attr("data-depth"));
+    var before = item.prevUntil("[data-depth=" + (depth - 1) + "]").filter("[data-depth=" + depth + "]");
+    var after = item.nextUntil("[data-depth=" + (depth - 1) + "]").filter("[data-depth=" + depth + "]");
+    return before.add(after);
 }
 function modalConfirm(title, body, callback) {
     $("#modal-confirm").modal("show");
