@@ -129,7 +129,7 @@ $(document).ready(function() {
                             folder = item.prevAll("div.folder[data-depth=" + (parseInt(item.attr("data-depth")) - 1) + "]:first");
                         }
                         folder.removeClass("loaded");
-                        folder.click();
+                        folder.dblclick();
                     }
                 }
             });
@@ -189,32 +189,14 @@ $(document).ready(function() {
                     }
                 });
                 if (firstRun) {
-                    $("div.folder[data-name='public']").click();
+                    $("div.folder[data-name='public']").dblclick();
                 }
             }
         });
     }
     function registerFileHandlers(files) {
-        files.on("click", ".file", function(e) {
+        files.on("dblclick", ".file", function(e) {
             e.preventDefault();
-            if (e.ctrlKey) {
-                $(this).toggleClass("active");
-                return;
-            }
-            else if (e.shiftKey) {
-                var depth = $(this).attr("data-depth");
-                if ($(this).prevAll(".file.active[data-depth='" + depth + "']").length) {
-                    $(this).prevUntil(".file.active[data-depth='" + depth + "']").addClass("active");
-                }
-                if ($(this).nextAll(".file.active[data-depth='" + depth + "']").length) {
-                    $(this).nextUntil(".file.active[data-depth='" + depth + "']").addClass("active");
-                }
-                $(this).addClass("active");
-                return;
-            }
-            else {
-                $("#files div").removeClass("active");
-            }
             var t = $(this);
             var filepath = get_path(t) + t.attr("data-name");
             var newTab = {
@@ -231,15 +213,29 @@ $(document).ready(function() {
                 layout.root.getItemsById("default-file")[0].addChild(newTab);
             }
         });
-        files.on("click", ".folder", function(e) {
+        files.on("click", ".file", function(e) {
             e.preventDefault();
             if (e.ctrlKey) {
+                $(this).toggleClass("active");
+            }
+            else if (e.shiftKey) {
+                var depth = $(this).attr("data-depth");
+                if ($(this).prevAll(".file.active[data-depth='" + depth + "']").length) {
+                    $(this).prevUntil(".file.active[data-depth='" + depth + "']").addClass("active");
+                }
+                if ($(this).nextAll(".file.active[data-depth='" + depth + "']").length) {
+                    $(this).nextUntil(".file.active[data-depth='" + depth + "']").addClass("active");
+                }
                 $(this).addClass("active");
                 return;
             }
             else {
                 $("#files div").removeClass("active");
+                $(this).addClass("active");
             }
+        });
+        files.on("dblclick", ".folder", function(e) {
+            e.preventDefault();
             var t = $(this);
             if (t.hasClass("loaded")) {
                 var contracted = t.find(".fa-fw").hasClass("fa-folder-o");
@@ -283,6 +279,13 @@ $(document).ready(function() {
                 });
                 $(this).trigger("folder:load");
             }
+        });
+        files.on("click", ".folder", function(e) {
+            e.preventDefault();
+            if (!e.ctrlKey) {
+                $("#files div").removeClass("active");
+            }
+            $(this).addClass("active");
         });
         var path_obj;
         files.on("dragstart", "div", function(e) {
@@ -356,7 +359,7 @@ $(document).ready(function() {
                             else {
                                 if (path != "" && folder) {
                                     folder.removeClass("loaded");
-                                    folder.click();
+                                    folder.dblclick();
                                 }
                                 else {
                                     initFiles();
@@ -420,7 +423,7 @@ $(document).ready(function() {
                                     }
                                     else {
                                         if (f.hasClass("folder") && !f.find(".fa-fw").hasClass("fa-folder-open-o")) {
-                                            f.click();
+                                            f.dblclick();
                                         }
                                         var newdepth = parseInt(f.attr("data-depth")) + 1;
                                         var dest_children = getChildren(f);
@@ -596,7 +599,7 @@ $(document).ready(function() {
             return {
                 callback: function(key, options) {
                     if (key == "open") {
-                        $("#files div.file.active").click();
+                        $("#files div.file.active").dblclick();
                     }
                     if (key == "delete") {
                         triggerDelete();
@@ -713,7 +716,7 @@ $(document).ready(function() {
             return {
                 callback: function(key, options) {
                     if (key == "toggle") {
-                        trigger.click();
+                        trigger.dblclick();
                     }
                     if (key == "delete") {
                         triggerDelete();
@@ -734,7 +737,7 @@ $(document).ready(function() {
                         trigger.removeClass("loaded");
                         var depth = parseInt(trigger.attr("data-depth"));
                         getChildren(trigger).remove();
-                        trigger.click();
+                        trigger.dblclick();
                     }
                     if (key == "upload") {
                         uploader_folder = trigger;
@@ -1044,7 +1047,7 @@ function addFileListener() {
                         if (!$("div." + (data.type ? "folder" : "file") + "[data-depth=0][data-name='" + data.name.replace("'", "\\'") + "']").length) {
                             $("#files").append(newNode);
                             if (data.type) {
-                                newNode.trigger("click");
+                                newNode.trigger("dblclick");
                             }
                         }
                     }
@@ -1054,7 +1057,7 @@ function addFileListener() {
                         if (!node.nextUntil("div.folder[data-depth=" + node.attr("data-depth") + "]").filter("div." + (data.type ? "folder" : "file") + "[data-depth=" + (parseInt(node.attr("data-depth") + 1)) + "][data-name='" + data.name.replace("'", "\\'") + "']").length) {
                             node.after(newNode);
                             if (data.type) {
-                                newNode.trigger("click");
+                                newNode.trigger("dblclick");
                             }
                         }
                     }

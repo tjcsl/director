@@ -36,6 +36,9 @@ iframe.preview {
     height: 100%;
     overflow-y: auto;
 }
+#files:focus {
+    outline: none;
+}
 #files .folder, #files .file {
     cursor: pointer;
     white-space: nowrap;
