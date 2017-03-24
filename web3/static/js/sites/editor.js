@@ -602,6 +602,11 @@ $(document).ready(function() {
                     "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
             }
+        },
+        events: {
+            show: function(opt) {
+                $("#files div.active").removeClass("active");
+            }
         }
     });
     $.contextMenu({

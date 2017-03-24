@@ -266,14 +266,18 @@ def editor_move_view(request, site_id):
     new_path = request.POST.get("new", "")
     old_path = os.path.abspath(os.path.join(site.path, old_path))
     new_path = os.path.abspath(os.path.join(site.path, new_path))
+    new_file = os.path.join(new_path, os.path.basename(old_path))
 
     if not old_path.startswith(site.path) or not os.path.exists(old_path):
         return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": old_path})
 
-    if not new_path.startswith(site.path) or os.path.isfile(new_path):
+    if not new_path.startswith(site.path):
         return JsonResponse({"error": "Invalid destination!", "path": new_path})
 
-    os.rename(old_path, os.path.join(new_path, os.path.basename(old_path)))
+    if os.path.exists(new_file):
+        return JsonResponse({"error": "The destination you are trying to copy to already exists.", "path": new_file})
+
+    os.rename(old_path, new_file)
 
     return JsonResponse({"success": True})
 
