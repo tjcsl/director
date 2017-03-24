@@ -338,37 +338,47 @@ $(document).ready(function() {
                     for (var i = 0; i < files.length; i++) {
                         formData.append("file[]", files[i], files[i].name);
                     }
+                    var msg = Messenger().info("Uploading file(s)...");
                     $.ajax({
                         url: upload_endpoint,
                         type: "POST",
                         data: formData,
+                        cache: false,
                         processData: false,
                         contentType: false,
                         success: function(data) {
                             if (data.error) {
-                                Messenger().error(data.error);
+                                msg.update({
+                                    type: "error",
+                                    message: data.error
+                                });
                             }
                             else {
-                                if (path == "") {
-                                    initFiles();
+                                if (path != "" && folder) {
+                                    folder.removeClass("loaded");
+                                    folder.click();
                                 }
                                 else {
-                                    if (folder) {
-                                        folder.removeClass("loaded");
-                                        folder.click();
-                                    }
-                                    else {
-                                        initFiles();
-                                    }
+                                    initFiles();
                                 }
                             }
+                            msg.update({
+                                type: "success",
+                                message: "File(s) uploaded!"
+                            });
                         },
                         error: function(httpObj, textStatus) {
                             if (httpObj.status == 413) {
-                                Messenger().error("The file(s) you are trying to upload are too large.");
+                                msg.update({
+                                    type: "error",
+                                    message: "The file(s) you are trying to upload are too large."
+                                });
                             }
                             else {
-                                Messenger().error("No files were uploaded due to an unknown error.");
+                                msg.update({
+                                    type: "error",
+                                    message: "No files were uploaded due to an unknown error."
+                                });
                             }
                         }
                     });
@@ -454,15 +464,20 @@ $(document).ready(function() {
         for (var i = 0; i < this.files.length; i++) {
             formData.append("file[]", this.files[i], this.files[i].name);
         }
+        var msg = Messenger().info("Uploading file(s)...");
         $.ajax({
             url: upload_endpoint,
             type: "POST",
             data: formData,
+            cache: false,
             processData: false,
             contentType: false,
             success: function(data) {
                 if (data.error) {
-                    Messenger().error(data.error);
+                    msg.update({
+                        type: "error",
+                        message: data.error
+                    });
                 }
                 else {
                     if (uploader_folder) {
@@ -472,14 +487,24 @@ $(document).ready(function() {
                     else {
                         initFiles();
                     }
+                    msg.update({
+                        type: "success",
+                        message: "File(s) uploaded!"
+                    });
                 }
             },
             error: function(httpObj, textStatus) {
                 if (httpObj.status == 413) {
-                    Messenger().error("The file(s) you are trying to upload are too large.");
+                    msg.update({
+                        type: "error",
+                        message: "The file(s) you are trying to upload are too large."
+                    });
                 }
                 else {
-                    Messenger().error("No files were uploaded due to an unknown error.");
+                    msg.update({
+                        type: "error",
+                        message: "No files were uploaded due to an unknown error."
+                    });
                 }
             }
         });
