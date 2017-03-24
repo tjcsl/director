@@ -362,6 +362,14 @@ $(document).ready(function() {
                                     }
                                 }
                             }
+                        },
+                        error: function(httpObj, textStatus) {
+                            if (httpObj.status == 413) {
+                                Messenger().error("The file(s) you are trying to upload are too large.");
+                            }
+                            else {
+                                Messenger().error("No files were uploaded due to an unknown error.");
+                            }
                         }
                     });
                 }
@@ -464,6 +472,14 @@ $(document).ready(function() {
                     else {
                         initFiles();
                     }
+                }
+            },
+            error: function(httpObj, textStatus) {
+                if (httpObj.status == 413) {
+                    Messenger().error("The file(s) you are trying to upload are too large.");
+                }
+                else {
+                    Messenger().error("No files were uploaded due to an unknown error.");
                 }
             }
         });
