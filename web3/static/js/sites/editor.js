@@ -1145,7 +1145,7 @@ function getElement(path) {
     var depth = 0;
     while (p.length) {
         var next = p.shift();
-        ele = ele.filter("[data-name='" + next.replace("'", "\\'") + "']");
+        ele = ele.filter("[data-depth=" + depth + "][data-name='" + next.replace("'", "\\'") + "']");
         if (!ele.length) {
             return false;
         }
