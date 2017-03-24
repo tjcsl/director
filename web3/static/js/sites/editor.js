@@ -831,9 +831,38 @@ $(document).ready(function() {
         container.setTitle("<span class='fa fa-folder-open'></span> Files");
         var files = $("<div id='files' tabindex='0' />");
         files.keydown(function(e) {
-            if (e.keyCode == 46) {
-                if ($("#files div.active").length > 0) {
+            var items = $("#files div.active");
+            if (items.length > 0) {
+                if (e.keyCode == 46) {
                     triggerDelete();
+                    e.preventDefault();
+                }
+                if (e.keyCode == 13) {
+                    items.dblclick();
+                    e.preventDefault();
+                }
+                if (e.keyCode == 27) {
+                    items.removeClass("active");
+                    e.preventDefault();
+                }
+                if (e.keyCode == 82 && e.altKey) {
+                    triggerRename(items.first());
+                    e.preventDefault();
+                }
+                if (e.keyCode == 38) {
+                    var na = items.prevAll(":visible");
+                    if (na.length) {
+                        items.removeClass("active");
+                        na.first().addClass("active");
+                    }
+                    e.preventDefault();
+                }
+                if (e.keyCode == 40) {
+                    var na = items.nextAll(":visible");
+                    if (na.length) {
+                        items.removeClass("active");
+                        na.first().addClass("active");
+                    }
                     e.preventDefault();
                 }
             }
@@ -1029,6 +1058,9 @@ $(document).ready(function() {
             $("#modal-confirm .btn-primary").focus();
         }
     });
+    $("#modal-confirm").on("hidden.bs.modal", function() {
+        $("#files").focus();
+    });
 
     addFileListener();
 });
@@ -1138,7 +1170,7 @@ function modalPrompt(title, body, callback, existing) {
     bodytext.text(body);
     $("#modal-confirm .modal-body").html(bodytext);
     $("#modal-confirm .modal-body").append("<input type='text' class='modal-prompt form-control' />");
-    $("#modal-confirm .modal-prompt").on("keypress", function(e) {
+    $("#modal-confirm .modal-prompt").off("keypress").on("keypress", function(e) {
         if (e.which == 13) {
             $("#modal-confirm .btn-primary").click();
             e.preventDefault();

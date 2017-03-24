@@ -50,7 +50,7 @@ iframe.preview {
     background-color: #ccc;
 }
 #files div.active:hover {
-    background-color: #bbb;
+    background-color: #bdbdbd;
 }
 #files div.hidden span {
     color: #888;
