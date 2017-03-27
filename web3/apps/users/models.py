@@ -62,7 +62,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def site_notifications(self):
         if self.is_superuser:
-            return self.site_requests.filter(Q(teacher_approval=True, admin_approval=False) | Q(teacher=self, teacher_approval=False))
+            from ..request.models import SiteRequest
+
+            return SiteRequest.objects.filter(Q(teacher_approval=True, admin_approval=False) | Q(teacher=self, teacher_approval=False))
         else:
             return self.site_requests.filter(teacher_approval=False)
 
