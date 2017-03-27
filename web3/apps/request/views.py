@@ -7,7 +7,7 @@ from ..authentication.decorators import superuser_required
 
 from ..users.helpers import create_user
 
-from ...utils.emails import send_approval_request_email
+from ...utils.emails import send_approval_request_email, send_admin_request_email
 from .models import SiteRequest
 
 
@@ -27,6 +27,7 @@ def approve_view(request):
         else:
             site_request.teacher_approval = True
             site_request.save()
+            send_admin_request_email(site_request)
             messages.success(request, "Your approval has been added and the site will be created shortly!")
         return redirect("approve_site")
 

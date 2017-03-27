@@ -1,0 +1,3 @@
+<p>A student, {{ request.user.full_name }}, has filed a website request form for {{ request.activity }} and obtained approval from {{ request.teacher.full_name }}.</p>
+
+<p>You can process this request at <a href="https://director.tjhsst.edu{% url 'admin_site' %}">https://director.tjhsst.edu{% url 'admin_site' %}</a>.</p>

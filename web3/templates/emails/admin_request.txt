@@ -1,0 +1,3 @@
+A student, {{ request.user.full_name }}, has filed a website request form for {{ request.activity }} and obtained approval from {{ request.teacher.full_name }}.
+
+You can process this request at https://director.tjhsst.edu{% url 'admin_site' %}.

@@ -33,6 +33,23 @@ def send_approval_request_email(request):
         return msg.send()
 
 
+def send_admin_request_email(request):
+    context = {"request": request}
+    plain_message = render_to_string("emails/admin_request.txt", context)
+    html_message = render_to_string("emails/admin_request.html", context)
+    if settings.DEBUG:
+        print(plain_message)
+        return 0
+    else:
+        msg = EmailMultiAlternatives(subject="{} A website request ({} - {}) requires processing!".format(settings.EMAIL_SUBJECT_PREFIX, request.activity, request.user.full_name),
+                                     body=plain_message,
+                                     from_email=settings.EMAIL_FROM,
+                                     to=[settings.EMAIL_FEEDBACK],
+                                     reply_to=[request.user.email, settings.EMAIL_FEEDBACK])
+        msg.attach_alternative(html_message, "text/html")
+        return msg.send()
+
+
 def send_feedback_email(request, comments):
     context = {
         "request": request,
