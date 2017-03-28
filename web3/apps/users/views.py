@@ -205,4 +205,9 @@ def teacher_lookup_view(request):
     if not name:
         return JsonResponse({"teachers": []})
     responses = request.user.api_request("search/{}".format(quote(name)))
-    return JsonResponse({"teachers": [{"username": x["username"], "name": x["full_name"], "email": x.get("tj_email", None)} for x in responses["results"] if x["user_type"] == "tjhsstTeacher"]})
+    return JsonResponse({
+        "teachers": [{
+            "username": x["username"],
+            "name": x["full_name"]
+        } for x in responses["results"] if x["user_type"] == "tjhsstTeacher"]
+    })
