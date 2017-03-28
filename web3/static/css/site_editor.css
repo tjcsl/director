@@ -64,11 +64,14 @@ iframe.preview {
 #files div.link span {
     color: #00BCD4;
 }
+span.file-indicator {
+    color: #FF9800;
+}
 span.file-indicator.saved {
     color: #4CAF50;
 }
-span.file-indicator {
-    color: #FF9800;
+span.file-indicator.readonly {
+    color: #aaa;
 }
 .dragover {
     border: 1px solid #999;

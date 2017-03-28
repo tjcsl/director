@@ -595,7 +595,7 @@ $(document).ready(function() {
                     "new_folder": {name: "New Folder", icon: "fa-folder"},
                     "sep2": "--------",
                     "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
-                    "new_nginx": {name: "Edit Nginx Config", icon: "fa-wrench"},
+                    "new_nginx": {name: (is_superuser ? "Edit" : "View") + " Nginx Config", icon: "fa-wrench"},
                     "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
                     "new_help": {name: "Help Guide", icon: "fa-question-circle"},
                     "sep3": "--------",
@@ -831,7 +831,7 @@ $(document).ready(function() {
                     "close_right": {name: "Close Tabs to Right", icon: "fa-chevron-right"},
                     "sep2": "--------",
                     "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
-                    "new_nginx": {name: "Edit Nginx Config", icon: "fa-wrench"},
+                    "new_nginx": {name: (is_superuser ? "Edit" : "View") + " Nginx Config", icon: "fa-wrench"},
                     "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
                     "new_help": {name: "Help Guide", icon: "fa-question-circle"}
                 }
@@ -927,7 +927,7 @@ $(document).ready(function() {
         }
     });
     layout.registerComponent("nginx", function(container, componentState) {
-        container.setTitle("<span class='file-indicator fa fa-wrench saved'></span> " + "Nginx");
+        container.setTitle("<span class='file-indicator fa fa-wrench " + (is_superuser ? "saved" : "readonly") + "'></span> " + "Nginx");
         container.on("tab", addContextHandlers);
         var editor = ace.edit(container.getElement()[0]);
         editor.setOptions({
