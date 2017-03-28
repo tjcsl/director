@@ -789,7 +789,7 @@ $(document).ready(function() {
     $.contextMenu({
         "selector": ".lm_tab",
         build: function(trigger, e) {
-            var can_save = trigger.hasClass("tab-file");
+            var can_save = trigger.hasClass("tab-file") || trigger.hasClass("tab-nginx");
             var can_close = trigger.find(".lm_close_tab").length > 0;
             return {
                 callback: function(key, options) {
@@ -937,19 +937,28 @@ $(document).ready(function() {
         container.on("resize", function() {
             editor.resize();
         });
+        container.on("tab", function(tab) {
+            tab.element.addClass("tab-nginx");
+            tab.element.on("tab:save", function() {
+                container.getElement().trigger("tab:save");
+            });
+        });
+        container.getElement().on("tab:save", function() {
+            if (!editor.getSession().getUndoManager().isClean()) {
+                $.post(nginx_endpoint, { editor: editor.getSession().getValue() }, function(data) {
+                    if (data.error) {
+                        Messenger().error(data.error);
+                    }
+                    else {
+                        editor.getSession().getUndoManager().markClean();
+                        container.tab.element.find("span.file-indicator").addClass("saved");
+                    }
+                });
+            }
+        });
         container.getElement().keydown(function(e) {
             if (((e.which == 115 || e.which == 83) && (e.ctrlKey || e.metaKey)) || e.which == 19) {
-                if (!editor.getSession().getUndoManager().isClean()) {
-                    $.post(nginx_endpoint, { editor: editor.getSession().getValue() }, function(data) {
-                        if (data.error) {
-                            Messenger().error(data.error);
-                        }
-                        else {
-                            editor.getSession().getUndoManager().markClean();
-                            container.tab.element.find("span.file-indicator").addClass("saved");
-                        }
-                    });
-                }
+                $(this).trigger("tab:save");
                 e.preventDefault();
                 e.stopPropagation();
             }
