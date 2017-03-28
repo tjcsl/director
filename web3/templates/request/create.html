@@ -34,11 +34,15 @@
                 },
                 load: function(query, callback) {
                     if (!query.length) return callback();
+                    $("#select-teacher-load").show();
                     $.ajax({
                         url: lookup_endpoint + "?name=" + encodeURIComponent(query),
                         type: 'GET',
                         error: function() {
                             callback();
+                        },
+                        complete: function() {
+                            $("#select-teacher-load").hide();
                         },
                         success: function(res) {
                             callback(res.teachers.slice(0, 10));
@@ -97,7 +101,7 @@
     <h4>Teacher Authorization</h4>
     <p>Please select the teacher that you want to approve the request. Once this form is submitted, that teacher will be emailed with instructions on how to approve this website request.</p>
     <div class="form-group">
-        <label for="select-teacher">Teacher</label>
+        <label for="select-teacher">Teacher<span id="select-teacher-load"> <i class="fa fa-cog fa-spin"></i></span></label>
         <div class="input-group">
             <select id="select-teacher" placeholder="Please select a teacher" name="teacher" required></select>
         </div>

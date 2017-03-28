@@ -44,3 +44,7 @@
 .submitted .approval .fa-check {
     color: #484848;
 }
+#select-teacher-load {
+    display: none;
+    color: #aaa;
+}
