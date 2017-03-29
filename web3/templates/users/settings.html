@@ -8,7 +8,7 @@
 <h5>Your Information</h5>
 <p>
     <b>Username:</b> {{ request.user.username }}<br />
-    <b>Account Type:</b> {% if request.user.is_superuser %}Superuser{% elif request.user.is_staff %}Staff{% else %}Normal Account{% endif %}<br />
+    <b>Account Type:</b> {% if request.user.is_superuser %}Admin{% elif request.user.is_staff %}Staff{% else %}Normal{% endif %} Account<br />
     <b>User ID:</b> {{ request.user.id }}<br />
 </p>
 
