@@ -44,7 +44,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @is_staff.setter
     def is_staff(self, value):
-        self.staff = True
+        if isinstance(value, bool):
+            self.staff = value
+        else:
+            self.staff = False
 
     @property
     def short_name(self):
