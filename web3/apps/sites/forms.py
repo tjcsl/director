@@ -48,7 +48,6 @@ class SiteForm(forms.ModelForm):
                 for field in self.fields:
                     self.fields[field].disabled = True
                 self.fields["category"].disabled = False
-                self.fields["domain"].disabled = False
             self._old_path = instance.path
         else:
             self._old_path = None
@@ -57,14 +56,8 @@ class SiteForm(forms.ModelForm):
     def clean_domain(self):
         data = [x.strip() for x in self.cleaned_data["domain"].strip().split(" ")]
         data = [x for x in data if x]
-        default = "{}.sites.tjhsst.edu".format(self.cleaned_data["name"])
         if not data:
             raise forms.ValidationError("You must enter at least one domain!")
-        for domain in data:
-            if domain.endswith(".edu") and domain != default:
-                raise forms.ValidationError("The domain " + domain + " is invalid!")
-        if not default in data:
-            raise forms.ValidationError("You need to keep the default domain ({})!".format(default))
         return " ".join(data)
 
 
