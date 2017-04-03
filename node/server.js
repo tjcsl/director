@@ -129,14 +129,17 @@ wss.on("connection", function(ws) {
                                         }
                                     }
                                     if (act) {
-                                        ws.send(JSON.stringify({
-                                            path: (p ? p : undefined),
-                                            type: !!(e.mask & Inotify.IN_ISDIR),
-                                            name: e.name,
-                                            action: act,
-                                            exec: (stat ? ((stat["mode"] & 1) && !stat.isDirectory()) : undefined),
-                                            link: (stat ? stat.isSymbolicLink() : undefined)
-                                        }));
+                                        if (ws.readyState == 1) {
+                                            // websocket is in OPEN state
+                                            ws.send(JSON.stringify({
+                                                path: (p ? p : undefined),
+                                                type: !!(e.mask & Inotify.IN_ISDIR),
+                                                name: e.name,
+                                                action: act,
+                                                exec: (stat ? ((stat["mode"] & 1) && !stat.isDirectory()) : undefined),
+                                                link: (stat ? stat.isSymbolicLink() : undefined)
+                                            }));
+                                        }
                                     }
                                 }
                             });
@@ -149,7 +152,7 @@ wss.on("connection", function(ws) {
                                     inotify.removeWatch(hooks[hook]);
                                 }
                                 catch (e) {
-                                    raven.captureException(e);
+                                    // watch was already removed
                                 }
                             }
                         });
