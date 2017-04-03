@@ -48,9 +48,19 @@ class SiteForm(forms.ModelForm):
                 for field in self.fields:
                     self.fields[field].disabled = True
                 self.fields["category"].disabled = False
+                self.fields["domain"].disabled = False
             self._old_path = instance.path
         else:
             self._old_path = None
+
+
+    def clean_domain(self):
+        data = [x.strip() for x in self.cleaned_data["domain"].strip().split(" ")]
+        data = [x for x in data if x]
+        if not data:
+            raise forms.ValidationError("You must enter at least one domain!")
+        return " ".join(data)
+
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
