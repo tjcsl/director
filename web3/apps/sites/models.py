@@ -124,7 +124,7 @@ class Database(models.Model):
     @property
     def username(self):
         if self.category == "mysql":
-            return "site_{}".format(self.site.name)[:16]
+            return "site_{}".format(self.site.name)[:16].lower()
         return "site_{}".format(self.site.name).lower()
 
     @property
