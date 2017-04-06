@@ -1,10 +1,6 @@
-{% extends "base.html" %}
+{% extends "sites/base.html" %}
 {% load staticfiles %}
 {% load formfilters %}
-
-{% block navbar %}
-{% if site %}<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>{% endif %}
-{% endblock %}
 
 {% block js %}
     {{ block.super }}

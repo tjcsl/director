@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "sites/base.html" %}
 {% load staticfiles %}
 
 {% block css %}
@@ -33,10 +33,6 @@
         registerTerminal($(".console-wrapper"), { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}" });
     });
     </script>
-{% endblock %}
-
-{% block navbar %}
-<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
 {% endblock %}
 
 {% block main %}

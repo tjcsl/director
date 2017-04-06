@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "sites/base.html" %}
 {% load staticfiles %}
 
 {% block js %}
@@ -14,10 +14,6 @@
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static 'css/sql_console.css' %}" />
-{% endblock %}
-
-{% block navbar %}
-<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
 {% endblock %}
 
 {% block main %}

@@ -52,3 +52,6 @@ a.nav-warn:hover {
 #filtered {
     font-size: 12px;
 }
+.navbar .fa-chevron-right {
+    margin-right: 10px;
+}

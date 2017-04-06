@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "sites/base.html" %}
 {% load staticfiles %}
 
 {% block js %}
@@ -9,10 +9,6 @@
             $("#id_site").selectize();
         });
     </script>
-{% endblock %}
-
-{% block navbar %}
-<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
 {% endblock %}
 
 {% block mainclass %}narrow{% endblock %}

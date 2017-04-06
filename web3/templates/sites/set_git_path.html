@@ -1,11 +1,7 @@
-{% extends "base.html" %}
+{% extends "sites/base.html" %}
 {% load staticfiles %}
 
 {% block mainclass %}narrow{% endblock %}
-
-{% block navbar %}
-<a href="{% url 'info_site' site.id %}">{{ site.name }}</a>
-{% endblock %}
 
 {% block main %}
 <h4>Edit Git Repository Path</h4>
