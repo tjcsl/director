@@ -1,8 +1,4 @@
-{% extends "base.html" %}
-
-{% block navbar %}
-<a href="{% url 'vm_info' vm.id %}">{{ vm.name }}</a>
-{% endblock %}
+{% extends "vms/base.html" %}
 
 {% block mainclass %}narrow{% endblock %}
 

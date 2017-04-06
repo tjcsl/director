@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "vms/base.html" %}
 {% load staticfiles %}
 {% load formfilters %}
 
@@ -9,10 +9,6 @@
             $("#id_users, #id_owner, #id_site").selectize();
         });
     </script>
-{% endblock %}
-
-{% block navbar %}
-{% if vm %}<a href="{% url 'vm_info' vm.id %}">{{ vm.name }}</a>{% endif %}
 {% endblock %}
 
 {% block mainclass %}narrow{% endblock %}

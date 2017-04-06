@@ -1,10 +1,6 @@
-{% extends "base.html" %}
+{% extends "vms/base.html" %}
 {% load staticfiles %}
 {% load simplefilters %}
-
-{% block navbar %}
-<input class="form-control search-box" data-search="#vms .vm" data-fields=".name,.owner,.sub" type="text" placeholder="&#xf002; Search Virtual Machines" />
-{% endblock %}
 
 {% block css %}
     {{ block.super }}

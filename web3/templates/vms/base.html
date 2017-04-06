@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+{% if vm %}<i class="fa fa-chevron-right"></i> <a href="{% url 'vm_info' vm.id %}">{{ vm.name }}</a>{% endif %}
+{% endblock %}
