@@ -943,11 +943,28 @@ $(document).ready(function() {
                 container.getElement().trigger("tab:save");
             });
         });
-        container.getElement().on("tab:save", function() {
+        container.getElement().on("tab:save", function(e, force) {
             if (!editor.getSession().getUndoManager().isClean()) {
-                $.post(nginx_endpoint, { editor: editor.getSession().getValue() }, function(data) {
+                $.post(nginx_endpoint, { editor: editor.getSession().getValue(), force: (force ? true : undefined) }, function(data) {
                     if (data.error) {
-                        Messenger().error(data.error);
+                        if (data.force) {
+                            var msg = Messenger().post({
+                                message: data.error,
+                                type: "error",
+                                actions: {
+                                    force: {
+                                        label: "Force Save",
+                                        action: function() {
+                                            container.getElement().trigger("tab:save", [true]);
+                                            msg.hide();
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            Messenger().error(data.error);
+                        }
                     }
                     else {
                         editor.getSession().getUndoManager().markClean();
