@@ -969,6 +969,9 @@ $(document).ready(function() {
                     else {
                         editor.getSession().getUndoManager().markClean();
                         container.tab.element.find("span.file-indicator").addClass("saved");
+                        if (force) {
+                            Messenger().success("Custom nginx configuration enabled!");
+                        }
                     }
                 });
             }
