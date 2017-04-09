@@ -55,7 +55,7 @@
         <a class="nav-warn" href="{% if request.user.site_notifications.0.teacher_approval %}{% url 'admin_site' %}{% else %}{% url 'approve_site' %}{% endif %}"><b>{{ request.user.site_notifications.count }}</b> Request{{ request.user.site_notifications.count|pluralize }}</a>
         {% endif %}
         <div class="dropdown pull-right" id="user-dropdown">
-            <button class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ request.user.full_name }}</button>
+            <button class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <span class="hidden-xs-down">{{ request.user.full_name }}</span></button>
             <ul class="dropdown-menu">
                 <div class="arrow"></div>
                 <li><a href="{% url 'user_settings' %}"><i class="fa fa-fw fa-cog"></i> Settings</a></li>
