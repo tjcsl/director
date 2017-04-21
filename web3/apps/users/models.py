@@ -36,7 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def has_webdocs(self):
         from ..sites.models import Site
-        return Site.objects.filter(name=self.username, purpose="user").count() > 0
+        return Site.objects.filter(name=self.username, purpose__in=["user", "legacy"]).count() > 0
 
     @property
     def is_staff(self):
