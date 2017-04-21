@@ -30,7 +30,11 @@ def index_view(request):
 
 
 def about_view(request):
-    return render(request, "about.html", {})
+    return render(request, "about.html")
+
+
+def guide_view(request):
+    return render(request, "guide_wrapper.html")
 
 
 def login_view(request):

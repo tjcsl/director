@@ -27,6 +27,7 @@ urlpatterns = [
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', auth_views.index_view, name='index'),
     url('^about$', auth_views.about_view, name='about'),
+    url('^guide$', auth_views.guide_view, name='guide'),
     url(r'^login/$', auth_views.login_view, name='login'),
     url(r'^logout/$', auth_views.logout_view, name='logout'),
     url(r'^wsauth$', auth_views.node_auth_view, name='node_auth'),

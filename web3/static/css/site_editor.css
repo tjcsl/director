@@ -104,19 +104,6 @@ span.file-indicator.readonly {
 #context-menu-layer {
     z-index: 9998 !important;
 }
-.step {
-    border-left: 5px solid #aaa;
-    padding-left: 10px;
-}
-.help-pane .path {
-    color: #880000;
-}
-.help-pane .file {
-    padding: 3px 10px;
-    background-color: #E0E0E0;
-    border-radius: 5px 5px 0 0;
-    font-family: monospace;
-}
 #modal-confirm pre {
     max-height: 300px;
     overflow-y: auto;
