@@ -5,9 +5,16 @@
 .guide .path {
     color: #880000;
 }
+.guide pre code.hljs {
+    background-color: #E0E0E0;
+}
 .guide .file {
     padding: 3px 10px;
     background-color: #E0E0E0;
     border-radius: 5px 5px 0 0;
     font-family: monospace;
+}
+.guide .search-example {
+    margin-left: 20px;
+    font-style: italic;
 }
