@@ -128,10 +128,14 @@ def editor_delete_view(request, site_id):
         return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": path})
 
     for p in path:
-        if os.path.isfile(p):
-            os.remove(p)
-        else:
-            shutil.rmtree(p)
+        try:
+            if os.path.isfile(p):
+                os.remove(p)
+            else:
+                shutil.rmtree(p)
+        except FileNotFoundError:
+            # File might have been deleted after the check
+            pass
 
     return JsonResponse({"success": True})
 
