@@ -194,8 +194,3 @@ EMAIL_SUBJECT_PREFIX = "[Director]"
 EMAIL_FROM = "director-noreply@tjhsst.edu"
 
 EMAIL_FEEDBACK = "director@lists.tjhsst.edu"
-
-CONDUCTOR_AGENT_PATH = "https://deneb.agent.lxc.deneb.csl.tjhsst.edu/"
-CONDUCTOR_CERT_PATH = os.path.join(PROJECT_ROOT, "settings/conductor.pem")
-
-LDAP_SERVER = "ldap://openldap1.csl.tjhsst.edu"
