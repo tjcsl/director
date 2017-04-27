@@ -28,6 +28,8 @@ SECRET_KEY = 's-gh_-#s^oq^0*5=y8k&*^l8m9540mvo@m*tazzw%3*o7$y&m0'
 
 ALLOWED_HOSTS = ["director.tjhsst.edu", "127.0.0.1", "localhost"]
 
+CONDUCTOR_CERT_PATH = os.path.join(PROJECT_ROOT, "settings/conductor.pem")
+
 try:
     from .secret import *
 except ImportError:
