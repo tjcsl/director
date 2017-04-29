@@ -19,6 +19,7 @@
 <h4>{% if site %}Edit{% else %}Create New{% endif %} Site</h4>
 <form method="POST">
     {% csrf_token %}
+    {{ form.non_field_errors }}
     {% include "form.html" with form=form %}
     <div class="form-actions">
         <button type="submit" class="btn btn-ion">Submit</button>
