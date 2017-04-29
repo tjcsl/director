@@ -49,6 +49,7 @@ class SiteForm(forms.ModelForm):
                 for field in self.fields:
                     self.fields[field].disabled = True
                 self.fields["category"].disabled = False
+                self.fields["domain"].disabled = False
             self._old_path = instance.path
         else:
             self._old_path = None
@@ -58,7 +59,15 @@ class SiteForm(forms.ModelForm):
         data = [x for x in data if x]
         if not data:
             raise forms.ValidationError("You must enter at least one domain!")
-        return " ".join(data)
+        for domain in data:
+            if domain.endswith("tjhsst.edu"):
+                if not domain == "{}.sites.tjhsst.edu".format(self.cleaned_data["name"]):
+                    if not self._user.is_superuser:
+                        raise forms.ValidationError("Only administrators can set up *.tjhsst.edu domains.")
+            else:
+                if Domain.objects.filter(domain=domain).exists():
+                    raise forms.ValidationError("The domain {} is already taken by another site! If you believe this is an error, please send an email to {}.".format(domain, settings.EMAIL_FEEDBACK))
+        return data
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
@@ -105,7 +114,7 @@ class SiteForm(forms.ModelForm):
 
             self.save_m2m()
 
-            domains = self.cleaned_data["domain"].split(" ")
+            domains = self.cleaned_data["domain"]
             instance.domain_set.exclude(domain__in=domains).delete()
             for domain in domains:
                 if not instance.domain_set.filter(domain=domain).exists():
