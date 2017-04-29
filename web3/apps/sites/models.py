@@ -100,7 +100,7 @@ class Site(models.Model):
 
 class Domain(models.Model):
     site = models.ForeignKey(Site, null=True, on_delete=models.CASCADE)
-    domain = models.CharField(max_length=255)
+    domain = models.CharField(max_length=255, unique=True)
 
     @property
     def is_sites(self):
