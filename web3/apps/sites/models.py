@@ -22,7 +22,6 @@ class Site(models.Model):
         ("activity", "Activity"),
         ("other", "Other")
     ))
-    domain_old = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
     user = models.OneToOneField(User)
