@@ -22,7 +22,7 @@ class Site(models.Model):
         ("activity", "Activity"),
         ("other", "Other")
     ))
-    domain = models.CharField(max_length=255)
+    domain_old = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
     user = models.OneToOneField(User)
@@ -96,6 +96,18 @@ class Site(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Domain(models.Model):
+    site = models.ForeignKey(Site, null=True, on_delete=models.CASCADE)
+    domain = models.CharField(max_length=255)
+
+    @property
+    def is_sites(self):
+        return self.domain.endswith(".sites.tjhsst.edu")
+
+    def __str__(self):
+        return self.domain
 
 
 class Process(models.Model):

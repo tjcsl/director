@@ -4,7 +4,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.conf import settings
 
-from .models import Site, Process, Database
+from .models import Site, Process, Database, Domain
 from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, delete_process_config, reload_services
 from .database_helpers import create_postgres_database, create_mysql_database
 
@@ -44,6 +44,7 @@ class SiteForm(forms.ModelForm):
         instance = getattr(self, "instance", None)
         if instance and instance.pk:
             self.fields["name"].disabled = True
+            self.fields["domain"].initial = " ".join([x.domain for x in instance.domain_set.all()])
             if hasattr(self, "_user") and not self._user.is_staff:
                 for field in self.fields:
                     self.fields[field].disabled = True
@@ -52,14 +53,12 @@ class SiteForm(forms.ModelForm):
         else:
             self._old_path = None
 
-
     def clean_domain(self):
         data = [x.strip() for x in self.cleaned_data["domain"].strip().split(" ")]
         data = [x for x in data if x]
         if not data:
             raise forms.ValidationError("You must enter at least one domain!")
         return " ".join(data)
-
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
@@ -73,6 +72,7 @@ class SiteForm(forms.ModelForm):
             for user in self.cleaned_data['users']:
                 instance.group.users.add(user)
         self.save_m2m = save_m2m
+
         if commit:
             try:
                 instance.user
@@ -89,7 +89,6 @@ class SiteForm(forms.ModelForm):
                     reload_services()
 
             make_site_dirs(instance)
-            create_config_files(instance)
             flush_permissions()
 
             if instance.category != "dynamic" and hasattr(instance, "process"):
@@ -105,6 +104,15 @@ class SiteForm(forms.ModelForm):
             instance.save()
 
             self.save_m2m()
+
+            domains = self.cleaned_data["domain"].split(" ")
+            instance.domain_set.exclude(domain__in=domains).delete()
+            for domain in domains:
+                if not instance.domain_set.filter(domain=domain).exists():
+                    Domain.objects.create(site=instance, domain=domain)
+
+            create_config_files(instance)
+
         return instance
 
     class Meta:
