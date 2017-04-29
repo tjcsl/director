@@ -10,6 +10,7 @@
     <li>To find sites with a PostgreSQL database:<br /><span class="search-example">tag:postgresql</span></li>
     <li>To find sites without a Git repository:<br /><span class="search-example">notag:git</span></li>
     <li>To find PHP sites with a SQL database:<br /><span class="search-example">PHP tag:sql</span></li>
+    <li>To find activity sites with "tech" in their name or description:<span class="search-example">type:activity tech</span></li>
 </ul>
 <p>After you have clicked a site, you will see information about the site and options to modify it.</p>
 <p>To upload files to your website, you can use a tool like <a href="https://winscp.net/">WinSCP</a> to connect to <span class="path">remote.tjhsst.edu</span>. You will then need to change directories to the location specified on the left of the page.</p>
@@ -17,6 +18,8 @@
 <p>The <span class="path">public</span> folder is where the server will serve files from (in static and PHP sites). As a good first step, you will probably want to make a <span class="path">public/index.html</span> file.</p>
 <p>The <span class="path">private</span> folder is where logs are generated (ex: the PHP error log). This folder is not accessible to the public.</p>
 <p>If you create a <span class="path">.secure</span> file in a folder, that folder will be only accessible to you after a login. If you add a <span class="path">.index</span> file to a folder, the folder will list all of its contents when you navigate to it.</p>
+<h5>Custom Domains</h5>
+<p>You can use a custom domain for your site by clicking on "Edit Site" and adding your domain to the domain field. You will then need to set up a CNAME record to point your domain to <span class="path">sites.tjhsst.edu</span>.</p>
 <h4 name="editor">Online Editor</h4>
 <p>Double click files and folders to open them. You can right click files in folders in the Files tab, or right click the blank space in the Files tab for more options. Clicking a file will open up the file for editing. Drag files on to the Files tab in order to upload them. You can use <kbd>Ctrl</kbd> + Click or <kbd>Shift</kbd> + Click to select multiple files.</p>
 <p>You can drag and drop files and folders to move them to different folders. You can drag around tabs to reorder them and create new panels. Your editor layout will automatically save if you make any changes.</p>
