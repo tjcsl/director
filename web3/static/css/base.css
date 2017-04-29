@@ -56,3 +56,9 @@ a.nav-warn:hover {
     margin-right: 5px;
     margin-left: -5px;
 }
+ul.errorlist {
+    list-style: none;
+    color: red;
+    padding-left: 0;
+    font-size: 14px;
+}

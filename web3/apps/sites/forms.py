@@ -75,7 +75,7 @@ class SiteForm(forms.ModelForm):
         default_domain = "{}.sites.tjhsst.edu".format(cleaned_data["name"])
         if cleaned_data["purpose"] in ["user", "activity", "legacy"]:
             if default_domain not in cleaned_data["domain"]:
-                raise forms.ValidationError("Sites with type {} must keep the default {} domain!".format(cleaned_data["purpose"], default_domain))
+                raise forms.ValidationError("Sites of type '{}' must keep the default '{}' domain!".format(cleaned_data["purpose"], default_domain))
         return cleaned_data
 
     def save(self, commit=True):
