@@ -54,7 +54,7 @@ class Site(models.Model):
         elif self.purpose == "legacy":
             return "https://www.tjhsst.edu/~{}/".format(self.name)
         else:
-            return "http://" + self.domain.split(" ")[0]
+            return "http://" + self.domain_set.exclude(domain__endswith=".sites.tjhsst.edu").first()
 
     @property
     def private_path(self):
