@@ -19,13 +19,13 @@ class SiteForm(forms.ModelForm):
                            widget=forms.TextInput(attrs={"class": "form-control"}),
                            help_text="Can only contain alphanumeric characters, underscores, and dashes. Maximum length of 32 characters.",
                            validators=[name_validator])
+    description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
+    category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic"), ("vm", "Virtual Machine")),
+                                 widget=forms.Select(attrs={"class": "form-control"}))
     domain = forms.CharField(max_length=255,
                              widget=forms.TextInput(attrs={"class": "form-control"}),
                              help_text="Can only contain alphanumeric characters, underscores, and dashes. Separate multiple domains with spaces.",
                              validators=[domain_validator])
-    description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
-    category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic"), ("vm", "Virtual Machine")),
-                                 widget=forms.Select(attrs={"class": "form-control"}))
     purpose = forms.ChoiceField(choices=(("user", "User"), ("activity", "Activity"), ("other", "Other")),
                                 widget=forms.Select(attrs={"class": "form-control"}))
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
