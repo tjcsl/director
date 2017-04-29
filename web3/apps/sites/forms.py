@@ -57,16 +57,22 @@ class SiteForm(forms.ModelForm):
     def clean_domain(self):
         data = [x.strip() for x in self.cleaned_data["domain"].strip().split(" ")]
         data = [x for x in data if x]
+        default_domain = "{}.sites.tjhsst.edu".format(self.cleaned_data["name"])
         if not data:
             raise forms.ValidationError("You must enter at least one domain!")
         for domain in data:
             if domain.endswith("tjhsst.edu"):
-                if not domain == "{}.sites.tjhsst.edu".format(self.cleaned_data["name"]):
+                if not domain == default_domain:
                     if not self._user.is_superuser:
                         raise forms.ValidationError("Only administrators can set up *.tjhsst.edu domains.")
             else:
                 if Domain.objects.filter(domain=domain).exists():
                     raise forms.ValidationError("The domain {} is already taken by another site! If you believe this is an error, please send an email to {}.".format(domain, settings.EMAIL_FEEDBACK))
+
+        if self.cleaned_data["category"] in ["user", "activity", "legacy"]:
+            if default_domain not in data:
+                raise forms.ValidationError("Sites with type {} must keep the default {} domain!".format(self.cleaned_data["category"], default_domain))
+
         return data
 
     def save(self, commit=True):
