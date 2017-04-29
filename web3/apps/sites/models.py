@@ -47,7 +47,7 @@ class Site(models.Model):
             return "https://user.tjhsst.edu/{}/".format(self.name)
         elif self.purpose == "activity":
             for d in self.domain_set.all():
-                if d.is_sites:
+                if d.endswith(".sites.tjhsst.edu"):
                     return "https://activities.tjhsst.edu/{}/".format(d.domain.split(".", 1)[0])
             return "https://activities.tjhsst.edu/{}/".format(self.name)
         elif self.purpose == "legacy":
@@ -56,7 +56,7 @@ class Site(models.Model):
             d = self.domain_set.exclude(domain__endswith=".sites.tjhsst.edu").first()
             if not d:
                 return None
-            return "http://" + d.domain
+            return "https://" + d.domain
 
     @property
     def private_path(self):
@@ -105,8 +105,8 @@ class Domain(models.Model):
     domain = models.CharField(max_length=255, unique=True)
 
     @property
-    def is_sites(self):
-        return self.domain.endswith(".sites.tjhsst.edu")
+    def custom_ssl(self):
+        return not self.domain.endswith(".tjhsst.edu")
 
     def __str__(self):
         return self.domain
