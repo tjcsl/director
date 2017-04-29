@@ -22,16 +22,16 @@ class SiteForm(forms.ModelForm):
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
     category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic"), ("vm", "Virtual Machine")),
                                  widget=forms.Select(attrs={"class": "form-control"}))
-    domain = forms.CharField(max_length=255,
-                             widget=forms.TextInput(attrs={"class": "form-control"}),
-                             help_text="Can only contain alphanumeric characters, underscores, and dashes. Separate multiple domains with spaces.",
-                             validators=[domain_validator])
     purpose = forms.ChoiceField(choices=(("user", "User"), ("activity", "Activity"), ("other", "Other")),
                                 widget=forms.Select(attrs={"class": "form-control"}))
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
     custom_nginx = forms.BooleanField(required=False,
                                       label="Custom Nginx Configuration",
                                       widget=forms.CheckboxInput(attrs={"class": "custom-control-input"}))
+    domain = forms.CharField(max_length=255,
+                             widget=forms.TextInput(attrs={"class": "form-control"}),
+                             help_text="Can only contain alphanumeric characters, underscores, and dashes. Separate multiple domains with spaces.",
+                             validators=[domain_validator])
 
     def __init__(self, *args, **kwargs):
         if kwargs.get("instance"):
@@ -69,9 +69,9 @@ class SiteForm(forms.ModelForm):
                 if Domain.objects.filter(domain=domain).exists():
                     raise forms.ValidationError("The domain {} is already taken by another site! If you believe this is an error, please send an email to {}.".format(domain, settings.EMAIL_FEEDBACK))
 
-        if self.cleaned_data["category"] in ["user", "activity", "legacy"]:
+        if self.cleaned_data["purpose"] in ["user", "activity", "legacy"]:
             if default_domain not in data:
-                raise forms.ValidationError("Sites with type {} must keep the default {} domain!".format(self.cleaned_data["category"], default_domain))
+                raise forms.ValidationError("Sites with type {} must keep the default {} domain!".format(self.cleaned_data["purpose"], default_domain))
 
         return data
 
