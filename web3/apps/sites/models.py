@@ -47,7 +47,7 @@ class Site(models.Model):
             return "https://user.tjhsst.edu/{}/".format(self.name)
         elif self.purpose == "activity":
             for d in self.domain_set.all():
-                if d.endswith(".sites.tjhsst.edu"):
+                if d.domain.endswith(".sites.tjhsst.edu"):
                     return "https://activities.tjhsst.edu/{}/".format(d.domain.split(".", 1)[0])
             return "https://activities.tjhsst.edu/{}/".format(self.name)
         elif self.purpose == "legacy":
