@@ -281,6 +281,9 @@ def editor_move_view(request, site_id):
     if os.path.exists(new_file):
         return JsonResponse({"error": "The destination you are trying to copy to already exists.", "path": new_file})
 
+    if new_file.startswith(os.path.join(old_path, "")):
+        return JsonResponse({"error": "You cannot place a folder inside itself!"})
+
     os.rename(old_path, new_file)
 
     return JsonResponse({"success": True})
