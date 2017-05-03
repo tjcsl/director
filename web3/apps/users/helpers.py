@@ -1,5 +1,5 @@
 from .models import User, Group
-from ..sites.models import Site
+from ..sites.models import Site, Domain
 from ..sites.helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions
 from ...utils.tjldap import get_uid, get_full_name
 
@@ -61,11 +61,11 @@ def create_webdocs(user, batch=False, purpose="user"):
     site = Site(
         name=username,
         description=full_name,
-        domain="{}.sites.tjhsst.edu".format(username),
         category="php",
         purpose=purpose,
         custom_nginx=False
     )
+    Domain.objects.create(site=site, domain="{}.sites.tjhsst.edu".format(username))
     create_site_users(site)
 
     if not isinstance(user, str):
