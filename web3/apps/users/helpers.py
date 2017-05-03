@@ -58,7 +58,7 @@ def create_webdocs(user, batch=False, purpose="user"):
     if Site.objects.filter(name=username).exists():
         return Site.objects.get(name=username)
 
-    site = Site(
+    site = Site.objects.create(
         name=username,
         description=full_name,
         category="php",
