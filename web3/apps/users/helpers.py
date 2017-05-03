@@ -1,6 +1,6 @@
 from .models import User, Group
 from ..sites.models import Site, Domain
-from ..sites.helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions
+from ..sites.helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, reload_nginx_config
 from ...utils.tjldap import get_uid, get_full_name
 
 
@@ -76,4 +76,5 @@ def create_webdocs(user, batch=False, purpose="user"):
     create_config_files(site)
     if not batch:
         flush_permissions()
+        reload_nginx_config()
     return site
