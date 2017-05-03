@@ -58,15 +58,16 @@ def create_webdocs(user, batch=False, purpose="user"):
     if Site.objects.filter(name=username).exists():
         return Site.objects.get(name=username)
 
-    site = Site.objects.create(
+    site = Site(
         name=username,
         description=full_name,
         category="php",
         purpose=purpose,
         custom_nginx=False
     )
-    Domain.objects.create(site=site, domain="{}.sites.tjhsst.edu".format(username))
     create_site_users(site)
+
+    Domain.objects.create(site=site, domain="{}.sites.tjhsst.edu".format(username))
 
     if not isinstance(user, str):
         site.group.users.add(user)
