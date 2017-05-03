@@ -73,7 +73,7 @@ class SiteForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(SiteForm, self).clean()
         default_domain = "{}.sites.tjhsst.edu".format(cleaned_data["name"])
-        if cleaned_data["purpose"] in ["user", "activity", "legacy"]:
+        if cleaned_data["purpose"] in ["user", "activity", "legacy"] and "domain" in cleaned_data:
             if default_domain not in cleaned_data["domain"]:
                 raise forms.ValidationError("Sites of type '{}' must keep the default '{}' domain!".format(cleaned_data["purpose"], default_domain))
         return cleaned_data
