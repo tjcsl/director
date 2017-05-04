@@ -94,7 +94,7 @@ def delete_process_config(process):
 def restart_supervisor(site):
     try:
         site.process
-        Popen("supervisorctl restart {}".format(site.name).split())
+        Popen(["supervisorctl", "restart", site.name])
     except Site.process.RelatedObjectDoesNotExist:
         pass
 
@@ -104,7 +104,7 @@ def get_supervisor_status(site):
         return "No Process"
 
     try:
-        return check_output("supervisorctl status {}".format(site.name).split()).decode()
+        return check_output(["supervisorctl", "status", site.name]).decode()
     except CalledProcessError:
         client.captureException()
         return "Status Retrieval Failure"
