@@ -111,9 +111,17 @@ def get_supervisor_status(site):
 
 
 def reload_services():
-    Popen("systemctl reload nginx.service".split())
-    Popen("systemctl restart php7.0-fpm.service".split())
+    reload_nginx_config()
+    reload_php_fpm()
+    update_supervisor()
+
+
+def update_supervisor():
     Popen("supervisorctl update".split())
+
+
+def reload_php_fpm():
+    Popen("systemctl restart php7.0-fpm.service".split())
 
 
 def reload_nginx_config():

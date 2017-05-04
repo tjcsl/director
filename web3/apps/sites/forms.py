@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from django.conf import settings
 
 from .models import Site, Process, Database, Domain
-from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, delete_process_config, reload_services
+from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, delete_process_config, reload_services, reload_php_fpm, update_supervisor
 from .database_helpers import create_postgres_database, create_mysql_database
 
 from ..users.models import User, Group
@@ -201,6 +201,10 @@ class DatabaseForm(forms.ModelForm):
                 instance.delete()
                 return None
             create_config_files(instance.site)
+            if instance.site.category == "php":
+                reload_php_fpm()
+            elif instance.site.category == "dynamic":
+                update_supervisor()
 
         return instance
 
