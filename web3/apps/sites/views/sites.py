@@ -14,7 +14,7 @@ from ..helpers import (reload_services, delete_site_files, create_config_files,
                        make_site_dirs, create_process_config, restart_supervisor,
                        get_supervisor_status, delete_process_config, write_new_index_file,
                        generate_ssh_key, run_as_site, do_git_pull, get_latest_commit,
-                       fix_permissions, reload_nginx_config, list_executable_files)
+                       fix_permissions, reload_nginx_config, list_executable_files, update_supervisor)
 
 from ...authentication.decorators import superuser_required
 from ...vms.models import VirtualMachine
@@ -116,7 +116,7 @@ def modify_process_view(request, site_id):
         if form.is_valid():
             proc = form.save()
             create_process_config(proc)
-            reload_services()
+            update_supervisor()
             messages.success(request, "Process modified!")
             return redirect("info_site", site_id=proc.site.id)
     else:
@@ -179,7 +179,7 @@ def delete_process_view(request, site_id):
     if request.method == "POST":
         try:
             delete_process_config(site.process)
-            reload_services()
+            update_supervisor()
             site.process.delete()
             messages.success(request, "Process deleted!")
         except Site.process.RelatedObjectDoesNotExist:
