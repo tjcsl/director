@@ -599,7 +599,7 @@ $(document).ready(function() {
                         };
                         c[0].addChild(newTab);
                     }
-                    if (key == "new_help") {
+                    if (key == "new_settings") {
                         var c = layout.root.getItemsById("default-file");
                         var newTab = {
                             type: "component",
@@ -643,7 +643,7 @@ $(document).ready(function() {
                     "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
                     "new_nginx": {name: (is_superuser ? "Edit" : "View") + " Nginx Config", icon: "fa-pencil"},
                     "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
-                    "new_help": {name: "Settings", icon: "fa-wrench"},
+                    "new_settings": {name: "Settings", icon: "fa-wrench"},
                     "sep3": "--------",
                     "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
@@ -879,7 +879,7 @@ $(document).ready(function() {
                     "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
                     "new_nginx": {name: (is_superuser ? "Edit" : "View") + " Nginx Config", icon: "fa-pencil"},
                     "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
-                    "new_settings": {name: "Settings", icon: "fa-wrench"}
+                    "new_help": {name: "Settings", icon: "fa-wrench"}
                 }
             };
         }
