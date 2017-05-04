@@ -1,9 +1,11 @@
 $(document).ready(function() {
     var modelist = ace.require("ace/ext/modelist");
     ace.require("ace/ext/language_tools");
+    var editors = [];
     var settings = {
         "hidden-files": true,
-        "layout-theme": "light"
+        "layout-theme": "light",
+        "editor-theme": "ace/theme/clouds"
     };
     var layout_config = {
         settings: {
@@ -58,7 +60,9 @@ $(document).ready(function() {
         if (savedState) {
             layout_config = JSON.parse(savedState);
             if ("editor" in layout_config) {
-                settings = layout_config["editor"];
+                for (var key in layout_config["editor"]) {
+                    settings[key] = layout_config["editor"][key];
+                }
             }
             Messenger().post({
                 "message": "Your editor layout has been restored from your last session.",
@@ -88,12 +92,16 @@ $(document).ready(function() {
 
     function updateSettings() {
         $(".setting-hidden-files").prop("checked", settings["hidden-files"]);
-        $(".setting-layout-theme").val(settings["layout-theme"] || "light");
+        $(".setting-layout-theme").val(settings["layout-theme"]);
+        $(".setting-editor-theme").val(settings["editor-theme"]);
 
         $("#files").toggleClass("show-hidden", settings["hidden-files"]);
         $("#files").toggleClass("dark", settings["layout-theme"] == "dark");
-        $("#layout-light").prop("disabled", (settings["layout-theme"] || "light") != "light");
+        $("#layout-light").prop("disabled", settings["layout-theme"] != "light");
         $("#layout-dark").prop("disabled", settings["layout-theme"] != "dark");
+        $.each(editors, function(k, v) {
+            v.setTheme(settings["editor-theme"]);
+        });
     }
 
     updateSettings();
@@ -106,6 +114,12 @@ $(document).ready(function() {
 
     $(document).on("change", ".setting-layout-theme", function(e) {
         settings["layout-theme"] = $(this).val();
+        updateSettings();
+        saveConfig();
+    });
+
+    $(document).on("change", ".setting-editor-theme", function(e) {
+        settings["editor-theme"] = $(this).val();
         updateSettings();
         saveConfig();
     });
@@ -969,9 +983,14 @@ $(document).ready(function() {
         container.setTitle("<span class='file-indicator fa fa-wrench " + (is_superuser ? "saved" : "readonly") + "'></span> " + "Nginx");
         container.on("tab", addContextHandlers);
         var editor = ace.edit(container.getElement()[0]);
+        editors.push(editor);
         editor.setOptions({
             "fontSize": "12pt",
-            "showPrintMargin": false
+            "showPrintMargin": false,
+            "theme": settings["editor-theme"]
+        });
+        container.on("close", function() {
+            editors.splice(editors.indexOf(editor), 1);
         });
         container.on("resize", function() {
             editor.resize();
@@ -1057,10 +1076,15 @@ $(document).ready(function() {
         else {
             container.setTitle("<span class='file-indicator fa fa-circle-o saved'></span> " + componentState.file);
             var editor = ace.edit(container.getElement()[0]);
+            editors.push(editor);
             editor.setOptions({
                 "fontSize": "12pt",
                 "showPrintMargin": false,
-                "enableBasicAutocompletion": true
+                "enableBasicAutocompletion": true,
+                "theme": settings["editor-theme"]
+            });
+            container.on("close", function() {
+                editors.splice(editors.indexOf(editor), 1);
             });
             container.on("resize", function() {
                 editor.resize();
