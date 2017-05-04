@@ -20,6 +20,24 @@
 <p>If you create a <span class="path">.secure</span> file in a folder, that folder will be only accessible to you after a login. If you add a <span class="path">.index</span> file to a folder, the folder will list all of its contents when you navigate to it.</p>
 <h5>Custom Domains</h5>
 <p>You can use a custom domain for your site by clicking on "Edit Site" and adding your domain to the domain field. You will then need to set up a CNAME record to point your domain to <span class="path">sites.tjhsst.edu</span>.</p>
+<h5>PHP and Databases</h5>
+<p>You can create a PostgreSQL or MySQL database for a site by going to the site page and clicking "Create Database". Below is some example code on how to connect to the database with PHP:</p>
+<pre><code class="php">&lt;?php
+$db_opts = parse_url(getenv("DATABASE_URL"));
+$dsn = ($db_opts["scheme"] == "postgres" ? "pgsql" : "mysql") . ":host=" . $db_opts["host"] . ";dbname=" . ltrim($db_opts["path"], "/");
+$db = new PDO($dsn, $db_opts["user"], $db_opts["pass"]);
+
+$db-&gt;exec("CREATE TABLE IF NOT EXISTS test (info TEXT)");
+$db-&gt;exec("INSERT INTO test (info) VALUES ('testing')");
+
+$stmt = $db-&gt;query("SELECT info FROM test");
+while ($row = $stmt-&gt;fetch()) {
+    echo $row["info"] . "&lt;br /&gt;";
+}</code></pre>
+<h5>PHP Errors</h5>
+<p>For security reasons, PHP error messages are not shown directly on the page, but instead logged to <span class="path">private/php.error.log</span>. If you would like to display PHP errors on a page for debugging reasons, you can add the following code to the beginning of your PHP code:</p>
+<pre><code class="php">error_reporting(E_ALL);
+ini_set('display_errors', 1);</code></pre>
 <h4 name="editor">Online Editor</h4>
 <p>Double click files and folders to open them. You can right click files in folders in the Files tab, or right click the blank space in the Files tab for more options. Clicking a file will open up the file for editing. Drag files on to the Files tab in order to upload them. You can use <kbd>Ctrl</kbd> + Click or <kbd>Shift</kbd> + Click to select multiple files.</p>
 <p>You can drag and drop files and folders to move them to different folders. You can drag around tabs to reorder them and create new panels. Your editor layout will automatically save if you make any changes.</p>
