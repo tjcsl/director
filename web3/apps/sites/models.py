@@ -46,9 +46,9 @@ class Site(models.Model):
         if self.purpose == "user":
             return "https://user.tjhsst.edu/{}/".format(self.name)
         elif self.purpose == "activity":
-            for d in self.domain_set.all():
-                if d.domain.endswith(".sites.tjhsst.edu"):
-                    return "https://activities.tjhsst.edu/{}/".format(d.domain.split(".", 1)[0])
+            different_url = self.domain_set.filter(domain__endswith=".sites.tjhsst.edu").first()
+            if different_url:
+                return "https://activities.tjhsst.edu/{}/".format(custom_sites.domain.split(".", 1)[0])
             return "https://activities.tjhsst.edu/{}/".format(self.name)
         elif self.purpose == "legacy":
             return "https://www.tjhsst.edu/~{}/".format(self.name)
