@@ -194,9 +194,9 @@ def delete_database_view(request, site_id):
                 return redirect("info_site", site_id=site.id)
             site.database.delete()
             create_config_files(site)
-            if site.type == "php":
+            if site.category == "php":
                 reload_php_fpm()
-            elif site.type == "dynamic":
+            elif site.category == "dynamic":
                 update_supervisor()
             messages.success(request, "Database deleted!")
         else:
@@ -227,9 +227,9 @@ def regenerate_database_view(request, site_id):
 
     if flag:
         create_config_files(site)
-        if site.type == "php":
+        if site.category == "php":
             reload_php_fpm()
-        elif site.type == "dynamic":
+        elif site.category == "dynamic":
             update_supervisor()
         messages.success(request, "Database credentials regenerated!")
     else:
