@@ -38,6 +38,7 @@ urlpatterns = [
     # VMs and Processes
     url("^(?P<site_id>\d+)/vm/edit$", sites.modify_vm_view, name="edit_vm"),
     url("^(?P<site_id>\d+)/process/edit$", sites.modify_process_view, name="edit_process"),
+    url("^(?P<site_id>\d+)/process/status$", sites.process_status_view, name="process_status"),
     url("^(?P<site_id>\d+)/process/restart$", sites.restart_process_view, name="restart_process"),
     url("^(?P<site_id>\d+)/process/delete$", sites.delete_process_view, name="delete_process"),
 

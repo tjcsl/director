@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
@@ -98,6 +98,15 @@ def delete_view(request, site_id):
         "site": site
     }
     return render(request, "sites/delete_site.html", context)
+
+
+@login_required
+def process_status_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    return HttpResponse(get_supervisor_status(site))
 
 
 @login_required

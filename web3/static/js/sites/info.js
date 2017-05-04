@@ -14,6 +14,18 @@ jQuery.fn.selectText = function(){
    }
 };
 
+function updateStatus() {
+    var s = $("#process-status").text();
+    if (s.includes("STARTING")) {
+        setTimeout(function() {
+            $.get(status_refresh_endpoint, function(data) {
+                $("#process-status").text(data);
+                updateStatus();
+            });
+        }, 2000);
+    }
+}
+
 $(document).ready(function() {
     if (window.location.hash) {
         var ele = $("a[href='" + window.location.hash + "']");
@@ -51,6 +63,8 @@ $(document).ready(function() {
     }).on("blur",function() {
         $("#database-pass").addClass("hide");
     });
+
+    updateStatus();
 });
 var select = function(el) {
     var range = document.createRange();
