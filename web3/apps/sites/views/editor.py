@@ -12,9 +12,9 @@ from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_http_methods
 
 from ..models import Site, Process
-from ..helpers import (fix_permissions, create_process_config, reload_services,
+from ..helpers import (fix_permissions, create_process_config, reload_php_fpm,
                        render_to_string, check_nginx_config, reload_nginx_config,
-                       create_config_files, delete_process_config)
+                       create_config_files, delete_process_config, update_supervisor)
 
 
 @login_required
@@ -317,7 +317,7 @@ def editor_process_view(request, site_id):
         proc = Process.objects.create(site=site, path=path)
 
     create_process_config(proc)
-    reload_services()
+    update_supervisor()
 
     return JsonResponse({"success": True})
 
@@ -421,7 +421,12 @@ def site_type_view(request, site_id):
     create_config_files(site)
     if site.category != "dynamic" and hasattr(site, "process"):
         delete_process_config(site.process)
-        reload_services()
+        update_supervisor()
         site.process.delete()
+
+    if site.category == "php":
+        reload_php_fpm()
+
+    reload_nginx_config()
 
     return JsonResponse({"success": True})
