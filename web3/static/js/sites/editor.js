@@ -6,7 +6,7 @@ $(document).ready(function() {
         "hidden-files": true,
         "layout-theme": "light",
         "editor-theme": "ace/theme/chrome",
-        "font-size": 12
+        "font-size": 16
     };
     var layout_config = {
         settings: {
