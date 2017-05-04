@@ -22,7 +22,7 @@ function updateStatus() {
                 $("#process-status").text(data);
                 updateStatus();
             });
-        }, 2000);
+        }, 1000);
     }
 }
 
