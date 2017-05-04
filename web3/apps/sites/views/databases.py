@@ -153,8 +153,7 @@ def dump_database_view(request, site_id):
         return redirect("info_site", site_id=site.id)
 
     if site.database.category == "postgresql":
-        # --cluster 9.6/main fixes the server version mismatch error
-        ret, out, err = run_as_site(site, ["pg_dump", "--cluster", "9.6/main", str(site.database)], timeout=60)
+        ret, out, err = run_as_site(site, ["pg_dump", str(site.database)], timeout=60)
     elif site.database.category == "mysql":
         ret, out, err = run_as_site(
             site, ["mysqldump", "-u", site.database.username, "--password={}".format(site.database.password), "-h", "mysql1", site.database.db_name], timeout=60)
