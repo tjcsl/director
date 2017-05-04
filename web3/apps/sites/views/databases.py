@@ -160,7 +160,7 @@ def dump_database_view(request, site_id):
 
     if ret == 0:
         resp = HttpResponse(out, content_type="application/force-download")
-        resp["Content-Disposition"] = "attachment; filename=dump{}.sql".format(datetime.datetime.now().strftime("%m%d%Y"))
+        resp["Content-Disposition"] = "attachment; filename={}{}.sql".format(site.name, datetime.datetime.now().strftime("%m%d%Y"))
         return resp
     else:
         messages.error(request, "Failed to export database!")
