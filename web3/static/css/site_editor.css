@@ -39,6 +39,9 @@ iframe.preview {
 #files:focus {
     outline: none;
 }
+#files:not(.show-hidden) .hidden {
+    display: none !important;
+}
 #files .folder, #files .file {
     cursor: pointer;
     white-space: nowrap;

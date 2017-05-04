@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="{% static 'css/terminal/terminal.css' %}" type="text/css" />
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/site_editor.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/guide.css' %}" />
 {% endblock %}
 
 {% block js %}
@@ -84,9 +83,15 @@
         </div>
     </div>
 </div>
-<div id="help-template" style="display:none">
-    <div class="help-pane guide">
-        {% include "guide.html" %}
+<div id="settings-template" style="display:none">
+    <div class="help-pane">
+        <h3><i class="fa fa-wrench" style="margin-bottom:15px"></i> Settings</h3>
+        <div class="alert alert-success"><i class="fa fa-question-circle"></i> Need help with using Director? Click <a target="_blank" href="{% url 'guide' %}">here</a> to access the help guide. Have a feature suggestion or bug report? Click <a target="_blank" href="{% url 'feedback' %}">here</a>!</div>
+        <label class="custom-control custom-checkbox">
+            <input type="checkbox" class="setting-hidden-files custom-control-input">
+            <span class="custom-control-indicator"></span>
+            <span class="custom-control-description">Show hidden files</span>
+        </label>
     </div>
 </div>
 <div id="modal-confirm" class="modal fade">

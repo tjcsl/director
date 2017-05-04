@@ -1,6 +1,9 @@
 $(document).ready(function() {
     var modelist = ace.require("ace/ext/modelist");
     ace.require("ace/ext/language_tools");
+    var settings = {
+        "hidden-files": true
+    };
     var layout_config = {
         settings: {
             showPopoutIcon: false
@@ -53,6 +56,9 @@ $(document).ready(function() {
         var savedState = localStorage.getItem("editor-state-" + site_name);
         if (savedState) {
             layout_config = JSON.parse(savedState);
+            if ("editor" in layout_config) {
+                settings = layout_config["editor"];
+            }
             Messenger().post({
                 "message": "Your editor layout has been restored from your last session.",
                 "actions": {
@@ -71,11 +77,29 @@ $(document).ready(function() {
 
     var layout = new GoldenLayout(layout_config, $("#editor-container"));
 
-    layout.on("stateChanged", function() {
+    function saveConfig() {
         if (typeof localStorage !== 'undefined') {
-            var state = JSON.stringify(layout.toConfig());
-            localStorage.setItem("editor-state-" + site_name, state);
+            var state = layout.toConfig();
+            state["editor"] = settings;
+            localStorage.setItem("editor-state-" + site_name, JSON.stringify(state));
         }
+    }
+
+    function updateSettings() {
+        $(".setting-hidden-files").prop("checked", settings["hidden-files"]);
+        $("#files").toggleClass("show-hidden", settings["hidden-files"]);
+    }
+
+    updateSettings();
+
+    $(document).on("change", ".setting-hidden-files", function(e) {
+        settings["hidden-files"] = $(this).prop("checked");
+        updateSettings();
+        saveConfig();
+    });
+
+    layout.on("stateChanged", function() {
+        saveConfig();
     });
 
     // #files code
@@ -595,9 +619,9 @@ $(document).ready(function() {
                     "new_folder": {name: "New Folder", icon: "fa-folder"},
                     "sep2": "--------",
                     "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
-                    "new_nginx": {name: (is_superuser ? "Edit" : "View") + " Nginx Config", icon: "fa-wrench"},
+                    "new_nginx": {name: (is_superuser ? "Edit" : "View") + " Nginx Config", icon: "fa-pencil"},
                     "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
-                    "new_help": {name: "Help Guide", icon: "fa-question-circle"},
+                    "new_help": {name: "Settings", icon: "fa-wrench"},
                     "sep3": "--------",
                     "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
@@ -831,9 +855,9 @@ $(document).ready(function() {
                     "close_right": {name: "Close Tabs to Right", icon: "fa-chevron-right"},
                     "sep2": "--------",
                     "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
-                    "new_nginx": {name: (is_superuser ? "Edit" : "View") + " Nginx Config", icon: "fa-wrench"},
+                    "new_nginx": {name: (is_superuser ? "Edit" : "View") + " Nginx Config", icon: "fa-pencil"},
                     "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
-                    "new_help": {name: "Help Guide", icon: "fa-question-circle"}
+                    "new_settings": {name: "Settings", icon: "fa-wrench"}
                 }
             };
         }
@@ -912,8 +936,11 @@ $(document).ready(function() {
     });
     layout.registerComponent("help", function(container, componentState) {
         container.on("tab", addContextHandlers);
-        container.setTitle("<span class='fa fa-question-circle'></span> Help");
-        container.getElement().html($("#help-template").html());
+        container.setTitle("<span class='fa fa-wrench'></span> Settings");
+        container.getElement().html($("#settings-template").html());
+        container.on("open", function() {
+            updateSettings();
+        });
     });
     layout.registerComponent("sql", function(container, componentState) {
         container.on("tab", addContextHandlers);
