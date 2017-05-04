@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from raven.contrib.django.raven_compat.models import client
 
-from ..helpers import run_as_site, create_config_files, demote
+from ..helpers import run_as_site, create_config_files, demote, reload_php_fpm, update_supervisor
 from ..database_helpers import delete_postgres_database, change_postgres_password, delete_mysql_database, change_mysql_password, list_tables
 from ..models import Site, User
 from ..forms import DatabaseForm
@@ -194,6 +194,10 @@ def delete_database_view(request, site_id):
                 return redirect("info_site", site_id=site.id)
             site.database.delete()
             create_config_files(site)
+            if site.type == "php":
+                reload_php_fpm()
+            elif site.type == "dynamic":
+                update_supervisor()
             messages.success(request, "Database deleted!")
         else:
             messages.error(request, "Database doesn't exist!")
@@ -223,6 +227,10 @@ def regenerate_database_view(request, site_id):
 
     if flag:
         create_config_files(site)
+        if site.type == "php":
+            reload_php_fpm()
+        elif site.type == "dynamic":
+            update_supervisor()
         messages.success(request, "Database credentials regenerated!")
     else:
         messages.error(request, "Failed to regenerate database credentials!")
