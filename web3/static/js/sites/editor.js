@@ -655,12 +655,12 @@ $(document).ready(function() {
                             var filepath = getPath(trigger) + trigger.attr("data-name");
                             paths.push(filepath);
                         });
-                        $.post(exec_endpoint, {name: paths}, function(data) {
+                        $.post(exec_endpoint, {name: paths, on: !trigger.hasClass("exec")}, function(data) {
                             if (data.error) {
                                 Messenger().error(data.error);
                             }
                             else {
-                                fobjs.toggleClass("exec");
+                                fobjs.toggleClass("exec", !trigger.hasClass("exec"));
                             }
                         });
                     }

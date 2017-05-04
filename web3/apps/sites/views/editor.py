@@ -330,6 +330,7 @@ def editor_exec_view(request, site_id):
         raise PermissionDenied
 
     paths = request.POST.getlist("name[]", [])
+    on = request.POST.get("on", False) == "true"
 
     if request.POST.get("name", False):
         paths.append(request.POST.get("name"))
@@ -345,7 +346,7 @@ def editor_exec_view(request, site_id):
 
     for path in paths:
         st = os.stat(path)
-        if not os.access(path, os.X_OK):
+        if on:
             os.chmod(path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
         else:
             os.chmod(path, stat.S_IMODE(st.st_mode) & ~stat.S_IXUSR & ~stat.S_IXGRP & ~stat.S_IXOTH)
