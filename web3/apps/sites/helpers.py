@@ -121,7 +121,7 @@ def update_supervisor():
 
 
 def reload_php_fpm():
-    Popen("systemctl restart php7.0-fpm.service".split())
+    Popen("systemctl reload php7.0-fpm.service".split())
 
 
 def reload_nginx_config():
