@@ -22,7 +22,7 @@
     <div class="col-md-6">
         <h3>{{ site.name }}</h3>
         <p>
-            <b>URL:</b> <a href="{{ site.url }}" target="_blank">{{ site.url }}</a><br />
+            <b>URL:</b> {% if site.url %}<a href="{{ site.url }}" target="_blank">{{ site.url }}</a>{% else %}None{% endif %}<br />
             <b>Type:</b> {{ site.get_purpose_display }} - {{ site.get_category_display }}<br />
             <b>Description:</b> {{ site.description|default:"None" }}<br />
             <b>Site User:</b> {{ site.user.username }} ({{ site.user.id }})<br />
