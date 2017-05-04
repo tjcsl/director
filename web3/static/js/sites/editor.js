@@ -5,7 +5,8 @@ $(document).ready(function() {
     var settings = {
         "hidden-files": true,
         "layout-theme": "light",
-        "editor-theme": "ace/theme/clouds"
+        "editor-theme": "ace/theme/chrome",
+        "font-size": 12
     };
     var layout_config = {
         settings: {
@@ -92,8 +93,9 @@ $(document).ready(function() {
 
     function updateSettings() {
         $(".setting-hidden-files").prop("checked", settings["hidden-files"]);
-        $(".setting-layout-theme").val(settings["layout-theme"]);
-        $(".setting-editor-theme").val(settings["editor-theme"]);
+        $(".setting[data-setting='layout-theme']").val(settings["layout-theme"]);
+        $(".setting[data-setting='editor-theme']").val(settings["editor-theme"]);
+        $(".setting[data-setting='font-size']").val(settings["font-size"]);
 
         $("#files").toggleClass("show-hidden", settings["hidden-files"]);
         $("#files").toggleClass("dark", settings["layout-theme"] == "dark");
@@ -101,25 +103,19 @@ $(document).ready(function() {
         $("#layout-dark").prop("disabled", settings["layout-theme"] != "dark");
         $.each(editors, function(k, v) {
             v.setTheme(settings["editor-theme"]);
+            v.setFontSize(settings["font-size"] + "px");
         });
     }
 
     updateSettings();
 
-    $(document).on("change", ".setting-hidden-files", function(e) {
-        settings["hidden-files"] = $(this).prop("checked");
-        updateSettings();
-        saveConfig();
-    });
-
-    $(document).on("change", ".setting-layout-theme", function(e) {
-        settings["layout-theme"] = $(this).val();
-        updateSettings();
-        saveConfig();
-    });
-
-    $(document).on("change", ".setting-editor-theme", function(e) {
-        settings["editor-theme"] = $(this).val();
+    $(document).on("change", ".setting", function(e) {
+        if ($(this).attr("type") == "checkbox") {
+            settings[$(this).attr("data-setting")] = $(this).prop("checked");
+        }
+        else {
+            settings[$(this).attr("data-setting")] = $(this).val();
+        }
         updateSettings();
         saveConfig();
     });
@@ -985,7 +981,7 @@ $(document).ready(function() {
         var editor = ace.edit(container.getElement()[0]);
         editors.push(editor);
         editor.setOptions({
-            "fontSize": "12pt",
+            "fontSize": settings["font-size"] + "px",
             "showPrintMargin": false,
             "theme": settings["editor-theme"]
         });
@@ -1078,7 +1074,7 @@ $(document).ready(function() {
             var editor = ace.edit(container.getElement()[0]);
             editors.push(editor);
             editor.setOptions({
-                "fontSize": "12pt",
+                "fontSize": settings["font-size"] + "px",
                 "showPrintMargin": false,
                 "enableBasicAutocompletion": true,
                 "theme": settings["editor-theme"]
