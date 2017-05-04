@@ -66,7 +66,7 @@ class SiteForm(forms.ModelForm):
                     if not self._user.is_superuser:
                         raise forms.ValidationError("Only administrators can set up *.tjhsst.edu domains.")
             else:
-                if Domain.objects.filter(domain=domain).exists():
+                if Domain.objects.filter(domain=domain).exclude(site__name=self.cleaned_data["name"]).exists():
                     raise forms.ValidationError("The domain {} is already taken by another site! If you believe this is an error, please send an email to {}.".format(domain, settings.EMAIL_FEEDBACK))
         return data
 
@@ -104,14 +104,14 @@ class SiteForm(forms.ModelForm):
                     proc = instance.process
                     proc.path = proc.path.replace(self._old_path, instance.path)
                     proc.save()
-                    reload_services()
+                    update_supervisor()
 
             make_site_dirs(instance)
             flush_permissions()
 
             if instance.category != "dynamic" and hasattr(instance, "process"):
                 delete_process_config(instance.process)
-                reload_services()
+                update_supervisor()
                 instance.process.delete()
 
             if instance.category != "vm" and hasattr(instance, "virtual_machine"):
