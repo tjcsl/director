@@ -48,7 +48,7 @@ class Site(models.Model):
         elif self.purpose == "activity":
             different_url = self.domain_set.filter(domain__endswith=".sites.tjhsst.edu").first()
             if different_url:
-                return "https://activities.tjhsst.edu/{}/".format(custom_sites.domain.split(".", 1)[0])
+                return "https://activities.tjhsst.edu/{}/".format(different_url.domain.split(".", 1)[0])
             return "https://activities.tjhsst.edu/{}/".format(self.name)
         elif self.purpose == "legacy":
             return "https://www.tjhsst.edu/~{}/".format(self.name)
