@@ -36,6 +36,9 @@ iframe.preview {
     height: 100%;
     overflow-y: auto;
 }
+#files.dark {
+    color: #ccc;
+}
 #files:focus {
     outline: none;
 }
@@ -49,8 +52,14 @@ iframe.preview {
 #files .folder:hover, #files .file:hover {
     background-color: #ddd;
 }
+#files.dark .folder:hover, #files.dark .file:hover {
+    background-color: #444;
+}
 #files div.active {
     background-color: #ccc;
+}
+#files.dark div.active {
+    background-color: #333;
 }
 #files div.active:hover {
     background-color: #bdbdbd;
@@ -93,12 +102,15 @@ span.file-indicator.readonly {
 .image-container img {
     border: 1px solid black;
 }
-.help-pane {
+.settings-pane {
     width: 100%;
     height: 100%;
     padding: 15px;
     background-color: white;
     overflow-y: auto;
+}
+.settings-pane select.form-control {
+    padding: .2rem .75rem;
 }
 .context-menu-list {
     z-index: 9999 !important;

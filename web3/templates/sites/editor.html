@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.2/jquery.contextMenu.min.css" />
 
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/golden-layout/1.5.7/css/goldenlayout-base.css" />
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/golden-layout/1.5.7/css/goldenlayout-light-theme.css" />
+    <link id="layout-light" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/golden-layout/1.5.7/css/goldenlayout-light-theme.css" />
+    <link id="layout-dark" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/golden-layout/1.5.7/css/goldenlayout-dark-theme.css" disabled />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/default.min.css" />
 
     {% if site.database %}
@@ -84,9 +85,16 @@
     </div>
 </div>
 <div id="settings-template" style="display:none">
-    <div class="help-pane">
+    <div class="settings-pane">
         <h3><i class="fa fa-wrench" style="margin-bottom:15px"></i> Settings</h3>
         <div class="alert alert-success"><i class="fa fa-question-circle"></i> Need help with using Director? Click <a target="_blank" href="{% url 'guide' %}">here</a> to access the help guide. Have a feature suggestion or bug report? Click <a target="_blank" href="{% url 'feedback' %}">here</a>!</div>
+        <div class="form-group">
+            <label>Layout Theme</label>
+            <select class="setting-layout-theme form-control">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
         <label class="custom-control custom-checkbox">
             <input type="checkbox" class="setting-hidden-files custom-control-input">
             <span class="custom-control-indicator"></span>
