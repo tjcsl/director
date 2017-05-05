@@ -45,8 +45,8 @@ def make_site_dirs(site):
             os.makedirs(path)
         os.chown(path, site.user.id, site.group.id)
         os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISGID)
-    Popen("/usr/bin/setfacl -m u:www-data:rx {}".format(site.path).split())
-    Popen("/usr/bin/setfacl -m u:www-data:rx {}".format(os.path.join(site.path, "public")).split())
+    Popen(["/usr/bin/setfacl", "-m", "u:www-data:rx", site.path])
+    Popen(["/usr/bin/setfacl", "-m", "u:www-data:rx", os.path.join(site.path, "public")])
 
 
 def create_config_files(site):
@@ -117,15 +117,15 @@ def reload_services():
 
 
 def update_supervisor():
-    Popen("supervisorctl update".split())
+    Popen(["supervisorctl", "update"])
 
 
 def reload_php_fpm():
-    Popen("systemctl reload php7.0-fpm.service".split())
+    Popen(["systemctl", "reload", "php7.0-fpm"])
 
 
 def reload_nginx_config():
-    Popen("/usr/sbin/nginx -s reload".split())
+    Popen(["/usr/sbin/nginx", "-s", "reload"])
 
 
 def check_nginx_config():
@@ -136,8 +136,8 @@ def flush_permissions():
     if os.path.isfile("/proc/net/rpc/auth.unix.gid/flush"):
         with open("/proc/net/rpc/auth.unix.gid/flush", "w") as f:
             f.write(str(int(time.time())))
-    Popen("/usr/sbin/nscd -i group".split())
-    Popen("/usr/sbin/nscd -i passwd".split())
+    Popen(["/usr/sbin/nscd", "-i", "group"])
+    Popen(["/usr/sbin/nscd", "-i", "passwd"])
 
 
 def run_as_site(site, cmd, cwd=None, env=None, timeout=15):
