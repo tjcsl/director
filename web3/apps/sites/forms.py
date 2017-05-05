@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from django.conf import settings
 
 from .models import Site, Process, Database, Domain
-from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, delete_process_config, reload_services, reload_php_fpm, update_supervisor
+from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, delete_process_config, reload_php_fpm, update_supervisor
 from .database_helpers import create_postgres_database, create_mysql_database
 
 from ..users.models import User, Group
@@ -21,6 +21,7 @@ class SiteForm(forms.ModelForm):
                            validators=[name_validator])
     description = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
     category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic"), ("vm", "Virtual Machine")),
+                                 help_text="If you want to run a custom server, like Node.js or Django, you will need to set this to Dynamic.",
                                  widget=forms.Select(attrs={"class": "form-control"}))
     purpose = forms.ChoiceField(choices=(("user", "User"), ("activity", "Activity"), ("other", "Other")),
                                 widget=forms.Select(attrs={"class": "form-control"}))
