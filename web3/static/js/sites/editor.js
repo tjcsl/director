@@ -189,10 +189,10 @@ $(document).ready(function() {
                     }
                     if (type) {
                         var newTab = {
-                            id: "file-" + filepath,
+                            id: "file-" + join(filepath, name),
                             type: "component",
                             componentName: "file",
-                            componentState: { file: name, path: filepath + "/" + name, isImage: false, isMedia: false }
+                            componentState: { file: name, path: join(filepath, name), isImage: false, isMedia: false }
                         };
                         layout.root.getItemsById("default-file")[0].addChild(newTab);
                     }
@@ -1189,7 +1189,17 @@ $(document).ready(function() {
 
     addFileListener();
 });
-
+function join(a, b) {
+    return arguments.filter(function(path) { return !!path; }).map(function(path) {
+        if (path[0] == "/") {
+            path = path.slice(1);
+        }
+        if (path[path.length - 1] == "/") {
+            path = path.slice(0, path.length - 1);
+        }
+        return path;
+    }).join("/");
+}
 function addFileListener() {
     try {
         var host = location.origin.replace(/^http/, 'ws');
@@ -1222,7 +1232,7 @@ function addFileListener() {
                 else if (data.action == "delete") {
                     var full_path = data.name;
                     if (data.path) {
-                        full_path = data.path + "/" + data.name;
+                        full_path = join(data.path, data.name);
                     }
                     var del = getElement(full_path);
                     if (del) {
