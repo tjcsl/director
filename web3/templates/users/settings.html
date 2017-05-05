@@ -28,8 +28,12 @@
 <h5>GitHub</h5>
 <p>If you link your Director account to your GitHub account, you can use Director to automatically set up webhooks and deploy your code when you push.</p>
 {% if request.user.github_token %}
-<p><i class="fa fa-check" style="color:green"></i> Your Director account is linked to your GitHub account! <a href="https://github.com/{{ github_username }}">@{{ github_username }}</a></p>
-<p><a class="btn btn-ion" href="{% url 'unlink_github' %}"><i class="fa fa-github"></i> Unlink GitHub Account</a></p>
+    {% if github_username %}
+        <p><i class="fa fa-check" style="color:green"></i> Your Director account is linked to your GitHub account! <a href="https://github.com/{{ github_username }}">@{{ github_username }}</a></p>
+    {% else %}
+        <p><i class="fa fa-exclamation-triangle"></i> Failed to contact a GitHub API server!</p>
+    {% endif %}
+    <p><a class="btn btn-ion" href="{% url 'unlink_github' %}"><i class="fa fa-github"></i> Unlink GitHub Account</a></p>
 {% else %}
 <p><a class="btn btn-ion" href="{% url 'link_github' %}"><i class="fa fa-github"></i> Link GitHub Account</a></p>
 {% endif %}
