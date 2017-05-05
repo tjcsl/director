@@ -4,6 +4,7 @@ $(document).ready(function() {
     var editors = [];
     var settings = {
         "hidden-files": true,
+        "prompt-delete": true,
         "layout-theme": "light",
         "editor-theme": "ace/theme/chrome",
         "font-size": 16
@@ -93,6 +94,7 @@ $(document).ready(function() {
 
     function updateSettings() {
         $(".setting[data-setting='hidden-files']").prop("checked", settings["hidden-files"]);
+        $(".setting[data-setting='prompt-delete']").prop("checked", settings["prompt-delete"]);
         $(".setting[data-setting='layout-theme']").val(settings["layout-theme"]);
         $(".setting[data-setting='editor-theme']").val(settings["editor-theme"]);
         $(".setting[data-setting='font-size']").val(settings["font-size"]);
@@ -136,7 +138,7 @@ $(document).ready(function() {
             }
             filepaths.push(filepath);
         });
-        modalConfirm("Are you sure you want to delete these files?", "<p>Are you sure you want to delete <b>" + filepaths.length  + "</b> file(s):</p><pre>" + $("<div />").text(filepaths.join("\n")).html() + "</pre>", function() {
+        function doDelete() {
             $.post(delete_endpoint, { name: filepaths }, function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
@@ -151,7 +153,15 @@ $(document).ready(function() {
                     });
                 }
             });
-        });
+        }
+        if (settings["prompt-delete"]) {
+            modalConfirm("Are you sure you want to delete these files?", "<p>Are you sure you want to delete <b>" + filepaths.length  + "</b> file(s):</p><pre>" + $("<div />").text(filepaths.join("\n")).html() + "</pre>", function() {
+                doDelete();
+            });
+        }
+        else {
+            doDelete();
+        }
     }
     function triggerCreate(item, type) {
         if (item[0] == $("#files")[0]) {
