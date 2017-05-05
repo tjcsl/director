@@ -187,6 +187,15 @@ $(document).ready(function() {
                         folder.removeClass("loaded");
                         folder.dblclick();
                     }
+                    if (type) {
+                        var newTab = {
+                            id: "file-" + filepath,
+                            type: "component",
+                            componentName: "file",
+                            componentState: { file: name, path: filepath + "/" + name, isImage: false, isMedia: false }
+                        };
+                        layout.root.getItemsById("default-file")[0].addChild(newTab);
+                    }
                 }
             });
         });
