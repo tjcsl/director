@@ -1190,7 +1190,7 @@ $(document).ready(function() {
     addFileListener();
 });
 function join(a, b) {
-    return arguments.filter(function(path) { return !!path; }).map(function(path) {
+    return [].slice.call(arguments).filter(function(path) { return !!path; }).map(function(path) {
         if (path[0] == "/") {
             path = path.slice(1);
         }
