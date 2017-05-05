@@ -92,7 +92,7 @@ $(document).ready(function() {
     }
 
     function updateSettings() {
-        $(".setting-hidden-files").prop("checked", settings["hidden-files"]);
+        $(".setting[data-setting='hidden-files']").prop("checked", settings["hidden-files"]);
         $(".setting[data-setting='layout-theme']").val(settings["layout-theme"]);
         $(".setting[data-setting='editor-theme']").val(settings["editor-theme"]);
         $(".setting[data-setting='font-size']").val(settings["font-size"]);
