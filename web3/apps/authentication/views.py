@@ -34,7 +34,7 @@ def about_view(request):
 
 
 def guide_view(request):
-    return render(request, "guide_wrapper.html")
+    return render(request, "guide.html")
 
 
 def login_view(request):

@@ -1,3 +1,22 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block mainclass %}narrow{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/default.min.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/guide.css' %}" />
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}
+
+{% block main %}
+    <div class="guide">
 <h3><i class="fa fa-cloud"></i> Director Help Guide</h3>
 <hr />
 <div class="alert alert-success"><i class="fa fa-lightbulb-o"></i> Have a suggestion? Found a bug? Give feedback <a target="_blank" href="{% url 'feedback' %}">here</a>!</div>
@@ -90,3 +109,5 @@ def index():
 
 gunicorn server:app -b 127.0.0.1:$PORT -w=4</code></pre>
 </div>
+    </div>
+{% endblock %}
