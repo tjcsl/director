@@ -925,6 +925,31 @@ $(document).ready(function() {
         }
     });
     // end #files code
+    $(document).keydown(function(e) {
+        if (e.keyCode == 78 && e.altKey) {
+            // Alt + N
+            if ($("#files div.active").length) {
+                triggerCreate($("#files div.active").first(), true);
+            }
+            else {
+                triggerCreate($("#files"), true);
+            }
+            e.preventDefault();
+        }
+        if (e.keyCode == 84 && e.altKey) {
+            // Alt + T
+            var c = layout.root.getItemsById("default-terminal");
+            if (!c.length) {
+                c = layout.root.getItemsById("default-file");
+            }
+            var newTab = {
+                type: "component",
+                componentName: "terminal"
+            };
+            c[0].addChild(newTab);
+            e.preventDefault();
+        }
+    });
     function addContextHandlers(tab) {
         tab.element.on("tab:new", function(e, item) {
             tab.contentItem.parent.addChild(item);
@@ -938,26 +963,32 @@ $(document).ready(function() {
             var items = $("#files div.active");
             if (items.length > 0) {
                 if (e.keyCode == 46) {
+                    // Delete
                     triggerDelete();
                     e.preventDefault();
                 }
                 if (e.keyCode == 13) {
+                    // Enter
                     items.dblclick();
                     e.preventDefault();
                 }
                 if (e.keyCode == 27) {
+                    // Escape
                     items.removeClass("active");
                     e.preventDefault();
                 }
                 if (e.keyCode == 82 && e.altKey) {
+                    // Alt + R
                     triggerRename(items.first());
                     e.preventDefault();
                 }
                 if (e.keyCode == 80 && e.altKey) {
+                    // Alt + P
                     triggerPreview();
                     e.preventDefault();
                 }
                 if (e.keyCode == 38) {
+                    // Key Up
                     var na = items.prevAll(":visible");
                     if (na.length) {
                         items.removeClass("active");
@@ -966,6 +997,7 @@ $(document).ready(function() {
                     e.preventDefault();
                 }
                 if (e.keyCode == 40) {
+                    // Key Down
                     var na = items.nextAll(":visible");
                     if (na.length) {
                         items.removeClass("active");
