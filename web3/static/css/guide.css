@@ -39,6 +39,9 @@
     top: 15px;
     left: 15px;
 }
+.toc h5 {
+    cursor: pointer;
+}
 .toc .level {
     padding-left: 5px;
     padding-right: 5px;
