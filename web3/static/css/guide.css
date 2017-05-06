@@ -25,6 +25,17 @@
 .guide h6 {
     font-size: 1.1rem;
 }
+.guide .click {
+    background: #f7f7f4;
+    background: -moz-linear-gradient(top,#f7f7f4 0%,#eaeaea 100%);
+    background: -webkit-linear-gradient(top,#f7f7f4 0%,#eaeaea 100%);
+    background: linear-gradient(to bottom,#f7f7f4 0%,#eaeaea 100%);
+    padding: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
 @media (max-width: 767px) {
     .guide {
         margin-left: 0px;

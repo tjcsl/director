@@ -21,8 +21,8 @@
 <div class="alert alert-success"><i class="fa fa-lightbulb-o"></i> Have a suggestion? Found a bug? Give feedback <a target="_blank" href="{% url 'feedback' %}">here</a>!</div>
 <h4>Getting Started</h4>
 <p>You will need to login using <a target="_blank" href="https://ion.tjhsst.edu/">Ion</a> in order to use Director.</p>
-<p>If you are a student, you have the opportunity to create a personal website in the format <span class="path">https://user.tjhsst.edu/&lt;username&gt;</span>. Students can do this by pressing the "<i class="fa fa-user-plus"></i> Create Webdocs" button located to the upper right of the page.</p>
-<p>If you would like to create or gain access to a website for a club or school activity, click on the "<i class="fa fa-plus"></i> Create Site" button in the upper right corner.</p>
+<p>If you are a student, you have the opportunity to create a personal website in the format <span class="path">https://user.tjhsst.edu/&lt;username&gt;</span>. Students can do this by pressing the <span class="click"><i class="fa fa-user-plus"></i> Create Webdocs</span> button located to the upper right of the page.</p>
+<p>If you would like to create or gain access to a website for a club or school activity, click on the <span class="click"><i class="fa fa-plus"></i> Create Site</span> button in the upper right corner.</p>
 <p>If you would like to create a website for another purpose, contact <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.</p>
 <p>The dashboard contains a list of sites that you have access to. You can click a particular site to see more details about it. You can use the search bar on the top of the page to filter the list of sites. Below are a few examples of search queries:</p>
 <ul>
@@ -34,23 +34,23 @@
 </ul>
 <h5>Site Editing</h5>
 <p>After you have clicked a site, you will see information about the site and options to modify it.</p>
-<p>To upload files to your website, you can use a tool like <a href="https://winscp.net/">WinSCP</a> or <a href="https://filezilla-project.org/download.php">FileZilla</a> to connect to <span class="path">remote.tjhsst.edu</span>. You will then need to change directories to the location specified on the left side of the page.</p>
+<p>To upload files to your website, you can use a tool like <a target="_blank" href="https://winscp.net/">WinSCP</a> or <a target="_blank" href="https://filezilla-project.org/download.php">FileZilla</a> to connect to <span class="path">remote.tjhsst.edu</span>. You will then need to change directories to the location specified on the left side of the page.</p>
 <ul>
     <li>For user sites, the site is located at <span class="path">/web/user/&lt;name&gt;</span>.</li>
     <li>For activity sites, the site is located at <span class="path">/web/activities/&lt;name&gt;</span>.</li>
     <li>For legacy sites, the site is located at <span class="path">/web/legacy/&lt;name&gt;</span>.</li>
     <li>For other sites, the site is located at <span class="path">/web/&lt;name&gt;</span>.</li>
 </ul>
-<p>You can also use the online editor or web terminal to edit your site. You can access these features through the "<i class="fa fa-folder-open"></i> File Explorer" and "<i class="fa fa-terminal"></i> Web Terminal" buttons on the left side of the page.</p>
+<p>You can also use the online editor or web terminal to edit your site. You can access these features through the <span class="click"><i class="fa fa-folder-open"></i> File Explorer</span> and <span class="click"><i class="fa fa-terminal"></i> Web Terminal</span> buttons on the left side of the page.</p>
 <h6>Special Locations</h6>
 <p>The <span class="path">public</span> folder is where the server will serve files from (in static and PHP sites). As a good first step, you will probably want to make a <span class="path">public/index.html</span> file.</p>
 <p>The <span class="path">private</span> folder is where logs are generated (ex: the PHP and supervisor error logs).</p>
 <p>If you create a <span class="path">.secure</span> file in a folder, that folder will be only accessible to you after a login. If you add a <span class="path">.index</span> file to a folder, the folder will list all of its contents when you navigate to it.</p>
 <h6>Custom Domains</h6>
-<p>You can use a custom domain for your site by clicking on "<i class="fa fa-pencil"></i> Edit Site" and adding your domain to the domain field. You will then need to set up a CNAME record to point your domain to <span class="path">sites.tjhsst.edu</span>.</p>
+<p>You can use a custom domain for your site by clicking on <span class="click"><i class="fa fa-pencil"></i> Edit Site</span> and adding your domain to the domain field. You will then need to set up a CNAME record to point your domain to <span class="path">sites.tjhsst.edu</span>.</p>
 <h5>PHP</h5>
 <h6>Databases</h6>
-<p>You can create a PostgreSQL or MySQL database for a site by going to the site page and clicking the "<i class="fa fa-plus"></i> Create Database" button on the right of the page. Below is some example code on how to connect to the database with PHP:</p>
+<p>You can create a PostgreSQL or MySQL database for a site by going to the site page and clicking the <span class="click"><i class="fa fa-plus"></i> Create Database</span> button on the right of the page. Below is some example code on how to connect to the database with PHP:</p>
 <pre><code class="php">&lt;?php
 $db_opts = parse_url(getenv("DATABASE_URL"));
 $dsn = ($db_opts["scheme"] == "postgres" ? "pgsql" : "mysql");
@@ -70,7 +70,7 @@ while ($row = $stmt-&gt;fetch()) {
 ini_set('display_errors', 1);</code></pre>
 <h5>Virtual Machines</h5>
 <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> Virtual machines currently only support IPv6. You may not be able to access sites that exclusively support IPv4 inside the virtual machine.</div>
-<p>In some cases, your web application may use software or features that require administrative access. In these cases, you might want to create a virtual machine, which will give you an environment where you have complete control. You can view and create virtual machines by clicking on your name in the top right corner and selecting "<i class="fa fa-server"></i> Virtual Machines". You can create a new virtual machine by clicking on "<i class="fa fa-plus"></i> Create VM".</p>
+<p>In some cases, your web application may use software or features that require administrative access. In these cases, you might want to create a virtual machine, which will give you an environment where you have complete control. You can view and create virtual machines by clicking on your name in the top right corner and selecting <span class="click"><i class="fa fa-server"></i> Virtual Machines</span>. You can create a new virtual machine by clicking on <span class="click"><i class="fa fa-plus"></i> Create VM</span>.</p>
 <p>You can also request software to be installed on the web server by using the <a href="{% url 'feedback' %}">feedback</a> form.</p>
 <h4>Online Editor</h4>
 <b>General</b>
@@ -86,18 +86,20 @@ ini_set('display_errors', 1);</code></pre>
     <li>Drag and drop files and folders to move them to different folders.</li>
     <li>Drag files on to the Files tab in order to upload them.</li>
     <li>Drag around tabs to reorder them and create new panels.</li>
+    <li>Drag between different panels to resize them.</li>
 </ul>
 <b>Keyboard Shortcuts</b>
 <ul>
     <li>Use <kbd>Ctrl + S</kbd> (Windows/Linux) or <kbd>&#8984; + S</kbd> (Mac) to save the file you are currently editing.</li>
-    <li>Use <kbd>Ctrl + Click</kbd> or <kbd>Shift + Click</kbd> to select multiple files.</li>
-    <li>Use <kbd>Alt + R</kbd> to quickly rename selected files.</li>
-    <li>Use <kbd>Alt + P</kbd> to open a preview tab for selected files.</li>
+    <li>Use <kbd>Ctrl + Click</kbd> to select multiple files.</li>
+    <li>Use <kbd>Shift + Click</kbd> to select all files between the selected files and the file you clicked.</li>
     <li>Use <kbd>Alt + N</kbd> to create a new file in the selected location.</li>
-    <li>Use <kbd>Alt + T</kbd> to open a new terminal window.</li>
+    <li>Use <kbd>Alt + P</kbd> to open a preview tab for selected files.</li>
+    <li>Use <kbd>Alt + R</kbd> to quickly rename selected files.</li>
+    <li>Use <kbd>Alt + T</kbd> to open a new terminal panel.</li>
     <li>Use the <kbd>Delete</kbd> key to delete selected files and folders.</li>
     <li>Use the <kbd>Enter</kbd> key to open currently selected files and folders.</li>
-    <li>Use the arrow keys to navigate the filesystem.</li>
+    <li>Use the <kbd>Up</kbd> and <kbd>Down</kbd> arrow keys to navigate the filesystem.</li>
 </ul>
 <p>Your editor layout will automatically save if you make any changes. Any settings that are changed will be automatically applied and changed. Layout and settings information is saved locally on a per site basis.</p>
 <p>If you open a preview panel, it will automatically refresh when you edit the associated file in the editor.</p>
