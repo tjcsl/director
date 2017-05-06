@@ -145,6 +145,30 @@ $(document).ready(function() {
     });
 
     // #files code
+    function triggerPreview() {
+        $("#files div.file.active").each(function() {
+            var fileobj = $(this);
+            var filepath = getPath(fileobj) + fileobj.attr("data-name");
+            if (filepath.startsWith("public/")) {
+                var newTab = {
+                    id: "preview-" + filepath,
+                    type: "component",
+                    componentName: "preview",
+                    componentState: { path: filepath, file: fileobj.attr("data-name") }
+                };
+                var existing = layout.root.getItemsById("preview-" + filepath);
+                if (existing.length) {
+                    existing[0].parent.setActiveContentItem(existing[0]);
+                }
+                else {
+                    layout.root.getItemsById("default-file")[0].addChild(newTab);
+                }
+            }
+            else {
+                Messenger().error("<b>" + $("<div />").text(fileobj.attr("data-name")).html() + "</b> cannot be previewed.");
+            }
+        });
+    }
     function triggerDelete() {
         var filepaths = [];
         var items = $("#files div.active");
@@ -748,28 +772,7 @@ $(document).ready(function() {
                         });
                     }
                     if (key == "preview") {
-                        $("#files div.file.active").each(function() {
-                            var fileobj = $(this);
-                            var filepath = getPath(fileobj) + fileobj.attr("data-name");
-                            if (filepath.startsWith("public/")) {
-                                var newTab = {
-                                    id: "preview-" + filepath,
-                                    type: "component",
-                                    componentName: "preview",
-                                    componentState: { path: filepath, file: fileobj.attr("data-name") }
-                                };
-                                var existing = layout.root.getItemsById("preview-" + filepath);
-                                if (existing.length) {
-                                    existing[0].parent.setActiveContentItem(existing[0]);
-                                }
-                                else {
-                                    layout.root.getItemsById("default-file")[0].addChild(newTab);
-                                }
-                            }
-                            else {
-                                Messenger().error("<b>" + $("<div />").text(fileobj.attr("data-name")).html() + "</b> cannot be previewed.");
-                            }
-                        });
+                        triggerPreview();
                     }
                     if (key == "open_browser") {
                         $("#files div.file.active").each(function() {
@@ -948,6 +951,10 @@ $(document).ready(function() {
                 }
                 if (e.keyCode == 82 && e.altKey) {
                     triggerRename(items.first());
+                    e.preventDefault();
+                }
+                if (e.keyCode == 80 && e.altKey) {
+                    triggerPreview();
                     e.preventDefault();
                 }
                 if (e.keyCode == 38) {
