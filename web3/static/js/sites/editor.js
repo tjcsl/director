@@ -1042,7 +1042,10 @@ $(document).ready(function() {
         container.setTitle("<span class='fa fa-wrench'></span> Settings");
         container.getElement().html($("#settings-template").html());
         container.on("open", function() {
-            updateSettings();
+            // this is called before the container is attached, so the settings fail to update
+            setTimeout(function() {
+                updateSettings();
+            }, 100);
         });
     });
     layout.registerComponent("sql", function(container, componentState) {
