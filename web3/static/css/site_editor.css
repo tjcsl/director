@@ -36,7 +36,7 @@ iframe.preview {
     height: 100%;
     overflow-y: auto;
 }
-#files.dark {
+body.dark #files {
     color: #ccc;
 }
 #files:focus {
@@ -52,13 +52,13 @@ iframe.preview {
 #files .folder:hover, #files .file:hover {
     background-color: #ddd;
 }
-#files.dark .folder:hover, #files.dark .file:hover {
+body.dark #files .folder:hover, body.dark #files .file:hover {
     background-color: #444;
 }
 #files div.active {
     background-color: #ccc;
 }
-#files.dark div.active {
+body.dark #files div.active {
     background-color: #333;
 }
 #files div.active:hover {
@@ -108,6 +108,10 @@ span.file-indicator.readonly {
     padding: 15px;
     background-color: white;
     overflow-y: auto;
+}
+body.dark .settings-pane {
+    background-color: #222;
+    color: white;
 }
 .settings-pane select.form-control {
     padding: .2rem .75rem;

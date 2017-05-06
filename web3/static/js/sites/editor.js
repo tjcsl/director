@@ -100,7 +100,7 @@ $(document).ready(function() {
         $(".setting[data-setting='font-size']").val(settings["font-size"]);
 
         $("#files").toggleClass("show-hidden", settings["hidden-files"]);
-        $("#files").toggleClass("dark", settings["layout-theme"] == "dark");
+        $("body").toggleClass("dark", settings["layout-theme"] == "dark");
         $("#layout-light").prop("disabled", settings["layout-theme"] != "light");
         $("#layout-dark").prop("disabled", settings["layout-theme"] != "dark");
         $.each(editors, function(k, v) {
@@ -111,12 +111,27 @@ $(document).ready(function() {
 
     updateSettings();
 
-    $(document).on("change", ".setting", function(e) {
+    $(document).on("change", ".settings-pane .setting", function(e) {
         if ($(this).attr("type") == "checkbox") {
             settings[$(this).attr("data-setting")] = $(this).prop("checked");
         }
         else {
             settings[$(this).attr("data-setting")] = $(this).val();
+        }
+        updateSettings();
+        saveConfig();
+    });
+
+    $(document).on("change", ".settings-pane .setting[data-setting='layout-theme']", function(e) {
+        if (settings["layout-theme"] == "dark") {
+            if (settings["editor-theme"] == "ace/theme/chrome") {
+                settings["editor-theme"] = "ace/theme/monokai";
+            }
+        }
+        else {
+            if (settings["editor-theme"] == "ace/theme/monokai") {
+                settings["editor-theme"] = "ace/theme/chrome";
+            }
         }
         updateSettings();
         saveConfig();
