@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block css %}
+    {{ block.super }}
+    <style>
+    h1 {
+        text-align: center;
+    }
+    .row {
+        margin-top: 30px;
+        text-align: center;
+    }
+    .row .fa {
+        font-size: 5em;
+    }
+    .row a {
+        text-decoration: none;
+        color: #333;
+    }
+    .row a:hover {
+        color: black;
+    }
+    </style>
+{% endblock %}
+
+{% block mainclass %}narrow{% endblock %}
+
+{% block main %}
+<h1>Welcome to Director!</h1>
+<hr />
+<p><b>Director</b> is a website management interface for student and activity websites. You can use Director to manage and create websites!</p>
+<p><b>New to Director?</b> You should read the <a target="_blank" href="{% url 'guide' %}">help guide</a>.</p>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <a href="{% url 'create_webdocs' %}">
+            <i class="fa fa-user"></i>
+            <h4>Create a Webdocs</h4>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'request_site' %}">
+            <i class="fa fa-globe"></i>
+            <h4>Create Activity Website</h4>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'vm_list' %}">
+            <i class="fa fa-cube"></i>
+            <h4>Create Virtual Machines</h4>
+        </a>
+    </div>
+</div>
+{% endblock %}

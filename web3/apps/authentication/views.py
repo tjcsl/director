@@ -21,8 +21,13 @@ import datetime
 
 def index_view(request):
     if request.user.is_authenticated():
+        sites = Site.objects.annotate(num_users=Count("group__users")).filter(group__users=request.user).order_by("name")
+
+        if sites.count() == 0:
+            return redirect("start")
+
         return render(request, "dashboard.html", {
-            "sites": Site.objects.annotate(num_users=Count("group__users")).filter(group__users=request.user).order_by("name"),
+            "sites": sites,
             "other_sites": Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name") if request.user.is_superuser else None
         })
     else:
@@ -35,6 +40,10 @@ def about_view(request):
 
 def guide_view(request):
     return render(request, "guide.html")
+
+
+def start_view(request):
+    return render(request, "start.html")
 
 
 def login_view(request):
