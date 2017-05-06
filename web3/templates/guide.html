@@ -85,6 +85,10 @@ while ($row = $stmt-&gt;fetch()) {
 <p>For security reasons, PHP error messages are not shown directly on the page, but instead logged to <span class="path">private/php.error.log</span>. If you would like to display PHP errors on a page for debugging reasons, you can add the following code to the beginning of your PHP code:</p>
 <pre><code class="php">error_reporting(E_ALL);
 ini_set('display_errors', 1);</code></pre>
+<h5>Virtual Machines</h5>
+<div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> Virtual machines currently only support IPv6. You may not be able to access sites that exclusively support IPv4 inside the virtual machine.</div>
+<p>In some cases, your web application may use software or features that require administrative access. In these cases, you might want to create a virtual machine, which will give you an environment where you have complete control. You can view and create virtual machines by clicking on your name in the top right corner and selecting "<i class="fa fa-server"></i> Virtual Machines". You can create a new virtual machine by clicking on "<i class="fa fa-plus"></i> Create VM".</p>
+<p>You can also request software to be installed on the web server by using the <a href="{% url 'feedback' %}">feedback</a> form.</p>
 <h4>Online Editor</h4>
 <b>General</b>
 <ul>
