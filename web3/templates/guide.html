@@ -103,7 +103,11 @@ ini_set('display_errors', 1);</code></pre>
 <p>If you open a preview panel, it will automatically refresh when you edit the associated file in the editor.</p>
 <p>The Nginx tab is not editable for security reasons. If you want to make a change, ask a sysadmin.</p>
 <h4>Dynamic Sites</h4>
-<p>To use a custom server, such as Django or Node.js, you will have to change your site type to Dynamic. You will then need to create a script file in any directory and set the Director process to this script file (click on the process on the site page to change the process).</p>
+<p>To use a custom server, such as Django or Node.js, you will have to change your site type to Dynamic. You will then need to create a script file in any directory and set the Director process to this script file (click on the process on the site page to change the process). The following environment variables are available for your use:</p>
+<ul>
+    <li><span class="path">PORT</span> - The port your server should be running on.</li>
+    <li><span class="path">DATABASE_URL</span> - Database credentials if you have a database associated with your site.</li>
+</ul>
 <h5>Node.js Server</h5>
 <div class="step">
     <p>Put the following file in the <span class="path">public</span> folder and name it <span class="path">server.js</span>.</p>
