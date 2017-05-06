@@ -49,7 +49,9 @@
 <h6>Custom Domains</h6>
 <p>You can use a custom domain for your site by clicking on <span class="click"><i class="fa fa-pencil"></i> Edit Site</span> and adding your domain to the domain field. You will then need to set up a CNAME record to point your domain to <span class="path">sites.tjhsst.edu</span>.</p>
 <h5>PHP</h5>
+<p>You can use PHP by changing your site type to PHP. To change the site type, go to the site page of the site you want to edit and click <span class="click"><i class="fa fa-pencil"></i> Edit Site</span>.</p>
 <h6>Databases</h6>
+<div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> The <i>mysql_connect()</i> functions were depreciated in PHP 5.5 and is no longer available in PHP 7. Instead, you want to use either <i>mysqli_connect()</i> or PDO_MySQL. The example below demonstrates how to use PDO to connect to the database.</div>
 <p>You can create a PostgreSQL or MySQL database for a site by going to the site page and clicking the <span class="click"><i class="fa fa-plus"></i> Create Database</span> button on the right of the page. Below is some example code on how to connect to the database with PHP:</p>
 <pre><code class="php">&lt;?php
 $db_opts = parse_url(getenv("DATABASE_URL"));
