@@ -7,7 +7,8 @@ $(document).ready(function() {
         "prompt-delete": true,
         "layout-theme": "light",
         "editor-theme": "ace/theme/chrome",
-        "font-size": 16
+        "font-size": 16,
+        "live-autocompletion": true
     };
     var layout_config = {
         settings: {
@@ -95,6 +96,7 @@ $(document).ready(function() {
     function updateSettings() {
         $(".setting[data-setting='hidden-files']").prop("checked", settings["hidden-files"]);
         $(".setting[data-setting='prompt-delete']").prop("checked", settings["prompt-delete"]);
+        $(".setting[data-setting='live-autocompletion']").prop("checked", settings["live-autocompletion"]);
         $(".setting[data-setting='layout-theme']").val(settings["layout-theme"]);
         $(".setting[data-setting='editor-theme']").val(settings["editor-theme"]);
         $(".setting[data-setting='font-size']").val(settings["font-size"]);
@@ -106,6 +108,7 @@ $(document).ready(function() {
         $.each(editors, function(k, v) {
             v.setTheme(settings["editor-theme"]);
             v.setFontSize(settings["font-size"] + "px");
+            v.setOption("enableLiveAutocompletion", settings["live-autocompletion"]);
         });
     }
 
@@ -1111,6 +1114,7 @@ $(document).ready(function() {
                 "fontSize": settings["font-size"] + "px",
                 "showPrintMargin": false,
                 "enableBasicAutocompletion": true,
+                "enableLiveAutocompletion": settings["live-autocompletion"],
                 "theme": settings["editor-theme"]
             });
             container.on("close", function() {
