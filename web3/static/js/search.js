@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $(".search-box").on("input", function(){
+    $(".search-box").on("input", function() {
         var val = $(this).val().toLowerCase();
 
         var notags = [];

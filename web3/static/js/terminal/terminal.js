@@ -56,7 +56,7 @@ function registerTerminal(wrapper, auth, titlecallback) {
             try {
                 term.destroy();
             }
-            catch (ignore) {  }
+            catch (ignore) { }
             wrapper.off("resize");
             console.html(cache).addClass("disconnected");
             started = false;
@@ -82,9 +82,9 @@ function registerTerminal(wrapper, auth, titlecallback) {
 }
 function gup(name, url) {
     if (!url) url = location.href;
-    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-    var regexS = "[\\?&]"+name+"=([^&#]*)";
-    var regex = new RegExp( regexS );
-    var results = regex.exec( url );
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(url);
     return results == null ? null : results[1];
 }

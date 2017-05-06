@@ -1,4 +1,4 @@
-jQuery.fn.selectText = function(){
+jQuery.fn.selectText = function() {
    var doc = document;
    var element = this[0];
    if (doc.body.createTextRange) {
@@ -60,7 +60,7 @@ $(document).ready(function() {
         $("#database-pass").removeClass("hide");
     }).dblclick(function() {
         $(this).selectText();
-    }).on("blur",function() {
+    }).on("blur", function() {
         $("#database-pass").addClass("hide");
     });
 

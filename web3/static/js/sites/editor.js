@@ -20,14 +20,14 @@ $(document).ready(function() {
         },
         content: [{
             type: 'row',
-            content:[{
+            content: [{
                 type: 'component',
                 componentName: 'files',
                 width: 25,
                 isClosable: false
             },{
                 type: 'column',
-                content:[{
+                content: [{
                     type: 'stack',
                     isClosable: false,
                     id: "default-file",
@@ -155,7 +155,7 @@ $(document).ready(function() {
             });
         }
         if (settings["prompt-delete"]) {
-            modalConfirm("Are you sure you want to delete these files?", "<p>Are you sure you want to delete <b>" + filepaths.length  + "</b> file(s):</p><pre>" + $("<div />").text(filepaths.join("\n")).html() + "</pre>", function() {
+            modalConfirm("Are you sure you want to delete these files?", "<p>Are you sure you want to delete <b>" + filepaths.length + "</b> file(s):</p><pre>" + $("<div />").text(filepaths.join("\n")).html() + "</pre>", function() {
                 doDelete();
             });
         }
@@ -497,7 +497,7 @@ $(document).ready(function() {
                                         var newdepth = parseInt(f.attr("data-depth")) + 1;
                                         var dest_children = getChildren(f);
                                         if (dest_children.length) {
-                                            f = dest_children[dest_children.length-1];
+                                            f = dest_children[dest_children.length - 1];
                                         }
                                         var existing = dest_children.filter("[data-name='" + path_obj.attr("data-name").replace("'", "\\'") + "']");
                                         if (!existing.length) {
@@ -508,7 +508,7 @@ $(document).ready(function() {
                                         }
                                     }
                                     var depth = path_obj.attr("data-depth");
-                                    path_obj.css("padding-left", newdepth*20 + "px");
+                                    path_obj.css("padding-left", newdepth * 20 + "px");
                                     path_obj.attr("data-depth", newdepth);
                                     var existing_children = getChildren(path_obj);
                                     if (path_obj.hasClass("folder")) {
@@ -517,7 +517,7 @@ $(document).ready(function() {
                                             if (!existing_children.filter("[data-name='" + $(this).attr("data-name").replace("'", "\\'") + "']").length) {
                                                 $(this).insertAfter(path_obj);
                                                 $(this).attr("data-depth", cdepth);
-                                                $(this).css("padding-left", cdepth*20 + "px");
+                                                $(this).css("padding-left", cdepth * 20 + "px");
                                             }
                                         });
                                     }
@@ -666,7 +666,7 @@ $(document).ready(function() {
                     "sep3": "--------",
                     "refresh": {name: "Refresh", icon: "fa-refresh"}
                 }
-            }
+            };
         },
         events: {
             show: function(opt) {
@@ -1332,7 +1332,7 @@ function makeNode(v, depth) {
     depth = depth || 0;
     var c = (v.type == "f" ? "file" : "folder");
     var ic = c;
-    var node = $("<div draggable='true' style='padding-left:" + (depth*20) + "px'><i class='fa fa-fw'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
+    var node = $("<div draggable='true' style='padding-left:" + (depth * 20) + "px'><i class='fa fa-fw'></i> <span>" + $("<div />").text(v.name).html() + "</span></div>");
     node.addClass(c);
     node.attr("data-name", v.name);
     node.attr("data-depth", depth);
