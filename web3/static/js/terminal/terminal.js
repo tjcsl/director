@@ -3,10 +3,11 @@ $(document).ready(function() {
         $(".console-wrapper").trigger("terminal:resize");
     });
 });
-function registerTerminal(wrapper, auth, titlecallback) {
-    titlecallback = titlecallback || function(title) {
+function registerTerminal(wrapper, auth, titleCallback, disconnectCallback) {
+    titleCallback = titleCallback || function(title) {
         document.title = title;
     };
+    disconnectCallback = disconnectCallback || function() { };
     var console = wrapper.find(".console");
     var disconnect = wrapper.find(".disconnect");
     var started = false;
@@ -29,7 +30,7 @@ function registerTerminal(wrapper, auth, titlecallback) {
             $.post("/ws/terminal/" + encodeURIComponent(termid) + "/size?cols=" + size.cols + "&rows=" + size.rows);
         });
         term.on("title", function(title) {
-            titlecallback(title);
+            titleCallback(title);
         });
         ws.send(JSON.stringify(auth));
         ws.onmessage = function(e) {
@@ -62,13 +63,14 @@ function registerTerminal(wrapper, auth, titlecallback) {
             started = false;
             wrapper.focus();
             disconnect.show();
-            titlecallback("Terminal");
+            titleCallback("Terminal");
+            disconnectCallback();
         };
         wrapper.keypress(function(e) {
             if (e.which == 13) {
                 wrapper.off("keypress");
                 wrapper.off("resize");
-                registerTerminal(wrapper, auth, titlecallback);
+                registerTerminal(wrapper, auth, titleCallback);
             }
         });
         wrapper.on("terminal:resize", function(e) {
