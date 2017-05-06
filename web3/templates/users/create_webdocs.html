@@ -65,12 +65,13 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <p>If any student websites could not be created, check to make sure that the username is correct.</p>
+        <p>If any websites could not be created, check to make sure that the username is correct.</p>
         <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
     </div>
     {% if not finished %}
     <form method="POST">
         {% csrf_token %}
+        <p>This form can also be used to create personal websites for teachers and other staff members. To do so, put the username of the staff member in the box below.</p>
         <div class="form-group">
             <label for="students">Student IDs</label>
             <textarea class="form-control" id="students" name="students"></textarea>
