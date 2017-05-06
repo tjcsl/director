@@ -57,11 +57,17 @@
 </ul>
 <h5>Site Editing</h5>
 <p>After you have clicked a site, you will see information about the site and options to modify it.</p>
-<p>To upload files to your website, you can use a tool like <a href="https://winscp.net/">WinSCP</a> to connect to <span class="path">remote.tjhsst.edu</span>. You will then need to change directories to the location specified on the left side of the page.</p>
-<p>You can also use the online editor or web terminal to edit your site. You can access these features through the "File Explorer" and "Web Terminal" buttons on the left side of the page.</p>
+<p>To upload files to your website, you can use a tool like <a href="https://winscp.net/">WinSCP</a> or <a href="https://filezilla-project.org/download.php">FileZilla</a> to connect to <span class="path">remote.tjhsst.edu</span>. You will then need to change directories to the location specified on the left side of the page.</p>
+<ul>
+    <li>For user sites, the site is located at <span class="path">/web/user/&lt;name&gt;</span>.</li>
+    <li>For activity sites, the site is located at <span class="path">/web/activities/&lt;name&gt;</span>.</li>
+    <li>For legacy sites, the site is located at <span class="path">/web/legacy/&lt;name&gt;</span>.</li>
+    <li>For other sites, the site is located at <span class="path">/web/&lt;name&gt;</span>.</li>
+</ul>
+<p>You can also use the online editor or web terminal to edit your site. You can access these features through the "<i class="fa fa-folder-open"></i> File Explorer" and "<i class="fa fa-terminal"></i> Web Terminal" buttons on the left side of the page.</p>
 <h6>Special Locations</h6>
 <p>The <span class="path">public</span> folder is where the server will serve files from (in static and PHP sites). As a good first step, you will probably want to make a <span class="path">public/index.html</span> file.</p>
-<p>The <span class="path">private</span> folder is where logs are generated (ex: the PHP error log). This folder is not accessible to the public.</p>
+<p>The <span class="path">private</span> folder is where logs are generated (ex: the PHP and supervisor error logs).</p>
 <p>If you create a <span class="path">.secure</span> file in a folder, that folder will be only accessible to you after a login. If you add a <span class="path">.index</span> file to a folder, the folder will list all of its contents when you navigate to it.</p>
 <h6>Custom Domains</h6>
 <p>You can use a custom domain for your site by clicking on "<i class="fa fa-pencil"></i> Edit Site" and adding your domain to the domain field. You will then need to set up a CNAME record to point your domain to <span class="path">sites.tjhsst.edu</span>.</p>
