@@ -1,3 +1,7 @@
+.guide {
+    margin-left: 170px;
+    width: calc(100% - 170px);
+}
 .guide .step {
     border-left: 5px solid #aaa;
     padding-left: 10px;
@@ -17,4 +21,48 @@
 .guide .search-example {
     margin-left: 20px;
     font-style: italic;
+}
+.guide h6 {
+    font-size: 1.1rem;
+}
+@media (max-width: 767px) {
+    .guide {
+        margin-left: 0px;
+        width: 100%;
+    }
+}
+.navbar {
+    z-index: 1;
+}
+.toc {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+}
+.toc .level {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-decoration: none;
+    display: block;
+    color: #484848;
+}
+.toc .level:hover {
+    background-color: #eee;
+}
+.toc .level.active {
+    color: #00008b;
+}
+.toc .level-h5 {
+    padding-left: 15px;
+    font-size: 15px;
+}
+.toc .level-h6 {
+    padding-left: 30px;
+    font-size: 14px;
+}
+.search-box {
+    display: inline-block;
+    font-family: "FontAwesome", "Open Sans", sans-serif;
+    padding: 0.25rem 0.50rem;
+    width: 300px;
 }
