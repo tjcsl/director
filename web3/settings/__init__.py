@@ -85,6 +85,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'social.apps.django_app.context_processors.backends',
                 'social.apps.django_app.context_processors.login_redirect',
+                'web3.apps.context_processors.email'
             ],
         },
     },
@@ -196,3 +197,4 @@ EMAIL_SUBJECT_PREFIX = "[Director]"
 EMAIL_FROM = "director-noreply@tjhsst.edu"
 
 EMAIL_FEEDBACK = "director@lists.tjhsst.edu"
+EMAIL_CONTACT = "sysadmins@tjhsst.edu"

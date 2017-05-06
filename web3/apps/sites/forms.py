@@ -68,7 +68,7 @@ class SiteForm(forms.ModelForm):
                         raise forms.ValidationError("Only administrators can set up *.tjhsst.edu domains.")
             else:
                 if Domain.objects.filter(domain=domain).exclude(site__name=self.cleaned_data["name"]).exists():
-                    raise forms.ValidationError("The domain {} is already taken by another site! If you believe this is an error, please send an email to {}.".format(domain, settings.EMAIL_FEEDBACK))
+                    raise forms.ValidationError("The domain {} is already taken by another site! If you believe this is an error, please send an email to {}.".format(domain, settings.EMAIL_CONTACT))
         return data
 
     def clean(self):
