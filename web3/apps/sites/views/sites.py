@@ -35,7 +35,7 @@ def create_view(request):
                 if not site.category == "dynamic":
                     write_new_index_file(site)
                 reload_services()
-                return redirect("index")
+                return redirect("info_site", site_id=site.id)
         else:
             form = SiteForm(user=request.user)
 
