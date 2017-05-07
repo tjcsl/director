@@ -107,7 +107,10 @@ $(document).ready(function() {
                 }, 1000);
             }
             else if (notify) {
-                Messenger().success("Server restarted!<br />Status: " + data);
+                notify.update({
+                    type: "success",
+                    message: "Server restarted!<br />Status: " + data
+                });
             }
         });
     }
@@ -120,10 +123,14 @@ $(document).ready(function() {
     }
 
     function doServerRestart() {
+        var notify = Messenger().info("Restarting server...");
         $.post(restart_process_endpoint, function() {
-            updateServerStatus(true);
+            updateServerStatus(notify);
         }).fail(function() {
-            Messenger().error("Failed to restart server!");
+            notify.update({
+                type: "error",
+                message: "Failed to restart server!"
+            });
         });
     }
 
