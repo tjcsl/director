@@ -60,6 +60,11 @@
     hljs.initHighlightingOnLoad();
 
     Raven.config('{% sentry_public_dsn %}').install();
+
+    Raven.setUserContext({
+        email: '{{ request.user.email|escapejs }}',
+        id: '{{ request.user.id|escapejs }}'
+    });
     </script>
     {% include "ajax_csrf.html" %}
     {% if site.database %}
