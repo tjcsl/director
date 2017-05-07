@@ -61,7 +61,7 @@ def create_config_files(site):
 
 
 def delete_php_config(site):
-    filename = "/etc/nginx/director.d/{}.conf".format(site.name)
+    filename = "/etc/php/7.0/fpm/pool.d/{}.conf".format(site.name)
     if os.path.exists(filename):
         os.remove(filename)
 
