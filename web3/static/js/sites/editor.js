@@ -95,6 +95,32 @@ $(document).ready(function() {
         }
     }
 
+    function pollStatus() {
+        $.get(process_status_endpoint, function(data) {
+            $(".server-status").text(data);
+            if (data.includes("STARTING")) {
+                setTimeout(pollStatus, 1000);
+            }
+        });
+    }
+
+    function updateServerStatus() {
+        $(".dynamic-container").toggle(is_dynamic);
+        if (is_dynamic) {
+            pollStatus();
+        }
+    }
+
+    $(document).on("click", ".restart-server", function(e) {
+        e.preventDefault();
+        $.post(restart_process_endpoint, function() {
+            updateServerStatus();
+            Messenger().success("Server restarted!");
+        }).fail(function() {
+            Messenger().error("Failed to restart server!");
+        });
+    });
+
     function updateSettings() {
         for (var k in settings) {
             var item = $(".setting[data-setting='" + k + "']");
@@ -687,6 +713,7 @@ $(document).ready(function() {
                             }
                             else {
                                 is_dynamic = type == "dynamic";
+                                updateServerStatus();
                                 Messenger().success("Site type changed to " + type + "!");
                             }
                         });
@@ -1063,6 +1090,7 @@ $(document).ready(function() {
             // this is called before the container is attached, so the settings fail to update
             setTimeout(function() {
                 updateSettings();
+                updateServerStatus();
             }, 100);
         });
     });
