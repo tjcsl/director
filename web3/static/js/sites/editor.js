@@ -769,14 +769,21 @@ $(document).ready(function() {
                     }
                     if (key.startsWith("site_type_")) {
                         var type = key.substring(10);
+                        var notify = Messenger().info("Updating site type...");
                         $.post(site_type_endpoint, { type: type }, function(data) {
                             if (data.error) {
-                                Messenger().error(data.error);
+                                notify.update({
+                                    type: "error",
+                                    message: data.error
+                                });
                             }
                             else {
                                 is_dynamic = type == "dynamic";
                                 updateServerStatus();
-                                Messenger().success("Site type changed to " + type + "!");
+                                notify.update({
+                                    type: "success",
+                                    message: "Site type changed to " + type + "!"
+                                });
                             }
                         });
                     }
@@ -841,12 +848,19 @@ $(document).ready(function() {
                     }
                     if (key == "set_process") {
                         var filepath = getPath(trigger) + trigger.attr("data-name");
+                        var notify = Messenger().info("Setting site process...");
                         $.post(process_endpoint, {name: filepath}, function(data) {
                             if (data.error) {
-                                Messenger().error(data.error);
+                                notify.update({
+                                    type: "error",
+                                    message: data.error
+                                });
                             }
                             else {
-                                Messenger().success("Dynamic process successfully updated!");
+                                notify.update({
+                                    type: "error",
+                                    message: "Dynamic process successfully updated!"
+                                });
                             }
                         });
                     }
