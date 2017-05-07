@@ -52,6 +52,8 @@ class SiteForm(forms.ModelForm):
                 self.fields["category"].disabled = False
                 self.fields["domain"].disabled = False
             self._old_path = instance.path
+            if instance.purpose == "legacy" or (hasattr(self, "_user") and self._user.is_superuser):
+                self.fields["purpose"].choices.append(("legacy", "Legacy"))
         else:
             self._old_path = None
 
