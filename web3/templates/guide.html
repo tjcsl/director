@@ -96,6 +96,8 @@ server.listen(process.env.PORT, function() {
     <pre><code class="bash">#!/bin/sh
 
 node server.js</code></pre>
+<b>Installing Packages</b>
+<p>You can use the <span class="path">npm install &lt;package&gt;</span> command to install Node.js packages. You should execute this command in the same folder as your server. A <span class="path">node_modules</span> folder will be created to store these libraries.</p>
 </div>
 <h6>Django Server</h6>
 <div class="step">
@@ -106,6 +108,13 @@ node server.js</code></pre>
 
 cd server
 gunicorn server.wsgi -b 127.0.0.1:$PORT -w=4</code></pre>
+<b>Installing Packages</b>
+<p>To install additional python packages, you will want to create a virtual environment. The terminal commands necessary to do this are listed below:<p>
+<pre><code class="bash">virtualenv --python python3 venv
+source venv/bin/activate</code></pre>
+<p>You will then be able to install packages using <span class="path">pip install &lt;package&gt;</span>. An example is shown below:</p>
+<pre><code class="bash">pip install requests</code></pre>
+<p>In order for the server to load these packages, you will need to add the line <span class="path">source venv/bin/activate</span> to the <span class="path">run.sh</span> file before the line where the server is started.</p>
 </div>
 <h6>Flask Server</h6>
 <div class="step">
