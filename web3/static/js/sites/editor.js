@@ -1009,6 +1009,24 @@ $(document).ready(function() {
                 }
             }
         }
+        if (e.ctrlKey) {
+            if (e.keyCode == 189) {
+                // Ctrl + Minus
+                if (settings["font-size"] > 8) {
+                    settings["font-size"] -= 4;
+                    updateSettings();
+                }
+                e.preventDefault();
+            }
+            if (e.keyCode == 187) {
+                // Ctrl + Plus
+                if (settings["font-size"] < 80) {
+                    settings["font-size"] += 4;
+                    updateSettings();
+                }
+                e.preventDefault();
+            }
+        }
     });
     function addContextHandlers(tab) {
         tab.element.on("tab:new", function(e, item) {
