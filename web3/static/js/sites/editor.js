@@ -113,6 +113,7 @@ $(document).ready(function() {
             v.setFontSize(settings["font-size"] + "px");
             v.setOption("enableLiveAutocompletion", settings["live-autocompletion"]);
         });
+        layout.updateSize();
     }
 
     updateSettings();
