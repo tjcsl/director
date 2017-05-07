@@ -123,6 +123,18 @@ body.dark .settings-pane select {
     background-color: #333;
     color: #eee;
 }
+body.dark .settings-pane .alert-success {
+    background-color: #5cb85c;
+    border-color: #5cb85c;
+    color: white;
+}
+body.dark .settings-pane .alert-success a {
+    color: white;
+    font-weight: bold;
+}
+body.dark .settings-pane .alert-success a:hover {
+    color: white;
+}
 body.dark .settings-pane .btn.btn-ion {
     color: #ddd;
     box-shadow: none;
@@ -186,4 +198,14 @@ body.dark .context-menu-item:not(.context-menu-not-selectable):hover {
 }
 body.dark .context-menu-separator {
     border-color: #222;
+}
+body.dark ::-webkit-scrollbar {
+    width: 8px;
+}
+body.dark ::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+body.dark ::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 8px;
 }
