@@ -123,7 +123,8 @@ def reload_services():
 
 
 def update_supervisor():
-    Popen(["supervisorctl", "update"])
+    if Popen(["supervisorctl", "update"]).wait() != 0:
+        client.captureMessage("Failed to update supervisor.")
 
 
 def reload_php_fpm():
@@ -133,7 +134,8 @@ def reload_php_fpm():
 
 
 def reload_nginx_config():
-    Popen(["/usr/sbin/nginx", "-s", "reload"])
+    if Popen(["/usr/sbin/nginx", "-s", "reload"]).wait() != 0:
+        client.captureMessage("Failed to reload the nginx service.")
 
 
 def check_nginx_config():
