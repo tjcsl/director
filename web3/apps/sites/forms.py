@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from django.conf import settings
 
 from .models import Site, Process, Database, Domain
-from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, delete_process_config, reload_php_fpm, update_supervisor
+from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, delete_process_config, reload_php_fpm, update_supervisor, delete_php_config
 from .database_helpers import create_postgres_database, create_mysql_database
 
 from ..users.models import User, Group
@@ -53,7 +53,9 @@ class SiteForm(forms.ModelForm):
                 self.fields["domain"].disabled = False
             self._old_path = instance.path
             if instance.purpose == "legacy" or (hasattr(self, "_user") and self._user.is_superuser):
-                self.fields["purpose"].choices.append(("legacy", "Legacy"))
+                purpose_choices = self.fields["purpose"].choices
+                purpose_choices.append(("legacy", "Legacy"))
+                self.fields["purpose"].choices = purpose_choices
         else:
             self._old_path = None
 
@@ -111,6 +113,9 @@ class SiteForm(forms.ModelForm):
 
             make_site_dirs(instance)
             flush_permissions()
+
+            if instance.category != "php":
+                delete_php_config(instance)
 
             if instance.category != "dynamic" and hasattr(instance, "process"):
                 delete_process_config(instance.process)

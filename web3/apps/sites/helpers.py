@@ -60,6 +60,12 @@ def create_config_files(site):
         create_process_config(site.process)
 
 
+def delete_php_config(site):
+    filename = "/etc/nginx/director.d/{}.conf".format(site.name)
+    if os.path.exists(filename):
+        os.remove(filename)
+
+
 def write_new_index_file(site):
     with open(os.path.join(site.path, "public", "index.html"), "w+") as f:
         f.write(render_to_string("config/index.html", {"site": site}))
