@@ -143,3 +143,13 @@ body.dark .settings-pane select {
     border: 1px solid #ccc;
     padding: 5px;
 }
+body.dark .sql-console {
+    background-color: #111;
+    color: white;
+}
+body.dark .sql-console .output {
+    color: white;
+}
+body.dark .sql-console .input {
+    color: white;
+}
