@@ -129,40 +129,73 @@ $(document).ready(function() {
         doServerRestart();
     });
 
-    function updateSettings() {
-        for (var k in settings) {
-            var item = $(".setting[data-setting='" + k + "']");
-            if (item.attr("type") == "checkbox") {
-                item.prop("checked", settings[k]);
-            }
-            else {
-                item.val(settings[k]);
-            }
-        }
-
-        $("#files").toggleClass("show-hidden", settings["hidden-files"]);
-        $("body").toggleClass("dark", settings["layout-theme"] == "dark");
-        $("body").toggleClass("hide-navbar", settings["hide-navbar"]);
-        $("#layout-light").prop("disabled", settings["layout-theme"] != "light");
-        $("#layout-dark").prop("disabled", settings["layout-theme"] != "dark");
+    function applyEditors(callback) {
         $.each(editors, function(k, v) {
-            v.setTheme(settings["editor-theme"]);
-            v.setFontSize(settings["font-size"] + "px");
-            v.setOption("enableLiveAutocompletion", settings["live-autocompletion"]);
+            callback(v);
         });
-        layout.updateSize();
+    }
+
+    var settingActions = {
+        "hidden-files": function() {
+            $("#files").toggleClass("show-hidden", settings["hidden-files"]);
+        },
+        "layout-theme": function() {
+            $("body").toggleClass("dark", settings["layout-theme"] == "dark");
+            $("#layout-light").prop("disabled", settings["layout-theme"] != "light");
+            $("#layout-dark").prop("disabled", settings["layout-theme"] != "dark");
+        },
+        "hide-navbar": function() {
+            $("body").toggleClass("hide-navbar", settings["hide-navbar"]);
+            layout.updateSize();
+        },
+        "editor-theme": function() {
+            applyEditors(function(v) {
+                v.setTheme(settings["editor-theme"]);
+            });
+        },
+        "font-size": function() {
+            applyEditors(function(v) {
+                v.setFontSize(settings["font-size"] + "px");
+            });
+        },
+        "live-autocompletion": function() {
+            applyEditors(function(v) {
+                v.setOption("enableLiveAutocompletion", settings["live-autocompletion"]);
+            });
+        }
+    };
+
+    function updateSetting(setting) {
+        var item = $(".setting[data-setting='" + setting + "']");
+        if (item.attr("type") == "checkbox") {
+            item.prop("checked", settings[setting]);
+        }
+        else {
+            item.val(settings[setting]);
+        }
+        console.log(settingActions, setting);
+        if (settingActions[setting]) {
+            settingActions[setting]();
+        }
+    }
+
+    function updateSettings() {
+        for (var setting in settings) {
+            updateSetting(setting);
+        }
     }
 
     updateSettings();
 
     $(document).on("change", ".settings-pane .setting", function(e) {
+        var setting = $(this).attr("data-setting");
         if ($(this).attr("type") == "checkbox") {
-            settings[$(this).attr("data-setting")] = $(this).prop("checked");
+            settings[setting] = $(this).prop("checked");
         }
         else {
-            settings[$(this).attr("data-setting")] = $(this).val();
+            settings[setting] = $(this).val();
         }
-        updateSettings();
+        updateSetting(setting);
         saveConfig();
     });
 
@@ -177,7 +210,8 @@ $(document).ready(function() {
                 settings["editor-theme"] = "ace/theme/chrome";
             }
         }
-        updateSettings();
+        updateSetting("layout-theme");
+        updateSetting("editor-theme");
         saveConfig();
     });
 
@@ -1014,7 +1048,7 @@ $(document).ready(function() {
                 // Ctrl + Minus
                 if (settings["font-size"] > 8) {
                     settings["font-size"] -= 4;
-                    updateSettings();
+                    updateSetting("font-size");
                 }
                 e.preventDefault();
             }
@@ -1022,7 +1056,7 @@ $(document).ready(function() {
                 // Ctrl + Plus
                 if (settings["font-size"] < 80) {
                     settings["font-size"] += 4;
-                    updateSettings();
+                    updateSetting("font-size");
                 }
                 e.preventDefault();
             }
