@@ -95,30 +95,38 @@ $(document).ready(function() {
         }
     }
 
-    function pollStatus() {
+    function pollStatus(notify) {
         $.get(process_status_endpoint, function(data) {
             $(".server-status").text(data);
             if (data.includes("STARTING")) {
-                setTimeout(pollStatus, 1000);
+                setTimeout(function() {
+                    pollStatus(notify);
+                }, 1000);
+            }
+            else if (notify) {
+                Messenger().success("Server restarted!<br />Status: " + data);
             }
         });
     }
 
-    function updateServerStatus() {
+    function updateServerStatus(notify) {
         $(".dynamic-container").toggle(is_dynamic);
         if (is_dynamic) {
-            pollStatus();
+            pollStatus(notify);
         }
+    }
+
+    function doServerRestart() {
+        $.post(restart_process_endpoint, function() {
+            updateServerStatus(true);
+        }).fail(function() {
+            Messenger().error("Failed to restart server!");
+        });
     }
 
     $(document).on("click", ".restart-server", function(e) {
         e.preventDefault();
-        $.post(restart_process_endpoint, function() {
-            updateServerStatus();
-            Messenger().success("Server restarted!");
-        }).fail(function() {
-            Messenger().error("Failed to restart server!");
-        });
+        doServerRestart();
     });
 
     function updateSettings() {
@@ -993,6 +1001,9 @@ $(document).ready(function() {
                 };
                 c[0].addChild(newTab);
                 e.preventDefault();
+            }
+            if (e.keyCode == 13) {
+                doServerRestart();
             }
         }
     });
