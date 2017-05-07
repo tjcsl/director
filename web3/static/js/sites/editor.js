@@ -927,28 +927,40 @@ $(document).ready(function() {
     });
     // end #files code
     $(document).keydown(function(e) {
-        if (e.keyCode == 78 && e.altKey) {
-            // Alt + N
-            if ($("#files div.active").length) {
-                triggerCreate($("#files div.active").first(), true);
+        if (e.altKey) {
+            if (e.keyCode == 78) {
+                // Alt + N
+                if ($("#files div.active").length) {
+                    triggerCreate($("#files div.active").first(), true);
+                }
+                else {
+                    triggerCreate($("#files"), true);
+                }
+                e.preventDefault();
             }
-            else {
-                triggerCreate($("#files"), true);
+            if (e.keyCode == 83) {
+                // Alt + S
+                var c = layout.root.getItemsById("default-file");
+                var newTab = {
+                    type: "component",
+                    componentName: "help"
+                };
+                c[0].addChild(newTab);
+                e.preventDefault();
             }
-            e.preventDefault();
-        }
-        if (e.keyCode == 84 && e.altKey) {
-            // Alt + T
-            var c = layout.root.getItemsById("default-terminal");
-            if (!c.length) {
-                c = layout.root.getItemsById("default-file");
+            if (e.keyCode == 84) {
+                // Alt + T
+                var c = layout.root.getItemsById("default-terminal");
+                if (!c.length) {
+                    c = layout.root.getItemsById("default-file");
+                }
+                var newTab = {
+                    type: "component",
+                    componentName: "terminal"
+                };
+                c[0].addChild(newTab);
+                e.preventDefault();
             }
-            var newTab = {
-                type: "component",
-                componentName: "terminal"
-            };
-            c[0].addChild(newTab);
-            e.preventDefault();
         }
     });
     function addContextHandlers(tab) {
