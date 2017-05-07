@@ -174,11 +174,14 @@ body.dark .sql-console .input {
 }
 body.dark .context-menu-list {
     background-color: #333;
-    color: white;
     border-color: #222;
 }
 body.dark .context-menu-item {
     background-color: #333;
+    color: #ddd;
+}
+body.dark .context-menu-item:not(.context-menu-not-selectable):hover {
+    background-color: #444;
     color: white;
 }
 body.dark .context-menu-separator {
