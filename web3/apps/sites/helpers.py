@@ -127,7 +127,9 @@ def update_supervisor():
 
 
 def reload_php_fpm():
-    Popen(["systemctl", "reload", "php7.0-fpm"])
+    if Popen(["systemctl", "reload", "php7.0-fpm"]).wait() != 0:
+        if Popen(["systemctl", "restart", "php7.0-fpm"]).wait() != 0:
+            client.captureMessage("Failed to reload the PHP FPM service.")
 
 
 def reload_nginx_config():
