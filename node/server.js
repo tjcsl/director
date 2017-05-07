@@ -177,7 +177,7 @@ wss.on("connection", function(ws) {
                                     rows: 30,
                                     cwd: auth.site_homedir,
                                     env: {
-                                        HOME: auth.site_homedir
+                                        SITE_ROOT: auth.site_homedir
                                     }
                                 });
                             }
