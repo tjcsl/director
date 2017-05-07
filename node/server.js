@@ -178,7 +178,8 @@ wss.on("connection", function(ws) {
                                     cwd: auth.site_homedir,
                                     env: {
                                         SITE_ROOT: auth.site_homedir,
-                                        SITE_NAME: auth.site_name
+                                        SITE_NAME: auth.site_name,
+                                        SITE_PURPOSE: auth.site_purpose
                                     }
                                 });
                             }

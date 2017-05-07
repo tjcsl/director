@@ -88,6 +88,7 @@ def node_auth_view(request):
                     "granted": True,
                     "site_name": site.name,
                     "site_homedir": site.path,
+                    "site_purpose": site.purpose,
                     "site_user": site.user.username,
                     "user": user.username
                 })
