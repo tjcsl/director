@@ -29,6 +29,10 @@ body {
 .console-wrapper .terminal {
     font-size: 16px;
 }
+.console-wrapper .terminal .xterm-helpers span {
+    font-size: 16px;
+    line-height: 19px;
+}
 .console-wrapper .terminal .xterm-viewport, .console-wrapper .terminal .xterm-rows {
     line-height: 19px !important;
 }
