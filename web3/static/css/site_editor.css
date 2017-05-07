@@ -201,6 +201,7 @@ body.dark .context-menu-separator {
 }
 body.dark ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 body.dark ::-webkit-scrollbar-track {
     background-color: transparent;
@@ -208,4 +209,7 @@ body.dark ::-webkit-scrollbar-track {
 body.dark ::-webkit-scrollbar-thumb {
     background-color: #555;
     border-radius: 8px;
+}
+body.dark .lm_header .lm_tab.lm_active {
+    box-shadow: none;
 }
