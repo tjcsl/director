@@ -858,9 +858,10 @@ $(document).ready(function() {
                             }
                             else {
                                 notify.update({
-                                    type: "error",
+                                    type: "success",
                                     message: "Dynamic process successfully updated!"
                                 });
+                                pollStatus();
                             }
                         });
                     }
