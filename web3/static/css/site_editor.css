@@ -8,6 +8,12 @@ body {
     width: 100%;
     height: calc(100vh - 40px);
 }
+body.hide-navbar .navbar {
+    display: none;
+}
+body.hide-navbar #editor-container {
+    height: 100vh;
+}
 iframe.download {
     display: none;
 }

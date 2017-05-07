@@ -9,6 +9,7 @@ $(document).ready(function() {
         "editor-theme": "ace/theme/chrome",
         "font-size": 16,
         "live-autocompletion": true,
+        "hide-navbar": false,
         "close-terminal": false
     };
     var layout_config = {
@@ -104,6 +105,7 @@ $(document).ready(function() {
 
         $("#files").toggleClass("show-hidden", settings["hidden-files"]);
         $("body").toggleClass("dark", settings["layout-theme"] == "dark");
+        $("body").toggleClass("hide-navbar", settings["hide-navbar"]);
         $("#layout-light").prop("disabled", settings["layout-theme"] != "light");
         $("#layout-dark").prop("disabled", settings["layout-theme"] != "dark");
         $.each(editors, function(k, v) {
