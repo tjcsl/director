@@ -119,6 +119,10 @@ body.dark .settings-pane {
     background-color: #222;
     color: white;
 }
+body.dark .settings-pane select {
+    background-color: #333;
+    color: #eee;
+}
 .settings-pane select.form-control {
     padding: .2rem .75rem;
 }
