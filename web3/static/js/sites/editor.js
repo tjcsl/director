@@ -96,12 +96,15 @@ $(document).ready(function() {
     }
 
     function updateSettings() {
-        $.each(["hidden-files", "prompt-delete", "live-autocompletion", "close-terminal"], function(k, v) {
-            $(".setting[data-setting='" + v + "']").prop("checked", settings[v]);
-        });
-        $(".setting[data-setting='layout-theme']").val(settings["layout-theme"]);
-        $(".setting[data-setting='editor-theme']").val(settings["editor-theme"]);
-        $(".setting[data-setting='font-size']").val(settings["font-size"]);
+        for (var k in settings) {
+            var item = $(".setting[data-setting='" + k + "']");
+            if (item.attr("type") == "checkbox") {
+                item.prop("checked", settings[k]);
+            }
+            else {
+                item.val(settings[k]);
+            }
+        }
 
         $("#files").toggleClass("show-hidden", settings["hidden-files"]);
         $("body").toggleClass("dark", settings["layout-theme"] == "dark");
