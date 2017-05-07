@@ -6,6 +6,12 @@
     <script type="text/javascript">
     var sql_endpoint = "{% url 'sql_database' site.id %}";
     var back_endpoint = "{% url 'info_site' site.id %}";
+
+    $(document).ready(function() {
+        registerConsole($("#sql-console-wrapper .sql-console"), function() {
+            window.location.href = back_endpoint;
+        });
+    });
     </script>
     {% include "ajax_csrf.html" %}
     <script type="text/javascript" src="{% static 'js/sql_console.js' %}"></script>

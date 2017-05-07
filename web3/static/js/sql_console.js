@@ -1,11 +1,4 @@
-$(document).ready(function() {
-    var consoles = $("#sql-console-wrapper .sql-console");
-    consoles.each(function() {
-        registerConsole($(this));
-    });
-});
-
-function registerConsole(console) {
+function registerConsole(console, exitCallback) {
     console.click(function() {
         var sel = window.getSelection().toString();
         if (!sel) {
@@ -51,9 +44,9 @@ function registerConsole(console) {
         if (e.which == 13) {
             var val = $(this).val();
             if (val) {
-                if (val == "exit" || val == "\\q" || val == ".q") {
-                    if (typeof back_endpoint != "undefined") {
-                        window.location.href = back_endpoint;
+                if (val == "quit" || val == "exit" || val == "\\q" || val == ".q") {
+                    if (exitCallback) {
+                        exitCallback();
                         return;
                     }
                 }

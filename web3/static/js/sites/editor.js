@@ -1221,7 +1221,11 @@ $(document).ready(function() {
         if (typeof registerConsole !== 'undefined') {
             container.setTitle("<span class='fa fa-database'></span> SQL");
             container.getElement().html($("#sql-console-template").html());
-            registerConsole(container.getElement().find(".sql-console"));
+            registerConsole(container.getElement().find(".sql-console"), function() {
+                if (settings["close-terminal"]) {
+                    container.close();
+                }
+            });
         }
         else {
             container.getElement().html("<b>No database provisioned!</b> Add a database in order to use the SQL console.");
