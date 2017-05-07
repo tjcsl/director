@@ -1003,7 +1003,10 @@ $(document).ready(function() {
                 e.preventDefault();
             }
             if (e.keyCode == 13) {
-                doServerRestart();
+                // Alt + Enter
+                if (is_dynamic) {
+                    doServerRestart();
+                }
             }
         }
     });
