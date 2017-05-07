@@ -116,6 +116,10 @@ body.dark .settings-pane {
 .settings-pane select.form-control {
     padding: .2rem .75rem;
 }
+.settings-pane .custom-checkbox {
+    display: block;
+    margin-left: 0;
+}
 .context-menu-list {
     z-index: 9999 !important;
     border-radius: 0;

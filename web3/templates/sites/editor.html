@@ -87,56 +87,62 @@
 <div id="settings-template" style="display:none">
     <div class="settings-pane">
         <h3><i class="fa fa-wrench" style="margin-bottom:15px"></i> Settings</h3>
-        <div class="alert alert-success"><i class="fa fa-question-circle"></i> New to Director? Click <a target="_blank" href="{% url 'guide' %}">here</a> to access the help guide.</div>
-        <div class="alert alert-success"><i class="fa fa-lightbulb-o"></i> Have a feature suggestion or a bug report? Click <a target="_blank" href="{% url 'feedback' %}">here</a>!</div>
-        <div class="form-group">
-            <label>Layout Theme</label>
-            <select class="setting form-control" data-setting="layout-theme">
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Editor Theme</label>
-            <select class="setting form-control" data-setting="editor-theme">
-                <option value="ace/theme/chrome">Default</option>
-                <option value="ace/theme/clouds">Clouds</option>
-                <option value="ace/theme/monokai">Monokai</option>
-                <option value="ace/theme/solarized_light">Solarized Light</option>
-                <option value="ace/theme/solarized_dark">Solarized Dark</option>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="alert alert-success"><i class="fa fa-question-circle"></i> New to Director? Click <a target="_blank" href="{% url 'guide' %}">here</a> to access the help guide.</div>
+                <div class="form-group">
+                    <label>Layout Theme</label>
+                    <select class="setting form-control" data-setting="layout-theme">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Editor Theme</label>
+                    <select class="setting form-control" data-setting="editor-theme">
+                        <option value="ace/theme/chrome">Default</option>
+                        <option value="ace/theme/clouds">Clouds</option>
+                        <option value="ace/theme/monokai">Monokai</option>
+                        <option value="ace/theme/solarized_light">Solarized Light</option>
+                        <option value="ace/theme/solarized_dark">Solarized Dark</option>
 
-            </select>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Editor Font Size</label>
+                    <select class="setting form-control" data-setting="font-size">
+                        <option value="8">8px</option>
+                        <option value="12">12px</option>
+                        <option value="16">16px</option>
+                        <option value="20">20px</option>
+                        <option value="24">24px</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-success"><i class="fa fa-lightbulb-o"></i> Have a feature suggestion or a bug report? Click <a target="_blank" href="{% url 'feedback' %}">here</a>!</div>
+                <label class="custom-control custom-checkbox">
+                    <input type="checkbox" class="setting custom-control-input" data-setting="hidden-files">
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">Show hidden files</span>
+                </label>
+                <label class="custom-control custom-checkbox">
+                    <input type="checkbox" class="setting custom-control-input" data-setting="prompt-delete">
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">Confirm when deleting files</span>
+                </label>
+                <label class="custom-control custom-checkbox">
+                    <input type="checkbox" class="setting custom-control-input" data-setting="live-autocompletion">
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">Enable code autocompletion</span>
+                </label>
+                <label class="custom-control custom-checkbox">
+                    <input type="checkbox" class="setting custom-control-input" data-setting="close-terminal">
+                    <span class="custom-control-indicator"></span>
+                    <span class="custom-control-description">Close terminal on disconnect</span>
+                </label>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Editor Font Size</label>
-            <select class="setting form-control" data-setting="font-size">
-                <option value="8">8px</option>
-                <option value="12">12px</option>
-                <option value="16">16px</option>
-                <option value="20">20px</option>
-                <option value="24">24px</option>
-            </select>
-        </div>
-        <label class="custom-control custom-checkbox">
-            <input type="checkbox" class="setting custom-control-input" data-setting="hidden-files">
-            <span class="custom-control-indicator"></span>
-            <span class="custom-control-description">Show hidden files</span>
-        </label>
-        <label class="custom-control custom-checkbox">
-            <input type="checkbox" class="setting custom-control-input" data-setting="prompt-delete">
-            <span class="custom-control-indicator"></span>
-            <span class="custom-control-description">Confirm when deleting files</span>
-        </label>
-        <label class="custom-control custom-checkbox">
-            <input type="checkbox" class="setting custom-control-input" data-setting="live-autocompletion">
-            <span class="custom-control-indicator"></span>
-            <span class="custom-control-description">Enable code autocompletion</span>
-        </label>
-        <label class="custom-control custom-checkbox">
-            <input type="checkbox" class="setting custom-control-input" data-setting="close-terminal">
-            <span class="custom-control-indicator"></span>
-            <span class="custom-control-description">Close terminal on disconnect</span>
-        </label>
     </div>
 </div>
 <div id="modal-confirm" class="modal fade">
