@@ -16,6 +16,8 @@ from ..helpers import (fix_permissions, create_process_config, reload_php_fpm,
                        render_to_string, check_nginx_config, reload_nginx_config,
                        create_config_files, delete_process_config, update_supervisor)
 
+from raven.contrib.django.raven_compat.models import client
+
 
 @login_required
 def editor_view(request, site_id):
@@ -24,7 +26,8 @@ def editor_view(request, site_id):
         raise PermissionDenied
 
     context = {
-        "site": site
+        "site": site,
+        "raven_dsn": client.get_public_dsn()
     }
 
     return render(request, "sites/editor.html", context)
