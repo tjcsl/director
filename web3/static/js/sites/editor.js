@@ -10,7 +10,8 @@ $(document).ready(function() {
         "font-size": 16,
         "live-autocompletion": true,
         "hide-navbar": false,
-        "close-terminal": false
+        "close-terminal": false,
+        "beginner-tips": false
     };
     var layout_config = {
         settings: {
@@ -69,19 +70,21 @@ $(document).ready(function() {
                     settings[key] = layout_config["editor"][key];
                 }
             }
-            Messenger().post({
-                "message": "Your editor layout has been restored from your last session.",
-                "actions": {
-                    "reset": {
-                        "label": "Reset Layout",
-                        "action": function() {
-                            localStorage.removeItem("editor-state-" + site_name);
-                            window.location.reload();
+            if (!settings["beginner-tips"]) {
+                Messenger().post({
+                    "message": "Your editor layout has been restored from your last session.",
+                    "actions": {
+                        "reset": {
+                            "label": "Reset Layout",
+                            "action": function() {
+                                localStorage.removeItem("editor-state-" + site_name);
+                                window.location.reload();
+                            }
                         }
-                    }
-                },
-                "showCloseButton": true
-            });
+                    },
+                    "showCloseButton": true
+                });
+            }
         }
     }
 
@@ -129,6 +132,14 @@ $(document).ready(function() {
         doServerRestart();
     });
 
+    $(document).on("click", ".reset-settings", function(e) {
+        e.preventDefault();
+        modalConfirm("Are you sure you want to reset your layout?", "<span style='white-space:pre-wrap'>Performing this operation will reset your settings and layout configuration to the default values.</span>", function() {
+            localStorage.removeItem("editor-state-" + site_name);
+            window.location.reload();
+        });
+    });
+
     function applyEditors(callback) {
         $.each(editors, function(k, v) {
             callback(v);
@@ -162,6 +173,9 @@ $(document).ready(function() {
             applyEditors(function(v) {
                 v.setOption("enableLiveAutocompletion", settings["live-autocompletion"]);
             });
+        },
+        "beginner-tips": function() {
+            $(".settings-pane .alert.alert-success").toggle(!settings["beginner-tips"]);
         }
     };
 
@@ -173,7 +187,6 @@ $(document).ready(function() {
         else {
             item.val(settings[setting]);
         }
-        console.log(settingActions, setting);
         if (settingActions[setting]) {
             settingActions[setting]();
         }
