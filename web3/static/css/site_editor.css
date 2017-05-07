@@ -123,6 +123,22 @@ body.dark .settings-pane select {
     background-color: #333;
     color: #eee;
 }
+body.dark .settings-pane .btn.btn-ion {
+    color: #ddd;
+    box-shadow: none;
+    text-shadow: none;
+    border-color: #111;
+    background: linear-gradient(to bottom,#222 0%,#111 100%);
+}
+body.dark .settings-pane .btn.btn-ion:hover {
+    background: linear-gradient(to bottom,#333 0%,#222 100%);
+}
+body.dark .settings-pane .btn.btn-ion:focus {
+    outline: none;
+}
+body.dark .settings-pane .btn.btn-ion:active {
+    background: linear-gradient(to bottom,#111 0%,#222 100%);
+}
 .settings-pane select.form-control {
     padding: .2rem .75rem;
 }
