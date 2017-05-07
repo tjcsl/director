@@ -894,7 +894,7 @@ $(document).ready(function() {
                                 window.open(final_url, "_blank");
                             }
                             else {
-                                Messenger().error("<b>" + $("<div />").text(fileobj.attr("data-name")).html() + "</b> cannot be displayed.");
+                                Messenger().error("<b>" + $("<div />").text(fileobj.attr("data-name")).html() + "</b> cannot be displayed in the browser.");
                             }
                         });
                     }
@@ -1045,6 +1045,27 @@ $(document).ready(function() {
                 }
                 else {
                     triggerCreate($("#files"), true);
+                }
+                e.preventDefault();
+            }
+            if (e.keyCode == 79) {
+                // Alt + O
+                var selected = $("#files div.file.active");
+                if (!is_dynamic && selected.length) {
+                    selected.each(function() {
+                        var fileobj = $(this);
+                        var filepath = getPath(fileobj) + fileobj.attr("data-name");
+                        if (filepath.startsWith("public/")) {
+                            var final_url = site_url + filepath.replace(/^public\//, "");
+                            window.open(final_url, "_blank");
+                        }
+                        else {
+                            Messenger().error("<b>" + $("<div />").text(fileobj.attr("data-name")).html() + "</b> cannot be displayed in the browser.");
+                        }
+                    });
+                }
+                else {
+                    window.open(site_url, "_blank");
                 }
                 e.preventDefault();
             }
