@@ -30,9 +30,8 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-modelist.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/golden-layout/1.5.7/goldenlayout.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.2/jquery.ui.position.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.2/jquery.contextMenu.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.5/jquery.ui.position.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.4.5/jquery.contextMenu.min.js"></script>
     <script src="//cdn.ravenjs.com/3.15.0/raven.min.js"></script>
 
     <script type="text/javascript" src="{% static 'js/sites/editor.js' %}"></script>
@@ -57,7 +56,6 @@
     var is_dynamic = {% if site.category == 'dynamic' %}true{% else %}false{% endif %};
     var is_superuser = {% if request.user.is_superuser %}true{% else %}false{% endif %};
     var terminal_auth = { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}" };
-    hljs.initHighlightingOnLoad();
     {% if raven_dsn %}
     Raven.config('{{ raven_dsn|escapejs }}').install();
 
