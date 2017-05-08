@@ -1111,6 +1111,18 @@ $(document).ready(function() {
                     doServerRestart();
                 }
             }
+            if (e.keyCode == 67) {
+                var c = layout.root.getItemsById("default-terminal");
+                if (!c.length) {
+                    c = layout.root.getItemsById("default-file");
+                }
+                var newTab = {
+                    type: "component",
+                    componentName: "sql"
+                };
+                c[0].addChild(newTab);
+                e.preventDefault();
+            }
         }
         if (e.ctrlKey) {
             if (e.keyCode == 189) {
