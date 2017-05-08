@@ -392,7 +392,7 @@ $(document).ready(function() {
                 $.each(data.files, function(k, v) {
                     file_set[v.name] = true;
                     var node = makeNode(v);
-                    if (!$("#files div[data-depth=0][data-name='" + v.name.replace("'", "\\'") + "']").length) {
+                    if (!$("#files div[data-depth=0][data-name='" + v.name.replace("\\", "\\\\").replace("'", "\\'") + "']").length) {
                         $("#files").append(node);
                     }
                 });
@@ -483,7 +483,7 @@ $(document).ready(function() {
                     else {
                         $.each(data.files, function(k, v) {
                             var node = makeNode(v, depth + 1);
-                            if (!getChildren(t).filter("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("'", "\\'") + "']").length) {
+                            if (!getChildren(t).filter("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("\\", "\\\\").replace("'", "\\'") + "']").length) {
                                 t.after(node);
                             }
                         });
