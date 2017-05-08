@@ -15,6 +15,6 @@ then
     export -f cd
 fi
 
-export HOME="/home/$1/"
+export HOME="/home/$1"
 
 su - -p -s /bin/bash "$1"
