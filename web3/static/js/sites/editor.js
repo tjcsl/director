@@ -93,9 +93,11 @@ $(document).ready(function() {
 
     function saveConfig() {
         if (typeof localStorage !== 'undefined') {
-            var state = layout.toConfig();
-            state["editor"] = settings;
-            localStorage.setItem("editor-state-" + site_name, JSON.stringify(state));
+            if (layout.isInitialised) {
+                var state = layout.toConfig();
+                state["editor"] = settings;
+                localStorage.setItem("editor-state-" + site_name, JSON.stringify(state));
+            }
         }
     }
 
