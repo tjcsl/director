@@ -1242,8 +1242,8 @@ $(document).ready(function() {
     });
     layout.registerComponent("sql", function(container, componentState) {
         container.on("tab", addContextHandlers);
+        container.setTitle("<span class='fa fa-database'></span> SQL");
         if (typeof registerConsole !== 'undefined') {
-            container.setTitle("<span class='fa fa-database'></span> SQL");
             container.getElement().html($("#sql-console-template").html());
             registerConsole(container.getElement().find(".sql-console"), function() {
                 if (settings["close-terminal"]) {
@@ -1252,7 +1252,7 @@ $(document).ready(function() {
             });
         }
         else {
-            container.getElement().html("<b>No database provisioned!</b> Add a database in order to use the SQL console.");
+            container.getElement().html("<span style='padding:5px'><b>No database provisioned!</b> Add a database in order to use the SQL console.</span>");
         }
     });
     layout.registerComponent("nginx", function(container, componentState) {
