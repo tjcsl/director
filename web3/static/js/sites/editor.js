@@ -1223,12 +1223,9 @@ $(document).ready(function() {
         container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-wrench'></span> Settings");
         container.getElement().html($("#settings-template").html());
-        container.on("open", function() {
-            // this is called before the container is attached, so the settings fail to update
-            setTimeout(function() {
-                updateSettings();
-                updateServerStatus();
-            }, 100);
+        container.on("shown", function() {
+            updateSettings();
+            updateServerStatus();
         });
     });
     layout.registerComponent("sql", function(container, componentState) {
