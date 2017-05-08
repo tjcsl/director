@@ -392,7 +392,7 @@ $(document).ready(function() {
                 $.each(data.files, function(k, v) {
                     file_set[v.name] = true;
                     var node = makeNode(v);
-                    if (!$("#files div[data-depth=0][data-name='" + v.name.replace("\\", "\\\\").replace("'", "\\'") + "']").length) {
+                    if (!$("#files div[data-depth=0][data-name='" + escapeFileName(v.name) + "']").length) {
                         $("#files").append(node);
                     }
                 });
@@ -483,7 +483,7 @@ $(document).ready(function() {
                     else {
                         $.each(data.files, function(k, v) {
                             var node = makeNode(v, depth + 1);
-                            if (!getChildren(t).filter("div[data-depth=" + (depth + 1) + "][data-name='" + v.name.replace("\\", "\\\\").replace("'", "\\'") + "']").length) {
+                            if (!getChildren(t).filter("div[data-depth=" + (depth + 1) + "][data-name='" + escapeFileName(v.name) + "']").length) {
                                 t.after(node);
                             }
                         });
@@ -630,7 +630,7 @@ $(document).ready(function() {
                                     var children = getChildren(path_obj);
                                     if (typeof f == "undefined" || f.attr("id") == "files") {
                                         newdepth = 0;
-                                        var existing = $("[data-depth=0][data-name='" + path_obj.attr("data-name").replace("'", "\\'") + "']");
+                                        var existing = $("[data-depth=0][data-name='" + escapeFileName(path_obj.attr("data-name")) + "']");
                                         if (!existing.length) {
                                             path_obj.insertAfter($("#files div:last"));
                                         }
@@ -647,7 +647,7 @@ $(document).ready(function() {
                                         if (dest_children.length) {
                                             f = dest_children[dest_children.length - 1];
                                         }
-                                        var existing = dest_children.filter("[data-name='" + path_obj.attr("data-name").replace("'", "\\'") + "']");
+                                        var existing = dest_children.filter("[data-name='" + escapeFileName(path_obj.attr("data-name")) + "']");
                                         if (!existing.length) {
                                             path_obj.insertAfter(f);
                                         }
@@ -662,7 +662,7 @@ $(document).ready(function() {
                                     if (path_obj.hasClass("folder")) {
                                         $.each(children.get().reverse(), function(k, v) {
                                             var cdepth = newdepth + (parseInt($(this).attr("data-depth")) - depth);
-                                            if (!existing_children.filter("[data-name='" + $(this).attr("data-name").replace("'", "\\'") + "']").length) {
+                                            if (!existing_children.filter("[data-name='" + escapeFileName($(this).attr("data-name")) + "']").length) {
                                                 $(this).insertAfter(path_obj);
                                                 $(this).attr("data-depth", cdepth);
                                                 $(this).css("padding-left", cdepth * 20 + "px");
@@ -1462,7 +1462,7 @@ function addFileListener() {
                 if (data.action == "create") {
                     if (!data.path) {
                         var newNode = makeNode({name: data.name, type: data.type ? "d" : "f", executable: data.exec, link: data.link}, 0);
-                        if (!$("div." + (data.type ? "folder" : "file") + "[data-depth=0][data-name='" + data.name.replace("'", "\\'") + "']").length) {
+                        if (!$("div." + (data.type ? "folder" : "file") + "[data-depth=0][data-name='" + escapeFileName(data.name) + "']").length) {
                             $("#files").append(newNode);
                         }
                     }
@@ -1470,7 +1470,7 @@ function addFileListener() {
                         var node = getElement(data.path);
                         if (node) {
                             var newNode = makeNode({name: data.name, type: data.type ? "d" : "f", executable: data.exec, link: data.link}, parseInt(node.attr("data-depth")) + 1);
-                            if (!node.nextUntil("div.folder[data-depth=" + node.attr("data-depth") + "]").filter("div." + (data.type ? "folder" : "file") + "[data-depth=" + (parseInt(node.attr("data-depth") + 1)) + "][data-name='" + data.name.replace("'", "\\'") + "']").length) {
+                            if (!node.nextUntil("div.folder[data-depth=" + node.attr("data-depth") + "]").filter("div." + (data.type ? "folder" : "file") + "[data-depth=" + (parseInt(node.attr("data-depth") + 1)) + "][data-name='" + escapeFileName(data.name) + "']").length) {
                                 node.after(newNode);
                             }
                         }
@@ -1509,7 +1509,7 @@ function getElement(path) {
     var depth = 0;
     while (p.length) {
         var next = p.shift();
-        ele = ele.filter("[data-depth=" + depth + "][data-name='" + next.replace("'", "\\'") + "']");
+        ele = ele.filter("[data-depth=" + depth + "][data-name='" + escapeFileName(next) + "']");
         if (!ele.length) {
             return false;
         }
@@ -1574,6 +1574,9 @@ function modalPrompt(title, body, callback, existing) {
             callback(input);
         }
     });
+}
+function escapeFileName(name) {
+    return name.replace("\\", "\\\\").replace("'", "\\'");
 }
 function makeNode(v, depth) {
     depth = depth || 0;
