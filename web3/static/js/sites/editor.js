@@ -8,6 +8,7 @@ $(document).ready(function() {
         "layout-theme": "light",
         "editor-theme": "ace/theme/chrome",
         "font-size": 16,
+        "terminal-size": 16,
         "live-autocompletion": true,
         "hide-navbar": false,
         "close-terminal": false,
@@ -183,6 +184,16 @@ $(document).ready(function() {
         },
         "beginner-tips": function() {
             $(".settings-pane .alert.alert-success").toggle(!settings["beginner-tips"]);
+        },
+        "terminal-size": function() {
+            var term = $(".console-wrapper .terminal");
+            var size = parseInt(settings["terminal-size"]);
+            term.css("font-size", size + "px");
+            term.find(".xterm-helpers span").css("font-size", size + "px").css("line-height", (size + 3) + "px");
+            term.find(".xterm-viewport, .xterm-rows").css("line-height", (size + 3) + "px");
+            $(".console-wrapper").each(function() {
+                $(this).trigger("terminal:resize");
+            });
         }
     };
 
@@ -1190,6 +1201,8 @@ $(document).ready(function() {
             if (settings["close-terminal"]) {
                 container.close();
             }
+        }, function() {
+            settingActions["terminal-size"]();
         });
         container.on("resize", function() {
             term.trigger("terminal:resize");

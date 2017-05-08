@@ -3,11 +3,12 @@ $(document).ready(function() {
         $(".console-wrapper").trigger("terminal:resize");
     });
 });
-function registerTerminal(wrapper, auth, titleCallback, disconnectCallback) {
+function registerTerminal(wrapper, auth, titleCallback, disconnectCallback, loadCallback) {
     titleCallback = titleCallback || function(title) {
         document.title = title;
     };
     disconnectCallback = disconnectCallback || function() { };
+    loadCallback = loadCallback || function() { };
     var console = wrapper.find(".console");
     var disconnect = wrapper.find(".disconnect");
     var started = false;
@@ -49,6 +50,7 @@ function registerTerminal(wrapper, auth, titleCallback, disconnectCallback) {
                 }
                 if (data.action == "START") {
                     started = true;
+                    loadCallback();
                 }
             }
         };
@@ -66,6 +68,7 @@ function registerTerminal(wrapper, auth, titleCallback, disconnectCallback) {
             titleCallback("Terminal");
             disconnectCallback();
         };
+        wrapper.find(".terminal .xterm-viewport, .terminal .xterm-rows").css("line-height", "19px");
         wrapper.keypress(function(e) {
             if (e.which == 13) {
                 wrapper.off("keypress");

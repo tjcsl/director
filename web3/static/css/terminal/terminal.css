@@ -34,7 +34,7 @@ body {
     line-height: 19px;
 }
 .console-wrapper .terminal .xterm-viewport, .console-wrapper .terminal .xterm-rows {
-    line-height: 19px !important;
+    line-height: 19px;
 }
 .console-wrapper ::-webkit-scrollbar {
     width: 8px;
