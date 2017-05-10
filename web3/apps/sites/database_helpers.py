@@ -3,6 +3,9 @@ import MySQLdb
 from _mysql_exceptions import ProgrammingError as MySQLProgrammingError, OperationalError as MySQLOperationalError
 
 from django.conf import settings
+from django.core.cache import cache
+
+from .helpers import run_as_site
 
 from raven.contrib.django.raven_compat.models import client
 
@@ -140,3 +143,19 @@ def delete_mysql_database(database):
         return False
     finally:
         conn.close()
+
+
+def get_sql_version(site):
+    key = "site:database:version:{}".format(site.database.category)
+    obj = cache.get(key)
+    if obj:
+        return obj
+
+    if site.database.category == "mysql":
+        ret, out, err = run_as_site(site, ["mysql", "--version"])
+        cache.set(key, out)
+        return out
+    else:
+        ret, out, err = run_as_site(site, ["psql", "--version"])
+        cache.set(key, out)
+        return out

@@ -76,11 +76,4 @@ function registerConsole(console, exitCallback) {
             console.scrollTop(console[0].scrollHeight);
         }
     });
-    printVersion(console);
-}
-
-function printVersion(console) {
-    $.post(sql_endpoint, {"version": true}, function(data) {
-        console.find(".output").append(data + "\n");
-    });
 }

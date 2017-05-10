@@ -15,6 +15,7 @@ from ..models import Site, Process
 from ..helpers import (fix_permissions, create_process_config, reload_php_fpm,
                        render_to_string, check_nginx_config, reload_nginx_config,
                        create_config_files, delete_process_config, update_supervisor)
+from ..database_helpers import get_sql_version
 
 from raven.contrib.django.raven_compat.models import client
 
@@ -27,7 +28,8 @@ def editor_view(request, site_id):
 
     context = {
         "site": site,
-        "raven_dsn": client.get_public_dsn()
+        "raven_dsn": client.get_public_dsn(),
+        "sql_version": get_sql_version(site) if site.database else None
     }
 
     return render(request, "sites/editor.html", context)

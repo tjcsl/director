@@ -11,7 +11,7 @@ from django.views.decorators.http import require_http_methods
 from raven.contrib.django.raven_compat.models import client
 
 from ..helpers import run_as_site, create_config_files, demote, reload_php_fpm, update_supervisor
-from ..database_helpers import delete_postgres_database, change_postgres_password, delete_mysql_database, change_mysql_password, list_tables
+from ..database_helpers import delete_postgres_database, change_postgres_password, delete_mysql_database, change_mysql_password, list_tables, get_sql_version
 from ..models import Site, User
 from ..forms import DatabaseForm
 
@@ -55,7 +55,7 @@ def modify_database_view(request, site_id):
         messages.error(request, "No database provisioned!")
         return redirect("info_site", site_id=site.id)
 
-    return render(request, "sites/edit_database.html", {"site": site})
+    return render(request, "sites/edit_database.html", {"site": site, "sql_version": get_sql_version(site)})
 
 
 @login_required
@@ -68,22 +68,15 @@ def sql_database_view(request, site_id):
         return HttpResponse("ERROR: no database provisioned", content_type="text/plain")
 
     sql = request.POST.get("sql", "")
-    version = request.POST.get("version", False) is not False
 
     if sql.startswith("\\!"):
         return HttpResponse("feature disabled\n\n", content_type="text/plain")
 
     if site.database.category == "mysql":
-        if version:
-            ret, out, err = run_as_site(site, ["mysql", "--version"])
-        else:
-            ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username),
-                                               "--host=mysql1", site.database.db_name, "-e", sql], env={"MYSQL_PWD": site.database.password})
+        ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username),
+                                           "--host=mysql1", site.database.db_name, "-e", sql], env={"MYSQL_PWD": site.database.password})
     else:
-        if version:
-            ret, out, err = run_as_site(site, ["psql", "--version"])
-        else:
-            ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql], env={"SHELL": "/usr/sbin/nologin"})
+        ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql], env={"SHELL": "/usr/sbin/nologin"})
     return HttpResponse(out + err, content_type="text/plain")
 
 
