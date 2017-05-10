@@ -44,9 +44,9 @@
                     $(".disconnect").html("<span style='color:green'><b>Command Finished</b>, press <kbd>ENTER</kbd> to go back</span>");
                 }
             },
-            onReconnect: function() {
+            onReconnect: (command ? function() {
                 window.location.href = site_endpoint;
-            }
+            } : false)
         });
     });
     </script>
