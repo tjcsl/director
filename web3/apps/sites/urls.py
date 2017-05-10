@@ -43,12 +43,12 @@ urlpatterns = [
     url("^(?P<site_id>\d+)/process/delete$", sites.delete_process_view, name="delete_process"),
 
     # Actions and Integrations
-    url("^(?P<site_id>\d+)/action/permission$", sites.permission_view, name="permission_site"),
-    url("^(?P<site_id>\d+)/action/config$", sites.config_view, name="config_site"),
-    url("^(?P<site_id>\d+)/action/generate_key$", sites.generate_key_view, name="generate_rsa_key"),
-    url("^(?P<site_id>\d+)/action/git_pull$", sites.git_pull_view, name="git_pull"),
-    url("^(?P<site_id>\d+)/action/git_setup$", sites.git_setup_view, name="github_automatic_setup"),
-    url("^(?P<site_id>\d+)/action/git_path$", sites.set_git_path_view, name="set_git_path"),
-    url("^(?P<site_id>\d+)/action/wordpress$", sites.install_wordpress_view, name="install_wordpress"),
-    url("^(?P<site_id>\d+)/webhook$", sites.webhook_view, name="git_webhook")
+    url("^(?P<site_id>\d+)/action/permission$", actions.permission_view, name="permission_site"),
+    url("^(?P<site_id>\d+)/action/config$", actions.config_view, name="config_site"),
+    url("^(?P<site_id>\d+)/action/generate_key$", actions.generate_key_view, name="generate_rsa_key"),
+    url("^(?P<site_id>\d+)/action/git_pull$", actions.git_pull_view, name="git_pull"),
+    url("^(?P<site_id>\d+)/action/git_setup$", actions.git_setup_view, name="github_automatic_setup"),
+    url("^(?P<site_id>\d+)/action/git_path$", actions.set_git_path_view, name="set_git_path"),
+    url("^(?P<site_id>\d+)/action/wordpress$", actions.install_wordpress_view, name="install_wordpress"),
+    url("^(?P<site_id>\d+)/webhook$", actions.webhook_view, name="git_webhook")
 ]
