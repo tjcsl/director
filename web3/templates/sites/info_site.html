@@ -147,7 +147,7 @@
             {% endif %}
         {% endif %}
         <h4><i class="fa fa-cog"></i> Miscellaneous Tools</h4>
-        <a class="btn btn-ion"><i class="fa fa-wordpress"></i> Install Wordpress</a>
+        <a href="{% url 'install_wordpress' site.id %}" class="btn btn-ion"><i class="fa fa-wordpress"></i> Install Wordpress</a>
     </div>
 </div>
 {% endblock %}

@@ -298,6 +298,15 @@ def git_pull_view(request, site_id):
     return JsonResponse({"ret": output[0], "out": output[1], "err": output[2]})
 
 
+@login_required
+def install_wordpress_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    return render(request, "sites/install_wordpress.html", {"site": site})
+
+
 @csrf_exempt
 def webhook_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
