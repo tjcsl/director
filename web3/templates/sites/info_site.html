@@ -59,6 +59,7 @@
         {% if site.category != "vm" %}
         <a href="{% url 'permission_site' site.id %}" class="btn btn-ion"><i class="fa fa-wrench"></i> Reset Permissions</a>
         {% endif %}
+        <a href="{% url 'install_wordpress' site.id %}" class="btn btn-ion"><i class="fa fa-wordpress"></i> Install Wordpress</a>
         <br /><br />
 
 
@@ -146,8 +147,6 @@
             <p>You can use additional features by turning the folder <a href="{% url 'set_git_path' site.id %}" class="path">{{ site.git_path }}</a> into a Git repository.</p>
             {% endif %}
         {% endif %}
-        <h4><i class="fa fa-cog"></i> Miscellaneous Tools</h4>
-        <a href="{% url 'install_wordpress' site.id %}" class="btn btn-ion"><i class="fa fa-wordpress"></i> Install Wordpress</a>
     </div>
 </div>
 {% endblock %}
