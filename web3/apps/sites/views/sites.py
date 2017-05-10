@@ -320,7 +320,11 @@ def install_wordpress_view(request, site_id):
                 messages.error(request, "A database has already been provisioned and it is not MySQL!")
                 return redirect("install_wordpress", site_id=site.id)
         else:
-            db = Database.objects.create(site=site, category="mysql")
+            db = Database.objects.create(
+                site=site,
+                category="mysql",
+                password=User.objects.make_random_password(length=24)
+            )
             if not create_mysql_database(db):
                 db.delete()
                 messages.error(request, "Failed to create MySQL database!")
