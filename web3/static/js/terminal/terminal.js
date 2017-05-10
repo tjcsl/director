@@ -10,6 +10,11 @@ function registerTerminal(wrapper, auth, options) {
     };
     var disconnectCallback = options["onClose"] || function() { };
     var loadCallback = options["onStart"] || function() { };
+    var reconnectCallback = options["onReconnect"] || function() {
+        wrapper.off("keypress");
+        wrapper.off("resize");
+        registerTerminal(wrapper, auth, titleCallback);
+    };
 
     var console = wrapper.find(".console");
     var disconnect = wrapper.find(".disconnect");
@@ -73,9 +78,7 @@ function registerTerminal(wrapper, auth, options) {
         wrapper.find(".terminal .xterm-viewport, .terminal .xterm-rows").css("line-height", "19px");
         wrapper.keypress(function(e) {
             if (e.which == 13) {
-                wrapper.off("keypress");
-                wrapper.off("resize");
-                registerTerminal(wrapper, auth, titleCallback);
+                reconnectCallback();
             }
         });
         wrapper.on("terminal:resize", function(e) {
