@@ -29,7 +29,7 @@ def editor_view(request, site_id):
     context = {
         "site": site,
         "raven_dsn": client.get_public_dsn(),
-        "sql_version": get_sql_version(site) if site.database else None
+        "sql_version": get_sql_version(site) if hasattr(site, "database") else None
     }
 
     return render(request, "sites/editor.html", context)
