@@ -35,6 +35,7 @@
     padding-right: 5px;
     border: 1px solid #ddd;
     border-radius: 3px;
+    color: #484848;
 }
 @media (max-width: 767px) {
     .guide {
