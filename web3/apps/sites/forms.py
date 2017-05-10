@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from django.conf import settings
 
 from .models import Site, Process, Database, Domain
-from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, delete_process_config, reload_php_fpm, update_supervisor, delete_php_config
+from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, reload_php_fpm, update_supervisor, clean_site_type
 from .database_helpers import create_postgres_database, create_mysql_database
 
 from ..users.models import User, Group
@@ -114,18 +114,7 @@ class SiteForm(forms.ModelForm):
             make_site_dirs(instance)
             flush_permissions()
 
-            if instance.category != "php":
-                delete_php_config(instance)
-
-            if instance.category != "dynamic" and hasattr(instance, "process"):
-                delete_process_config(instance.process)
-                update_supervisor()
-                instance.process.delete()
-
-            if instance.category != "vm" and hasattr(instance, "virtual_machine"):
-                vm = instance.virtual_machine
-                vm.site = None
-                vm.save()
+            clean_site_type(instance)
 
             instance.save()
 

@@ -4,6 +4,7 @@
 
 {% block main %}
 <form method="POST">
+    {% csrf_token %}
     <h3><i class="fa fa-wordpress"></i> Install Wordpress</h3>
     <p>You can use this page to automatically install Wordpress for you. The script will perform the following actions:</p>
     <ul>

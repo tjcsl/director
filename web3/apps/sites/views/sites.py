@@ -8,13 +8,15 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from ..models import Site
+from ..models import Site, Database
 from ..forms import SiteForm, ProcessForm
 from ..helpers import (reload_services, delete_site_files, create_config_files,
                        make_site_dirs, create_process_config, restart_supervisor,
                        get_supervisor_status, delete_process_config, write_new_index_file,
                        generate_ssh_key, run_as_site, do_git_pull, get_latest_commit,
-                       fix_permissions, reload_nginx_config, list_executable_files, update_supervisor)
+                       fix_permissions, reload_nginx_config, list_executable_files, update_supervisor,
+                       clean_site_type)
+from ..database_helpers import create_mysql_database
 
 from ...authentication.decorators import superuser_required
 from ...vms.models import VirtualMachine
@@ -303,6 +305,28 @@ def install_wordpress_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
+
+    if request.method == "POST":
+        if not site.category == "php":
+            site.category = "php"
+            site.save()
+
+            clean_site_type(site)
+            create_config_files(site)
+            reload_services()
+
+        if hasattr(site, "database"):
+            if not site.database.category == "mysql":
+                messages.error(request, "A database has already been provisioned and it is not MySQL!")
+                return redirect("install_wordpress", site_id=site.id)
+        else:
+            db = Database.objects.create(site=site, category="mysql")
+            if not create_mysql_database(db):
+                db.delete()
+                messages.error(request, "Failed to create MySQL database!")
+                return redirect("install_wordpress", site_id=site.id)
+
+        return render(request, "sites/web_terminal.html", {"site": site, "command": "/scripts/wordpress.sh && exit"})
 
     return render(request, "sites/install_wordpress.html", {"site": site})
 

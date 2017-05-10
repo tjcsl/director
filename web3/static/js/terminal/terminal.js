@@ -50,7 +50,7 @@ function registerTerminal(wrapper, auth, titleCallback, disconnectCallback, load
                 }
                 if (data.action == "START") {
                     started = true;
-                    loadCallback();
+                    loadCallback(term);
                 }
             }
         };
