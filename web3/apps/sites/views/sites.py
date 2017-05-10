@@ -19,6 +19,7 @@ from ..helpers import (reload_services, delete_site_files, create_config_files,
 from ..database_helpers import create_mysql_database
 
 from ...authentication.decorators import superuser_required
+from ...users.models import User
 from ...vms.models import VirtualMachine
 from ...request.models import SiteRequest
 
