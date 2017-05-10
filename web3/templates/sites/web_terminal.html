@@ -30,11 +30,13 @@
     <script type="text/javascript" src="{% static 'js/terminal/terminal.js' %}"></script>
     <script>
     $(document).ready(function() {
-        registerTerminal($(".console-wrapper"), { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}" }, null, null, function(term) {
-            {% if command %}
-            var command = "{{ command|escapejs }}";
-            term.send(command + "\n");
-            {% endif %}
+        registerTerminal($(".console-wrapper"), { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}" }, {
+            onStart: function(term) {
+                {% if command %}
+                var command = "{{ command|escapejs }}";
+                term.send(command + "\n");
+                {% endif %}
+            }
         });
     });
     </script>

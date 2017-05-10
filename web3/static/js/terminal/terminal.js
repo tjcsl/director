@@ -3,12 +3,14 @@ $(document).ready(function() {
         $(".console-wrapper").trigger("terminal:resize");
     });
 });
-function registerTerminal(wrapper, auth, titleCallback, disconnectCallback, loadCallback) {
-    titleCallback = titleCallback || function(title) {
+function registerTerminal(wrapper, auth, options) {
+    options = options || {};
+    var titleCallback = options["onTitle"] || function(title) {
         document.title = title;
     };
-    disconnectCallback = disconnectCallback || function() { };
-    loadCallback = loadCallback || function() { };
+    var disconnectCallback = options["onClose"] || function() { };
+    var loadCallback = options["onStart"] || function() { };
+
     var console = wrapper.find(".console");
     var disconnect = wrapper.find(".disconnect");
     var started = false;

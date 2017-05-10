@@ -1209,14 +1209,18 @@ $(document).ready(function() {
         container.setTitle("<span class='fa fa-terminal'></span> Terminal");
         var term = $($("#console-wrapper-template").html());
         container.getElement().append(term);
-        registerTerminal(term, terminal_auth, function(title) {
-            container.setTitle("<span class='fa fa-terminal'></span> " + title);
-        }, function() {
-            if (settings["close-terminal"]) {
-                container.close();
+        registerTerminal(term, terminal_auth, {
+            onTitle: function(title) {
+                container.setTitle("<span class='fa fa-terminal'></span> " + title);
+            },
+            onClose: function() {
+                if (settings["close-terminal"]) {
+                    container.close();
+                }
+            },
+            onStart: function() {
+                settingActions["terminal-size"]();
             }
-        }, function() {
-            settingActions["terminal-size"]();
         });
         container.on("resize", function() {
             term.trigger("terminal:resize");
