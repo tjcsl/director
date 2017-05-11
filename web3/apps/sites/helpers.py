@@ -10,6 +10,7 @@ from threading import Timer
 from .models import Site
 from ..users.models import User, Group
 
+from django.utils.crypto import get_random_string
 from django.template.loader import render_to_string
 
 from raven.contrib.django.raven_compat.models import client
@@ -30,6 +31,15 @@ def create_site_users(site):
     site.group = group
     site.save()
     return (user, group)
+
+
+def add_access_token(func):
+    def func_wrapper(request, **kwargs):
+        if not request.user.access_token:
+            request.user.access_token = get_random_string(24)
+            request.user.save()
+        return func(request, **kwargs)
+    return func_wrapper
 
 
 def get_next_id():

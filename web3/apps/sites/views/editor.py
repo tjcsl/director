@@ -14,13 +14,15 @@ from django.views.decorators.http import require_http_methods
 from ..models import Site, Process
 from ..helpers import (fix_permissions, create_process_config, reload_php_fpm,
                        render_to_string, check_nginx_config, reload_nginx_config,
-                       create_config_files, delete_process_config, update_supervisor)
+                       create_config_files, delete_process_config, update_supervisor,
+                       add_access_token)
 from ..database_helpers import get_sql_version
 
 from raven.contrib.django.raven_compat.models import client
 
 
 @login_required
+@add_access_token
 def editor_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
@@ -399,6 +401,7 @@ def edit_nginx_view(request, site_id):
 
 
 @login_required
+@add_access_token
 def web_terminal_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():

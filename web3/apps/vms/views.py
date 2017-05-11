@@ -11,6 +11,8 @@ from .forms import VirtualMachineForm
 from .models import VirtualMachine
 from .helpers import call_api
 
+from ..sites.helpers import add_access_token
+
 
 @login_required
 def list_view(request):
@@ -164,6 +166,7 @@ def edit_view(request, vm_id):
 
 
 @login_required
+@add_access_token
 def terminal_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
 
