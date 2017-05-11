@@ -95,6 +95,10 @@ sed -i 's/^group:.*/group: compat pgsql/' /etc/nsswitch.conf
 /usr/sbin/nscd -i group
 /usr/sbin/nscd -i passwd
 
+# Setup loggging directory
+mkdir -p /var/log/nginx/director/
+chmod o-rwx /var/log/nginx/director/
+
 # Setup supervisor
 cp config/dev-supervisord.conf /etc/supervisor/supervisord.conf
 systemctl start supervisor
