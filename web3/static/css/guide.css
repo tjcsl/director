@@ -1,6 +1,6 @@
 .guide {
-    margin-left: 170px;
-    width: calc(100% - 170px);
+    margin-left: 200px;
+    width: calc(100% - 200px);
 }
 .guide .step {
     border-left: 5px solid #aaa;
