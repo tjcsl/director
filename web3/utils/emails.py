@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 
 
 def send_new_site_email(user, site):
+    """Send email informing user about being added to a new site."""
     context = {"user": user, "site": site, "contact_email": settings.EMAIL_CONTACT}
     plain_message = render_to_string("emails/new_site_added.txt", context)
     html_message = render_to_string("emails/new_site_added.html", context)
@@ -17,6 +18,7 @@ def send_new_site_email(user, site):
 
 
 def send_approval_request_email(request):
+    """Send email to teachers after students have submitted a site request."""
     context = {"request": request, "contact_email": settings.EMAIL_CONTACT}
     plain_message = render_to_string("emails/approval_request.txt", context)
     html_message = render_to_string("emails/approval_request.html", context)
@@ -34,6 +36,7 @@ def send_approval_request_email(request):
 
 
 def send_admin_request_email(request):
+    """Send email to administrators after teachers have approved a site request."""
     context = {"request": request}
     plain_message = render_to_string("emails/admin_request.txt", context)
     html_message = render_to_string("emails/admin_request.html", context)
