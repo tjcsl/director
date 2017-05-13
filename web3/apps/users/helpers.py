@@ -5,6 +5,9 @@ from ...utils.tjldap import get_uid, get_full_name
 
 
 def generate_debug_id(username):
+    """Used in development environments to generate a user id when logging in.
+    This avoids having to connect to the LDAP server (which requires VPN externally) in order to get an id.
+    """
     if User.objects.filter(username=username).exists():
         return User.objects.get(username=username).id
 
