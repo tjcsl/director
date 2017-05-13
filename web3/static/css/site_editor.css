@@ -213,6 +213,19 @@ body.dark ::-webkit-scrollbar-thumb {
 body.dark .lm_header .lm_tab.lm_active {
     box-shadow: none;
 }
+body.dark .modal-content {
+    background-color: #333;
+    color: white;
+}
+body.dark .modal-header {
+    border-bottom-color: #555;
+}
+body.dark .modal-footer {
+    border-top-color: #555;
+}
+body.dark .modal-footer button {
+    border: none;
+}
 .lm_splitter.lm_vertical .lm_drag_handle {
     height: 15px;
     top: 0px;
