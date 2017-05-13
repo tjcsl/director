@@ -99,6 +99,10 @@ sed -i 's/^group:.*/group: compat pgsql/' /etc/nsswitch.conf
 mkdir -p /var/log/nginx/director/
 chmod o-rwx /var/log/nginx/director/
 
+# Make install scripts folder
+mkdir -p /scripts/
+cp scripts/* /scripts/
+
 # Setup supervisor
 cp config/dev-supervisord.conf /etc/supervisor/supervisord.conf
 systemctl start supervisor

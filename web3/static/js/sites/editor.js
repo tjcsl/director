@@ -1453,6 +1453,12 @@ $(document).ready(function() {
         $("#files").focus();
     });
 
+    $(window).bind("onbeforeunload", function() {
+        if ($(".file-indicator:not(.saved)").length) {
+            return "You have unsaved files. Are you sure you want to exit?";
+        }
+    });
+
     addFileListener();
 });
 function join(a, b) {
