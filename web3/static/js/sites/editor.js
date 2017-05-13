@@ -12,7 +12,8 @@ $(document).ready(function() {
         "live-autocompletion": true,
         "hide-navbar": false,
         "close-terminal": false,
-        "beginner-tips": false
+        "beginner-tips": false,
+        "confirm-leave": true
     };
     var layout_config = {
         settings: {
@@ -1454,7 +1455,7 @@ $(document).ready(function() {
     });
 
     $(window).bind("beforeunload", function(e) {
-        if ($(".file-indicator:not(.saved)").length) {
+        if ($(".file-indicator:not(.saved)").length && settings["confirm-leave"]) {
             var msg = "You have unsaved files. Are you sure you want to exit?";
             e.returnValue = msg;
             return msg;
