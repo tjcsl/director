@@ -39,6 +39,7 @@ def editor_view(request, site_id):
 
 @login_required
 def editor_path_view(request, site_id):
+    """Returns a list of files and folders in the requested path."""
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
@@ -67,6 +68,7 @@ def editor_path_view(request, site_id):
 
 @login_required
 def editor_load_view(request, site_id):
+    """Reads the requested file and returns it to the client."""
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
@@ -299,6 +301,7 @@ def editor_move_view(request, site_id):
 @require_http_methods(["POST"])
 @login_required
 def editor_process_view(request, site_id):
+    """Set the server process script file for dynamic sites."""
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
@@ -332,6 +335,7 @@ def editor_process_view(request, site_id):
 @require_http_methods(["POST"])
 @login_required
 def editor_exec_view(request, site_id):
+    """Set/unset the executable bit for the requested files."""
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
@@ -417,6 +421,7 @@ def web_terminal_view(request, site_id):
 @require_http_methods(["POST"])
 @login_required
 def site_type_view(request, site_id):
+    """Change the site category between static, PHP, and dynamic."""
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
