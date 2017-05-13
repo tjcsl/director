@@ -1453,7 +1453,7 @@ $(document).ready(function() {
         $("#files").focus();
     });
 
-    $(window).bind("onbeforeunload", function(e) {
+    $(window).bind("beforeunload", function(e) {
         if ($(".file-indicator:not(.saved)").length) {
             var msg = "You have unsaved files. Are you sure you want to exit?";
             e.returnValue = msg;
