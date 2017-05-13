@@ -9,6 +9,33 @@ from ..users.models import User, Group
 
 
 class Site(models.Model):
+
+    """Represents a website.
+
+    Attributes:
+        name
+            The name of the website, max length 32 characters.
+        category
+            What the website runs in the backend.
+            If set to static, the webserver will serve static files in the public folder.
+            If set to PHP, the website will serve static files in the public folder and execute any php files.
+            If set to dynamic, the user will have to select a process to run for the webserver.
+            If set to virtual machine, the site will forward to port 80 of a virtual machine that the user selects.
+        purpose
+            What the website is intended to be used for. This affects the domain that the website uses and
+            where the website files are stored.
+        description
+            A description of the website. For user websites, this is often just the full name of the user.
+            For activity websites, this is often the name of the activity.
+        user
+            The user that processes associated with the website will run as.
+        description
+            The group that processes associated with the website will run as.
+        custom_nginx
+            If True, the Nginx configuration will not be automatically generated or overwritten.
+        repo_path
+            The path of the GitHub repository used for webhooks relative to site.path.
+    """
     name = models.CharField(max_length=32, unique=True)
     category = models.CharField(max_length=16, choices=(
         ("static", "Static"),
@@ -101,6 +128,14 @@ class Site(models.Model):
 
 
 class Domain(models.Model):
+    """Represents a domain.
+
+    Attributes:
+        site
+            The site that the domain is associated with.
+        domain
+            The domain as a string.
+    """
     site = models.ForeignKey(Site, null=True, on_delete=models.CASCADE)
     domain = models.CharField(max_length=255, unique=True)
 
@@ -113,6 +148,14 @@ class Domain(models.Model):
 
 
 class Process(models.Model):
+    """Represents a process associated with dynamic websites.
+
+    Attributes:
+        site
+            The site that this process is associated with.
+        path
+            The absolute path of the script file to run.
+    """
     site = models.OneToOneField(Site)
     path = models.FilePathField(path=settings.WEB_ROOT)
 
@@ -124,6 +167,17 @@ class Process(models.Model):
 
 
 class Database(models.Model):
+    """Represents an SQL database that is associated with a website.
+
+    Attributes:
+        site
+            The site that the database is associated with.
+        category
+            Whether this database is a MySQL or PostgreSQL database.
+        password
+            The password of the user used to connect to the database.
+            This is automatically generated in most cases.
+    """
     site = models.OneToOneField(Site)
     category = models.CharField(max_length=16, choices=(
         ("postgresql", "PostgreSQL"),
