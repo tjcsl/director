@@ -34,6 +34,10 @@ def create_site_users(site):
 
 
 def add_access_token(func):
+    """Decorator to add an access token if it is not set.
+
+    Used to ensure that the user can authenticate with the Node.js server for cases like the web terminal.
+    """
     def func_wrapper(request, **kwargs):
         if not request.user.access_token:
             request.user.access_token = get_random_string(24)
@@ -77,11 +81,13 @@ def delete_php_config(site):
 
 
 def write_new_index_file(site):
+    """Creates a default index file for new sites."""
     with open(os.path.join(site.path, "public", "index.html"), "w+") as f:
         f.write(render_to_string("config/index.html", {"site": site}))
 
 
 def delete_site_files(site):
+    """Deletes all site content and configuration files."""
     files = ["/etc/nginx/director.d/{}.conf", "/etc/php/7.0/fpm/pool.d/{}.conf", "/etc/supervisor/director.d/{}.conf"]
     files = [x.format(site.name) for x in files]
     for f in files:
@@ -153,6 +159,7 @@ def check_nginx_config():
 
 
 def flush_permissions():
+    """Resets any cached users or groups."""
     if os.path.isfile("/proc/net/rpc/auth.unix.gid/flush"):
         with open("/proc/net/rpc/auth.unix.gid/flush", "w") as f:
             f.write(str(int(time.time())))
@@ -229,6 +236,7 @@ def get_latest_commit(site):
 
 
 def fix_permissions(site):
+    """Makes sure that all files are owned by the site user and the site group has access."""
     for root, dirs, files in os.walk(site.path):
         dirs[:] = [d for d in dirs if not d == ".ssh"]
         for f in files + dirs:
@@ -276,6 +284,7 @@ def list_executable_files(path, level):
 
 
 def clean_site_type(instance):
+    """Destroy any old site configuration caused by changing site types."""
     if instance.category != "php":
         delete_php_config(instance)
 
