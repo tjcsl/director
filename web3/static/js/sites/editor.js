@@ -1453,9 +1453,11 @@ $(document).ready(function() {
         $("#files").focus();
     });
 
-    $(window).bind("onbeforeunload", function() {
+    $(window).bind("onbeforeunload", function(e) {
         if ($(".file-indicator:not(.saved)").length) {
-            return "You have unsaved files. Are you sure you want to exit?";
+            var msg = "You have unsaved files. Are you sure you want to exit?";
+            e.returnValue = msg;
+            return msg;
         }
     });
 
