@@ -50,7 +50,7 @@ def change_postgres_password(database):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     try:
-        cursor.execute("ALTER USER {} WITH PASSWORD \'{}\'".format(database.username, database.password))
+        cursor.execute("ALTER USER \"{}\" WITH PASSWORD \'{}\'".format(database.username, database.password))
         return True
     except psycopg2.DatabaseError:
         client.captureException()
@@ -65,8 +65,8 @@ def delete_postgres_database(database):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     try:
-        cursor.execute("DROP DATABASE IF EXISTS {}".format(database.db_name))
-        cursor.execute("DROP USER IF EXISTS {}".format(database.username))
+        cursor.execute("DROP DATABASE IF EXISTS \"{}\"".format(database.db_name))
+        cursor.execute("DROP USER IF EXISTS \"{}\"".format(database.username))
         return True
     except psycopg2.OperationalError:
         client.captureException()
