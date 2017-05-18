@@ -36,7 +36,7 @@ def create_postgres_database(database):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
     try:
-        cursor.execute("GRANT ALL ON SCHEMA public TO {}".format(database.username))
+        cursor.execute("GRANT ALL ON SCHEMA public TO \"{}\"".format(database.username))
         return True
     except psycopg2.DatabaseError:
         client.captureException()
@@ -106,8 +106,8 @@ def create_mysql_database(database):
         cursor.execute("SELECT 1 FROM mysql.user WHERE user = '{}'".format(database.username))
         if cursor.rowcount == 0:
             cursor.execute("CREATE USER '{}'@'%' IDENTIFIED BY '{}';".format(database.username, database.password))
-        cursor.execute("CREATE DATABASE IF NOT EXISTS '{}';".format(database.db_name))
-        cursor.execute("GRANT ALL ON '{}' . * TO '{}';".format(database.db_name, database.username))
+        cursor.execute("CREATE DATABASE IF NOT EXISTS {};".format(database.db_name))
+        cursor.execute("GRANT ALL ON {} . * TO '{}';".format(database.db_name, database.username))
         cursor.execute("FLUSH PRIVILEGES;")
         return True
     except (MySQLProgrammingError, MySQLOperationalError):
