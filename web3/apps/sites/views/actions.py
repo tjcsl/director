@@ -1,4 +1,5 @@
 import os
+import threading
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -34,7 +35,10 @@ def permission_view(request, site_id):
         raise PermissionDenied
 
     make_site_dirs(site)
-    fix_permissions(site)
+
+    t = threading.Thread(target=fix_permissions, args=(site,))
+    t.setDaemon(True)
+    t.start()
 
     messages.success(request, "File permissions regenerated!")
     return redirect("info_site", site_id=site.id)
