@@ -1492,7 +1492,7 @@ function addFileListener() {
                     }
                     else {
                         var node = getElement(data.path);
-                        if (node) {
+                        if (node && node.find("i.fa").hasClass("fa-folder-open-o")) {
                             var newNode = makeNode({name: data.name, type: data.type ? "d" : "f", executable: data.exec, link: data.link}, parseInt(node.attr("data-depth")) + 1);
                             if (!node.nextUntil("div.folder[data-depth=" + node.attr("data-depth") + "]").filter("div." + (data.type ? "folder" : "file") + "[data-depth=" + (parseInt(node.attr("data-depth") + 1)) + "][data-name='" + escapeFileName(data.name) + "']").length) {
                                 node.after(newNode);

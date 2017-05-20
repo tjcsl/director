@@ -42,6 +42,7 @@ app.post("/ws/terminal/:id/size", function(req, res) {
     res.end();
 });
 
+var onlineUsers = {};
 var wss = new WebSocketServer({ server: server });
 wss.on("connection", function(ws) {
     var id = uuid();
@@ -91,19 +92,21 @@ wss.on("connection", function(ws) {
                 }
                 else {
                     if (data.editor) {
-                        var hooks = {};
                         function addHook(p) {
                             if (!path.join(auth.site_homedir, p).startsWith(auth.site_homedir)) {
                                 return;
                             }
-                            hooks[p] = inotify.addWatch({
+                            if (p in onlineUsers[auth.site_name].hooks) {
+                                return;
+                            }
+                            onlineUsers[auth.site_name].hooks[p] = inotify.addWatch({
                                 path: path.join(auth.site_homedir, p),
                                 watch_for: Inotify.IN_CREATE | Inotify.IN_DELETE | Inotify.IN_MOVED_FROM | Inotify.IN_MOVED_TO | Inotify.IN_IGNORED | Inotify.IN_DELETE_SELF | Inotify.IN_MODIFY,
                                 callback: function(e) {
                                     var act = null;
                                     var stat = null;
                                     if (e.mask & (Inotify.IN_DELETE_SELF | Inotify.IN_IGNORED)) {
-                                        delete hooks[p];
+                                        delete onlineUsers[auth.site_name].hooks[p];
                                         return;
                                     }
                                     if (e.mask & (Inotify.IN_DELETE | Inotify.IN_MOVED_FROM)) {
@@ -129,31 +132,45 @@ wss.on("connection", function(ws) {
                                         }
                                     }
                                     if (act) {
-                                        if (ws.readyState == 1) {
-                                            // websocket is in OPEN state
-                                            ws.send(JSON.stringify({
-                                                path: (p ? p : undefined),
-                                                type: !!(e.mask & Inotify.IN_ISDIR),
-                                                name: e.name,
-                                                action: act,
-                                                exec: (stat ? ((stat["mode"] & 1) && !stat.isDirectory()) : undefined),
-                                                link: (stat ? stat.isSymbolicLink() : undefined)
-                                            }));
+                                        var msg = JSON.stringify({
+                                            path: (p ? p : undefined),
+                                            type: !!(e.mask & Inotify.IN_ISDIR),
+                                            name: e.name,
+                                            action: act,
+                                            exec: (stat ? ((stat["mode"] & 1) && !stat.isDirectory()) : undefined),
+                                            link: (stat ? stat.isSymbolicLink() : undefined)
+                                        });
+                                        for (var i = 0; i < onlineUsers[auth.site_name].sockets.length; i++) {
+                                            var s = onlineUsers[auth.site_name].sockets[i];
+                                            if (s.readyState == 1) {
+                                                // websocket is in OPEN state
+                                                s.send(msg);
+                                            }
                                         }
                                     }
                                 }
                             });
                         }
+                        if (auth.site_name in onlineUsers) {
+                            onlineUsers[auth.site_name].sockets.push(ws);
+                        }
+                        else {
+                            onlineUsers[auth.site_name] = {sockets: [ws], hooks: {}};
+                        }
                         addHook("");
                         addHook("public");
                         ws.on("close", function() {
-                            for (var hook in hooks) {
-                                try {
-                                    inotify.removeWatch(hooks[hook]);
+                            onlineUsers[auth.site_name].sockets.splice(onlineUsers[auth.site_name].sockets.indexOf(ws), 1);
+                            if (!onlineUsers[auth.site_name].sockets) {
+                                for (var hook in onlineUsers[auth.site_name].hooks) {
+                                    try {
+                                        inotify.removeWatch(hooks[hook]);
+                                    }
+                                    catch (e) {
+                                        // watch was already removed
+                                    }
                                 }
-                                catch (e) {
-                                    // watch was already removed
-                                }
+                                delete onlineUsers[auth.site_name];
                             }
                         });
                         ws.removeListener("message", message_init);
