@@ -234,3 +234,13 @@ body.dark .modal-footer button {
     width: 15px;
     left: 0px;
 }
+#users {
+    margin-right: 5px;
+}
+#users span {
+    cursor: default;
+    margin-right: 5px;
+    padding: 5px;
+    color: white;
+    background-color: #66CD00;
+}

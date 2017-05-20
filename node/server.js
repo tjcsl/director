@@ -92,11 +92,25 @@ wss.on("connection", function(ws) {
                 }
                 else {
                     if (data.editor) {
+                        ws.user = auth.user;
+                        function sendUserCount() {
+                            var msg = JSON.stringify({
+                                action: "users",
+                                users: onlineUsers[auth.site_name].sockets.map(function(x) { return x.user; })
+                            });
+                            for (var i = 0; i < onlineUsers[auth.site_name].sockets.length; i++) {
+                                var s = onlineUsers[auth.site_name].sockets[i];
+                                if (s.readyState == 1) {
+                                    // websocket is in OPEN state
+                                    s.send(msg);
+                                }
+                            }
+                        }
                         function addHook(p) {
                             if (!path.join(auth.site_homedir, p).startsWith(auth.site_homedir)) {
                                 return;
                             }
-                            if (p in onlineUsers[auth.site_name].hooks) {
+                            if (!onlineUsers[auth.site_name] || p in onlineUsers[auth.site_name].hooks) {
                                 return;
                             }
                             onlineUsers[auth.site_name].hooks[p] = inotify.addWatch({
@@ -172,7 +186,11 @@ wss.on("connection", function(ws) {
                                 }
                                 delete onlineUsers[auth.site_name];
                             }
+                            else {
+                                sendUserCount();
+                            }
                         });
+                        sendUserCount();
                         ws.removeListener("message", message_init);
                         ws.on("message", function(d) {
                             var data = JSON.parse(d);

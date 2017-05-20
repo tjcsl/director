@@ -1513,6 +1513,20 @@ function addFileListener() {
                         del.remove();
                     }
                 }
+                else if (data.action == "users") {
+                    $("#users").children().remove();
+                    var flag = true;
+                    $.each(data.users, function(k, v) {
+                        if (v == user_name && flag) {
+                            flag = false;
+                            return;
+                        }
+                        var ele = $("<span />");
+                        ele.attr("title", v);
+                        ele.text(v.match(/[a-zA-Z]/)[0].toUpperCase());
+                        $("#users").append(ele);
+                    });
+                }
             };
             $(document).on("folder:load", "#files div.folder", function() {
                 ws.send(JSON.stringify({action: "listen", path: getPath($(this))}));

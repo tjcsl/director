@@ -37,6 +37,7 @@
     <script type="text/javascript" src="{% static 'js/sites/editor.js' %}"></script>
     <script type="text/javascript">
     var site_url = "{{ site.url }}";
+    var user_name = "{{ request.user.username }}";
     var site_name = "{{ site.name }}";
     var path_endpoint = "{% url 'editor_path' site.id %}";
     var load_endpoint = "{% url 'editor_load' site.id %}";
@@ -72,6 +73,10 @@
     </script>
     <script type="text/javascript" src="{% static 'js/sql_console.js' %}"></script>
     {% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <div id="users" class="pull-right"></div>
 {% endblock %}
 
 {% block main %}
