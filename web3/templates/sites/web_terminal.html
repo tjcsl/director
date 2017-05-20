@@ -10,15 +10,27 @@
         overflow-y: hidden;
     }
     .main {
-        padding: 5px;
+        padding: 0;
         background-color: black;
         padding-right: 0;
     }
     .console-wrapper {
         width: 100%;
         height: 100%;
-        height: calc(100vh - 45px);
+        height: calc(100vh - 40px);
+        padding-left: 5px;
+        padding-top: 5px;
         overflow-y: hidden;
+    }
+    #command-info {
+        display: none;
+        background-color: white;
+        color: black;
+        padding: 5px;
+        text-align: center;
+    }
+    #command-info b {
+        font-family: monospace;
     }
     </style>
 {% endblock %}
@@ -33,6 +45,9 @@
     var site_endpoint = "{% url 'info_site' site.id %}";
 
     $(document).ready(function() {
+        if (command) {
+            $("#command-info").show().find("b").text(command);
+        }
         registerTerminal($(".console-wrapper"), { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}" }, {
             onStart: function(term) {
                 if (command) {
@@ -53,6 +68,7 @@
 {% endblock %}
 
 {% block main %}
+<div id="command-info">Running command <b></b>...</div>
 <div class="console-wrapper" tabindex="0">
     <div class="console"></div>
     <div class="disconnect">
