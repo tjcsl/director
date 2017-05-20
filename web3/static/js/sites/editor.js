@@ -1161,7 +1161,7 @@ $(document).ready(function() {
                     triggerDelete();
                     e.preventDefault();
                 }
-                if (e.keyCode == 13) {
+                if (e.keyCode == 13 && !e.altKey) {
                     // Enter
                     items.dblclick();
                     e.preventDefault();
