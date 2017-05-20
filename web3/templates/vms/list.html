@@ -12,6 +12,10 @@
     <script type="text/javascript" src="{% static 'js/search.js' %}"></script>
 {% endblock %}
 
+{% block navbar %}
+<input class="form-control search-box" data-search="#vms .vm" data-fields=".name,.owner,.sub" type="text" placeholder="&#xf002; Search VMs" />
+{% endblock %}
+
 {% block main %}
 <div class="subheading clearfix">
     <h3 class="pull-left">Virtual Machines <span id="filtered"></span></h3>
