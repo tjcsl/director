@@ -30,6 +30,9 @@ class IonOauth2(BaseOAuth2):
         ('expires_in', 'expires')
     ]
 
+    def get_scope(self):
+        return ["read"]
+
     def get_user_details(self, response):
         profile = self.get_json('https://ion.tjhsst.edu/api/profile',
                                 params={'access_token': response['access_token']})
