@@ -26,9 +26,14 @@ def index_view(request):
         if sites.count() == 0:
             return redirect("start")
 
+        if request.user.is_superuser and request.GET.get("all", False):
+            other_sites = Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name")
+        else:
+            other_sites = None
+
         return render(request, "dashboard.html", {
             "sites": sites,
-            "other_sites": Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name") if request.user.is_superuser else None
+            "other_sites": other_sites
         })
     else:
         return login_view(request)
