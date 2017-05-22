@@ -190,6 +190,12 @@ wss.on("connection", function(ws) {
                                 sendUserCount();
                             }
                         });
+                        // remove any dead connections
+                        for (var i = onlineUsers[auth.site_name].sockets.length - 1; i >= 0; i--) {
+                            if (onlineUsers[auth.site_name].sockets[i].readyState == 3) {
+                                onlineUsers[auth.site_name].sockets.splice(i, 1);
+                            }
+                        }
                         sendUserCount();
                         ws.removeListener("message", message_init);
                         ws.on("message", function(d) {
