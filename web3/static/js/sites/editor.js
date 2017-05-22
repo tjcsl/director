@@ -1362,7 +1362,7 @@ $(document).ready(function() {
     layout.registerComponent("file", function(container, componentState) {
         container.on("tab", addContextHandlers);
         if (componentState.isImage) {
-            container.setTitle("<i class='fa fa-picture-o'></i> " + componentState.file);
+            container.setTitle("<span class='fa fa-picture-o'></span> " + componentState.file);
             var img = $("<img />");
             var img_info = $("<div class='image-info' />");
             img.on("load", function() {
@@ -1375,7 +1375,7 @@ $(document).ready(function() {
             container.getElement().append(img_container);
         }
         else if (componentState.isMedia) {
-            container.setTitle("<i class='fa fa-video-camera'></i> " + componentState.file);
+            container.setTitle("<span class='fa fa-video-camera'></span> " + componentState.file);
             var obj;
             if (componentState.path.toLowerCase().match(/\.pdf$/) != null) {
                 obj = $("<embed class='embedded' type='application/pdf' />");
