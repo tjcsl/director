@@ -109,6 +109,10 @@ span.file-indicator.readonly {
 .image-container img {
     border: 1px solid black;
 }
+.image-container .image-info {
+    font-family: monospace;
+    font-size: 12px;
+}
 .settings-pane {
     width: 100%;
     height: 100%;

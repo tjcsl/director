@@ -1364,9 +1364,14 @@ $(document).ready(function() {
         if (componentState.isImage) {
             container.setTitle(componentState.file);
             var img = $("<img />");
+            var img_info = $("<div class='image-info' />");
+            img.on("load", function() {
+                img_info.text(img[0].naturalWidth + "px x " + img[0].naturalHeight + "px");
+            });
             img.attr("src", download_endpoint + "?name=" + encodeURIComponent(componentState.path) + "&embed=true");
             var img_container = $("<div class='image-container' />");
             img_container.append(img);
+            img_container.append(img_info);
             container.getElement().append(img_container);
         }
         else if (componentState.isMedia) {
