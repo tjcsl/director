@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from djang.conf import settings
+from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from raven.contrib.django.raven_compat.models import client
