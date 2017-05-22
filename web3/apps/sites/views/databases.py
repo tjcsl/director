@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from djang.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
 from raven.contrib.django.raven_compat.models import client
@@ -73,9 +74,15 @@ def sql_database_view(request, site_id):
         return HttpResponse("feature disabled\n\n", content_type="text/plain")
 
     if site.database.category == "mysql":
+        if not settings.POSTGRES_DB_HOST:
+            return HttpResponse("Director has been improperly configured! (Missing POSTGRES_DB_HOST)", content_type="text/plain")
+
         ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username),
-                                           "--host=mysql1", site.database.db_name, "-e", sql], env={"MYSQL_PWD": site.database.password})
+                                           "--host={}".format(settings.MYSQL_DB_HOST), site.database.db_name, "-e", sql], env={"MYSQL_PWD": site.database.password})
     else:
+        if not settings.MYSQL_DB_HOST:
+            return HttpResponse("Director has been improperly configured! (Missing MYSQL_DB_HOST)", content_type="text/plain")
+
         ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql], env={"SHELL": "/usr/sbin/nologin"})
     return HttpResponse(out + err, content_type="text/plain")
 
@@ -115,7 +122,7 @@ def load_database_view(request, site_id):
         proc = Popen(["psql", str(site.database)], preexec_fn=demote(
             site.user.id, site.group.id), cwd=site.path, stdin=PIPE, stdout=PIPE, stderr=PIPE)
     elif site.database.category == "mysql":
-        proc = Popen(["mysql", "-u", site.database.username, "--password={}".format(site.database.password), "-h", "mysql1", site.database.db_name], preexec_fn=demote(
+        proc = Popen(["mysql", "-u", site.database.username, "--password={}".format(site.database.password), "-h", settings.MYSQL_DB_HOST, site.database.db_name], preexec_fn=demote(
             site.user.id, site.group.id), cwd=site.path, stdin=PIPE, stdout=PIPE, stderr=PIPE)
 
     for chunk in sql_file.chunks():
@@ -149,7 +156,7 @@ def dump_database_view(request, site_id):
         ret, out, err = run_as_site(site, ["pg_dump", str(site.database)], timeout=60)
     elif site.database.category == "mysql":
         ret, out, err = run_as_site(
-            site, ["mysqldump", "-u", site.database.username, "--password={}".format(site.database.password), "-h", "mysql1", site.database.db_name], timeout=60)
+            site, ["mysqldump", "-u", site.database.username, "--password={}".format(site.database.password), "-h", settings.MYSQL_DB_HOST, site.database.db_name], timeout=60)
 
     if ret == 0:
         resp = HttpResponse(out, content_type="application/force-download")

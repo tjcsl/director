@@ -11,6 +11,9 @@ from raven.contrib.django.raven_compat.models import client
 
 
 def create_postgres_database(database):
+    if not settings.POSTGRES_DB_HOST:
+        return True
+
     conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(
         settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
@@ -46,6 +49,9 @@ def create_postgres_database(database):
 
 
 def change_postgres_password(database):
+    if not settings.POSTGRES_DB_HOST:
+        return True
+
     conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = conn.cursor()
@@ -60,6 +66,9 @@ def change_postgres_password(database):
 
 
 def delete_postgres_database(database):
+    if not settings.POSTGRES_DB_HOST:
+        return True
+
     conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(
         settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
@@ -78,6 +87,9 @@ def delete_postgres_database(database):
 def list_tables(database):
     try:
         if database.category == "postgresql":
+            if not settings.POSTGRES_DB_HOST:
+                return []
+
             conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(
                 settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
             cursor = conn.cursor()
@@ -87,6 +99,9 @@ def list_tables(database):
             finally:
                 conn.close()
         elif database.category == "mysql":
+            if not settings.MYSQL_DB_HOST:
+                return []
+
             conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
             cursor = conn.cursor()
             try:
@@ -100,6 +115,9 @@ def list_tables(database):
 
 
 def create_mysql_database(database):
+    if not settings.MYSQL_DB_HOST:
+        return True
+
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
@@ -118,6 +136,9 @@ def create_mysql_database(database):
 
 
 def change_mysql_password(database):
+    if not settings.MYSQL_DB_HOST:
+        return True
+
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
@@ -132,6 +153,9 @@ def change_mysql_password(database):
 
 
 def delete_mysql_database(database):
+    if not settings.MYSQL_DB_HOST:
+        return True
+
     conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
