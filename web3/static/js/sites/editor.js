@@ -1547,12 +1547,7 @@ function addFileListener() {
                 }
                 else if (data.action == "users") {
                     $("#users").children().remove();
-                    var flag = true;
                     $.each(data.users, function(k, v) {
-                        if (v == user_name && flag) {
-                            flag = false;
-                            return;
-                        }
                         var ele = $("<span />");
                         ele.attr("title", v);
                         ele.text(v.match(/[a-zA-Z]/)[0].toUpperCase());
