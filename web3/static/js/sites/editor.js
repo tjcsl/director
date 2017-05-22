@@ -904,7 +904,11 @@ $(document).ready(function() {
                             var fileobj = $(this);
                             var filepath = getPath(fileobj) + fileobj.attr("data-name");
                             if (filepath.startsWith("public/")) {
-                                var final_url = site_url + filepath.replace(/^public\//, "");
+                                var final_url = site_url;
+                                if (!final_url.endsWith("/")) {
+                                    final_url += "/";
+                                }
+                                final_url += filepath.replace(/^public\//, "");
                                 window.open(final_url, "_blank");
                             }
                             else {
