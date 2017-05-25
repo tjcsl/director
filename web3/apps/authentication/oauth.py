@@ -20,6 +20,11 @@ def create_user_group(strategy, details, user, *args, **kwargs):
     return {"group": group}
 
 
+def add_to_global_group(strategy, details, user, *args, **kwargs):
+    group = Group.objects.get(id=1337)
+    group.users.add(user.pk)
+
+
 class IonOauth2(BaseOAuth2):
     name = 'ion'
     AUTHORIZATION_URL = 'https://ion.tjhsst.edu/oauth/authorize'

