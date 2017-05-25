@@ -133,6 +133,13 @@ def index():
 
 gunicorn server:app -b 127.0.0.1:$PORT -w=4</code></pre>
 </div>
+<h6>Resource Limits</h6>
+<p>Server processes will run under the following limitations:</p>
+<ul>
+    <li>Maximum 150 processes per user</li>
+    <li>Maximum 2G memory per process</li>
+</ul>
+<p>If you need more resources, contact a sysadmin.</p>
 <h5>Virtual Machines</h5>
 <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> Virtual machines currently only support IPv6. You may not be able to access sites that exclusively support IPv4 inside the virtual machine.</div>
 <p>In some cases, your web application may use software or features that require administrative access. In these cases, you might want to create a virtual machine, which will give you an environment where you have complete control. You can view and create virtual machines by clicking on your name in the top right corner and selecting <span class="click"><i class="fa fa-server"></i> Virtual Machines</span>. You can create a new virtual machine by clicking on <span class="click"><i class="fa fa-plus"></i> Create VM</span>.</p>
