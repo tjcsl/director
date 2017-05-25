@@ -17,7 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.conf import settings
 
-from .apps.authentication import views as auth_views
+from .apps.auth import views as auth_views
 from .apps.users import views as user_views
 from .apps.feedback import views as feedback_views
 

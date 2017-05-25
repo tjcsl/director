@@ -10,7 +10,7 @@ from ..helpers import (reload_services, delete_site_files, create_config_files, 
                        get_supervisor_status, delete_process_config, write_new_index_file, get_latest_commit, reload_nginx_config,
                        list_executable_files, update_supervisor)
 
-from ...authentication.decorators import superuser_required
+from ...auth.decorators import superuser_required
 from ...vms.models import VirtualMachine
 from ...request.models import SiteRequest
 

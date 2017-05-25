@@ -12,7 +12,7 @@ from django.core.validators import validate_email
 
 from .forms import UserForm
 from .helpers import create_user, create_webdocs
-from ..authentication.decorators import superuser_required
+from ..auth.decorators import superuser_required
 from ..sites.helpers import flush_permissions, write_new_index_file, reload_services
 from ...utils.tjldap import get_full_name
 

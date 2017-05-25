@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'social.apps.django_app.default',
     'web3',
-    'web3.apps.authentication',
+    'web3.apps.auth',
     'web3.apps.sites',
     'web3.apps.users',
     'web3.apps.vms',
@@ -163,17 +163,17 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_uid',
     'social.pipeline.social_auth.auth_allowed',
     'social.pipeline.social_auth.social_user',
-    'web3.apps.authentication.oauth.get_username',
+    'web3.apps.auth.oauth.get_username',
     'social.pipeline.social_auth.associate_by_email',
     'social.pipeline.user.create_user',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',
-    'web3.apps.authentication.oauth.create_user_group',
-    'web3.apps.authentication.oauth.add_to_global_group'
+    'web3.apps.auth.oauth.create_user_group',
+    'web3.apps.auth.oauth.add_to_global_group'
 )
 
 AUTHENTICATION_BACKENDS = (
-    'web3.apps.authentication.oauth.IonOauth2',
+    'web3.apps.auth.oauth.IonOauth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 
