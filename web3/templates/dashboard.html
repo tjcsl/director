@@ -23,8 +23,12 @@
     {% if request.user.is_staff or not request.user.has_webdocs %}
     <a href="{% url 'create_webdocs' %}" class="pull-right btn btn-ion" style="margin-right:5px"><i class="fa fa-user-plus"></i><span class="hidden-xs-down"> Create</span> Webdocs</a>
     {% endif %}
-    {% if not other_sites and request.user.is_superuser %}
+    {% if request.user.is_superuser %}
+    {% if other_sites %}
+    <a href="{% url 'index' %}" class="pull-right btn btn-ion" style="margin-right:5px"><i class="fa fa-star-o"></i> Hide All</a>
+    {% else %}
     <a href="{% url 'index' %}?all=1" class="pull-right btn btn-ion" style="margin-right:5px"><i class="fa fa-star"></i> Show All</a>
+    {% endif %}
     {% endif %}
 </div>
 <div id="sites">
