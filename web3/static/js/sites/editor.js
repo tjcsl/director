@@ -105,7 +105,7 @@ $(document).ready(function() {
     function pollStatus(notify) {
         $.get(process_status_endpoint, function(data) {
             $(".server-status").text(data);
-            if (data.includes("STARTING")) {
+            if (data && data.includes("STARTING")) {
                 setTimeout(function() {
                     pollStatus(notify);
                 }, 1000);
@@ -860,7 +860,14 @@ $(document).ready(function() {
         "selector": "#files .file",
         build: function(trigger, e) {
             var multiple_selected = $("#files div.file.active").length > 1;
-            var is_public = getPath(trigger).startsWith("public/");
+            var filepath = getPath(trigger);
+            var is_public;
+            if (filepath) {
+                is_public = filepath.startsWith("public/");
+            }
+            else {
+                is_public = false;
+            }
             return {
                 callback: function(key, options) {
                     if (key == "open") {
