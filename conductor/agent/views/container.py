@@ -149,7 +149,7 @@ def container_set_config(name, key, value):
 
 
 @rpc.method("container.set_cgroup")
-def container_set_config(name, key, value):
+def container_set_cgroup(name, key, value):
     container = lxc.Container(name)
     if not container.defined:
         return 1
