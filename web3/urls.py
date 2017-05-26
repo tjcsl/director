@@ -24,7 +24,7 @@ from .apps.feedback import views as feedback_views
 from .apps.error.views import (handle_404_view, handle_500_view, handle_503_view)
 
 urlpatterns = [
-    url('', include('social.apps.django_app.urls', namespace='social')),
+    url('', include('social_django.urls', namespace='social')),
     url(r'^$', auth_views.index_view, name='index'),
     url('^about$', auth_views.about_view, name='about'),
     url('^guide$', auth_views.guide_view, name='guide'),

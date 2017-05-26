@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserM
 from django.utils import timezone
 from django.db.models import Q
 
-from social.apps.django_app.utils import load_strategy
+from social_django.utils import load_strategy
 
 import json
 import requests

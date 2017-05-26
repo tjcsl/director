@@ -1,5 +1,5 @@
-from social.backends.oauth import BaseOAuth2
-from social.pipeline.user import get_username as social_get_username
+from social_core.backends.oauth import BaseOAuth2
+from social_core.pipeline.user import get_username as social_get_username
 
 from ...utils.tjldap import get_uid
 from ..users.models import Group
