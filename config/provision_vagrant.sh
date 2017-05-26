@@ -3,6 +3,8 @@
 # This script is intended for setting up a development environment.
 # Additional configuration is necessary for production.
 
+export DEBIAN_FRONTEND=noninteractive
+
 set -e
 
 if [ "$EUID" -ne 0 ]
@@ -27,11 +29,16 @@ apt-get update
 apt-get upgrade -y
 
 apt-get install -y git
+apt-get install -y htop
 apt-get install -y php-fpm
 
 apt-get install -y sudo python python-dev python3 python3-dev python3-pip virtualenv libnss-pgsql2 nodejs nodejs-legacy supervisor
 apt-get install -y postgresql postgresql-contrib libpq-dev nginx
 apt-get install -y libmysqlclient-dev mysql-client-core-5.7
+
+# Install conductor-agent dependencies
+apt-get install -y lxc
+pip3 install Flask gunicorn dnspython
 
 mkdir -p /etc/nginx/director.d/
 mkdir -p /etc/supervisor/director.d/
@@ -56,6 +63,9 @@ sed -i '/dsn/d' web3/settings/secret.py
 # Setup Ion OAuth
 sed -i 's/^SOCIAL_AUTH_ION_KEY.*/SOCIAL_AUTH_ION_KEY = "'"$(devconfig ion_key)"'"/' web3/settings/secret.py
 sed -i 's/^SOCIAL_AUTH_ION_SECRET.*/SOCIAL_AUTH_ION_SECRET = "'"$(devconfig ion_secret)"'"/' web3/settings/secret.py
+
+# Setup conductor-agent path
+sed -i 's/^CONDUCTOR_AGENT_PATH.*/CONDUCTOR_AGENT_PATH = "http:\/\/localhost:4998\/"/' web3/settings/secret.py
 
 # Create web3 user and database
 sudo -u postgres createuser -D -A "web3" || echo "web3 user already exists"

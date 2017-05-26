@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# This script runs the Django and Node.js servers whenver the virtual machine starts.
+# This script runs the Django, Node.js, and conductor-agent servers whenver the virtual machine starts.
 
-supervisorctl restart director
-supervisorctl restart directornode
+export DEBIAN_FRONTEND=noninteractive
+
+supervisorctl start director
+supervisorctl start directornode
+supervisorctl start conductoragent
