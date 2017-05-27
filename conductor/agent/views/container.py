@@ -25,8 +25,9 @@ def create_container(name, template="debian"):
     proc = subprocess.Popen([script_path, name], stdout=subprocess.PIPE)
     exit_code = proc.wait()
     uuid = proc.stdout.read().strip().decode()
+    errors = proc.stderr.read().strip().decode()
     if exit_code:
-        return 1, ""
+        return 1, errors
 
     return 0, uuid
 

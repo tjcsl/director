@@ -1,0 +1,9 @@
+lxc.include = /usr/share/lxc/config/debian.common.conf
+lxc.arch = x86_64
+lxc.rootfs = $ROOTFS
+lxc.utsname = $HOSTNAME
+
+lxc.network.type = veth
+lxc.network.link = vbr1600
+lxc.network.flags = up
+lxc.network.hwaddr = $MAC

@@ -19,7 +19,7 @@ def call_api(action=None, **kwargs):
         resp = requests.request(method=("POST" if action else "GET"),
                                 json={"method": action, "args": kwargs},
                                 url=settings.CONDUCTOR_AGENT_PATH,
-                                timeout=10,
+                                timeout=30,
                                 **auth_args)
     except requests.exceptions.ConnectionError:
         client.captureException()

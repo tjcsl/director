@@ -1,0 +1,29 @@
+#!/bin/bash
+
+function makeRandomHex() {
+    max=$1
+    printf "%x" $(( $RANDOM % $max ))
+}
+
+function makeMac() {
+    echo "00:16:3e:$(makeRandomHex 128):$(makeRandomHex 256):$(makeRandomHex 256)"
+}
+
+HOSTNAME=$1
+UUID=$(uuidgen)
+MAC=$(makeMac)
+DEST=/usr/local/var/lib/lxc/$UUID
+ROOTFS=$DEST/rootfs
+TEMPLATE=/var/conductor/debian/rootfs
+
+mkdir $DEST
+cp -r $TEMPLATE $ROOTFS
+
+export UUID
+export MAC
+export ROOTFS
+
+cat /var/conductor/debian/config | envsubst > $DEST/config
+echo $HOSTNAME > $ROOTFS/etc/hostname
+
+echo $UUID
