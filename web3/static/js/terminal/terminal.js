@@ -52,7 +52,7 @@ function registerTerminal(wrapper, auth, options) {
                 }
                 if (data.id) {
                     termid = data.id;
-                    term.open(console[0]);
+                    term.open(console[0], true);
                     term.fit();
                 }
                 if (data.action == "START") {

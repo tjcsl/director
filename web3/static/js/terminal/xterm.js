@@ -1,5 +1,6 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Terminal = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.CHARSETS = {};
 exports.DEFAULT_CHARSET = exports.CHARSETS['B'];
 exports.CHARSETS['0'] = {
@@ -162,6 +163,7 @@ exports.CHARSETS['='] = {
 
 },{}],2:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var CompositionHelper = (function () {
     function CompositionHelper(textarea, compositionView, terminal) {
         this.textarea = textarea;
@@ -288,6 +290,7 @@ exports.CompositionHelper = CompositionHelper;
 
 },{}],3:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var C0;
 (function (C0) {
     C0.NUL = '\x00';
@@ -331,6 +334,7 @@ var C0;
 
 },{}],4:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 ;
 var EventEmitter = (function () {
     function EventEmitter() {
@@ -388,6 +392,7 @@ exports.EventEmitter = EventEmitter;
 
 },{}],5:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var EscapeSequences_1 = require("./EscapeSequences");
 var Charsets_1 = require("./Charsets");
 var InputHandler = (function () {
@@ -632,7 +637,12 @@ var InputHandler = (function () {
                     this._terminal.eraseLine(j);
                 break;
             case 3:
-                ;
+                var scrollBackSize = this._terminal.lines.length - this._terminal.rows;
+                if (scrollBackSize > 0) {
+                    this._terminal.lines.trimStart(scrollBackSize);
+                    this._terminal.ybase = Math.max(this._terminal.ybase - scrollBackSize, 0);
+                    this._terminal.ydisp = Math.max(this._terminal.ydisp - scrollBackSize, 0);
+                }
                 break;
         }
     };
@@ -1163,7 +1173,7 @@ var InputHandler = (function () {
         this._terminal.cursorHidden = false;
         this._terminal.insertMode = false;
         this._terminal.originMode = false;
-        this._terminal.wraparoundMode = false;
+        this._terminal.wraparoundMode = true;
         this._terminal.applicationKeypad = false;
         this._terminal.viewport.syncScrollArea();
         this._terminal.applicationCursor = false;
@@ -1314,6 +1324,234 @@ var wcwidth = (function (opts) {
 
 },{"./Charsets":1,"./EscapeSequences":3}],6:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var INVALID_LINK_CLASS = 'xterm-invalid-link';
+var protocolClause = '(https?:\\/\\/)';
+var domainCharacterSet = '[\\da-z\\.-]+';
+var negatedDomainCharacterSet = '[^\\da-z\\.-]+';
+var domainBodyClause = '(' + domainCharacterSet + ')';
+var tldClause = '([a-z\\.]{2,6})';
+var ipClause = '((\\d{1,3}\\.){3}\\d{1,3})';
+var localHostClause = '(localhost)';
+var portClause = '(:\\d{1,5})';
+var hostClause = '((' + domainBodyClause + '\\.' + tldClause + ')|' + ipClause + '|' + localHostClause + ')' + portClause + '?';
+var pathClause = '(\\/[\\/\\w\\.\\-%~]*)*';
+var queryStringHashFragmentCharacterSet = '[0-9\\w\\[\\]\\(\\)\\/\\?\\!#@$%&\'*+,:;~\\=\\.\\-]*';
+var queryStringClause = '(\\?' + queryStringHashFragmentCharacterSet + ')?';
+var hashFragmentClause = '(#' + queryStringHashFragmentCharacterSet + ')?';
+var negatedPathCharacterSet = '[^\\/\\w\\.\\-%]+';
+var bodyClause = hostClause + pathClause + queryStringClause + hashFragmentClause;
+var start = '(?:^|' + negatedDomainCharacterSet + ')(';
+var end = ')($|' + negatedPathCharacterSet + ')';
+var strictUrlRegex = new RegExp(start + protocolClause + bodyClause + end);
+var HYPERTEXT_LINK_MATCHER_ID = 0;
+var Linkifier = (function () {
+    function Linkifier() {
+        this._nextLinkMatcherId = HYPERTEXT_LINK_MATCHER_ID;
+        this._rowTimeoutIds = [];
+        this._linkMatchers = [];
+        this.registerLinkMatcher(strictUrlRegex, null, { matchIndex: 1 });
+    }
+    Linkifier.prototype.attachToDom = function (document, rows) {
+        this._document = document;
+        this._rows = rows;
+    };
+    Linkifier.prototype.linkifyRow = function (rowIndex) {
+        if (!this._document) {
+            return;
+        }
+        var timeoutId = this._rowTimeoutIds[rowIndex];
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        this._rowTimeoutIds[rowIndex] = setTimeout(this._linkifyRow.bind(this, rowIndex), Linkifier.TIME_BEFORE_LINKIFY);
+    };
+    Linkifier.prototype.setHypertextLinkHandler = function (handler) {
+        this._linkMatchers[HYPERTEXT_LINK_MATCHER_ID].handler = handler;
+    };
+    Linkifier.prototype.setHypertextValidationCallback = function (callback) {
+        this._linkMatchers[HYPERTEXT_LINK_MATCHER_ID].validationCallback = callback;
+    };
+    Linkifier.prototype.registerLinkMatcher = function (regex, handler, options) {
+        if (options === void 0) { options = {}; }
+        if (this._nextLinkMatcherId !== HYPERTEXT_LINK_MATCHER_ID && !handler) {
+            throw new Error('handler must be defined');
+        }
+        var matcher = {
+            id: this._nextLinkMatcherId++,
+            regex: regex,
+            handler: handler,
+            matchIndex: options.matchIndex,
+            validationCallback: options.validationCallback,
+            priority: options.priority || 0
+        };
+        this._addLinkMatcherToList(matcher);
+        return matcher.id;
+    };
+    Linkifier.prototype._addLinkMatcherToList = function (matcher) {
+        if (this._linkMatchers.length === 0) {
+            this._linkMatchers.push(matcher);
+            return;
+        }
+        for (var i = this._linkMatchers.length - 1; i >= 0; i--) {
+            if (matcher.priority <= this._linkMatchers[i].priority) {
+                this._linkMatchers.splice(i + 1, 0, matcher);
+                return;
+            }
+        }
+        this._linkMatchers.splice(0, 0, matcher);
+    };
+    Linkifier.prototype.deregisterLinkMatcher = function (matcherId) {
+        for (var i = 1; i < this._linkMatchers.length; i++) {
+            if (this._linkMatchers[i].id === matcherId) {
+                this._linkMatchers.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
+    };
+    Linkifier.prototype._linkifyRow = function (rowIndex) {
+        var row = this._rows[rowIndex];
+        if (!row) {
+            return;
+        }
+        var text = row.textContent;
+        for (var i = 0; i < this._linkMatchers.length; i++) {
+            var matcher = this._linkMatchers[i];
+            var linkElements = this._doLinkifyRow(row, matcher);
+            if (linkElements.length > 0) {
+                if (matcher.validationCallback) {
+                    var _loop_1 = function (j) {
+                        var element = linkElements[j];
+                        matcher.validationCallback(element.textContent, element, function (isValid) {
+                            if (!isValid) {
+                                element.classList.add(INVALID_LINK_CLASS);
+                            }
+                        });
+                    };
+                    for (var j = 0; j < linkElements.length; j++) {
+                        _loop_1(j);
+                    }
+                }
+                return;
+            }
+        }
+    };
+    Linkifier.prototype._doLinkifyRow = function (row, matcher) {
+        var result = [];
+        var isHttpLinkMatcher = matcher.id === HYPERTEXT_LINK_MATCHER_ID;
+        var nodes = row.childNodes;
+        var match = row.textContent.match(matcher.regex);
+        if (!match || match.length === 0) {
+            return result;
+        }
+        var uri = match[typeof matcher.matchIndex !== 'number' ? 0 : matcher.matchIndex];
+        var rowStartIndex = match.index + uri.length;
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            var searchIndex = node.textContent.indexOf(uri);
+            if (searchIndex >= 0) {
+                var linkElement = this._createAnchorElement(uri, matcher.handler, isHttpLinkMatcher);
+                if (node.textContent.length === uri.length) {
+                    if (node.nodeType === 3) {
+                        this._replaceNode(node, linkElement);
+                    }
+                    else {
+                        var element = node;
+                        if (element.nodeName === 'A') {
+                            return result;
+                        }
+                        element.innerHTML = '';
+                        element.appendChild(linkElement);
+                    }
+                }
+                else {
+                    var nodesAdded = this._replaceNodeSubstringWithNode(node, linkElement, uri, searchIndex);
+                    i += nodesAdded;
+                }
+                result.push(linkElement);
+                match = row.textContent.substring(rowStartIndex).match(matcher.regex);
+                if (!match || match.length === 0) {
+                    return result;
+                }
+                uri = match[typeof matcher.matchIndex !== 'number' ? 0 : matcher.matchIndex];
+                rowStartIndex += match.index + uri.length;
+            }
+        }
+        return result;
+    };
+    Linkifier.prototype._createAnchorElement = function (uri, handler, isHypertextLinkHandler) {
+        var element = this._document.createElement('a');
+        element.textContent = uri;
+        element.draggable = false;
+        if (isHypertextLinkHandler) {
+            element.href = uri;
+            element.target = '_blank';
+            element.addEventListener('click', function (event) {
+                if (handler) {
+                    return handler(event, uri);
+                }
+            });
+        }
+        else {
+            element.addEventListener('click', function (event) {
+                if (element.classList.contains(INVALID_LINK_CLASS)) {
+                    return;
+                }
+                return handler(event, uri);
+            });
+        }
+        return element;
+    };
+    Linkifier.prototype._replaceNode = function (oldNode) {
+        var newNodes = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            newNodes[_i - 1] = arguments[_i];
+        }
+        var parent = oldNode.parentNode;
+        for (var i = 0; i < newNodes.length; i++) {
+            parent.insertBefore(newNodes[i], oldNode);
+        }
+        parent.removeChild(oldNode);
+    };
+    Linkifier.prototype._replaceNodeSubstringWithNode = function (targetNode, newNode, substring, substringIndex) {
+        var node = targetNode;
+        if (node.nodeType !== 3) {
+            node = node.childNodes[0];
+        }
+        if (node.childNodes.length === 0 && node.nodeType !== 3) {
+            throw new Error('targetNode must be a text node or only contain a single text node');
+        }
+        var fullText = node.textContent;
+        if (substringIndex === 0) {
+            var rightText_1 = fullText.substring(substring.length);
+            var rightTextNode_1 = this._document.createTextNode(rightText_1);
+            this._replaceNode(node, newNode, rightTextNode_1);
+            return 0;
+        }
+        if (substringIndex === targetNode.textContent.length - substring.length) {
+            var leftText_1 = fullText.substring(0, substringIndex);
+            var leftTextNode_1 = this._document.createTextNode(leftText_1);
+            this._replaceNode(node, leftTextNode_1, newNode);
+            return 0;
+        }
+        var leftText = fullText.substring(0, substringIndex);
+        var leftTextNode = this._document.createTextNode(leftText);
+        var rightText = fullText.substring(substringIndex + substring.length);
+        var rightTextNode = this._document.createTextNode(rightText);
+        this._replaceNode(node, leftTextNode, newNode, rightTextNode);
+        return 1;
+    };
+    return Linkifier;
+}());
+Linkifier.TIME_BEFORE_LINKIFY = 200;
+exports.Linkifier = Linkifier;
+
+
+
+},{}],7:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var EscapeSequences_1 = require("./EscapeSequences");
 var Charsets_1 = require("./Charsets");
 var normalStateHandler = {};
@@ -1787,8 +2025,9 @@ exports.Parser = Parser;
 
 
 
-},{"./Charsets":1,"./EscapeSequences":3}],7:[function(require,module,exports){
+},{"./Charsets":1,"./EscapeSequences":3}],8:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var MAX_REFRESH_FRAME_SKIP = 5;
 var FLAGS;
 (function (FLAGS) {
@@ -1807,7 +2046,7 @@ var Renderer = (function () {
         this._refreshFramesSkipped = 0;
         this._refreshAnimationFrame = null;
         if (brokenBold === null) {
-            brokenBold = checkBoldBroken(this._terminal.document);
+            brokenBold = checkBoldBroken(this._terminal.element);
         }
     }
     Renderer.prototype.queueRefresh = function (start, end) {
@@ -1984,22 +2223,25 @@ var Renderer = (function () {
     return Renderer;
 }());
 exports.Renderer = Renderer;
-function checkBoldBroken(document) {
-    var body = document.getElementsByTagName('body')[0];
+function checkBoldBroken(terminal) {
+    var document = terminal.ownerDocument;
     var el = document.createElement('span');
     el.innerHTML = 'hello world';
-    body.appendChild(el);
-    var w1 = el.scrollWidth;
+    terminal.appendChild(el);
+    var w1 = el.offsetWidth;
+    var h1 = el.offsetHeight;
     el.style.fontWeight = 'bold';
-    var w2 = el.scrollWidth;
-    body.removeChild(el);
-    return w1 !== w2;
+    var w2 = el.offsetWidth;
+    var h2 = el.offsetHeight;
+    terminal.removeChild(el);
+    return w1 !== w2 || h1 !== h2;
 }
 
 
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Viewport = (function () {
     function Viewport(terminal, viewportElement, scrollArea, charMeasure) {
         var _this = this;
@@ -2075,8 +2317,9 @@ exports.Viewport = Viewport;
 
 
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function prepareTextForClipboard(text) {
     var space = String.fromCharCode(32), nonBreakingSpace = String.fromCharCode(160), allNonBreakingSpaces = new RegExp(nonBreakingSpace, 'g'), processedText = text.split('\n').map(function (line) {
         var processedLine = line.replace(/\s+$/g, '').replace(allNonBreakingSpaces, space);
@@ -2156,8 +2399,9 @@ exports.rightClickHandler = rightClickHandler;
 
 
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Generic_1 = require("./Generic");
 var isNode = (typeof navigator === 'undefined') ? true : false;
 var userAgent = (isNode) ? 'node' : navigator.userAgent;
@@ -2171,18 +2415,25 @@ exports.isMSWindows = Generic_1.contains(['Windows', 'Win16', 'Win32', 'WinCE'],
 
 
 
-},{"./Generic":13}],11:[function(require,module,exports){
+},{"./Generic":14}],12:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var EventEmitter_js_1 = require("../EventEmitter.js");
 var CharMeasure = (function (_super) {
     __extends(CharMeasure, _super);
-    function CharMeasure(parentElement) {
+    function CharMeasure(document, parentElement) {
         var _this = _super.call(this) || this;
+        _this._document = document;
         _this._parentElement = parentElement;
         return _this;
     }
@@ -2203,11 +2454,12 @@ var CharMeasure = (function (_super) {
     CharMeasure.prototype.measure = function () {
         var _this = this;
         if (!this._measureElement) {
-            this._measureElement = document.createElement('span');
+            this._measureElement = this._document.createElement('span');
             this._measureElement.style.position = 'absolute';
             this._measureElement.style.top = '0';
             this._measureElement.style.left = '-9999em';
             this._measureElement.textContent = 'W';
+            this._measureElement.setAttribute('aria-hidden', 'true');
             this._parentElement.appendChild(this._measureElement);
             setTimeout(function () { return _this._doMeasure(); }, 0);
         }
@@ -2232,8 +2484,9 @@ exports.CharMeasure = CharMeasure;
 
 
 
-},{"../EventEmitter.js":4}],12:[function(require,module,exports){
+},{"../EventEmitter.js":4}],13:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var CircularList = (function () {
     function CircularList(maxLength) {
         this._array = new Array(maxLength);
@@ -2370,8 +2623,9 @@ exports.CircularList = CircularList;
 
 
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function contains(arr, el) {
     return arr.indexOf(el) >= 0;
 }
@@ -2380,8 +2634,9 @@ exports.contains = contains;
 
 
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var CompositionHelper_1 = require("./CompositionHelper");
 var EventEmitter_1 = require("./EventEmitter");
 var Viewport_1 = require("./Viewport");
@@ -2391,11 +2646,13 @@ var EscapeSequences_1 = require("./EscapeSequences");
 var InputHandler_1 = require("./InputHandler");
 var Parser_1 = require("./Parser");
 var Renderer_1 = require("./Renderer");
+var Linkifier_1 = require("./Linkifier");
 var CharMeasure_1 = require("./utils/CharMeasure");
 var Browser = require("./utils/Browser");
 var document = (typeof window != 'undefined') ? window.document : null;
 var WRITE_BUFFER_PAUSE_THRESHOLD = 5;
 var WRITE_BATCH_SIZE = 300;
+var CURSOR_BLINK_INTERVAL = 600;
 function Terminal(options) {
     var self = this;
     if (!(this instanceof Terminal)) {
@@ -2453,6 +2710,7 @@ function Terminal(options) {
     this.scrollTop = 0;
     this.scrollBottom = this.rows - 1;
     this.customKeydownHandler = null;
+    this.cursorBlinkInterval = null;
     this.applicationKeypad = false;
     this.applicationCursor = false;
     this.originMode = false;
@@ -2491,6 +2749,7 @@ function Terminal(options) {
     this.inputHandler = new InputHandler_1.InputHandler(this);
     this.parser = new Parser_1.Parser(this.inputHandler, this);
     this.renderer = this.renderer || null;
+    this.linkifier = this.linkifier || new Linkifier_1.Linkifier();
     this.writeBuffer = [];
     this.writeInProgress = false;
     this.xoffSentToCatchUp = false;
@@ -2622,7 +2881,7 @@ Terminal.prototype.setOption = function (key, value) {
     this.options[key] = value;
     switch (key) {
         case 'cursorBlink':
-            this.element.classList.toggle('xterm-cursor-blink', value);
+            this.setCursorBlinking(value);
             break;
         case 'cursorStyle':
             this.element.classList.toggle("xterm-cursor-style-underline", value === 'underline');
@@ -2633,6 +2892,26 @@ Terminal.prototype.setOption = function (key, value) {
             break;
     }
 };
+Terminal.prototype.restartCursorBlinking = function () {
+    this.setCursorBlinking(this.options.cursorBlink);
+};
+Terminal.prototype.setCursorBlinking = function (enabled) {
+    this.element.classList.toggle('xterm-cursor-blink', enabled);
+    this.clearCursorBlinkingInterval();
+    if (enabled) {
+        var self = this;
+        this.cursorBlinkInterval = setInterval(function () {
+            self.element.classList.toggle('xterm-cursor-blink-on');
+        }, CURSOR_BLINK_INTERVAL);
+    }
+};
+Terminal.prototype.clearCursorBlinkingInterval = function () {
+    this.element.classList.remove('xterm-cursor-blink-on');
+    if (this.cursorBlinkInterval) {
+        clearInterval(this.cursorBlinkInterval);
+        this.cursorBlinkInterval = null;
+    }
+};
 Terminal.bindFocus = function (term) {
     on(term.textarea, 'focus', function (ev) {
         if (term.sendFocus) {
@@ -2640,6 +2919,7 @@ Terminal.bindFocus = function (term) {
         }
         term.element.classList.add('focus');
         term.showCursor();
+        term.restartCursorBlinking.apply(term);
         Terminal.focus = term;
         term.emit('focus', { terminal: term });
     });
@@ -2654,6 +2934,7 @@ Terminal.bindBlur = function (term) {
             term.send(EscapeSequences_1.C0.ESC + '[O');
         }
         term.element.classList.remove('focus');
+        term.clearCursorBlinkingInterval.apply(term);
         Terminal.focus = null;
         term.emit('blur', { terminal: term });
     });
@@ -2715,6 +2996,9 @@ Terminal.bindKeys = function (term) {
     on(term.textarea, 'compositionupdate', term.compositionHelper.compositionupdate.bind(term.compositionHelper));
     on(term.textarea, 'compositionend', term.compositionHelper.compositionend.bind(term.compositionHelper));
     term.on('refresh', term.compositionHelper.updateCompositionElements.bind(term.compositionHelper));
+    term.on('refresh', function (data) {
+        term.queueLinkification(data.start, data.end);
+    });
 };
 Terminal.prototype.insertRow = function (row) {
     if (typeof row != 'object') {
@@ -2724,7 +3008,7 @@ Terminal.prototype.insertRow = function (row) {
     this.children.push(row);
     return row;
 };
-Terminal.prototype.open = function (parent) {
+Terminal.prototype.open = function (parent, focus) {
     var self = this, i = 0, div;
     this.parent = parent || this.parent;
     if (!this.parent) {
@@ -2737,7 +3021,7 @@ Terminal.prototype.open = function (parent) {
     this.element.classList.add('terminal');
     this.element.classList.add('xterm');
     this.element.classList.add('xterm-theme-' + this.theme);
-    this.element.classList.toggle('xterm-cursor-blink', this.options.cursorBlink);
+    this.setCursorBlinking(this.options.cursorBlink);
     this.element.style.height;
     this.element.setAttribute('tabindex', 0);
     this.viewportElement = document.createElement('div');
@@ -2750,6 +3034,7 @@ Terminal.prototype.open = function (parent) {
     this.rowContainer.classList.add('xterm-rows');
     this.element.appendChild(this.rowContainer);
     this.children = [];
+    this.linkifier.attachToDom(document, this.children);
     this.helperContainer = document.createElement('div');
     this.helperContainer.classList.add('xterm-helpers');
     this.element.appendChild(this.helperContainer);
@@ -2776,7 +3061,7 @@ Terminal.prototype.open = function (parent) {
         this.insertRow();
     }
     this.parent.appendChild(this.element);
-    this.charMeasure = new CharMeasure_1.CharMeasure(this.helperContainer);
+    this.charMeasure = new CharMeasure_1.CharMeasure(document, this.helperContainer);
     this.charMeasure.on('charsizechanged', function () {
         self.updateCharSizeCSS();
     });
@@ -2785,7 +3070,16 @@ Terminal.prototype.open = function (parent) {
     this.renderer = new Renderer_1.Renderer(this);
     this.refresh(0, this.rows - 1);
     this.initGlobal();
-    this.focus();
+    if (typeof focus == 'undefined') {
+        var message = 'You did not pass the `focus` argument in `Terminal.prototype.open()`.\n';
+        message += 'The `focus` argument now defaults to `true` but starting with xterm.js 3.0 ';
+        message += 'it will default to `false`.';
+        console.warn(message);
+        focus = true;
+    }
+    if (focus) {
+        this.focus();
+    }
     on(this.element, 'click', function () {
         var selection = document.getSelection(), collapsed = selection.isCollapsed, isRange = typeof collapsed == 'boolean' ? !collapsed : selection.type == 'Range';
         if (!isRange) {
@@ -2985,10 +3279,8 @@ Terminal.prototype.bindMouse = function () {
                 ? el.offsetParent
                 : el.parentNode;
         }
-        w = self.element.clientWidth;
-        h = self.element.clientHeight;
-        x = Math.ceil((x / w) * self.cols);
-        y = Math.ceil((y / h) * self.rows);
+        x = Math.ceil(x / self.charMeasure.width);
+        y = Math.ceil(y / self.charMeasure.height);
         if (x < 0)
             x = 0;
         if (x > self.cols)
@@ -3058,6 +3350,13 @@ Terminal.prototype.destroy = function () {
 Terminal.prototype.refresh = function (start, end) {
     if (this.renderer) {
         this.renderer.queueRefresh(start, end);
+    }
+};
+Terminal.prototype.queueLinkification = function (start, end) {
+    if (this.linkifier) {
+        for (var i = start; i <= end; i++) {
+            this.linkifier.linkifyRow(i);
+        }
     }
 };
 Terminal.prototype.showCursor = function () {
@@ -3173,10 +3472,39 @@ Terminal.prototype.writeln = function (data) {
 Terminal.prototype.attachCustomKeydownHandler = function (customKeydownHandler) {
     this.customKeydownHandler = customKeydownHandler;
 };
+Terminal.prototype.setHypertextLinkHandler = function (handler) {
+    if (!this.linkifier) {
+        throw new Error('Cannot attach a hypertext link handler before Terminal.open is called');
+    }
+    this.linkifier.setHypertextLinkHandler(handler);
+    this.refresh(0, this.rows - 1);
+};
+Terminal.prototype.setHypertextValidationCallback = function (handler) {
+    if (!this.linkifier) {
+        throw new Error('Cannot attach a hypertext validation callback before Terminal.open is called');
+    }
+    this.linkifier.setHypertextValidationCallback(handler);
+    this.refresh(0, this.rows - 1);
+};
+Terminal.prototype.registerLinkMatcher = function (regex, handler, options) {
+    if (this.linkifier) {
+        var matcherId = this.linkifier.registerLinkMatcher(regex, handler, options);
+        this.refresh(0, this.rows - 1);
+        return matcherId;
+    }
+};
+Terminal.prototype.deregisterLinkMatcher = function (matcherId) {
+    if (this.linkifier) {
+        if (this.linkifier.deregisterLinkMatcher(matcherId)) {
+            this.refresh(0, this.rows - 1);
+        }
+    }
+};
 Terminal.prototype.keyDown = function (ev) {
     if (this.customKeydownHandler && this.customKeydownHandler(ev) === false) {
         return false;
     }
+    this.restartCursorBlinking();
     if (!this.compositionHelper.keydown.bind(this.compositionHelper)(ev)) {
         if (this.ybase !== this.ydisp) {
             this.scrollToBottom();
@@ -3571,14 +3899,6 @@ Terminal.prototype.resize = function (x, y) {
             }
         }
     }
-    else {
-        i = this.lines.length;
-        while (i--) {
-            while (this.lines.get(i).length > x) {
-                this.lines.get(i).pop();
-            }
-        }
-    }
     this.cols = x;
     this.setupStops(this.cols);
     j = this.rows;
@@ -3780,8 +4100,10 @@ Terminal.prototype.reset = function () {
     this.options.rows = this.rows;
     this.options.cols = this.cols;
     var customKeydownHandler = this.customKeydownHandler;
+    var cursorBlinkInterval = this.cursorBlinkInterval;
     Terminal.call(this, this.options);
     this.customKeydownHandler = customKeydownHandler;
+    this.cursorBlinkInterval = cursorBlinkInterval;
     this.refresh(0, this.rows - 1);
     this.viewport.syncScrollArea();
 };
@@ -3892,6 +4214,6 @@ module.exports = Terminal;
 
 
 
-},{"./CompositionHelper":2,"./EscapeSequences":3,"./EventEmitter":4,"./InputHandler":5,"./Parser":6,"./Renderer":7,"./Viewport":8,"./handlers/Clipboard":9,"./utils/Browser":10,"./utils/CharMeasure":11,"./utils/CircularList":12}]},{},[14])(14)
+},{"./CompositionHelper":2,"./EscapeSequences":3,"./EventEmitter":4,"./InputHandler":5,"./Linkifier":6,"./Parser":7,"./Renderer":8,"./Viewport":9,"./handlers/Clipboard":10,"./utils/Browser":11,"./utils/CharMeasure":12,"./utils/CircularList":13}]},{},[15])(15)
 });
 //# sourceMappingURL=xterm.js.map
