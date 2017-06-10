@@ -32,7 +32,7 @@ apt-get install -y git
 apt-get install -y htop
 apt-get install -y php-fpm
 
-apt-get install -y sudo python python-dev python3 python3-dev python3-pip virtualenv libnss-pgsql2 nodejs nodejs-legacy supervisor
+apt-get install -y sudo python python-dev python3 python3-dev python3-pip virtualenv libnss-pgsql2 nodejs nodejs-legacy npm supervisor
 apt-get install -y postgresql postgresql-contrib libpq-dev nginx
 apt-get install -y libmysqlclient-dev mysql-client-core-5.7
 
@@ -46,6 +46,11 @@ mkdir -p /etc/supervisor/director.d/
 mkdir -p /var/log/gunicorn/
 
 cd director/
+
+# Install node dependencies
+cd node/
+npm install
+cd ..
 
 # Set up Debian virtual machine template
 mkdir -p /var/conductor/debian/rootfs/
