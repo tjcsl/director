@@ -132,7 +132,7 @@ def delete_view(request, vm_id):
 def create_view(request):
     if request.method == "POST":
         current_vms = VirtualMachine.objects.filter(owner=request.user).count()
-        if not request.user.is_superuser and not request.user.is_staff and current_vms > settings.MAX_VMS:
+        if not request.user.is_superuser and not request.user.is_staff and current_vms >= settings.MAX_VMS:
             messages.error(request, "You can create a maximum of {} VMs! Contact a sysadmin if you need more.".format(settings.MAX_VMS))
             return redirect("vm_list")
         form = VirtualMachineForm(request.POST, user=request.user)
