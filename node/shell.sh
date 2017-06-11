@@ -16,6 +16,5 @@ then
 fi
 
 export HOME="/home/$1"
-export PATH="/home/$1/bin:/home/$1/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 
 su - -p -s /bin/bash "$1"
