@@ -22,4 +22,3 @@ class Command(BaseCommand):
                 create_config_files(site)
             self.stdout.write("Finished {}".format(site.name))
         reload_services()
-        reload_nginx_config()
