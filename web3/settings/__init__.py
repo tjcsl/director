@@ -30,6 +30,9 @@ ALLOWED_HOSTS = ["director.tjhsst.edu", "127.0.0.1", "localhost"]
 
 CONDUCTOR_CERT_PATH = os.path.join(PROJECT_ROOT, "settings/conductor.pem")
 
+# Maximum number of machines that a non-staff, non-superuser account can create.
+MAX_VMS = 5
+
 try:
     from .secret import *
 except ImportError:
