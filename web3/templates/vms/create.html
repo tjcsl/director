@@ -7,6 +7,9 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $("#id_users, #id_owner, #id_site").selectize();
+            $("form").submit(function() {
+                $(this).find("button").prop("disabled", true).html("<i class='fa fa-cog fa-spin'></i> Processing...");
+            });
         });
     </script>
 {% endblock %}
