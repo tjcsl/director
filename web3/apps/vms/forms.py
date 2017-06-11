@@ -1,4 +1,5 @@
 import uuid
+import re
 
 from django import forms
 from django.core.cache import cache
@@ -17,6 +18,18 @@ class VirtualMachineForm(forms.ModelForm):
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
     site = forms.ModelChoiceField(required=False, queryset=Site.objects.filter(category="vm"))
     owner = forms.ModelChoiceField(required=True, queryset=User.objects.filter(service=False))
+
+    def clean_name(self):
+        name = self.cleaned_data["name"].strip()
+        name_re = "^{}$".format(re.escape(name.lower().replace("-", " ")).replace("\\\\-", "[- ]"))
+        existing = VirtualMachine.objects.filter(name__iregex=name_re)
+        if existing.exists():
+            if self.instance and self.instance.pk:
+                if not existing.first() == self.instance:
+                    raise forms.ValidationError("A virtual machine with this name already exists!")
+            else:
+                raise forms.ValidationError("A virtual machine with this name already exists!")
+        return name
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
