@@ -763,6 +763,8 @@ $(document).ready(function() {
                 }
             }
         });
+        $(this).wrap("<form>").closest("form").get(0).reset();
+        $(this).unwrap();
     });
     $.contextMenu({
         "selector": "#files",
