@@ -75,6 +75,10 @@
         {% block navbar %}
         {% endblock %}
         {% endif %}
+        {% if global_warning %}
+        <span class="pull-right" style="color: yellow; margin-right: 10px"><i id="global-warning" class="fa fa-exclamation-triangle" data-placement="bottom" title="{{ global_warning }}"></i></span>
+        <script>$("#global-warning").tooltip("show");</script>
+        {% endif %}
         </ul>
     </div>
     <div class="main {% block mainclass %}{% endblock %}">

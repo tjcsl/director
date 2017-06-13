@@ -28,10 +28,14 @@ SECRET_KEY = 's-gh_-#s^oq^0*5=y8k&*^l8m9540mvo@m*tazzw%3*o7$y&m0'
 
 ALLOWED_HOSTS = ["director.tjhsst.edu", "127.0.0.1", "localhost"]
 
+# This is the path to the certificate that is used to authenticate with the conductor agent.
 CONDUCTOR_CERT_PATH = os.path.join(PROJECT_ROOT, "settings/conductor.pem")
 
 # Maximum number of machines that a non-staff, non-superuser account can create.
 MAX_VMS = 5
+
+# If this is set, the variable appears on all pages on Director.
+GLOBAL_WARNING = None
 
 try:
     from .secret import *
