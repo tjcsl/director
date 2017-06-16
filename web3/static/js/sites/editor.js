@@ -492,6 +492,8 @@ $(document).ready(function() {
                         });
                         t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
                     }
+                }).fail(function() {
+                    Messenger().error("Failed to connect to server!");
                 });
                 $(this).trigger("folder:load");
             }
@@ -1474,6 +1476,8 @@ $(document).ready(function() {
                     session.getUndoManager().markClean();
                     editor.setSession(session);
                 }
+            }).fail(function() {
+                Messenger().error("Failed to connect to server!");
             });
         }
     });
