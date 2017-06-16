@@ -25,7 +25,8 @@ def create_view(request):
             if form.is_valid():
                 site = form.save()
                 for user in site.group.users.filter(service=False):
-                    send_new_site_email(user, site)
+                    if not user == request.user:
+                        send_new_site_email(user, site)
                 if not site.category == "dynamic":
                     write_new_index_file(site)
                 reload_services()
