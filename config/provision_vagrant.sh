@@ -138,6 +138,3 @@ cp config/dev-supervisord.conf /etc/supervisor/supervisord.conf
 systemctl start supervisor
 supervisorctl reread
 supervisorctl update
-
-# Automatically start supervisor on boot
-systemctl enable supervisor
