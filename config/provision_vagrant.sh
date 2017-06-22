@@ -3,9 +3,9 @@
 # This script is intended for setting up a development environment.
 # Additional configuration is necessary for production.
 
-export DEBIAN_FRONTEND=noninteractive
-
 set -e
+
+export DEBIAN_FRONTEND=noninteractive
 
 if [ "$EUID" -ne 0 ]
 then
@@ -20,7 +20,7 @@ with open('/home/ubuntu/director/config/devconfig.json', 'r') as f:
     print(json.load(f)['$1'])"
 }
 
-export DEBIAN_FRONTEND=noninteractive
+timedatectl set-timezone America/New_York
 
 DB_PASS='web3'
 NSS_PASS='web3'
@@ -36,6 +36,8 @@ apt-get install -y sudo python python-dev python3 python3-dev python3-pip virtua
 apt-get install -y postgresql postgresql-contrib libpq-dev nginx
 apt-get install -y libmysqlclient-dev mysql-client-core-5.7
 
+npm install -g nodemon
+
 # Install conductor-agent dependencies
 apt-get install -y lxc
 pip3 install -U pip
@@ -48,9 +50,10 @@ mkdir -p /var/log/gunicorn/
 cd director/
 
 # Install node dependencies
-cd node/
+sudo -i -u ubuntu bash <<EOF
+cd director/node
 npm install
-cd ..
+EOF
 
 # Set up Debian virtual machine template
 mkdir -p /var/conductor/debian/rootfs/
@@ -100,6 +103,8 @@ useradd www-data || echo "www-data user already exists"
 
 mkdir -p /web
 
+sudo -i -u ubuntu bash <<EOF
+cd director
 if [ ! -d "venv" ]; then
     virtualenv --python python3 venv
 fi
@@ -107,6 +112,7 @@ source venv/bin/activate
 pip install -U -r requirements.txt
 
 ./manage.py migrate --no-input
+EOF
 
 # Give nss user specific permissions
 sudo -u postgres psql -c "GRANT CONNECT ON DATABASE web3 TO nss;"
