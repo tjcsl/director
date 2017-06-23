@@ -37,13 +37,16 @@ MAX_VMS = 5
 # If this is set, the variable appears on all pages on Director.
 GLOBAL_WARNING = None
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+# Default database password used in development.
+DB_PASSWORD = "web3"
+
 try:
-    from .secret import *
+    from .secret import *  # noqa
 except ImportError:
     pass
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = DEBUG if "DEBUG" in globals() else True
-
 
 # Application definition
 
