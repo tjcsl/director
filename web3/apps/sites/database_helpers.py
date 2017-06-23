@@ -17,8 +17,13 @@ def create_postgres_database(database):
     conn = None
 
     try:
-        conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(
-            settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+        conn = psycopg2.connect(
+            dbname="postgres",
+            host=settings.POSTGRES_DB_HOST,
+            user=settings.POSTGRES_DB_USER,
+            password=settings.POSTGRES_DB_PASS,
+            port=settings.POSTGRES_DB_PORT
+        )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = conn.cursor()
         cursor.execute("SELECT 1 FROM pg_catalog.pg_user WHERE usename = '{}'".format(database.username))
@@ -39,8 +44,13 @@ def create_postgres_database(database):
 
     conn = None
     try:
-        conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(
-            settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+        conn = psycopg2.connect(
+            dbname=database.db_name,
+            host=settings.POSTGRES_DB_HOST,
+            user=settings.POSTGRES_DB_USER,
+            password=settings.POSTGRES_DB_PASS,
+            port=settings.POSTGRES_DB_PORT
+        )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = conn.cursor()
         cursor.execute("GRANT ALL ON SCHEMA public TO \"{}\"".format(database.username))
@@ -59,7 +69,13 @@ def change_postgres_password(database):
 
     conn = None
     try:
-        conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+        conn = psycopg2.connect(
+            dbname="postgres",
+            host=settings.POSTGRES_DB_HOST,
+            user=settings.POSTGRES_DB_USER,
+            password=settings.POSTGRES_DB_PASS,
+            port=settings.POSTGRES_DB_PORT
+        )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = conn.cursor()
         cursor.execute("ALTER USER \"{}\" WITH PASSWORD \'{}\'".format(database.username, database.password))
@@ -78,8 +94,13 @@ def delete_postgres_database(database):
 
     conn = None
     try:
-        conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(
-            settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+        conn = psycopg2.connect(
+            dbname="postgres",
+            host=settings.POSTGRES_DB_HOST,
+            user=settings.POSTGRES_DB_USER,
+            password=settings.POSTGRES_DB_PASS,
+            port=settings.POSTGRES_DB_PORT
+        )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = conn.cursor()
 
@@ -100,8 +121,13 @@ def list_tables(database):
             if not settings.POSTGRES_DB_HOST:
                 return []
 
-            conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(
-                settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+            conn = psycopg2.connect(
+                dbname=database.db_name,
+                host=settings.POSTGRES_DB_HOST,
+                user=settings.POSTGRES_DB_USER,
+                password=settings.POSTGRES_DB_PASS,
+                port=settings.POSTGRES_DB_PORT
+            )
             cursor = conn.cursor()
             try:
                 cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
