@@ -14,11 +14,13 @@ def create_postgres_database(database):
     if not settings.POSTGRES_DB_HOST:
         return True
 
-    conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(
-        settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
-    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-    cursor = conn.cursor()
+    conn = None
+
     try:
+        conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(
+            settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+        conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cursor = conn.cursor()
         cursor.execute("SELECT 1 FROM pg_catalog.pg_user WHERE usename = '{}'".format(database.username))
         if cursor.rowcount == 0:
             cursor.execute("CREATE USER \"{}\" WITH PASSWORD \'{}\'".format(database.username, database.password))
@@ -32,48 +34,55 @@ def create_postgres_database(database):
         client.captureException()
         return False
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
-    conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(
-        settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
-    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-    cursor = conn.cursor()
+    conn = None
     try:
+        conn = psycopg2.connect("host = '{}' dbname='{}' user='{}' password='{}'".format(
+            settings.POSTGRES_DB_HOST, database.db_name, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+        conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cursor = conn.cursor()
         cursor.execute("GRANT ALL ON SCHEMA public TO \"{}\"".format(database.username))
         return True
     except psycopg2.DatabaseError:
         client.captureException()
         return False
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 
 def change_postgres_password(database):
     if not settings.POSTGRES_DB_HOST:
         return True
 
-    conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
-    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-    cursor = conn.cursor()
+    conn = None
     try:
+        conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+        conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cursor = conn.cursor()
         cursor.execute("ALTER USER \"{}\" WITH PASSWORD \'{}\'".format(database.username, database.password))
         return True
     except psycopg2.DatabaseError:
         client.captureException()
         return False
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 
 def delete_postgres_database(database):
     if not settings.POSTGRES_DB_HOST:
         return True
 
-    conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(
-        settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
-    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-    cursor = conn.cursor()
+    conn = None
     try:
+        conn = psycopg2.connect("host = '{}' dbname='postgres' user='{}' password='{}'".format(
+            settings.POSTGRES_DB_HOST, settings.POSTGRES_DB_USER, settings.POSTGRES_DB_PASS))
+        conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cursor = conn.cursor()
+
         cursor.execute("DROP DATABASE IF EXISTS \"{}\"".format(database.db_name))
         cursor.execute("DROP USER IF EXISTS \"{}\"".format(database.username))
         return True
@@ -81,7 +90,8 @@ def delete_postgres_database(database):
         client.captureException()
         return False
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 
 def list_tables(database):
