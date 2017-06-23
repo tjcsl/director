@@ -138,7 +138,7 @@ def list_tables(database):
             if not settings.MYSQL_DB_HOST:
                 return []
 
-            conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+            conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, port=settings.MYSQL_DB_PORT, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
             cursor = conn.cursor()
             try:
                 cursor.execute("SHOW TABLES IN {}".format(database.db_name))
@@ -154,7 +154,7 @@ def create_mysql_database(database):
     if not settings.MYSQL_DB_HOST:
         return True
 
-    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, port=settings.MYSQL_DB_PORT, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT 1 FROM mysql.user WHERE user = '{}'".format(database.username))
@@ -175,7 +175,7 @@ def change_mysql_password(database):
     if not settings.MYSQL_DB_HOST:
         return True
 
-    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, port=settings.MYSQL_DB_PORT, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
         cursor.execute("SET PASSWORD FOR '{}'@'%' = PASSWORD('{}');".format(database.username, database.password))
@@ -192,7 +192,7 @@ def delete_mysql_database(database):
     if not settings.MYSQL_DB_HOST:
         return True
 
-    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, port=settings.MYSQL_DB_PORT, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
     cursor = conn.cursor()
     try:
         cursor.execute("DROP DATABASE IF EXISTS `{}`;".format(database.db_name))
