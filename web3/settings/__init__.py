@@ -41,12 +41,17 @@ GLOBAL_WARNING = None
 DEBUG = True
 
 # Default database password used in development.
+DB_USERNAME = "web3"
 DB_PASSWORD = "web3"
 
 try:
     from .secret import *  # noqa
 except ImportError:
     pass
+
+if "TRAVIS" in os.environ:
+    DB_USERNAME = "postgres"
+    DB_PASSWORD = ""
 
 # Application definition
 
@@ -117,7 +122,7 @@ DATABASES = {
     "default": {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'web3',
-        'USER': 'web3',
+        'USER': DB_USERNAME,
         'PASSWORD': DB_PASSWORD,
         'HOST': '127.0.0.1',
         'PORT': '5432'

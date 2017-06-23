@@ -11,5 +11,7 @@ install:
     - pip install -U pip flake8 -r requirements.txt
 before_script:
     - cp web3/settings/secret.sample web3/settings/secret.py
+    - psql -U postgres -c "create database web3"
 script:
     - flake8 --max-line-length=200 .
+    - ./manage.py migrate
