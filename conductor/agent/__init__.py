@@ -16,6 +16,7 @@ class rpc:
             return f
         return wrap
 
+
 app = Flask(__name__)
 
 
@@ -33,6 +34,7 @@ def dispatch():
     tx = make_response(json.dumps(method_registry[method](**args)))
     tx.headers["Content-Type"] = "application/json"
     return tx
+
 
 import agent.views.ping  # noqa
 import agent.views.container  # noqa
