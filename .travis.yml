@@ -1,0 +1,15 @@
+language: python
+python:
+    - '3.5'
+sudo: false
+cache:
+    directories:
+        - "$HOME/.cache/pip"
+services:
+    - postgresql
+install:
+    - pip install -U pip flake8 -r requirements.txt
+before_script:
+    - cp web3/settings/secret.sample web3/settings/secret.py
+script:
+    - flake8 --max-line-length=200 .
