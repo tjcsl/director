@@ -23,6 +23,8 @@ from .apps.feedback import views as feedback_views
 
 from .apps.error.views import (handle_404_view, handle_500_view, handle_503_view)
 
+admin.site.site_header = "Director administration"
+
 urlpatterns = [
     url('', include('social_django.urls', namespace='social')),
     url(r'^$', auth_views.index_view, name='index'),
