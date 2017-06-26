@@ -38,11 +38,6 @@ apt-get install -y libmysqlclient-dev mysql-client-core-5.7
 
 npm install -g nodemon
 
-# Install conductor-agent dependencies
-apt-get install -y lxc
-pip3 install -U pip
-pip3 install -U Flask gunicorn dnspython
-
 mkdir -p /etc/nginx/director.d/
 mkdir -p /etc/supervisor/director.d/
 mkdir -p /var/log/gunicorn/
@@ -54,17 +49,6 @@ sudo -i -u ubuntu bash <<EOF
 cd director/node
 npm install
 EOF
-
-# Set up Debian virtual machine template
-mkdir -p /var/conductor/debian/rootfs/
-mkdir -p /usr/local/var/lib/lxc/
-cp conductor/vm_config /var/conductor/debian/config
-cp conductor/vm_create /var/conductor/debian/create
-
-# Install Debian on the rootfs
-if [ -z "$(ls -A /var/conductor/debian/rootfs)" ]; then
-    debootstrap --include=openssh-server stable /var/conductor/debian/rootfs https://deb.debian.org/debian/
-fi
 
 # Copy over the secret file
 cp web3/settings/secret.sample web3/settings/secret.py
@@ -141,6 +125,4 @@ cp scripts/* /scripts/
 
 # Setup supervisor
 cp config/dev-supervisord.conf /etc/supervisor/supervisord.conf
-systemctl start supervisor
-supervisorctl reread
-supervisorctl update
+systemctl restart supervisor
