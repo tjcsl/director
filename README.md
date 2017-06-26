@@ -18,4 +18,6 @@ You can also suspend and resume the machine using the commands `vagrant suspend`
 You can SSH into the virtual machine using the command `vagrant ssh`.
 You can restart the server using the commands `supervisorctl restart director` or `supervisorctl restart directornode`.
 
+The Conductor agent is not installed by default. To install the Conductor agent, SSH into the machine and run `sudo bash director/config/provision_conductor.sh`.
+
 Current Director maintainer: [Eric Wang](https://github.com/ezwang) (TJ 2017)
