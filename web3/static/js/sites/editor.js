@@ -7,6 +7,7 @@ $(document).ready(function() {
         "prompt-delete": true,
         "layout-theme": "light",
         "editor-theme": "ace/theme/chrome",
+        "editor-keybinding": "",
         "font-size": 16,
         "terminal-size": 16,
         "live-autocompletion": true,
@@ -175,6 +176,12 @@ $(document).ready(function() {
                 v.setTheme(settings["editor-theme"]);
             });
         },
+        "editor-keybinding": function() {
+            applyEditors(function(v) {
+                console.log(v)
+                v.setKeyboardHandler(settings["editor-keybinding"]);
+            });
+        },
         "font-size": function() {
             applyEditors(function(v) {
                 v.setFontSize(settings["font-size"] + "px");
@@ -228,6 +235,7 @@ $(document).ready(function() {
         }
         else {
             settings[setting] = $(this).val();
+            console.log(setting, ':', settings[setting]);
         }
         updateSetting(setting);
         saveConfig();
@@ -1408,6 +1416,7 @@ $(document).ready(function() {
                 "enableLiveAutocompletion": settings["live-autocompletion"],
                 "theme": settings["editor-theme"]
             });
+            editor.setKeyboardHandler(settings["editor-keybinding"])
             container.on("close", function() {
                 editors.splice(editors.indexOf(editor), 1);
             });
@@ -1507,6 +1516,16 @@ $(document).ready(function() {
         }
     });
 
+    ace.config.loadModule("ace/keyboard/vim", function(m) {
+        var VimApi = ace.require("ace/keyboard/vim").CodeMirror.Vim
+        VimApi.defineEx("write", "w", function(cm, input) {
+            // save on :write
+            // console.log(cm, input);
+            console.log(cm.ace.container)
+            $(cm.ace.container).trigger("tab:save")
+            cm.ace.execCommand("save");
+        });
+    });
     addFileListener();
 });
 function join(a, b) {
