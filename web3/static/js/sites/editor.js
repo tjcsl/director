@@ -1326,6 +1326,9 @@ $(document).ready(function() {
                 container.getElement().trigger("tab:save");
             });
         });
+        container.getElement().on("tab:close", function(e) {
+            container.close();
+        });
         container.getElement().on("tab:save", function(e, force) {
             if (!editor.getSession().getUndoManager().isClean()) {
                 $.post(nginx_endpoint, { editor: editor.getSession().getValue(), force: (force ? true : undefined) }, function(data) {
@@ -1427,6 +1430,9 @@ $(document).ready(function() {
                     container.getElement().trigger("tab:save");
                 });
             });
+            container.getElement().on("tab:close", function(e) {
+                container.close();
+            });
             container.getElement().on("tab:save", function(e, force) {
                 if (!editor.getSession().getUndoManager().isClean()) {
                     $.post(save_endpoint + "?name=" + encodeURIComponent(componentState.path), { contents: editor.getSession().getValue(), force: (force ? true : undefined) }, function(data) {
@@ -1519,9 +1525,11 @@ $(document).ready(function() {
         VimApi.defineEx("write", "w", function(cm, input) {
             // save on :write
             // console.log(cm, input);
-            console.log(cm.ace.container)
-            $(cm.ace.container).trigger("tab:save")
+            $(cm.ace.container).trigger("tab:save");
             cm.ace.execCommand("save");
+        });
+        VimApi.defineEx("quit", "q", function(cm, input) {
+            $(cm.ace.container).trigger("tab:close");
         });
     });
     addFileListener();
