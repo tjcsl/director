@@ -178,7 +178,6 @@ $(document).ready(function() {
         },
         "editor-keybinding": function() {
             applyEditors(function(v) {
-                console.log(v)
                 v.setKeyboardHandler(settings["editor-keybinding"]);
             });
         },
@@ -235,7 +234,6 @@ $(document).ready(function() {
         }
         else {
             settings[setting] = $(this).val();
-            console.log(setting, ':', settings[setting]);
         }
         updateSetting(setting);
         saveConfig();
@@ -1416,7 +1414,7 @@ $(document).ready(function() {
                 "enableLiveAutocompletion": settings["live-autocompletion"],
                 "theme": settings["editor-theme"]
             });
-            editor.setKeyboardHandler(settings["editor-keybinding"])
+            editor.setKeyboardHandler(settings["editor-keybinding"]);
             container.on("close", function() {
                 editors.splice(editors.indexOf(editor), 1);
             });
