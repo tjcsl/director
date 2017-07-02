@@ -153,13 +153,13 @@ def git_setup_view(request, site_id):
                     resp = request.user.github_api_request("/repos/{}/keys".format(out))
                     if resp is not None:
                         # Delete all keys from Director that do not match the current key.
-                        existing_key, existing_host = site.public_key.strip().split(" ")
+                        ssh_rsa, existing_key, existing_host = site.public_key.strip().split(" ")
                         key_exists = False
                         for i in resp:
-                            if i["key"].strip().split(" ")[0] == existing_key:
+                            if i["key"].strip().split(" ")[1] == existing_key:
                                 key_exists = True
                                 continue
-                            if i["title"] == "Director" or i["key"].strip().split(" ")[1] == existing_host:
+                            if i["title"] == "Director":
                                 request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
 
                         # If the key does not already exist in GitHub, add it.
