@@ -135,6 +135,7 @@ def git_setup_view(request, site_id):
         if ret != 0:
             messages.error(request, "Failed to detect the remote repository!")
         else:
+            # Try to identify which remote is the GitHub repository.
             out = [[y for y in x.replace("\t", " ").split(" ") if y] for x in out.split("\n") if x]
             out = [x[1] for x in out if x[2] == "(fetch)"]
             out = [x for x in out if x.startswith("git@github.com") or x.startswith("https://github.com")]
@@ -151,11 +152,23 @@ def git_setup_view(request, site_id):
                 if repo_info is not None:
                     resp = request.user.github_api_request("/repos/{}/keys".format(out))
                     if resp is not None:
+                        # Delete all keys from Director that do not match the current key.
+                        existing_key, existing_host = site.public_key.strip().split(" ")
+                        key_exists = False
                         for i in resp:
-                            if i["title"] == "Director" or i["key"].strip().split(" ")[1] == site.public_key.strip().split(" ")[1]:
+                            if i["key"].strip().split(" ")[0] == existing_key:
+                                key_exists = True
+                                continue
+                            if i["title"] == "Director" or i["key"].strip().split(" ")[1] == existing_host:
                                 request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
-                        resp = request.user.github_api_request("/repos/{}/keys".format(out), method="POST", data={"title": "Director", "key": site.public_key.strip(), "read_only": True})
+
+                        # If the key does not already exist in GitHub, add it.
+                        if not key_exists:
+                            resp = request.user.github_api_request("/repos/{}/keys".format(out), method="POST", data={"title": "Director", "key": site.public_key.strip(), "read_only": True})
+                        else:
+                            resp = True
                         if resp:
+                            # If the webhook does not exist, create it.
                             resp = request.user.github_api_request("/repos/{}/hooks".format(out))
                             if resp is not None:
                                 webhook_url = request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
