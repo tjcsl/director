@@ -1,9 +1,9 @@
 appdirs==1.4.3
 contextlib2==0.5.5
 defusedxml==0.5.0
-Django==1.11.2
+Django==1.11.3
 django-debug-toolbar==1.8
-django-extensions==1.7.9
+django-extensions==1.8.1
 gunicorn==19.7.1
 ion-oauth==0.1
 ldap3==2.2.4
@@ -12,12 +12,12 @@ oauthlib==2.0.2
 packaging==16.8
 psycopg2==2.7.1
 pyasn1==0.2.3
-PyJWT==1.5.0
+PyJWT==1.5.2
 pyparsing==2.2.0
 python3-openid==3.1.0
 pytz==2017.2
 raven==6.1.0
-requests==2.17.3
+requests==2.18.1
 requests-oauthlib==0.8.0
 six==1.10.0
 social-auth-app-django==1.2.0
