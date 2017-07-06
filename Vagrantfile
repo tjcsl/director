@@ -35,13 +35,27 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.synced_folder ".", "/home/ubuntu/director"
 
-  config.vm.provision "file",
-    source: "~/.ssh/#{devconfig['ssh_key']}",
-    destination: ".ssh/#{devconfig['ssh_key']}"
+  RSA_PUB = File.join(ENV["HOME"], ".ssh/id_rsa.pub")
+  RSA_PRIV = File.join(ENV["HOME"], ".ssh/id_rsa")
+  GIT_CONF = File.join(ENV["HOME"], ".gitconfig")
 
-  config.vm.provision "file",
-    source: "~/.ssh/#{devconfig['ssh_key']}.pub",
-    destination: ".ssh/#{devconfig['ssh_key']}.pub"
+  if File.file?(RSA_PUB)
+    config.vm.provision "file",
+      source: RSA_PUB,
+      destination: ".ssh/id_rsa.pub"
+  end
+
+  if File.file?(RSA_PRIV)
+    config.vm.provision "file",
+      source: RSA_PRIV,
+      destination: ".ssh/id_rsa"
+  end
+
+  if File.file?(GIT_CONF)
+    config.vm.provision "file",
+      source: GIT_CONF,
+      destination: ".gitconfig"
+  end
 
   config.vm.provision "shell", path: "config/provision_vagrant.sh"
   config.vm.provision "shell", path: "config/run_vagrant.sh", run: "always"
