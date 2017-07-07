@@ -23,7 +23,7 @@ class SiteForm(forms.ModelForm):
     category = forms.ChoiceField(choices=(("static", "Static"), ("php", "PHP"), ("dynamic", "Dynamic"), ("vm", "Virtual Machine")),
                                  help_text="If you want to run a custom server, like Node.js or Django, you will need to set this to Dynamic.",
                                  widget=forms.Select(attrs={"class": "form-control"}))
-    purpose = forms.ChoiceField(choices=(("user", "User"), ("activity", "Activity"), ("other", "Other")),
+    purpose = forms.ChoiceField(choices=(("user", "User"), ("project", "Project"), ("activity", "Activity"), ("other", "Other")),
                                 widget=forms.Select(attrs={"class": "form-control"}))
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
     custom_nginx = forms.BooleanField(required=False,

@@ -46,6 +46,7 @@ class Site(models.Model):
     purpose = models.CharField(max_length=16, choices=(
         ("legacy", "Legacy"),
         ("user", "User"),
+        ("project", "Project"),
         ("activity", "Activity"),
         ("other", "Other")
     ))
@@ -65,6 +66,8 @@ class Site(models.Model):
             return os.path.join(settings.WEB_ROOT, "activities", self.name)
         elif self.purpose == "legacy":
             return os.path.join(settings.WEB_ROOT, "legacy", self.name)
+        elif self.purpose == "project":
+            return os.path.join(settings.WEB_ROOT, "projects", self.name)
         else:
             return os.path.join(settings.WEB_ROOT, self.name)
 
