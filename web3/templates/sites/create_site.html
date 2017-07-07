@@ -6,6 +6,7 @@
     {{ block.super }}
     <script type="text/javascript" src="{% static 'js/sites/creation.js' %}"></script>
     <script type="text/javascript">
+        var project_domain = "{{ project_domain }}";
         $(document).ready(function() {
             $("#id_users").selectize();
         });

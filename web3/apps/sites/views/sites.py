@@ -36,7 +36,8 @@ def create_view(request):
 
         context = {
             "form": form,
-            "site": None
+            "site": None,
+            "project_domain": settings.PROJECT_DOMAIN
         }
         return render(request, "sites/create_site.html", context)
     else:
@@ -69,7 +70,8 @@ def edit_view(request, site_id):
         form = SiteForm(instance=site, user=request.user)
     context = {
         "form": form,
-        "site": site
+        "site": site,
+        "project_domain": settings.PROJECT_DOMAIN
     }
     return render(request, "sites/create_site.html", context)
 
