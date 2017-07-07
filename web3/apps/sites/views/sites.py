@@ -3,6 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.conf import settings
 
 from ..models import Site
 from ..forms import SiteForm, ProcessForm
