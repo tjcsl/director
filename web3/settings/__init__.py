@@ -44,6 +44,9 @@ DEBUG = True
 DB_USERNAME = "web3"
 DB_PASSWORD = "web3"
 
+# Default project domain
+PROJECT_DOMAIN = "tjhsst.io"
+
 try:
     from .secret import *  # noqa
 except ImportError:

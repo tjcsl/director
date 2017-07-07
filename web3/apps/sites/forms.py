@@ -70,6 +70,10 @@ class SiteForm(forms.ModelForm):
                 if not domain == default_domain:
                     if not self._user.is_superuser:
                         raise forms.ValidationError("Only administrators can set up *.tjhsst.edu domains.")
+            elif domain.endswith(settings.PROJECT_DOMAIN):
+                if not domain.rsplit(".", 2)[0] == self.cleaned_data["name"]:
+                    if not self._user.is_superuser:
+                        raise forms.ValidationError("Your subdomain for {} must match your site name!".format(settings.PROJECT_DOMAIN))
             else:
                 if Domain.objects.filter(domain=domain).exclude(site__name=self.cleaned_data["name"]).exists():
                     raise forms.ValidationError("The domain {} is already taken by another site! If you believe this is an error, please send an email to {}.".format(domain, settings.EMAIL_CONTACT))
@@ -78,9 +82,10 @@ class SiteForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(SiteForm, self).clean()
         default_domain = "{}.sites.tjhsst.edu".format(cleaned_data["name"])
-        if cleaned_data["purpose"] in ["user", "activity", "legacy"] and "domain" in cleaned_data:
-            if default_domain not in cleaned_data["domain"]:
-                raise forms.ValidationError("Sites of type '{}' must keep the default '{}' domain!".format(cleaned_data["purpose"], default_domain))
+        if "domain" in cleaned_data:
+            if cleaned_data["purpose"] in ["user", "activity", "legacy"]:
+                if default_domain not in cleaned_data["domain"]:
+                    raise forms.ValidationError("Sites of type '{}' must keep the default '{}' domain!".format(cleaned_data["purpose"], default_domain))
         return cleaned_data
 
     def save(self, commit=True):
