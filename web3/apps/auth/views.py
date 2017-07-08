@@ -73,6 +73,7 @@ def logout_view(request):
 
 @csrf_exempt
 def node_auth_view(request):
+    """Provides authentication for the Node.js server."""
     if request.method == "POST":
         try:
             if not request.POST.get("uid", None):
@@ -115,6 +116,7 @@ def node_auth_view(request):
 
 @login_required
 def set_access_cookie_view(request):
+    """Check if a user can view a .secure folder, and set a cookie if they can."""
     if "site" not in request.GET:
         messages.error(request, "No site specified!")
         return redirect("index")
@@ -132,6 +134,7 @@ def set_access_cookie_view(request):
 
 
 def check_access_cookie_view(request):
+    """Checks if a user has the cookie set that will allow them to view the .secure folder."""
     site_name = request.META.get("HTTP_DIRECTOR_SITE_NAME")
     site_cookie = request.COOKIES.get("site_{}".format(site_name))
     if not site_cookie:
