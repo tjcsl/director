@@ -80,6 +80,10 @@ wss.on("connection", function(ws) {
                     else if (data.type == "terminal") {
                         handler_terminal.register(ws, auth, data);
                     }
+                    else {
+                        ws.send(JSON.stringify({ error: "Unknown request type!" }));
+                        ws.close();
+                    }
                 }
             });
         });
