@@ -1521,14 +1521,14 @@ $(document).ready(function() {
     });
 
     ace.config.loadModule("ace/keyboard/vim", function(m) {
-        var VimApi = ace.require("ace/keyboard/vim").CodeMirror.Vim
+        var VimApi = ace.require("ace/keyboard/vim").CodeMirror.Vim;
         VimApi.defineEx("write", "w", function(cm, input) {
             // save on :write
-            // console.log(cm, input);
             $(cm.ace.container).trigger("tab:save");
             cm.ace.execCommand("save");
         });
         VimApi.defineEx("quit", "q", function(cm, input) {
+            // close on :quit
             $(cm.ace.container).trigger("tab:close");
         });
     });
