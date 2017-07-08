@@ -15,6 +15,7 @@
   "dependencies": {
     "express": "^4.15.3",
     "inotify": "^1.4.1",
+    "node-gyp": "^3.6.2",
     "pty.js": "^0.3.1",
     "raven": "^1.2.1",
     "uuid": "^3.0.1",

@@ -5,6 +5,7 @@ sudo: false
 cache:
     directories:
         - "$HOME/.cache/pip"
+        - "node/node_modules"
 services:
     - postgresql
 install:
