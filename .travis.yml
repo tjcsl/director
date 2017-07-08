@@ -5,20 +5,13 @@ sudo: false
 cache:
     directories:
         - "$HOME/.cache/pip"
-        - "node/node_modules"
-addons:
-    apt:
-        packages:
-            - python
 services:
     - postgresql
 install:
     - pip install -U pip flake8 -r requirements.txt
-    - cd node && npm install && cd ..
 before_script:
     - cp web3/settings/secret.sample web3/settings/secret.py
     - psql -U postgres -c "create database web3"
 script:
     - flake8 --max-line-length=200 .
     - ./manage.py migrate
-    - cd node && npm test && cd ..
