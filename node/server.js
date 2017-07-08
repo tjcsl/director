@@ -75,10 +75,10 @@ wss.on("connection", function(ws) {
                     ws.user = auth.user;
                     ws.removeListener("message", message_init);
                     if (data.type == "fileupdate") {
-                        handler_fileupdate.register(ws, auth, data);
+                        handler_fileupdate.register(ws, auth);
                     }
                     else if (data.type == "terminal") {
-                        handler_terminal.register(ws, auth, data);
+                        handler_terminal.register(ws, auth);
                     }
                     else {
                         ws.send(JSON.stringify({ error: "Unknown request type!" }));

@@ -7,14 +7,14 @@ var onlineUsers = {};
 
 module.exports = {
     onlineUsers: onlineUsers,
-    register: function(ws, auth, data) {
+    register: function(ws, data) {
         function sendUserCount() {
             var msg = JSON.stringify({
                 action: "users",
-                users: onlineUsers[auth.site_name].sockets.map(function(x) { return x.user; })
+                users: onlineUsers[data.site.name].sockets.map(function(x) { return x.user; })
             });
-            for (var i = 0; i < onlineUsers[auth.site_name].sockets.length; i++) {
-                var s = onlineUsers[auth.site_name].sockets[i];
+            for (var i = 0; i < onlineUsers[data.site.name].sockets.length; i++) {
+                var s = onlineUsers[data.site.name].sockets[i];
                 if (s.readyState == 1) {
                     // websocket is in OPEN state
                     s.send(msg);
@@ -22,20 +22,20 @@ module.exports = {
             }
         }
         function addHook(p) {
-            if (!path.join(auth.site_homedir, p).startsWith(auth.site_homedir)) {
+            if (!path.join(data.site.homedir, p).startsWith(data.site.homedir)) {
                 return;
             }
-            if (!onlineUsers[auth.site_name] || p in onlineUsers[auth.site_name].hooks) {
+            if (!onlineUsers[data.site.name] || p in onlineUsers[data.site.name].hooks) {
                 return;
             }
-            onlineUsers[auth.site_name].hooks[p] = inotify.addWatch({
-                path: path.join(auth.site_homedir, p),
+            onlineUsers[data.site.name].hooks[p] = inotify.addWatch({
+                path: path.join(data.site.homedir, p),
                 watch_for: Inotify.IN_CREATE | Inotify.IN_DELETE | Inotify.IN_MOVED_FROM | Inotify.IN_MOVED_TO | Inotify.IN_IGNORED | Inotify.IN_DELETE_SELF | Inotify.IN_MODIFY,
                 callback: function(e) {
                     var act = null;
                     var stat = null;
                     if (e.mask & (Inotify.IN_DELETE_SELF | Inotify.IN_IGNORED)) {
-                        delete onlineUsers[auth.site_name].hooks[p];
+                        delete onlineUsers[data.site.name].hooks[p];
                         return;
                     }
                     if (e.mask & (Inotify.IN_DELETE | Inotify.IN_MOVED_FROM)) {
@@ -49,7 +49,7 @@ module.exports = {
                     }
                     if (act == "create" || act == "modify") {
                         try {
-                            stat = fs.lstatSync(path.join(auth.site_homedir, p, e.name));
+                            stat = fs.lstatSync(path.join(data.site.homedir, p, e.name));
                         }
                         catch (err) {
                             if (err && err.code == "ENOENT") {
@@ -66,8 +66,8 @@ module.exports = {
                             exec: (stat ? ((stat.mode & 1) && !stat.isDirectory()) : undefined),
                             link: (stat ? stat.isSymbolicLink() : undefined)
                         });
-                        for (var i = 0; i < onlineUsers[auth.site_name].sockets.length; i++) {
-                            var s = onlineUsers[auth.site_name].sockets[i];
+                        for (var i = 0; i < onlineUsers[data.site.name].sockets.length; i++) {
+                            var s = onlineUsers[data.site.name].sockets[i];
                             if (s.readyState == 1) {
                                 // websocket is in OPEN state
                                 s.send(msg);
@@ -77,18 +77,18 @@ module.exports = {
                 }
             });
         }
-        if (auth.site_name in onlineUsers) {
-            onlineUsers[auth.site_name].sockets.push(ws);
+        if (data.site.name in onlineUsers) {
+            onlineUsers[data.site.name].sockets.push(ws);
         }
         else {
-            onlineUsers[auth.site_name] = {sockets: [ws], hooks: {}};
+            onlineUsers[data.site.name] = {sockets: [ws], hooks: {}};
         }
         addHook("");
         addHook("public");
         ws.on("close", function() {
-            onlineUsers[auth.site_name].sockets.splice(onlineUsers[auth.site_name].sockets.indexOf(ws), 1);
-            if (!onlineUsers[auth.site_name].sockets) {
-                for (var hook in onlineUsers[auth.site_name].hooks) {
+            onlineUsers[data.site.name].sockets.splice(onlineUsers[data.site.name].sockets.indexOf(ws), 1);
+            if (!onlineUsers[data.site.name].sockets) {
+                for (var hook in onlineUsers[data.site.name].hooks) {
                     try {
                         inotify.removeWatch(hooks[hook]);
                     }
@@ -96,16 +96,16 @@ module.exports = {
                         // watch was already removed
                     }
                 }
-                delete onlineUsers[auth.site_name];
+                delete onlineUsers[data.site.name];
             }
             else {
                 sendUserCount();
             }
         });
         // remove any dead connections
-        for (var i = onlineUsers[auth.site_name].sockets.length - 1; i >= 0; i--) {
-            if (onlineUsers[auth.site_name].sockets[i].readyState == 3) {
-                onlineUsers[auth.site_name].sockets.splice(i, 1);
+        for (var i = onlineUsers[data.site.name].sockets.length - 1; i >= 0; i--) {
+            if (onlineUsers[data.site.name].sockets[i].readyState == 3) {
+                onlineUsers[data.site.name].sockets.splice(i, 1);
             }
         }
         sendUserCount();

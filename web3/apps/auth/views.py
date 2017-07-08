@@ -92,10 +92,14 @@ def node_auth_view(request):
                     return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status=403)
                 return JsonResponse({
                     "granted": True,
-                    "site_name": site.name,
-                    "site_homedir": site.path,
-                    "site_purpose": site.purpose,
-                    "site_user": site.user.username,
+                    "site": {
+                        "id": site.id,
+                        "name": site.name,
+                        "homedir": site.path,
+                        "purpose": site.purpose,
+                        "user": site.user.username
+                    },
+                    "userid": user.id,
                     "user": user.username
                 })
 
@@ -105,7 +109,16 @@ def node_auth_view(request):
                     return JsonResponse({"granted": False, "error": "User does not have permission to access this virtual machine."}, status=403)
                 if not vm.ip_address or not vm.password:
                     return JsonResponse({"granted": False, "error": "No IP address or root password set!"})
-                return JsonResponse({"granted": True, "ip": vm.ip_address, "password": vm.password})
+                return JsonResponse({
+                    "granted": True,
+                    "vm": {
+                        "id": vm.id,
+                        "ip": vm.ip_address,
+                        "password": vm.password
+                    },
+                    "userid": user.id,
+                    "user": user.username
+                })
 
         except Exception as e:
             client.captureException()

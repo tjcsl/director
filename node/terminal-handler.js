@@ -12,7 +12,7 @@ module.exports = {
         terminals[id].resize(rows, cols);
         return true;
     },
-    register: function(ws, auth, data) {
+    register: function(ws, data) {
         var id = uuid();
         var started = false;
         var term = null;
@@ -24,31 +24,31 @@ module.exports = {
         });
 
         if (data.site) {
-            if (!auth.user) {
+            if (!data.user) {
                 ws.send(JSON.stringify({ error: "Invalid user id passed!" }));
                 ws.close();
             }
             else {
-                term = pty.spawn(__dirname + "/shell.sh", [auth.user], {
+                term = pty.spawn(__dirname + "/shell.sh", [data.user], {
                     name: "xterm-color",
                     cols: 80,
                     rows: 30,
-                    cwd: auth.site_homedir,
+                    cwd: data.site.homedir,
                     env: {
-                        SITE_ROOT: auth.site_homedir,
-                        SITE_NAME: auth.site_name,
-                        SITE_PURPOSE: auth.site_purpose
+                        SITE_ROOT: data.site.homedir,
+                        SITE_NAME: data.site.name,
+                        SITE_PURPOSE: data.site.purpose
                     }
                 });
             }
         }
         else if (data.vm) {
-            term = pty.spawn(__dirname + "/ssh.sh", [auth.ip], {
+            term = pty.spawn(__dirname + "/ssh.sh", [auth.vm.ip], {
                 name: "xterm-color",
                 cols: 80,
                 rows: 30,
                 env: {
-                    SSHPASS: auth.password
+                    SSHPASS: auth.vm.password
                 }
             });
         }
