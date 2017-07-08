@@ -30,7 +30,7 @@
     <script type="text/javascript" src="{% static 'js/terminal/terminal.js' %}"></script>
     <script>
     $(document).ready(function() {
-        registerTerminal($(".console-wrapper"), { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", vm: "{{ vm.id }}" });
+        registerTerminal($(".console-wrapper"), { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", vm: "{{ vm.id }}", type: "terminal" });
     });
     </script>
 {% endblock %}

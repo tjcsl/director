@@ -74,10 +74,10 @@ wss.on("connection", function(ws) {
                 else {
                     ws.user = auth.user;
                     ws.removeListener("message", message_init);
-                    if (data.editor) {
+                    if (data.type == "fileupdate") {
                         handler_fileupdate.register(ws, auth, data);
                     }
-                    else {
+                    else if (data.type == "terminal") {
                         handler_terminal.register(ws, auth, data);
                     }
                 }

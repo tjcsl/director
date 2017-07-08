@@ -56,7 +56,7 @@
     var restart_process_endpoint = "{% url 'restart_process' site.id %}";
     var is_dynamic = {% if site.category == 'dynamic' %}true{% else %}false{% endif %};
     var is_superuser = {% if request.user.is_superuser %}true{% else %}false{% endif %};
-    var terminal_auth = { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}" };
+    var terminal_auth = { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}", type: "terminal" };
     {% if raven_dsn %}
     Raven.config('{{ raven_dsn|escapejs }}').install();
 

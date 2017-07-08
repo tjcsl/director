@@ -1550,7 +1550,7 @@ function addFileListener() {
         var host = location.origin.replace(/^http/, 'ws');
         var ws = new WebSocket(host + "/ws/");
         ws.onopen = function(e) {
-            ws.send(JSON.stringify({ uid: terminal_auth.uid, token: terminal_auth.token, site: terminal_auth.site, editor: true }));
+            ws.send(JSON.stringify({ uid: terminal_auth.uid, token: terminal_auth.token, site: terminal_auth.site, type: "fileupdate" }));
             ws.onmessage = function(e) {
                 var data = JSON.parse(e.data);
                 if (data.action == "create") {
