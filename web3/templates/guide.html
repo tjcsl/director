@@ -116,7 +116,7 @@ gunicorn server.wsgi -b 127.0.0.1:$PORT -w=4</code></pre>
 source venv/bin/activate</code></pre>
 <p>You will then be able to install packages using <span class="path">pip install &lt;package&gt;</span>. An example is shown below:</p>
 <pre><code class="bash">pip install requests</code></pre>
-<p>In order for the server to load these packages, you will need to add the line <span class="path">source venv/bin/activate</span> to the <span class="path">run.sh</span> file before the line where the server is started.</p>
+<p><b>Note:</b> In order for the server to load these packages, you will need to add the line <span class="path">source venv/bin/activate</span> to the <span class="path">run.sh</span> file before the line where the server is started.</p>
 </div>
 <h6>Flask Server</h6>
 <div class="step">
