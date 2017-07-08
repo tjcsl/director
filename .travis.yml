@@ -6,11 +6,14 @@ cache:
     directories:
         - "$HOME/.cache/pip"
         - "node/node_modules"
+addons:
+    apt:
+        packages:
+            - python
 services:
     - postgresql
 install:
     - pip install -U pip flake8 -r requirements.txt
-    - npm update -g node-gyp
     - cd node && npm install && cd ..
 before_script:
     - cp web3/settings/secret.sample web3/settings/secret.py
