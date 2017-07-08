@@ -52,6 +52,10 @@ module.exports = {
                 }
             });
         }
+        else {
+            ws.send(JSON.stringify({ error: "Unknown terminal type!" }));
+            ws.close();
+        }
 
         term.on("close", function(e) {
             ws.close();
