@@ -58,7 +58,7 @@ $(document).ready(function() {
         }]
     };
     if (typeof registerConsole !== 'undefined') {
-        layout_config["content"][0]["content"][1]["content"][1]["content"].push({
+        layout_config.content[0].content[1].content[1].content.push({
             type: 'component',
             componentName: 'sql'
         });
@@ -69,8 +69,8 @@ $(document).ready(function() {
         if (savedState) {
             layout_config = JSON.parse(savedState);
             if ("editor" in layout_config) {
-                for (var key in layout_config["editor"]) {
-                    settings[key] = layout_config["editor"][key];
+                for (var key in layout_config.editor) {
+                    settings[key] = layout_config.editor[key];
                 }
             }
             if (!settings["beginner-tips"]) {
@@ -97,7 +97,7 @@ $(document).ready(function() {
         if (typeof localStorage !== 'undefined') {
             if (layout.isInitialised) {
                 var state = layout.toConfig();
-                state["editor"] = settings;
+                state.editor = settings;
                 localStorage.setItem("editor-state-" + site_name, JSON.stringify(state));
             }
         }
@@ -321,11 +321,12 @@ $(document).ready(function() {
         }
     }
     function triggerCreate(item, type) {
+        var filepath;
         if (item[0] == $("#files")[0]) {
             filepath = "";
         }
         else {
-            var filepath = getPath(item);
+            filepath = getPath(item);
         }
         var name = modalPrompt("New " + (type ? "File" : "Folder"), "Enter a name for your new " + (type ? "file" : "directory") + ".", function(name) {
             $.post(create_endpoint, { name: name, path: filepath, type: (type ? "f" : "d") }, function(data) {
@@ -656,9 +657,10 @@ $(document).ready(function() {
                                     }
                                     else {
                                         var children = getChildren(path_obj);
+                                        var newdepth, existing;
                                         if (typeof f == "undefined" || f.attr("id") == "files") {
                                             newdepth = 0;
-                                            var existing = $("[data-depth=0][data-name='" + escapeFileName(path_obj.attr("data-name")) + "']");
+                                            existing = $("[data-depth=0][data-name='" + escapeFileName(path_obj.attr("data-name")) + "']");
                                             if (!existing.length) {
                                                 path_obj.insertAfter($("#files div:last"));
                                             }
@@ -671,12 +673,12 @@ $(document).ready(function() {
                                             if (f.hasClass("folder") && !f.find(".fa-fw").hasClass("fa-folder-open-o")) {
                                                 f.dblclick();
                                             }
-                                            var newdepth = parseInt(f.attr("data-depth")) + 1;
+                                            newdepth = parseInt(f.attr("data-depth")) + 1;
                                             var dest_children = getChildren(f);
                                             if (dest_children.length) {
                                                 f = dest_children[dest_children.length - 1];
                                             }
-                                            var existing = dest_children.filter("[data-name='" + escapeFileName(path_obj.attr("data-name")) + "']");
+                                            existing = dest_children.filter("[data-name='" + escapeFileName(path_obj.attr("data-name")) + "']");
                                             if (!existing.length) {
                                                 path_obj.insertAfter(f);
                                             }
@@ -779,42 +781,43 @@ $(document).ready(function() {
         build: function(trigger, e) {
             return {
                 callback: function(key, options) {
+                    var c, newTab;
                     if (key == "new_file") {
                         triggerCreate(trigger, true);
                     }
-                    if (key == "new_folder") {
+                    else if (key == "new_folder") {
                         triggerCreate(trigger, false);
                     }
-                    if (key == "refresh") {
+                    else if (key == "refresh") {
                         initFiles();
                     }
-                    if (key == "open") {
+                    else if (key == "open") {
                         window.open(site_url, "_blank");
                     }
-                    if (key == "new_terminal" || key == "new_nginx" || key == "new_sql") {
-                        var c = layout.root.getItemsById("default-terminal");
+                    else if (key == "new_terminal" || key == "new_nginx" || key == "new_sql") {
+                        c = layout.root.getItemsById("default-terminal");
                         if (!c.length) {
                             c = layout.root.getItemsById("default-file");
                         }
-                        var newTab = {
+                        newTab = {
                             type: "component",
                             componentName: (key == "new_terminal" ? "terminal" : key == "new_nginx" ? "nginx" : "sql")
                         };
                         c[0].addChild(newTab);
                     }
-                    if (key == "new_settings") {
-                        var c = layout.root.getItemsById("default-file");
-                        var newTab = {
+                    else if (key == "new_settings") {
+                        c = layout.root.getItemsById("default-file");
+                        newTab = {
                             type: "component",
                             componentName: "help"
                         };
                         c[0].addChild(newTab);
                     }
-                    if (key == "upload") {
+                    else if (key == "upload") {
                         uploader_folder = null;
                         $("#uploader").trigger("click");
                     }
-                    if (key.startsWith("site_type_")) {
+                    else if (key.startsWith("site_type_")) {
                         var type = key.substring(10);
                         var notify = Messenger().info("Updating site type...");
                         $.post(site_type_endpoint, { type: type }, function(data) {
@@ -1096,6 +1099,7 @@ $(document).ready(function() {
     // end #files code
     $(document).keydown(function(e) {
         if (e.altKey) {
+            var c, newTab;
             if (e.keyCode == 78) {
                 // Alt + N
                 if ($("#files div.active").length) {
@@ -1106,7 +1110,7 @@ $(document).ready(function() {
                 }
                 e.preventDefault();
             }
-            if (e.keyCode == 79) {
+            else if (e.keyCode == 79) {
                 // Alt + O
                 var selected = $("#files div.file.active");
                 if (!is_dynamic && selected.length) {
@@ -1127,41 +1131,41 @@ $(document).ready(function() {
                 }
                 e.preventDefault();
             }
-            if (e.keyCode == 83) {
+            else if (e.keyCode == 83) {
                 // Alt + S
-                var c = layout.root.getItemsById("default-file");
-                var newTab = {
+                c = layout.root.getItemsById("default-file");
+                newTab = {
                     type: "component",
                     componentName: "help"
                 };
                 c[0].addChild(newTab);
                 e.preventDefault();
             }
-            if (e.keyCode == 84) {
+            else if (e.keyCode == 84) {
                 // Alt + T
-                var c = layout.root.getItemsById("default-terminal");
+                c = layout.root.getItemsById("default-terminal");
                 if (!c.length) {
                     c = layout.root.getItemsById("default-file");
                 }
-                var newTab = {
+                newTab = {
                     type: "component",
                     componentName: "terminal"
                 };
                 c[0].addChild(newTab);
                 e.preventDefault();
             }
-            if (e.keyCode == 13) {
+            else if (e.keyCode == 13) {
                 // Alt + Enter
                 if (is_dynamic) {
                     doServerRestart();
                 }
             }
-            if (e.keyCode == 67) {
-                var c = layout.root.getItemsById("default-terminal");
+            else if (e.keyCode == 67) {
+                c = layout.root.getItemsById("default-terminal");
                 if (!c.length) {
                     c = layout.root.getItemsById("default-file");
                 }
-                var newTab = {
+                newTab = {
                     type: "component",
                     componentName: "sql"
                 };
@@ -1227,10 +1231,10 @@ $(document).ready(function() {
                 }
                 if (e.keyCode == 38) {
                     // Key Up
-                    var na = items.prevAll(":visible");
-                    if (na.length) {
+                    var pa = items.prevAll(":visible");
+                    if (pa.length) {
                         items.removeClass("active");
-                        na.first().addClass("active");
+                        pa.first().addClass("active");
                     }
                     e.preventDefault();
                 }
@@ -1557,8 +1561,9 @@ function addFileListener() {
                     Messenger().error(data.error);
                 }
                 if (data.action == "create") {
+                    var newNode;
                     if (!data.path) {
-                        var newNode = makeNode({name: data.name, type: data.type ? "d" : "f", executable: data.exec, link: data.link}, 0);
+                        newNode = makeNode({name: data.name, type: data.type ? "d" : "f", executable: data.exec, link: data.link}, 0);
                         if (!$("div." + (data.type ? "folder" : "file") + "[data-depth=0][data-name='" + escapeFileName(data.name) + "']").length) {
                             $("#files").append(newNode);
                         }
@@ -1566,7 +1571,7 @@ function addFileListener() {
                     else {
                         var node = getElement(data.path);
                         if (node && node.find("i.fa").hasClass("fa-folder-open-o")) {
-                            var newNode = makeNode({name: data.name, type: data.type ? "d" : "f", executable: data.exec, link: data.link}, parseInt(node.attr("data-depth")) + 1);
+                            newNode = makeNode({name: data.name, type: data.type ? "d" : "f", executable: data.exec, link: data.link}, parseInt(node.attr("data-depth")) + 1);
                             if (!node.nextUntil("div.folder[data-depth=" + node.attr("data-depth") + "]").filter("div." + (data.type ? "folder" : "file") + "[data-depth=" + (parseInt(node.attr("data-depth") + 1)) + "][data-name='" + escapeFileName(data.name) + "']").length) {
                                 node.after(newNode);
                             }
