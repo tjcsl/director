@@ -2,7 +2,6 @@ $(document).ready(function() {
     var modelist = ace.require("ace/ext/modelist");
     ace.require("ace/ext/language_tools");
     var editors = [];
-    var logContainer;
     var settings = {
         "hidden-files": true,
         "prompt-delete": true,
@@ -815,17 +814,12 @@ $(document).ready(function() {
                         c[0].addChild(newTab);
                     }
                     else if (key == "show_log") {
-                        if (logContainer) {
-                            // switch to preexisting log tab if exists.
-                            logContainer.tab.contentItem.parent.setActiveContentItem(logContainer.tab.contentItem);
-                        } else {
-                            c = layout.root.getItemsById("default-file");
-                            newTab = {
-                                type: "component",
-                                componentName: "log"
-                            };
-                            c[0].addChild(newTab);
-                        }
+                        c = layout.root.getItemsById("default-file");
+                        newTab = {
+                            type: "component",
+                            componentName: "log"
+                        };
+                        c[0].addChild(newTab);
                     }
                     else if (key == "upload") {
                         uploader_folder = null;
@@ -901,24 +895,24 @@ $(document).ready(function() {
                     if (key == "open") {
                         $("#files div.file.active").dblclick();
                     }
-                    if (key == "delete") {
+                    else if (key == "delete") {
                         triggerDelete();
                     }
-                    if (key == "new_file") {
+                    else if (key == "new_file") {
                         triggerCreate(trigger, true);
                     }
-                    if (key == "download") {
+                    else if (key == "download") {
                         $("#files div.file.active").each(function() {
                             triggerDownload($(this));
                         });
                     }
-                    if (key == "new_folder") {
+                    else if (key == "new_folder") {
                         triggerCreate(trigger, false);
                     }
-                    if (key == "rename") {
+                    else if (key == "rename") {
                         triggerRename(trigger);
                     }
-                    if (key == "set_process") {
+                    else if (key == "set_process") {
                         var filepath = getPath(trigger) + trigger.attr("data-name");
                         var notify = Messenger().info("Setting site process...");
                         $.post(process_endpoint, {name: filepath}, function(data) {
@@ -937,7 +931,7 @@ $(document).ready(function() {
                             }
                         });
                     }
-                    if (key == "set_exec") {
+                    else if (key == "set_exec") {
                         var paths = [];
                         var fobjs = $("#files div.file.active");
                         fobjs.each(function() {
@@ -954,10 +948,10 @@ $(document).ready(function() {
                             }
                         });
                     }
-                    if (key == "preview") {
+                    else if (key == "preview") {
                         triggerPreview();
                     }
-                    if (key == "open_browser") {
+                    else if (key == "open_browser") {
                         $("#files div.file.active").each(function() {
                             var fileobj = $(this);
                             var filepath = getPath(fileobj) + fileobj.attr("data-name");
@@ -974,10 +968,20 @@ $(document).ready(function() {
                             }
                         });
                     }
+                    else if (key == "show_log") {
+                        c = layout.root.getItemsById("default-file");
+                        newTab = {
+                            type: "component",
+                            componentName: "log",
+                            componentState: { path: (getPath(trigger) || "") + trigger.attr("data-name") }
+                        };
+                        c[0].addChild(newTab);
+                    }
                 },
                 items: {
                     "open": {name: "Open", icon: "fa-pencil"},
                     "preview": ((is_dynamic || !is_public) ? undefined : {name: "Preview", icon: "fa-eye"}),
+                    "show_log": {name: "Show Log", icon: "fa-line-chart"},
                     "open_browser": ((is_dynamic || !is_public) ? undefined : {name: "Open in Browser", icon: "fa-globe"}),
                     "download": {name: "Download", icon: "fa-download"},
                     "sep1": "--------",
@@ -1291,7 +1295,6 @@ $(document).ready(function() {
         });
     });
     layout.registerComponent("preview", function(container, componentState) {
-        console.log(componentState);
         container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-eye'></span> " + componentState.file);
         var frame = $("<iframe class='preview' />");
@@ -1315,38 +1318,41 @@ $(document).ready(function() {
         container.getElement().html($("#log-template").html());
         container.on("open", function () {
             var scrollContainer = container.getElement().find(".log");
-            console.log(scrollContainer);
-            console.log(scrollContainer.prop("scrollHeight"));
             window.setTimeout(function () {
-                console.log(scrollContainer.prop("scrollHeight"));
                 scrollContainer.scrollTop(scrollContainer.prop("scrollHeight"));
             }, 500);
-            if (!logContainer) {
-                logContainer = container;
-                var host = location.origin.replace(/^http/, 'ws');
-                var logws = new WebSocket(host + "/ws/");
-                logws.onopen = function(e) {
-                    container.getElement().find(".log .output").empty();
-                    logws.send(JSON.stringify({ uid: terminal_auth.uid, token: terminal_auth.token, site: terminal_auth.site, type: "log" }));
-                    logws.onmessage = function (e) {
-                        var data = JSON.parse(e.data);
-                        if (data.error)
-                            Messenger().error(data.error);
-                        if (data.text) {
-                            var scrollContainer = container.getElement().find(".log")[0];
-                            var isScrolledToBottom = scrollContainer.scrollHeight - scrollContainer.clientHeight <= scrollContainer.scrollTop + 1;
-                            container.getElement().find(".log .output").append(data.text);
-                            if (isScrolledToBottom) {
-                                scrollContainer.scrollTop = scrollContainer.scrollHeight;
-                            }
+            var host = location.origin.replace(/^http/, 'ws');
+            var logws = new WebSocket(host + "/ws/");
+            logws.onopen = function(e) {
+                var logOutput = container.getElement().find(".log .output");
+                logOutput.empty();
+                logws.send(JSON.stringify({
+                    uid: terminal_auth.uid,
+                    token: terminal_auth.token,
+                    site: terminal_auth.site,
+                    type: "log",
+                    custom: {
+                        path: componentState.path
+                    }
+                }));
+                var scrollContainer = container.getElement().find(".log")[0];
+                logws.onmessage = function (e) {
+                    var data = JSON.parse(e.data);
+                    if (data.error) {
+                        Messenger().error(data.error);
+                    }
+                    if (data.text) {
+                        var isScrolledToBottom = scrollContainer.scrollHeight - scrollContainer.clientHeight <= scrollContainer.scrollTop + 1;
+                        logOutput.append(data.text);
+                        if (isScrolledToBottom) {
+                            scrollContainer.scrollTop = scrollContainer.scrollHeight;
                         }
-                    };
+                    }
                 };
-                container.on("destroy", function () {
-                    logws.close();
-                    logContainer = null;
-                });
-            }
+            };
+            container.on("destroy", function () {
+                logws.close();
+            });
         });
     });
     layout.registerComponent("sql", function(container, componentState) {
@@ -1375,7 +1381,6 @@ $(document).ready(function() {
             "theme": settings["editor-theme"]
         });
         container.on("close", function() {
-            console.log('closed');
             editors.splice(editors.indexOf(editor), 1);
         });
         container.on("resize", function() {

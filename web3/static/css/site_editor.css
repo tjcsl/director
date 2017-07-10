@@ -117,12 +117,13 @@ span.file-indicator.readonly {
 .log {
     width: 100%;
     height: 100%;
-    padding: 15px;
+    padding: 10px;
     background-color: white;
     overflow-y: auto;
 }
 .log pre {
     color: inherit;
+    margin-bottom: 0;
 }
 body.dark .log {
     background-color: #222;

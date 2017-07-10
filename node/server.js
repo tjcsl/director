@@ -75,6 +75,9 @@ wss.on("connection", function(ws) {
                 else {
                     ws.user = auth.user;
                     ws.removeListener("message", message_init);
+                    if ("custom" in data) {
+                        auth.custom = data.custom;
+                    }
                     if (data.type == "fileupdate") {
                         handler_fileupdate.register(ws, auth);
                     }
