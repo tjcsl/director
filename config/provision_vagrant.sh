@@ -32,7 +32,8 @@ apt-get install -y git
 apt-get install -y htop
 apt-get install -y php-fpm
 
-apt-get install -y sudo python python-dev python3 python3-dev python3-pip virtualenv libnss-pgsql2 nodejs nodejs-legacy npm supervisor
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+apt-get install -y sudo python python-dev python3 python3-dev python3-pip virtualenv libnss-pgsql2 nodejs supervisor
 apt-get install -y postgresql postgresql-contrib libpq-dev nginx
 apt-get install -y libmysqlclient-dev mysql-client-core-5.7
 
