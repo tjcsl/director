@@ -10,6 +10,7 @@ var querystring = require("querystring");
 
 var handler_fileupdate = require("./fileupdate-handler.js");
 var handler_terminal = require("./terminal-handler.js");
+var handler_log = require("./log-handler.js");
 
 var raven = require("raven");
 if (fs.existsSync("raven.dsn")) {
@@ -76,6 +77,9 @@ wss.on("connection", function(ws) {
                     ws.removeListener("message", message_init);
                     if (data.type == "fileupdate") {
                         handler_fileupdate.register(ws, auth);
+                    }
+                    else if (data.type == "log") {
+                        handler_log.register(ws, auth);
                     }
                     else if (data.type == "terminal") {
                         handler_terminal.register(ws, auth);

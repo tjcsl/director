@@ -2,6 +2,7 @@ $(document).ready(function() {
     var modelist = ace.require("ace/ext/modelist");
     ace.require("ace/ext/language_tools");
     var editors = [];
+    var logContainer;
     var settings = {
         "hidden-files": true,
         "prompt-delete": true,
@@ -813,6 +814,19 @@ $(document).ready(function() {
                         };
                         c[0].addChild(newTab);
                     }
+                    else if (key == "show_log") {
+                        if (logContainer) {
+                            // switch to preexisting log tab if exists.
+                            logContainer.tab.contentItem.parent.setActiveContentItem(logContainer.tab.contentItem);
+                        } else {
+                            var c = layout.root.getItemsById("default-file");
+                            var newTab = {
+                                type: "component",
+                                componentName: "log"
+                            };
+                            c[0].addChild(newTab);
+                        }
+                    }
                     else if (key == "upload") {
                         uploader_folder = null;
                         $("#uploader").trigger("click");
@@ -849,6 +863,7 @@ $(document).ready(function() {
                             "site_type_dynamic": {name: "Dynamic", icon: "fa-cog"}
                         }
                     },
+                    "show_log": {name: "Show Log", icon: "fa-line-chart"},
                     "sep1": "--------",
                     "upload": {name: "Upload", icon: "fa-upload"},
                     "new_file": {name: "New File", icon: "fa-file"},
@@ -1276,6 +1291,7 @@ $(document).ready(function() {
         });
     });
     layout.registerComponent("preview", function(container, componentState) {
+        console.log(componentState)
         container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-eye'></span> " + componentState.file);
         var frame = $("<iframe class='preview' />");
@@ -1291,6 +1307,46 @@ $(document).ready(function() {
         container.on("shown", function() {
             updateSettings();
             updateServerStatus();
+        });
+    });
+    layout.registerComponent("log", function(container, componentState) {
+        container.on("tab", addContextHandlers);
+        container.setTitle("<span class='fa fa-line-chart'></span> Process Log");
+        container.getElement().html($("#log-template").html());
+        container.on("open", function () {
+            var scrollContainer = container.getElement().find(".log");
+            console.log(scrollContainer);
+            console.log(scrollContainer.prop("scrollHeight"));
+            window.setTimeout(function () {
+                console.log(scrollContainer.prop("scrollHeight"));
+                scrollContainer.scrollTop(scrollContainer.prop("scrollHeight"));
+            }, 500);
+            if (!logContainer) {
+                logContainer = container;
+                var host = location.origin.replace(/^http/, 'ws');
+                var logws = new WebSocket(host + "/ws/");
+                logws.onopen = function(e) {
+                    container.getElement().find(".log .output").empty();
+                    logws.send(JSON.stringify({ uid: terminal_auth.uid, token: terminal_auth.token, site: terminal_auth.site, type: "log" }));
+                    logws.onmessage = function (e) {
+                        var data = JSON.parse(e.data);
+                        if (data.error)
+                            Messenger().error(data.error);
+                        if (data.text) {
+                            var scrollContainer = container.getElement().find(".log")[0];
+                            var isScrolledToBottom = scrollContainer.scrollHeight - scrollContainer.clientHeight <= scrollContainer.scrollTop + 1;
+                            container.getElement().find(".log .output").append(data.text);
+                            if (isScrolledToBottom) {
+                                scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                            }
+                        }
+                    }
+                };
+                container.on("destroy", function () {
+                    logws.close();
+                    logContainer = null;
+                })
+            }
         });
     });
     layout.registerComponent("sql", function(container, componentState) {
@@ -1319,6 +1375,7 @@ $(document).ready(function() {
             "theme": settings["editor-theme"]
         });
         container.on("close", function() {
+            console.log('closed');
             editors.splice(editors.indexOf(editor), 1);
         });
         container.on("resize", function() {
