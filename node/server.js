@@ -75,20 +75,26 @@ wss.on("connection", function(ws) {
                 else {
                     ws.user = auth.user;
                     ws.removeListener("message", message_init);
-                    if ("custom" in data) {
-                        auth.custom = data.custom;
+                    try {
+                        if ("custom" in data) {
+                            auth.custom = data.custom;
+                        }
+                        if (data.type == "fileupdate") {
+                            handler_fileupdate.register(ws, auth);
+                        }
+                        else if (data.type == "log") {
+                            handler_log.register(ws, auth);
+                        }
+                        else if (data.type == "terminal") {
+                            handler_terminal.register(ws, auth);
+                        }
+                        else {
+                            ws.send(JSON.stringify({ error: "Unknown request type!" }));
+                            ws.close();
+                        }
                     }
-                    if (data.type == "fileupdate") {
-                        handler_fileupdate.register(ws, auth);
-                    }
-                    else if (data.type == "log") {
-                        handler_log.register(ws, auth);
-                    }
-                    else if (data.type == "terminal") {
-                        handler_terminal.register(ws, auth);
-                    }
-                    else {
-                        ws.send(JSON.stringify({ error: "Unknown request type!" }));
+                    catch (ex) {
+                        raven.captureException(ex);
                         ws.close();
                     }
                 }

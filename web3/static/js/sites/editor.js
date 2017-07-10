@@ -857,7 +857,7 @@ $(document).ready(function() {
                             "site_type_dynamic": {name: "Dynamic", icon: "fa-cog"}
                         }
                     },
-                    "show_log": {name: "Show Log", icon: "fa-line-chart"},
+                    "show_log": (is_dynamic ? {name: "Show Log", icon: "fa-line-chart"} : undefined),
                     "sep1": "--------",
                     "upload": {name: "Upload", icon: "fa-upload"},
                     "new_file": {name: "New File", icon: "fa-file"},
@@ -981,7 +981,7 @@ $(document).ready(function() {
                 items: {
                     "open": {name: "Open", icon: "fa-pencil"},
                     "preview": ((is_dynamic || !is_public) ? undefined : {name: "Preview", icon: "fa-eye"}),
-                    "show_log": {name: "Show Log", icon: "fa-line-chart"},
+                    "show_log": {name: "Show as Log", icon: "fa-line-chart"},
                     "open_browser": ((is_dynamic || !is_public) ? undefined : {name: "Open in Browser", icon: "fa-globe"}),
                     "download": {name: "Download", icon: "fa-download"},
                     "sep1": "--------",
@@ -1336,16 +1336,22 @@ $(document).ready(function() {
                     }
                 }));
                 var scrollContainer = container.getElement().find(".log")[0];
+                var started = false;
                 logws.onmessage = function (e) {
-                    var data = JSON.parse(e.data);
-                    if (data.error) {
-                        Messenger().error(data.error);
-                    }
-                    if (data.text) {
+                    if (started) {
                         var isScrolledToBottom = scrollContainer.scrollHeight - scrollContainer.clientHeight <= scrollContainer.scrollTop + 1;
-                        logOutput.append(data.text);
+                        logOutput.append(document.createTextNode(e.data));
                         if (isScrolledToBottom) {
                             scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                        }
+                    }
+                    else {
+                        var data = JSON.parse(e.data);
+                        if (data.error) {
+                            Messenger().error(data.error);
+                        }
+                        else if (data.action == "START") {
+                            started = true;
                         }
                     }
                 };

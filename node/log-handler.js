@@ -4,14 +4,12 @@ var path = require("path");
 
 module.exports = {
     register: function(ws, data) {
+        ws.send(JSON.stringify({ action: "START" }));
         var filename;
         if ("custom" in data && data.custom.path) {
             filename = path.normalize(path.join(data.site.homedir, data.custom.path));
             if (!filename.startsWith(data.site.homedir)) {
-                ws.send(JSON.stringify({
-                    text: "Invalid log file at " + filename + ".",
-                    error: "Invalid log file."
-                }));
+                ws.send("Invalid log file at " + filename + ".");
                 ws.close();
                 return;
             }
@@ -21,21 +19,18 @@ module.exports = {
         }
         fs.stat(filename, function (err, stats) {
             if (err && err.code == "ENOENT") {
-                ws.send(JSON.stringify({
-                    text: "No log file at " + filename + ".",
-                    error: "No log file."
-                }));
+                ws.send("No log file at " + filename + ".");
                 ws.close();
             } else {
                 var stream = fst.createReadStream(filename, { encoding: "utf8", tail: true });
                 stream.on("error", function () {
                     if (ws.readyState == 1) {
-                        ws.send(JSON.stringify({error: "An error occurred reading the log."}));
+                        ws.send("An error occurred while reading the log.");
                     }
                 });
                 stream.on("data", function (data) {
                     if (ws.readyState == 1) {
-                        ws.send(JSON.stringify({text: data}));
+                        ws.send(data);
                     }
                 });
                 ws.on("close", function() {

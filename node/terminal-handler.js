@@ -6,7 +6,7 @@ var terminals = {};
 module.exports = {
     terminals: terminals,
     resizeTerminal: function(id, rows, cols) {
-        if (typeof terminals[id] !== "undefined") {
+        if (typeof terminals[id] === "undefined") {
             return false;
         }
         terminals[id].resize(rows, cols);
