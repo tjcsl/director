@@ -5,12 +5,12 @@ $(document).ready(function() {
 });
 function registerTerminal(wrapper, auth, options) {
     options = options || {};
-    var titleCallback = options["onTitle"] || function(title) {
+    var titleCallback = options.onTitle || function(title) {
         document.title = title;
     };
-    var disconnectCallback = options["onClose"] || function() { };
-    var loadCallback = options["onStart"] || function() { };
-    var reconnectCallback = options["onReconnect"] || function() {
+    var disconnectCallback = options.onClose || function() { };
+    var loadCallback = options.onStart || function() { };
+    var reconnectCallback = options.onReconnect || function() {
         wrapper.off("keypress");
         wrapper.off("resize");
         registerTerminal(wrapper, auth, titleCallback);
