@@ -4,11 +4,11 @@ var path = require("path");
 
 module.exports = {
     register: function(ws, data) {
-        var filename = path.join(data.site.homedir, "private", `log-${data.site.name}.log`);
+        var filename = path.join(data.site.homedir, "private", "log-" + data.site.name + ".log");
         fs.stat(filename, function (err, stats) {
             if (err && err.code == "ENOENT") {
                 ws.send(JSON.stringify({
-                    text: `No log file at ${filename}`,
+                    text: "No log file at " + filename,
                     error: "No log file"}));
                 ws.close();
             } else {
@@ -23,6 +23,6 @@ module.exports = {
                     stream.close();
                 });
             }
-        })
+        });
     },
 };

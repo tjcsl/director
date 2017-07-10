@@ -819,8 +819,8 @@ $(document).ready(function() {
                             // switch to preexisting log tab if exists.
                             logContainer.tab.contentItem.parent.setActiveContentItem(logContainer.tab.contentItem);
                         } else {
-                            var c = layout.root.getItemsById("default-file");
-                            var newTab = {
+                            c = layout.root.getItemsById("default-file");
+                            newTab = {
                                 type: "component",
                                 componentName: "log"
                             };
@@ -1291,7 +1291,7 @@ $(document).ready(function() {
         });
     });
     layout.registerComponent("preview", function(container, componentState) {
-        console.log(componentState)
+        console.log(componentState);
         container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-eye'></span> " + componentState.file);
         var frame = $("<iframe class='preview' />");
@@ -1340,12 +1340,12 @@ $(document).ready(function() {
                                 scrollContainer.scrollTop = scrollContainer.scrollHeight;
                             }
                         }
-                    }
+                    };
                 };
                 container.on("destroy", function () {
                     logws.close();
                     logContainer = null;
-                })
+                });
             }
         });
     });
