@@ -18,5 +18,5 @@ before_script:
 script:
     - flake8 --max-line-length=200 .
     - ./node/node_modules/eslint/bin/eslint.js node/
-    - ./node/node_modules/eslint/bin/eslint.js web3/static/js/sites/
+    - ./node/node_modules/eslint/bin/eslint.js web3/static/js/
     - ./manage.py migrate

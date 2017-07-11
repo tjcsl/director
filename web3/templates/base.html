@@ -20,11 +20,11 @@
     {% endblock %}
 
     {% block js %}
-        <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'js/messenger.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'js/messenger-theme-future.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/vendor/jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/vendor/messenger.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/vendor/messenger-theme-future.js' %}"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.1.0/js/tether.min.js"></script>
-        <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/vendor/bootstrap.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'selectize/selectize.js' %}"></script>
 
         {% if messages %}
