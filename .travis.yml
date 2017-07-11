@@ -1,8 +1,6 @@
-language: python, node_js
+language: python
 python:
     - '3.5'
-node_js:
-    - '6'
 sudo: false
 cache:
     directories:
@@ -12,6 +10,7 @@ services:
     - postgresql
 install:
     - pip install -U pip flake8 -r requirements.txt
+    - nvm install 6
     - cd node; npm install eslint; cd ..
 before_script:
     - cp web3/settings/secret.sample web3/settings/secret.py
