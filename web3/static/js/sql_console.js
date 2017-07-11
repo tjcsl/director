@@ -1,4 +1,12 @@
-function registerConsole(console, exitCallback) {
+/* exported
+        registerConsole
+*/
+/* global
+        sql_endpoint
+*/
+
+// FIXME: consolidate the exported functions into a single exported variable
+var registerConsole = function (console, exitCallback) {
     console.click(function() {
         var sel = window.getSelection().toString();
         if (!sel) {
@@ -76,4 +84,4 @@ function registerConsole(console, exitCallback) {
             console.scrollTop(console[0].scrollHeight);
         }
     });
-}
+};
