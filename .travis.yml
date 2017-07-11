@@ -16,7 +16,7 @@ before_script:
     - cp web3/settings/secret.sample web3/settings/secret.py
     - psql -U postgres -c "create database web3"
 script:
-    - flake8 --max-line-length=200 .
+    - flake8 --max-line-length=200 --exclude=node_modules,venv .
     - ./node/node_modules/eslint/bin/eslint.js --env node node/
     - ./node/node_modules/eslint/bin/eslint.js --env browser web3/static/js/
     - ./manage.py migrate
