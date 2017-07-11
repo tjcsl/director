@@ -1,6 +1,8 @@
 language: python
 python:
     - '3.5'
+node_js:
+    - '6'
 sudo: false
 cache:
     directories:
