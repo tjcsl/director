@@ -1,18 +1,24 @@
+/* global
+    jQuery
+
+    status_refresh_endpoint
+    git_pull_endpoint
+*/
 jQuery.fn.selectText = function() {
-   var doc = document;
-   var element = this[0];
-   var range;
-   if (doc.body.createTextRange) {
-       range = document.body.createTextRange();
-       range.moveToElementText(element);
-       range.select();
-   } else if (window.getSelection) {
-       var selection = window.getSelection();
-       range = document.createRange();
-       range.selectNodeContents(element);
-       selection.removeAllRanges();
-       selection.addRange(range);
-   }
+    var doc = document;
+    var element = this[0];
+    var range;
+    if (doc.body.createTextRange) {
+        range = document.body.createTextRange();
+        range.moveToElementText(element);
+        range.select();
+    } else if (window.getSelection) {
+        var selection = window.getSelection();
+        range = document.createRange();
+        range.selectNodeContents(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
 };
 
 function updateStatus() {
@@ -67,10 +73,3 @@ $(document).ready(function() {
 
     updateStatus();
 });
-var select = function(el) {
-    var range = document.createRange();
-    range.selectNodeContents(el);
-    var sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-};

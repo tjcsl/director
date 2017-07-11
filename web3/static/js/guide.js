@@ -1,3 +1,6 @@
+/* global
+    hljs
+*/
 hljs.initHighlightingOnLoad();
 $(document).ready(function() {
     $(".guide h4, .guide h5, .guide h6").each(function() {
@@ -10,12 +13,12 @@ $(document).ready(function() {
         item.addClass("level-" + $(this).prop("tagName").toLowerCase());
         $(".toc").append(item);
     });
-    $(".toc h5").click(function(e) {
+    $(".toc h5").click(function() {
         $("html, body").animate({
             scrollTop: 0
         }, 400);
     });
-    $(".toc .level").click(function(e) {
+    $(".toc .level").click(function() {
         var loc = $(".guide [name='" + $(this).attr("href").substring(1) + "']");
         $("html, body").animate({
             scrollTop: loc.offset().top

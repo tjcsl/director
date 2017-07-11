@@ -46,16 +46,16 @@ $(document).ready(function() {
         var search_fields = $(this).data("fields").split(",");
         var sites_shown = 0;
         var sites_total = 0;
-        $(search_objects).each(function(k, v) {
+        $(search_objects).each(function() {
             var t = $(this);
-            var fields = $.map(search_fields, function(val, i) {
+            var fields = $.map(search_fields, function(val) {
                 return t.find(val).text().toLowerCase();
             });
             var show = true;
             var site_tags = null;
             if (tags.length || notags.length) {
                 site_tags = [];
-                $(this).find(".tag").each(function(k, v) {
+                $(this).find(".tag").each(function() {
                     site_tags.push($(this).text().replace(/\W/g, "").toLowerCase());
                 });
             }
