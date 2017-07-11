@@ -1,9 +1,17 @@
+/* exported
+        registerTerminal
+*/
+/* global
+        Terminal
+*/
+
+// FIXME: consolidate the exported functions into a single exported variable
 $(document).ready(function() {
     $(window).resize(function() {
         $(".console-wrapper").trigger("terminal:resize");
     });
 });
-function registerTerminal(wrapper, auth, options) {
+var registerTerminal = function (wrapper, auth, options) {
     options = options || {};
     var titleCallback = options.onTitle || function(title) {
         document.title = title;
@@ -19,10 +27,10 @@ function registerTerminal(wrapper, auth, options) {
     var console = wrapper.find(".console");
     var disconnect = wrapper.find(".disconnect");
     var started = false;
-    var host = location.origin.replace(/^http/, 'ws');
+    var host = location.origin.replace(/^http/, "ws");
     var ws = new WebSocket(host + "/ws/");
     var termid;
-    ws.onopen = function(e) {
+    ws.onopen = function() {
         console.empty().removeClass("disconnected");
         disconnect.hide();
         var term = new Terminal({ cursorBlink: true });
@@ -61,19 +69,23 @@ function registerTerminal(wrapper, auth, options) {
                 }
             }
         };
-        ws.onclose = function(e) {
+        ws.onclose = function() {
             var cache = console.html();
             try {
                 term.destroy();
             }
-            catch (ignore) { }
-            wrapper.off("resize");
-            console.html(cache).addClass("disconnected");
-            started = false;
-            wrapper.focus();
-            disconnect.show();
-            titleCallback("Terminal");
-            disconnectCallback();
+            catch (e) {
+                // Fail silently
+            }
+            finally {
+                wrapper.off("resize");
+                console.html(cache).addClass("disconnected");
+                started = false;
+                wrapper.focus();
+                disconnect.show();
+                titleCallback("Terminal");
+                disconnectCallback();
+            }
         };
         wrapper.find(".terminal .xterm-viewport, .terminal .xterm-rows").css("line-height", "19px");
         wrapper.keypress(function(e) {
@@ -89,12 +101,13 @@ function registerTerminal(wrapper, auth, options) {
             }
         });
     };
-}
-function gup(name, url) {
+};
+
+var gup = function (name, url) {
     if (!url) url = location.href;
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
     var regexS = "[\\?&]" + name + "=([^&#]*)";
     var regex = new RegExp(regexS);
     var results = regex.exec(url);
     return results == null ? null : results[1];
-}
+};

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $("#id_username").on("paste keyup blur", function(e) {
+    $("#id_username").on("paste keyup blur", function() {
         var new_name = $(this).val();
         var current_email = $("#id_email").val();
         if (!current_email || current_email.includes("@tjhsst.edu")) {
