@@ -17,6 +17,6 @@ before_script:
     - psql -U postgres -c "create database web3"
 script:
     - flake8 --max-line-length=200 .
-    - ./node/node_modules/eslint/bin/eslint.js node/*.js
-    - ./node/node_modules/eslint/bin/eslint.js web3/static/js/sites/*.js
+    - ./node/node_modules/eslint/bin/eslint.js node/
+    - ./node/node_modules/eslint/bin/eslint.js web3/static/js/sites/
     - ./manage.py migrate
