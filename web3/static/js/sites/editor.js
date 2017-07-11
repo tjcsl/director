@@ -1759,12 +1759,15 @@ function getChildren(item) {
         return parseInt($(this).attr("data-depth")) <= depth;
     });
 }
-function getSiblings(item) {
-    var depth = parseInt(item.attr("data-depth"));
-    var before = item.prevUntil("[data-depth=" + (depth - 1) + "]").filter("[data-depth=" + depth + "]");
-    var after = item.nextUntil("[data-depth=" + (depth - 1) + "]").filter("[data-depth=" + depth + "]");
-    return before.add(after);
-}
+
+// TODO: use this function
+// function getSiblings(item) {
+//     var depth = parseInt(item.attr("data-depth"));
+//     var before = item.prevUntil("[data-depth=" + (depth - 1) + "]").filter("[data-depth=" + depth + "]");
+//     var after = item.nextUntil("[data-depth=" + (depth - 1) + "]").filter("[data-depth=" + depth + "]");
+//     return before.add(after);
+// }
+
 function modalConfirm(title, body, callback) {
     $("#modal-confirm").modal("show");
     $("#modal-confirm .modal-title").text(title);
