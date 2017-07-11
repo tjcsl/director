@@ -22,7 +22,8 @@ module.exports = {
                 ws.send("No log file at " + filename + ".");
                 ws.close();
             } else {
-                var stream = fst.createReadStream(filename, { encoding: "utf8", tail: true });
+                var fileLength = fs.statSync(filename)["size"];
+                var stream = fst.createReadStream(filename, { encoding: "utf8", tail: true, start: Math.max(0, fileLength - 2048) });
                 stream.on("error", function () {
                     if (ws.readyState == 1) {
                         ws.send("An error occurred while reading the log.");
