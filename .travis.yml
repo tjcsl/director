@@ -11,7 +11,7 @@ services:
 install:
     - pip install -U pip flake8 -r requirements.txt
     - nvm install 6
-    - cd node; npm install eslint; cd ..
+    - cd node; npm install; cd ..
 before_script:
     - cp web3/settings/secret.sample web3/settings/secret.py
     - psql -U postgres -c "create database web3"
