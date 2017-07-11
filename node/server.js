@@ -1,11 +1,11 @@
 #!/usr/bin/node
+/* eslint-disable no-alert, no-console */
 
 var fs = require("fs");
-var WebSocketServer = require('ws').Server;
+var WebSocketServer = require("ws").Server;
 var express = require("express");
 var app = express();
 var http = require("http");
-var https = require("https");
 var querystring = require("querystring");
 
 var handler_fileupdate = require("./fileupdate-handler.js");
@@ -35,7 +35,7 @@ app.post("/ws/terminal/:id/size", function(req, res) {
 
 var wss = new WebSocketServer({ server: server });
 wss.on("connection", function(ws) {
-    var message_init = function(data, flags) {
+    var message_init = function(data) {
         data = JSON.parse(data);
         var postData = querystring.stringify({
             uid: data.uid,

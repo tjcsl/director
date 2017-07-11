@@ -17,7 +17,7 @@ module.exports = {
         else {
             filename = path.join(data.site.homedir, "private", "log-" + data.site.name + ".log");
         }
-        fs.stat(filename, function (err, stats) {
+        fs.stat(filename, function (err) {
             if (err && err.code == "ENOENT") {
                 ws.send("No log file at " + filename + ".");
                 ws.close();

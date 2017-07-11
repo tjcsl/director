@@ -1,9 +1,8 @@
 /* global
-    jQuery
-
-    status_refresh_endpoint
-    git_pull_endpoint
+       status_refresh_endpoint
+       git_pull_endpoint
 */
+
 jQuery.fn.selectText = function() {
     var doc = document;
     var element = this[0];

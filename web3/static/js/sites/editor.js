@@ -1,3 +1,36 @@
+// Libraries
+/* global
+        ace
+        Messenger
+        GoldenLayout
+
+        registerTerminal
+        registerConsole
+*/
+// Defined in template
+/* global
+        user_name
+        site_name
+        site_url
+        is_dynamic: true
+        is_superuser
+        terminal_auth
+        process_status_endpoint
+        restart_process_endpoint
+        create_endpoint
+        delete_endpoint
+        download_endpoint
+        rename_endpoint
+        path_endpoint
+        upload_endpoint
+        move_endpoint
+        process_endpoint
+        exec_endpoint
+        site_type_endpoint
+        nginx_endpoint
+        save_endpoint
+        load_endpoint
+*/
 $(document).ready(function() {
     var modelist = ace.require("ace/ext/modelist");
     ace.require("ace/ext/language_tools");
@@ -26,45 +59,45 @@ $(document).ready(function() {
             minimise: "Minimize"
         },
         content: [{
-            type: 'row',
+            type: "row",
             content: [{
-                type: 'component',
-                componentName: 'files',
+                type: "component",
+                componentName: "files",
                 width: 25,
                 isClosable: false
             },{
-                type: 'column',
+                type: "column",
                 content: [{
-                    type: 'stack',
+                    type: "stack",
                     isClosable: false,
                     id: "default-file",
                     content: [{
-                        type: 'component',
-                        componentName: 'help'
+                        type: "component",
+                        componentName: "help"
                     }]
                 },{
-                    type: 'stack',
+                    type: "stack",
                     id: "default-terminal",
                     height: 30,
                     content: [{
-                        type: 'component',
-                        componentName: 'terminal'
+                        type: "component",
+                        componentName: "terminal"
                     }, {
-                        type: 'component',
-                        componentName: 'nginx'
+                        type: "component",
+                        componentName: "nginx"
                     }]
                 }]
             }]
         }]
     };
-    if (typeof registerConsole !== 'undefined') {
+    if (typeof registerConsole !== "undefined") {
         layout_config.content[0].content[1].content[1].content.push({
-            type: 'component',
-            componentName: 'sql'
+            type: "component",
+            componentName: "sql"
         });
     }
 
-    if (typeof localStorage !== 'undefined') {
+    if (typeof localStorage !== "undefined") {
         var savedState = localStorage.getItem("editor-state-" + site_name);
         if (savedState) {
             layout_config = JSON.parse(savedState);
@@ -94,7 +127,7 @@ $(document).ready(function() {
     var layout = new GoldenLayout(layout_config, $("#editor-container"));
 
     function saveConfig() {
-        if (typeof localStorage !== 'undefined') {
+        if (typeof localStorage !== "undefined") {
             if (layout.isInitialised) {
                 var state = layout.toConfig();
                 state.editor = settings;
@@ -227,7 +260,7 @@ $(document).ready(function() {
 
     updateSettings();
 
-    $(document).on("change", ".settings-pane .setting", function(e) {
+    $(document).on("change", ".settings-pane .setting", function() {
         var setting = $(this).attr("data-setting");
         if ($(this).attr("type") == "checkbox") {
             settings[setting] = $(this).prop("checked");
@@ -239,7 +272,7 @@ $(document).ready(function() {
         saveConfig();
     });
 
-    $(document).on("change", ".settings-pane .setting[data-setting='layout-theme']", function(e) {
+    $(document).on("change", ".settings-pane .setting[data-setting='layout-theme']", function() {
         if (settings["layout-theme"] == "dark") {
             if (settings["editor-theme"] == "ace/theme/chrome") {
                 settings["editor-theme"] = "ace/theme/monokai";
@@ -287,7 +320,7 @@ $(document).ready(function() {
     function triggerDelete() {
         var filepaths = [];
         var items = $("#files div.active");
-        items.each(function(k, v) {
+        items.each(function() {
             var item = $(this);
             var filepath = getPath(item);
             if (item.hasClass("file")) {
@@ -301,7 +334,7 @@ $(document).ready(function() {
                     Messenger().error(data.error);
                 }
                 else {
-                    items.each(function(k, v) {
+                    items.each(function() {
                         var item = $(this);
                         if (item.hasClass("folder")) {
                             getChildren(item).remove();
@@ -328,7 +361,7 @@ $(document).ready(function() {
         else {
             filepath = getPath(item);
         }
-        var name = modalPrompt("New " + (type ? "File" : "Folder"), "Enter a name for your new " + (type ? "file" : "directory") + ".", function(name) {
+        modalPrompt("New " + (type ? "File" : "Folder"), "Enter a name for your new " + (type ? "file" : "directory") + ".", function(name) {
             $.post(create_endpoint, { name: name, path: filepath, type: (type ? "f" : "d") }, function(data) {
                 if (data.error) {
                     Messenger().error(data.error);
@@ -466,7 +499,7 @@ $(document).ready(function() {
                 if (contracted) {
                     t.find(".fa-fw").removeClass("fa-folder-o").addClass("fa-folder-open-o");
                     children.show();
-                    children.find(".fa-fw").each(function(k, v) {
+                    children.find(".fa-fw").each(function() {
                         var folder = $(this).parent();
                         if (!folder.hasClass("folder")) {
                             return;
@@ -529,7 +562,7 @@ $(document).ready(function() {
                 $(e.target).closest("div").addClass("dragover");
             }
         });
-        files.on("dragleave", "div", function(e) {
+        files.on("dragleave", "div", function() {
             $(this).removeClass("dragover");
         });
         files.on("drop", function(e) {
@@ -595,7 +628,7 @@ $(document).ready(function() {
                                 message: "File(s) uploaded!"
                             });
                         },
-                        error: function(httpObj, textStatus) {
+                        error: function(httpObj) {
                             if (httpObj.status == 413) {
                                 msg.update({
                                     type: "error",
@@ -692,7 +725,7 @@ $(document).ready(function() {
                                         path_obj.attr("data-depth", newdepth);
                                         var existing_children = getChildren(path_obj);
                                         if (path_obj.hasClass("folder")) {
-                                            $.each(children.get().reverse(), function(k, v) {
+                                            $.each(children.get().reverse(), function() {
                                                 var cdepth = newdepth + (parseInt($(this).attr("data-depth")) - depth);
                                                 if (!existing_children.filter("[data-name='" + escapeFileName($(this).attr("data-name")) + "']").length) {
                                                     $(this).insertAfter(path_obj);
@@ -715,7 +748,7 @@ $(document).ready(function() {
         });
     }
     var uploader_folder = null;
-    $("#uploader").on("change", function(e) {
+    $("#uploader").on("change", function() {
         if (!this.files.length) {
             return;
         }
@@ -758,7 +791,7 @@ $(document).ready(function() {
                     });
                 }
             },
-            error: function(httpObj, textStatus) {
+            error: function(httpObj) {
                 if (httpObj.status == 413) {
                     msg.update({
                         type: "error",
@@ -778,9 +811,9 @@ $(document).ready(function() {
     });
     $.contextMenu({
         "selector": "#files",
-        build: function(trigger, e) {
+        build: function(trigger) {
             return {
-                callback: function(key, options) {
+                callback: function(key) {
                     var c, newTab;
                     if (key == "new_file") {
                         triggerCreate(trigger, true);
@@ -865,7 +898,7 @@ $(document).ready(function() {
                     "sep2": "--------",
                     "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
                     "new_nginx": {name: (is_superuser ? "Edit" : "View") + " Nginx Config", icon: "fa-pencil"},
-                    "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
+                    "new_sql": typeof registerConsole == "undefined" ? undefined : {name: "SQL Console", icon: "fa-database"},
                     "new_settings": {name: "Settings", icon: "fa-wrench"},
                     "sep3": "--------",
                     "refresh": {name: "Refresh", icon: "fa-refresh"}
@@ -873,14 +906,14 @@ $(document).ready(function() {
             };
         },
         events: {
-            show: function(opt) {
+            show: function() {
                 $("#files div.active").removeClass("active");
             }
         }
     });
     $.contextMenu({
         "selector": "#files .file",
-        build: function(trigger, e) {
+        build: function(trigger) {
             var multiple_selected = $("#files div.file.active").length > 1;
             var filepath = getPath(trigger);
             var is_public;
@@ -891,7 +924,7 @@ $(document).ready(function() {
                 is_public = false;
             }
             return {
-                callback: function(key, options) {
+                callback: function(key) {
                     if (key == "open") {
                         $("#files div.file.active").dblclick();
                     }
@@ -969,8 +1002,8 @@ $(document).ready(function() {
                         });
                     }
                     else if (key == "show_log") {
-                        c = layout.root.getItemsById("default-file");
-                        newTab = {
+                        var c = layout.root.getItemsById("default-file");
+                        var newTab = {
                             type: "component",
                             componentName: "log",
                             componentState: { path: (getPath(trigger) || "") + trigger.attr("data-name") }
@@ -997,19 +1030,19 @@ $(document).ready(function() {
             };
         },
         events: {
-            show: function(opt) {
+            show: function() {
                 this.addClass("active");
             },
-            hide: function(opt) {
+            hide: function() {
                 $("#files div.active").removeClass("active");
             }
         }
     });
     $.contextMenu({
         "selector": "#files .folder",
-        build: function(trigger, e) {
+        build: function(trigger) {
             return {
-                callback: function(key, options) {
+                callback: function(key) {
                     if (key == "toggle") {
                         trigger.dblclick();
                     }
@@ -1030,7 +1063,6 @@ $(document).ready(function() {
                     }
                     if (key == "refresh") {
                         trigger.removeClass("loaded");
-                        var depth = parseInt(trigger.attr("data-depth"));
                         getChildren(trigger).remove();
                         trigger.dblclick();
                     }
@@ -1055,21 +1087,21 @@ $(document).ready(function() {
             };
         },
         events: {
-            show: function(opt) {
+            show: function() {
                 this.addClass("active");
             },
-            hide: function(opt) {
+            hide: function() {
                 $("#files div.active").removeClass("active");
             }
         }
     });
     $.contextMenu({
         "selector": ".lm_tab",
-        build: function(trigger, e) {
+        build: function(trigger) {
             var can_save = trigger.hasClass("tab-file") || trigger.hasClass("tab-nginx");
             var can_close = trigger.find(".lm_close_tab").length > 0;
             return {
-                callback: function(key, options) {
+                callback: function(key) {
                     if (key == "save") {
                         trigger.trigger("tab:save");
                     }
@@ -1109,7 +1141,7 @@ $(document).ready(function() {
                     "sep2": "--------",
                     "new_terminal": {name: "New Terminal", icon: "fa-terminal"},
                     "new_nginx": {name: (is_superuser ? "Edit" : "View") + " Nginx Config", icon: "fa-pencil"},
-                    "new_sql": typeof registerConsole == 'undefined' ? undefined : {name: "SQL Console", icon: "fa-database"},
+                    "new_sql": typeof registerConsole == "undefined" ? undefined : {name: "SQL Console", icon: "fa-database"},
                     "new_help": {name: "Settings", icon: "fa-wrench"}
                 }
             };
@@ -1216,7 +1248,7 @@ $(document).ready(function() {
             tab.contentItem.parent.addChild(item);
         });
     }
-    layout.registerComponent("files", function(container, componentState) {
+    layout.registerComponent("files", function(container) {
         container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-folder-open'></span> Files");
         var files = $("<div id='files' tabindex='0' />");
@@ -1272,7 +1304,7 @@ $(document).ready(function() {
         initFiles(true);
         registerFileHandlers(files);
     });
-    layout.registerComponent("terminal", function(container, componentState) {
+    layout.registerComponent("terminal", function(container) {
         container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-terminal'></span> Terminal");
         var term = $($("#console-wrapper-template").html());
@@ -1303,7 +1335,7 @@ $(document).ready(function() {
         frame.attr("src", final_url);
         container.getElement().append(frame);
     });
-    layout.registerComponent("help", function(container, componentState) {
+    layout.registerComponent("help", function(container) {
         container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-wrench'></span> Settings");
         container.getElement().html($("#settings-template").html());
@@ -1321,9 +1353,9 @@ $(document).ready(function() {
             window.setTimeout(function () {
                 scrollContainer.scrollTop(scrollContainer.prop("scrollHeight"));
             }, 500);
-            var host = location.origin.replace(/^http/, 'ws');
+            var host = location.origin.replace(/^http/, "ws");
             var logws = new WebSocket(host + "/ws/");
-            logws.onopen = function(e) {
+            logws.onopen = function() {
                 var logOutput = container.getElement().find(".log .output");
                 logOutput.empty();
                 logws.send(JSON.stringify({
@@ -1361,10 +1393,10 @@ $(document).ready(function() {
             });
         });
     });
-    layout.registerComponent("sql", function(container, componentState) {
+    layout.registerComponent("sql", function(container) {
         container.on("tab", addContextHandlers);
         container.setTitle("<span class='fa fa-database'></span> SQL");
-        if (typeof registerConsole !== 'undefined') {
+        if (typeof registerConsole !== "undefined") {
             container.getElement().html($("#sql-console-template").html());
             registerConsole(container.getElement().find(".sql-console"), function() {
                 if (settings["close-terminal"]) {
@@ -1376,7 +1408,7 @@ $(document).ready(function() {
             container.getElement().html("<span style='padding:5px'><b>No database provisioned!</b> Add a database in order to use the SQL console.</span>");
         }
     });
-    layout.registerComponent("nginx", function(container, componentState) {
+    layout.registerComponent("nginx", function(container) {
         container.setTitle("<span class='file-indicator fa fa-wrench " + (is_superuser ? "saved" : "readonly") + "'></span> " + "Nginx");
         container.on("tab", addContextHandlers);
         var editor = ace.edit(container.getElement()[0]);
@@ -1398,7 +1430,7 @@ $(document).ready(function() {
                 container.getElement().trigger("tab:save");
             });
         });
-        container.getElement().on("tab:close", function(e) {
+        container.getElement().on("tab:close", function() {
             container.close();
         });
         container.getElement().on("tab:save", function(e, force) {
@@ -1502,7 +1534,7 @@ $(document).ready(function() {
                     container.getElement().trigger("tab:save");
                 });
             });
-            container.getElement().on("tab:close", function(e) {
+            container.getElement().on("tab:close", function() {
                 container.close();
             });
             container.getElement().on("tab:save", function(e, force) {
@@ -1592,21 +1624,21 @@ $(document).ready(function() {
         }
     });
 
-    ace.config.loadModule("ace/keyboard/vim", function(m) {
+    ace.config.loadModule("ace/keyboard/vim", function() {
         var VimApi = ace.require("ace/keyboard/vim").CodeMirror.Vim;
-        VimApi.defineEx("write", "w", function(cm, input) {
+        VimApi.defineEx("write", "w", function(cm) {
             // save on :write
             $(cm.ace.container).trigger("tab:save");
             cm.ace.execCommand("save");
         });
-        VimApi.defineEx("quit", "q", function(cm, input) {
+        VimApi.defineEx("quit", "q", function(cm) {
             // close on :quit
             $(cm.ace.container).trigger("tab:close");
         });
     });
     addFileListener();
 });
-function join(a, b) {
+function join() {
     return [].slice.call(arguments).filter(function(path) { return !!path; }).map(function(path) {
         if (path[0] == "/") {
             path = path.slice(1);
@@ -1619,9 +1651,9 @@ function join(a, b) {
 }
 function addFileListener() {
     try {
-        var host = location.origin.replace(/^http/, 'ws');
+        var host = location.origin.replace(/^http/, "ws");
         var ws = new WebSocket(host + "/ws/");
-        ws.onopen = function(e) {
+        ws.onopen = function() {
             ws.send(JSON.stringify({ uid: terminal_auth.uid, token: terminal_auth.token, site: terminal_auth.site, type: "fileupdate" }));
             ws.onmessage = function(e) {
                 var data = JSON.parse(e.data);
@@ -1684,7 +1716,7 @@ function addFileListener() {
         };
     }
     catch (e) {
-        console.error(e);
+        Messenger().error(e);
     }
 }
 function getElement(path) {

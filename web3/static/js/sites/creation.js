@@ -1,10 +1,11 @@
+/* global project_domain */
 $(document).ready(function() {
     $("#id_name").on("keydown", function(e) {
         if (e.which < 32 || e.which == 127) return;
         if (!(e.key.match(/[A-Za-z0-9_-]{1}/))) {
             e.preventDefault();
         }
-    }).on("paste keyup blur", function(e) {
+    }).on("paste keyup blur", function() {
         var is_project = $("#id_purpose").val() == "project";
         var new_name = $(this).val();
         var current_domain = $("#id_domain").val();

@@ -90,7 +90,7 @@ module.exports = {
             if (!onlineUsers[data.site.name].sockets) {
                 for (var hook in onlineUsers[data.site.name].hooks) {
                     try {
-                        inotify.removeWatch(hooks[hook]);
+                        inotify.removeWatch(onlineUsers[data.site.name].hooks[hook]);
                     }
                     catch (e) {
                         // watch was already removed

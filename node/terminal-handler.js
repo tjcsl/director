@@ -14,7 +14,7 @@ module.exports = {
     },
     register: function(ws, data) {
         var id = uuid();
-        var started = false;
+        // var started = false;
         var term = null;
         ws.on("close", function() {
             if (term) {
@@ -57,7 +57,7 @@ module.exports = {
             ws.close();
         }
 
-        term.on("close", function(e) {
+        term.on("close", function() {
             ws.close();
             delete terminals[id];
         });
@@ -68,7 +68,7 @@ module.exports = {
             term.write(data);
         });
         terminals[id] = term;
-        started = true;
+        // started = true;
         if (ws.readyState == 1) {
             ws.send(JSON.stringify({ id: id, action: "START" }));
         }
