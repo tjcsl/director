@@ -124,6 +124,7 @@ span.file-indicator.readonly {
 .log pre {
     color: inherit;
     margin-bottom: 0;
+    overflow: visible;
 }
 body.dark .log {
     background-color: #222;
