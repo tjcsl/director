@@ -5,7 +5,6 @@
         sql_endpoint
 */
 
-// FIXME: consolidate the exported functions into a single exported variable
 var registerConsole = function (console, exitCallback) {
     console.click(function() {
         var sel = window.getSelection().toString();
