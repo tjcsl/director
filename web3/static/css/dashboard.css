@@ -60,3 +60,6 @@
 #sites .site .pull-left.fa span.green {
     background-color: #4CAF50;
 }
+#sites .site .pull-left.fa span.empty {
+    background-color: transparent;
+}

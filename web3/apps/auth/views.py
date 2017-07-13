@@ -12,6 +12,7 @@ from django.contrib import messages
 from ..sites.models import Site
 from ..vms.models import VirtualMachine
 from ..users.models import User
+from ..sites.helpers import get_supervisor_status
 
 from raven.contrib.django.raven_compat.models import client
 
@@ -26,6 +27,17 @@ def index_view(request):
         if sites.count() == 0:
             return redirect("start")
 
+        statuses = {}
+        for site in sites:
+            supervisor_status = get_supervisor_status(site)
+            if supervisor_status == "No Process":
+                statuses[site.name] = "none"
+                continue
+            if "RUNNING" in supervisor_status:
+                statuses[site.name] = "running"
+            else:
+                statuses[site.name] = "stopped"
+
         if request.user.is_superuser and request.GET.get("all", False):
             other_sites = Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name")
         else:
@@ -33,7 +45,8 @@ def index_view(request):
 
         return render(request, "dashboard.html", {
             "sites": sites,
-            "other_sites": other_sites
+            "other_sites": other_sites,
+            "statuses": statuses
         })
     else:
         return login_view(request)
