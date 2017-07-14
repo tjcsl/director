@@ -31,13 +31,16 @@ def index_view(request):
 
         if request.user.is_superuser and request.GET.get("all", False):
             other_sites = Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name")
+            other_statuses = get_supervisor_statuses(list(other_sites.filter(category="dynamic").values_list("name", flat=True)))
         else:
             other_sites = None
+            other_statuses = None
 
         return render(request, "dashboard.html", {
             "sites": sites,
             "other_sites": other_sites,
-            "statuses": statuses
+            "statuses": statuses,
+            "other_statuses": other_statuses
         })
     else:
         return login_view(request)
