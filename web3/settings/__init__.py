@@ -192,7 +192,7 @@ SOCIAL_AUTH_PIPELINE = (
 
 AUTHENTICATION_BACKENDS = (
     'web3.apps.auth.oauth.IonOauth2',
-    'django.contrib.auth.backends.ModelBackend',
+    'web3.apps.auth.backends.PAMAuthenticationBackend',
 )
 
 
