@@ -35,28 +35,36 @@
 <div id="sites">
 {% for site in sites %}
     <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.id }}">
-    {% with statuses|lookup:site.name as status %}
         {% if site.database %}<span data-toggle="tooltip" class="pull-right tag tag-primary tag-database">{{ site.database.get_category_display }}</span>{% endif %}
         {% if site.has_repo %}<span data-toggle="tooltip" class="pull-right tag tag-default tag-git"><i class="fa fa-github-alt"></i> Git</span>{% endif %}
         {% if site.has_vm %}<span data-toggle="tooltip" class="pull-right tag tag-info tag-vm"><i class="fa fa-server"></i> VM</span>{% endif %}
         {% if site.custom_nginx %}<span data-toggle="tooltip" class="pull-right tag tag-info tag-nginx">Nginx</span>{% endif %}
-        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% elif site.purpose == 'legacy' %}fa-snowflake-o{% else %}fa-cube{% endif %}"><span class="{% if status is None %}empty{% elif status is True %}green{% else %}red{% endif %}"></span></i>
+        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% elif site.purpose == 'legacy' %}fa-snowflake-o{% else %}fa-cube{% endif %}">
+            {% if site.category == "dynamic" %}
+            {% with statuses|lookup:site.name as status %}
+            <span class="{% if status is None %}empty{% elif status is True %}green{% else %}red{% endif %}"></span>
+            {% endwith %}
+            {% endif %}
+        </i>
         <b class="name">{{ site.name }}</b><span class="sub"><span class="type">{{ site.get_category_display }}</span> - <span class="desc">{{ site.description|default:"No Description" }}</span> - <span class="users">{{ site.num_users|add:"-1" }} user{% if site.num_users != 2 %}s{% endif %}</span></span>
-    {% endwith %}
     </a>
 {% endfor %}
 {% if other_sites %}
     {% for site in other_sites %}
     <a href="{% url 'info_site' site.id %}" class="site" id="{{ site.id }}">
-    {% with statuses|lookup:site.name as status %}
         <span data-toggle="tooltip" class="pull-right tag tag-warning tag-admin">Admin</span>
         {% if site.has_repo %}<span data-toggle="tooltip" class="pull-right tag tag-default tag-git"><i class="fa fa-github-alt"></i> Git</span>{% endif %}
         {% if site.custom_nginx %}<span data-toggle="tooltip" class="pull-right tag tag-info tag-nginx">Nginx</span>{% endif %}
         {% if site.num_users <= 1 %}<span data-toggle="tooltip" class="pull-right tag tag-danger tag-nousers">No Users</span>{% endif %}
         {% if site.database %}<span data-toggle="tooltip" class="pull-right tag tag-primary tag-database">{{ site.database.get_category_display }}</span>{% endif %}
-        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% elif site.purpose == 'legacy' %}fa-snowflake-o{% else %}fa-cube{% endif %}"><span class="{% if status is None %}empty{% elif status is True %}green{% else %}red{% endif %}"></span></i>
+        <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% elif site.purpose == 'legacy' %}fa-snowflake-o{% else %}fa-cube{% endif %}">
+            {% if site.category == "dynamic" %}
+            {% with statuses|lookup:site.name as status %}
+            <span class="{% if status is None %}empty{% elif status is True %}green{% else %}red{% endif %}"></span>
+            {% endwith %}
+            {% endif %}
+        </i>
         <b class="name">{{ site.name }}</b><span class="sub"><span class="type">{{ site.get_category_display }}</span> - <span class="desc">{{ site.description|default:"No Description" }}</span> - <span class="users">{{ site.num_users|add:"-1" }} user{% if site.num_users != 2 %}s{% endif %}</span></span>
-    {% endwith %}
     </a>
     {% endfor %}
 {% endif %}
