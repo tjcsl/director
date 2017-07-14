@@ -68,7 +68,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
         else:
-            messages.error("Incorrect username or password!")
+            messages.error(request, "Incorrect username or password!")
 
         return redirect("index")
 
