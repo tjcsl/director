@@ -59,7 +59,7 @@
         {% if site.database %}<span data-toggle="tooltip" class="pull-right tag tag-primary tag-database">{{ site.database.get_category_display }}</span>{% endif %}
         <i class="pull-left fa fa-2x fa-fw {% if site.purpose == 'user' %}fa-user{% elif site.purpose == 'activity' %}fa-globe{% elif site.purpose == 'legacy' %}fa-snowflake-o{% else %}fa-cube{% endif %}">
             {% if site.category == "dynamic" %}
-            {% with statuses|lookup:site.name as status %}
+            {% with other_statuses|lookup:site.name as status %}
             <span class="{% if status is None %}empty{% elif status is True %}green{% else %}red{% endif %}"></span>
             {% endwith %}
             {% endif %}
