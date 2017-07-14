@@ -15,6 +15,7 @@ $(document).ready(function() {
 
         var show_online = false;
         var show_offline = false;
+        var show_empty = false;
 
         var matches = val.match(/tag:\w+/g);
         if (matches) {
@@ -25,6 +26,9 @@ $(document).ready(function() {
                 }
                 else if (tag == "offline") {
                     show_offline = true;
+                }
+                else if (tag == "unknown") {
+                    show_empty = true;
                 }
                 else {
                     tags.push(tag);
@@ -97,6 +101,11 @@ $(document).ready(function() {
             }
             if (show_online) {
                 if (!$(this).find(".fa.pull-left span").hasClass("green")) {
+                    show = false;
+                }
+            }
+            if (show_empty) {
+                if (!$(this).find(".fa.pull-left span").hasClass("empty")) {
                     show = false;
                 }
             }
