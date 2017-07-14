@@ -1,6 +1,8 @@
 import re
 import pam
 
+from django.conf import settings
+
 from ..users.models import User
 
 
@@ -12,7 +14,10 @@ class PAMAuthenticationBackend(object):
     """
 
     def authenticate(self, username=None, password=None):
-        if not isinstance(username, str):
+        if not isinstance(username, str) or password is None:
+            return None
+
+        if not settings.PASSWORD_AUTH:
             return None
 
         # remove all non-alphanumeric characters

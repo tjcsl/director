@@ -47,6 +47,9 @@ DB_PASSWORD = "web3"
 # Default project domain
 PROJECT_DOMAIN = "tjhsst.io"
 
+# Default to not allow password authentication
+PASSWORD_AUTH = False
+
 try:
     from .secret import *  # noqa
 except ImportError:
@@ -191,8 +194,8 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'web3.apps.auth.oauth.IonOauth2',
     'web3.apps.auth.backends.PAMAuthenticationBackend',
+    'web3.apps.auth.oauth.IonOauth2',
 )
 
 
