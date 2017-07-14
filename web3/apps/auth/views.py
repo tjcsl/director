@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
@@ -59,7 +59,24 @@ def start_view(request):
 
 
 def login_view(request):
-    return render(request, "login.html")
+    if settings.PASSWORD_AUTH and request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+        else:
+            messages.error("Incorrect username or password!")
+
+        return redirect("index")
+
+    context = {
+        "password_auth": settings.PASSWORD_AUTH
+    }
+
+    return render(request, "login.html", context)
 
 
 def grant_access_token(sender, user, request, **kwargs):

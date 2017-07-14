@@ -10,6 +10,22 @@
     {% if request.user.is_authenticated and request.GET.next %}
     <div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> You are already logged in as <b>{{ request.user.username }}</b>, but you are not authorized to access this page. Would you like to login to a different account?</div>
     {% endif %}
+    {% if password_auth %}
+    <div class="login-box">
+        <h4>Director Login</h4>
+        <form action="{% url 'login' %}" method="POST">
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                <input type="text" id="id_username" name="username" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="id_password">Password</label>
+                <input type="password" id="id_password" name="password" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fa fa-key"></i> Login</button>
+        </form>
+    </div>
+    {% endif %}
     <div class="login-box">
         <p><b>Log in with your Intranet account</b> to access the Director management interface.</p>
         <center>
