@@ -12,8 +12,9 @@
     {% endif %}
     {% if password_auth %}
     <div class="login-box">
-        <h4>Director Login</h4>
+        <h4 style="text-align:center">Login to Director</h4>
         <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="id_username">Username</label>
                 <input type="text" id="id_username" name="username" class="form-control" />
