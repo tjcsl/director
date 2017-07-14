@@ -26,7 +26,7 @@ class PAMAuthenticationBackend(object):
         p = pam.pam()
         if p.authenticate(username, password, service="sshd"):
             try:
-                return User.objects.get(username=username)
+                return User.objects.get(username=username, service=False)
             except User.DoesNotExist:
                 return None
         else:
@@ -34,6 +34,6 @@ class PAMAuthenticationBackend(object):
 
     def get_user(self, user_id):
         try:
-            return User.objects.get(id=user_id)
+            return User.objects.get(id=user_id, service=False)
         except User.DoesNotExist:
             return None
