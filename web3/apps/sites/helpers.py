@@ -132,6 +132,22 @@ def get_supervisor_status(site):
         return "Status Retrieval Failure"
 
 
+def get_supervisor_statuses(sites):
+    try:
+        out = check_output(["supervisorctl", "status"] + sites).decode()
+    except CalledProcessError:
+        client.captureException()
+        return {}
+    statuses = {}
+    for line in out.split("\n"):
+        line = line.strip()
+        if not line:
+            continue
+        key, value = line.split(" ", 1)
+        statuses[key] = True if "RUNNING" in value else False
+    return statuses
+
+
 def reload_services():
     reload_nginx_config()
     reload_php_fpm()

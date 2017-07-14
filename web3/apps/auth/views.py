@@ -12,7 +12,7 @@ from django.contrib import messages
 from ..sites.models import Site
 from ..vms.models import VirtualMachine
 from ..users.models import User
-from ..sites.helpers import get_supervisor_status
+from ..sites.helpers import get_supervisor_statuses
 
 from raven.contrib.django.raven_compat.models import client
 
@@ -27,16 +27,7 @@ def index_view(request):
         if sites.count() == 0:
             return redirect("start")
 
-        statuses = {}
-        for site in sites:
-            supervisor_status = get_supervisor_status(site)
-            if supervisor_status == "No Process":
-                statuses[site.name] = "none"
-                continue
-            if "RUNNING" in supervisor_status:
-                statuses[site.name] = "running"
-            else:
-                statuses[site.name] = "stopped"
+        statuses = get_supervisor_statuses(list(sites.filter(category="dynamic").values_list("name", flat=True)))
 
         if request.user.is_superuser and request.GET.get("all", False):
             other_sites = Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name")
