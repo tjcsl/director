@@ -18,6 +18,9 @@
 {% block main %}
 {% if not site %}<a href="{% url 'request_site' %}" class="pull-right">Site Request Form</a>{% endif %}
 <h4>{% if site %}Edit{% else %}Create New{% endif %} Site</h4>
+{% if not request.user.is_staff %}
+<div style="margin-top:15px" class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> This form is used for the creation of personal project websites. If you would like to create a website for a club or activity, use the <a href="{% url 'request_site' %}">site request form</a>.</div>
+{% endif %}
 <form method="POST">
     {% csrf_token %}
     {{ form.non_field_errors }}
