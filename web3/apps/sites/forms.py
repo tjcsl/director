@@ -49,6 +49,7 @@ class SiteForm(forms.ModelForm):
             if hasattr(self, "_user") and not self._user.is_staff:
                 for field in self.fields:
                     self.fields[field].disabled = True
+                self.fields["description"].disabled = False
                 self.fields["category"].disabled = False
                 self.fields["domain"].disabled = False
             self._old_path = instance.path
