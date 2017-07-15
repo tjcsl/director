@@ -4,9 +4,9 @@ Director (web3) is a website management platform for [TJHSST](https://www.tjhsst
 
 ## Developing for Director
 
-Before starting development for Director, obtain Ion OAuth credentials from the current maintainer(s).
+Before starting development for Director, generate Ion OAuth credentials [here](https://ion.tjhsst.edu/oauth/applications/).
 Clone this repository, and copy `config/devconfig.json.sample` to `config/devconfig.json`.
-Edit the `devconfig.json` file and fill out the `ion_key` and `ion_secret` fields.
+Edit the `devconfig.json` file and fill out the `ion_key` and `ion_secret` fields with your Ion OAuth credentials.
 
 To develop for Director, you will need to download [Vagrant](https://www.vagrantup.com/downloads.html).
 After it is downloaded, you can run `vagrant up` in the folder with the `Vagrantfile`.
