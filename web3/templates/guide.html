@@ -50,11 +50,11 @@
 <p>The <span class="path">private</span> folder is where logs are generated (ex: the PHP and supervisor error logs).</p>
 <p>If you create a <span class="path">.secure</span> file in a folder, that folder will be only accessible to you after a login. If you add a <span class="path">.index</span> file to a folder, the folder will list all of its contents when you navigate to it.</p>
 <h6>Custom Domains</h6>
-<p>You can use a custom domain for your site by clicking on <span class="click"><i class="fa fa-pencil"></i> Edit Site</span> and adding your domain to the domain field. You will then need to set up a CNAME record to point your domain to <span class="path">sites.tjhsst.edu</span>.</p>
+<p>You can use a custom domain for your site by clicking on <span class="click"><i class="fa fa-pencil"></i> Configure Site</span> and adding your domain to the domain field. You will then need to set up a CNAME record to point your domain to <span class="path">sites.tjhsst.edu</span>.</p>
 <h6>GitHub Integration</h6>
 <p>You can set up a webhook that automatically deploys code to your website after you push a commit. In order to do so, clone your repository into the <span class="path">public</span> folder and follow the instructions to the right of the site page.</p>
 <h5>PHP</h5>
-<p>You can use PHP by changing your site type to PHP. To change the site type, go to the site page of the site you want to edit and click <span class="click"><i class="fa fa-pencil"></i> Edit Site</span>.</p>
+<p>You can use PHP by changing your site type to PHP. To change the site type, go to the site page of the site you want to edit and click <span class="click"><i class="fa fa-pencil"></i> Configure Site</span>.</p>
 <h6>Databases</h6>
 <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> The <i>mysql_connect()</i> functions were depreciated in PHP 5.5 and is no longer available in PHP 7. Instead, you want to use either <i>mysqli_connect()</i> or PDO_MySQL. The example below demonstrates how to use PDO to connect to the database.</div>
 <p>You can create a PostgreSQL or MySQL database for a site by going to the site page and clicking the <span class="click"><i class="fa fa-plus"></i> Create Database</span> button on the right of the page. Below is some example code on how to connect to the database with PHP:</p>
