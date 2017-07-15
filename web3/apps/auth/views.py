@@ -51,7 +51,11 @@ def about_view(request):
 
 
 def guide_view(request):
-    return render(request, "guide.html")
+    context = {
+        'project_domain': settings.PROJECT_DOMAIN
+    }
+
+    return render(request, "guide.html", context)
 
 
 def start_view(request):
