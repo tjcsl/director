@@ -20,7 +20,14 @@ from ....utils.emails import send_new_site_email
 
 @login_required
 def create_view(request):
-    if request.user.is_superuser:
+    # Redirect the user if any approvals need to be done.
+    if request.user.is_staff:
+        if request.user.is_superuser and SiteRequest.objects.filter(teacher_approval=True, admin_approval=False).exists():
+            return redirect("admin_site")
+        if request.user.site_requests.filter(teacher_approval=False).exists():
+            return redirect("approve_site")
+
+    if request.user.is_superuser or request.user.is_staff:
         if request.method == "POST":
             form = SiteForm(request.POST, user=request.user)
             if form.is_valid():
@@ -42,15 +49,7 @@ def create_view(request):
         }
         return render(request, "sites/create_site.html", context)
     else:
-        if request.user.is_staff:
-            if request.user.is_superuser and SiteRequest.objects.filter(teacher_approval=True, admin_approval=False).exists():
-                return redirect("admin_site")
-            if request.user.site_requests.filter(teacher_approval=False).exists():
-                return redirect("approve_site")
-            else:
-                return render(request, "sites/create_info.html")
-        else:
-            return redirect("request_site")
+        return redirect("request_site")
 
 
 @login_required

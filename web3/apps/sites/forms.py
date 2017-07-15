@@ -58,6 +58,12 @@ class SiteForm(forms.ModelForm):
                 purpose_choices.append(("legacy", "Legacy"))
                 self.fields["purpose"].choices = purpose_choices
         else:
+            if hasattr(self, "_user") and not self._user.is_superuser:
+                self.fields["purpose"].initial = "project"
+                self.fields["purpose"].disabled = True
+                self.fields["users"].initial = (self._user.id,)
+                self.fields["users"].disabled = True
+                self.fields["custom_nginx"].disabled = True
             self._old_path = None
 
     def clean_domain(self):
