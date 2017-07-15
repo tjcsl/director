@@ -76,9 +76,12 @@ def edit_view(request, site_id):
     return render(request, "sites/create_site.html", context)
 
 
-@superuser_required
 def delete_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
+
+    if not request.user.is_superuser and not (site.purpose == "project" and site.group.users.filter(id=request.user.id).exists()):
+        raise PermissionDenied
+
     if request.method == "POST":
         if not request.POST.get("confirm", None) == site.name:
             messages.error(request, "Delete confirmation failed!")
