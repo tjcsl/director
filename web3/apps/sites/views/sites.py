@@ -11,7 +11,6 @@ from ..helpers import (reload_services, delete_site_files, create_config_files, 
                        get_supervisor_status, delete_process_config, write_new_index_file, get_latest_commit, reload_nginx_config,
                        list_executable_files, update_supervisor)
 
-from ...auth.decorators import superuser_required
 from ...vms.models import VirtualMachine
 from ...request.models import SiteRequest
 
@@ -27,29 +26,26 @@ def create_view(request):
         if request.user.site_requests.filter(teacher_approval=False).exists():
             return redirect("approve_site")
 
-    if request.user.is_superuser or request.user.is_staff:
-        if request.method == "POST":
-            form = SiteForm(request.POST, user=request.user)
-            if form.is_valid():
-                site = form.save()
-                for user in site.group.users.filter(service=False):
-                    if not user == request.user:
-                        send_new_site_email(user, site)
-                if not site.category == "dynamic":
-                    write_new_index_file(site)
-                reload_services()
-                return redirect("info_site", site_id=site.id)
-        else:
-            form = SiteForm(user=request.user)
-
-        context = {
-            "form": form,
-            "site": None,
-            "project_domain": settings.PROJECT_DOMAIN
-        }
-        return render(request, "sites/create_site.html", context)
+    if request.method == "POST":
+        form = SiteForm(request.POST, user=request.user)
+        if form.is_valid():
+            site = form.save()
+            for user in site.group.users.filter(service=False):
+                if not user == request.user:
+                    send_new_site_email(user, site)
+            if not site.category == "dynamic":
+                write_new_index_file(site)
+            reload_services()
+            return redirect("info_site", site_id=site.id)
     else:
-        return redirect("request_site")
+        form = SiteForm(user=request.user)
+
+    context = {
+        "form": form,
+        "site": None,
+        "project_domain": settings.PROJECT_DOMAIN
+    }
+    return render(request, "sites/create_site.html", context)
 
 
 @login_required
