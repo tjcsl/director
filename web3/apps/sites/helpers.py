@@ -333,6 +333,6 @@ def generate_ssl_certificate(domain):
 
     if success:
         create_config_files(domain.site)
-        reload_services(domain.site)
+        reload_services()
     else:
         client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name))
