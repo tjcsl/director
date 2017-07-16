@@ -1,6 +1,7 @@
 /* global
        status_refresh_endpoint
        git_pull_endpoint
+       add_ssl_endpoint
 */
 
 jQuery.fn.selectText = function() {
@@ -61,6 +62,14 @@ $(document).ready(function() {
             }
         }
     });
+    $(".generate-cert").click(function (e) {
+        e.preventDefault();
+        var name = $(this).attr("href");
+        $.post(add_ssl_endpoint, {domain: name}, function (data) {
+            console.log(data);
+            Messenger().post("Sent request to generate certificate. Check back in a little to see if it worked.");
+        });
+    })
 
     $("#database-url").click(function() {
         $("#database-pass").removeClass("hide");

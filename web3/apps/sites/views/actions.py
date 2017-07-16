@@ -9,8 +9,8 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from ..models import Site, Database
-from ..helpers import clean_site_type, do_git_pull, fix_permissions, generate_ssh_key, make_site_dirs, run_as_site, create_config_files, reload_services, add_access_token
+from ..models import Site, Domain, Database
+from ..helpers import clean_site_type, do_git_pull, fix_permissions, generate_ssh_key, make_site_dirs, run_as_site, create_config_files, reload_services, add_access_token, generate_ssl_certificate
 from ..database_helpers import create_mysql_database
 from ...users.models import User
 
@@ -199,7 +199,6 @@ def git_setup_view(request, site_id):
 
     return redirect(reverse("info_site", kwargs={"site_id": site.id}) + "#github-automatic")
 
-
 @login_required
 def set_git_path_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
@@ -220,3 +219,24 @@ def set_git_path_view(request, site_id):
         return redirect("info_site", site_id=site_id)
 
     return render(request, "sites/set_git_path.html", {"site": site})
+
+
+@require_http_methods(["POST"])
+@login_required
+def add_ssl_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+    name = request.POST.get("domain")
+    domain = Domain.objects.get(name=name)
+    if domain:
+        t = threading.Thread(target=generate_ssl_certificate, args=(domain,))
+        t.daemon = True
+        t.start()
+        return "Hello"
+    # TODO: allow generating certs for all domains at once.
+    # domains = site.domain_set.all()
+    # for domain in domains:
+    #     generate_ssl_certificate(domain)
+    #     return "Hello"

@@ -68,3 +68,11 @@
     cursor: pointer;
     content: "Click to show password";
 }
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}

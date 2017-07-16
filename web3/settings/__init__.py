@@ -18,7 +18,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PROJECT_ROOT = BASE_DIR
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -49,6 +48,9 @@ PROJECT_DOMAIN = "tjhsst.io"
 
 # Default to not allow password authentication
 PASSWORD_AUTH = False
+
+# Let's Encrypt Settings
+LE_WEBROOT = "/var/www/certbot/"
 
 try:
     from .secret import *  # noqa

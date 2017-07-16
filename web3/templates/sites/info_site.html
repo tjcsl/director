@@ -14,6 +14,7 @@
     <script type="text/javascript">
     var git_pull_endpoint = "{% url 'git_pull' site.id %}";
     var status_refresh_endpoint = "{% url 'process_status' site.id %}";
+    var add_ssl_endpoint = "{% url 'add_ssl' site.id %}";
     </script>
     <script type="text/javascript" src="{% static 'js/sites/info.js' %}"></script>
 {% endblock %}
@@ -146,6 +147,17 @@
             <h4><i class="fa fa-github"></i> GitHub Integration</h4>
             <p>You can use additional features by turning the folder <a href="{% url 'set_git_path' site.id %}" class="path">{{ site.git_path }}</a> into a Git repository.</p>
             {% endif %}
+            <h4><i class="fa fa-shield"></i> SSL Certificates</h4>
+            <p>You can add SSL certificates to your custom domains. *.tjhsst.edu domains already have certificates.</p>
+            <ul>
+                {% for domain in site.custom_domains %}
+                <li class="{% if domain.has_cert %}green{% else %}red{% endif %}">
+                    {{ domain }} {% if not domain.has_cert %}<a class="btn btn-sm btn-ion generate-cert" href="{{ domain }}">Generate Cert</a>{% endif %}
+                </li>
+                {% empty %}
+                <p>No custom domains.</p>
+                {% endfor %}
+            </ul>
         {% endif %}
     </div>
 </div>

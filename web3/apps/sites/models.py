@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import os
+import re
 
 from django.conf import settings
 from django.db import models
@@ -126,6 +127,14 @@ class Site(models.Model):
     def has_vm(self):
         return hasattr(self, "virtual_machine")
 
+    @property
+    def custom_domains(self):
+        return [domain for domain in self.domain_set.all() if domain.custom_ssl]
+
+    @property
+    def supports_ssl(self):
+        return len([domain for domain in self.domain_set.all() if domain.has_cert]) > 0
+
     def __str__(self):
         return self.name
 
@@ -144,7 +153,11 @@ class Domain(models.Model):
 
     @property
     def custom_ssl(self):
-        return not self.domain.endswith(".tjhsst.edu")
+        return re.match(r"^[a-zA-Z0-9-]+\.tjhsst\.edu", self.domain)
+
+    @property
+    def has_cert(self):
+        return os.path.isfile("/etc/letsencrypt/live/{}".format(self.domain))
 
     def __str__(self):
         return self.domain
