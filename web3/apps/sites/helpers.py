@@ -318,7 +318,7 @@ def clean_site_type(instance):
 
 def generate_ssl_certificate(domain):
     """Generate SSL certs for a domain and update the nginx config."""
-    success = Popen([
+    process = Popen([
         "/usr/bin/certbot",
         "certonly",
         "--webroot",
@@ -327,7 +327,9 @@ def generate_ssl_certificate(domain):
         "-d",
         domain.domain,
         "-n"
-    ]).wait() == 0
+    ])
+
+    success = process.wait() == 0
 
     if success:
         create_config_files(domain.site)
