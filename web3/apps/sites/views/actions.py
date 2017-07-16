@@ -229,7 +229,7 @@ def add_ssl_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
     name = request.POST.get("domain")
-    domain = Domain.objects.get(name=name)
+    domain = get_object_or_404(Domain, name=name)
     if domain:
         t = threading.Thread(target=generate_ssl_certificate, args=(domain,))
         t.daemon = True
