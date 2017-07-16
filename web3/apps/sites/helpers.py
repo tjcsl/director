@@ -156,6 +156,8 @@ def reload_services():
 
 
 def update_supervisor():
+    if Popen(["supervisorctl", "reread"]).wait() != 0:
+        client.captureMessage("Failed to reread supervisor configuration.")
     if Popen(["supervisorctl", "update"]).wait() != 0:
         client.captureMessage("Failed to update supervisor.")
 
