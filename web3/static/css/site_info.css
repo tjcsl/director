@@ -76,3 +76,7 @@
 .red {
     color: red;
 }
+
+.generate-cert {
+    display: inline-block;
+}

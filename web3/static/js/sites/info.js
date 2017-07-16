@@ -62,12 +62,10 @@ $(document).ready(function() {
             }
         }
     });
-    $(".generate-cert").click(function (e) {
+    $(".generate-cert").submit(function (e) {
         e.preventDefault();
-        var name = $(this).attr("href");
-        $.post(add_ssl_endpoint, {domain: name}, function (data) {
-            console.log(data);
-            Messenger().post("Sent request to generate certificate. Check back in a little to see if it worked.");
+        $.post(add_ssl_endpoint, $(this).serialize(), function (data) {
+            Messenger().post("Sent request to generate certificate. Check back later to see if it worked.");
         });
     })
 

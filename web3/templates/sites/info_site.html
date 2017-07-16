@@ -154,10 +154,10 @@
                 <li class="{% if domain.has_cert %}green{% else %}red{% endif %}">
                     {{ domain }}
                     {% if not domain.has_cert %}
-                    <form action="{% url 'add_ssl' site.id %}" method="POST">
+                    <form class="generate-cert" action="{% url 'add_ssl' site.id %}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="domain" value="{{ domain }}" />
-                        <button type="submit" class="btn btn-sm btn-ion generate-cert">Generate Cert</button>
+                        <button type="submit" class="btn btn-sm btn-ion">Generate Cert</button>
                     </form>
                     {% endif %}
                 </li>
