@@ -318,7 +318,7 @@ def clean_site_type(instance):
         vm.save()
 
 
-def generate_ssl_certificate(domain):
+def generate_ssl_certificate(domain, renew=False):
     """Generate SSL certs for a domain and update the nginx config."""
     process = Popen([
         "/usr/bin/certbot",
@@ -334,7 +334,8 @@ def generate_ssl_certificate(domain):
     success = process.wait() == 0
 
     if success:
-        create_config_files(domain.site)
-        reload_services()
+        if not renew:
+            create_config_files(domain.site)
+            reload_services()
     else:
         client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name))
