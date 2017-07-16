@@ -153,7 +153,7 @@ class Domain(models.Model):
 
     @property
     def custom_ssl(self):
-        return re.match(r"^[a-zA-Z0-9-]+\.tjhsst\.edu", self.domain)
+        return not re.match(r"^[a-zA-Z0-9-]+\.tjhsst\.edu", self.domain)
 
     @property
     def has_cert(self):
