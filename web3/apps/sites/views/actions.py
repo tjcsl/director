@@ -229,12 +229,13 @@ def add_ssl_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
     name = request.POST.get("domain")
-    domain = get_object_or_404(Domain, name=name)
-    if domain:
-        t = threading.Thread(target=generate_ssl_certificate, args=(domain,))
-        t.daemon = True
-        t.start()
-        return "Hello"
+    domain = get_object_or_404(Domain, domain=name)
+
+    t = threading.Thread(target=generate_ssl_certificate, args=(domain,))
+    t.daemon = True
+    t.start()
+
+    return JsonResponse({"success": True})
     # TODO: allow generating certs for all domains at once.
     # domains = site.domain_set.all()
     # for domain in domains:
