@@ -25,6 +25,7 @@
     },
     "globals": {
         "$": false,
-        "jQuery": false
+        "jQuery": false,
+        "Messenger": false
     }
 }

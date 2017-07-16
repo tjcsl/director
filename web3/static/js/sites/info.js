@@ -62,12 +62,12 @@ $(document).ready(function() {
             }
         }
     });
-    $(".generate-cert").submit(function (e) {
+    $(".generate-cert").submit(function() {
         e.preventDefault();
-        $.post(add_ssl_endpoint, $(this).serialize(), function (data) {
-            Messenger().post("Sent request to generate certificate. Check back later to see if it worked.");
+        $.post(add_ssl_endpoint, $(this).serialize(), function() {
+            Messenger().info("Sent request to generate certificate. Check back later to see if it worked.");
         });
-    })
+    });
 
     $("#database-url").click(function() {
         $("#database-pass").removeClass("hide");
