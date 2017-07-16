@@ -199,6 +199,7 @@ def git_setup_view(request, site_id):
 
     return redirect(reverse("info_site", kwargs={"site_id": site.id}) + "#github-automatic")
 
+
 @login_required
 def set_git_path_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
