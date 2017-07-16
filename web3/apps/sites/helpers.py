@@ -9,8 +9,8 @@ from threading import Timer
 
 from .models import Site
 from ..users.models import User, Group
-from ...settings import LE_WEBROOT
 
+from django.conf import settings
 from django.utils.crypto import get_random_string
 from django.template.loader import render_to_string
 
@@ -317,17 +317,17 @@ def clean_site_type(instance):
 
 
 def generate_ssl_certificate(domain):
-    """Generate SSL certs for a domain and update the nginx config"""
+    """Generate SSL certs for a domain and update the nginx config."""
     success = Popen([
-        'sudo',
-        '/usr/bin/certbot',
-        'certonly',
-        '--webroot',
-        '-w',
-        LE_WEBROOT,
-        '-d',
+        "/usr/bin/certbot",
+        "certonly",
+        "--webroot",
+        "-w",
+        settings.LE_WEBROOT,
+        "-d",
         domain.domain,
-        '-n']).wait() == 0
+        "-n"]).wait() == 0
+
     if success:
         create_config_files(domain.site)
         reload_services(domain.site)
