@@ -157,7 +157,7 @@ class Domain(models.Model):
 
     @property
     def has_cert(self):
-        return os.path.isfile("/etc/letsencrypt/live/{}".format(self.domain))
+        return os.path.isfile("/etc/letsencrypt/live/{}/cert.pem".format(self.domain))
 
     def __str__(self):
         return self.domain
