@@ -133,7 +133,10 @@ class Site(models.Model):
 
     @property
     def supports_ssl(self):
-        return len([domain for domain in self.domain_set.all() if domain.has_cert]) > 0
+        if hasattr(self, "_supports_ssl"):
+            return self._supports_ssl
+        self._supports_ssl = len([domain for domain in self.domain_set.all() if domain.has_cert]) > 0
+        return self._supports_ssl
 
     def __str__(self):
         return self.name
