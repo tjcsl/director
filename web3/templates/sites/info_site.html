@@ -148,11 +148,18 @@
             <p>You can use additional features by turning the folder <a href="{% url 'set_git_path' site.id %}" class="path">{{ site.git_path }}</a> into a Git repository.</p>
             {% endif %}
             <h4><i class="fa fa-shield"></i> SSL Certificates</h4>
-            <p>You can add SSL certificates to your custom domains. *.tjhsst.edu domains already have certificates.</p>
+            <p>You can add SSL certificates to your custom domains. All *.tjhsst.edu domains already have certificates.</p>
             <ul>
                 {% for domain in site.custom_domains %}
                 <li class="{% if domain.has_cert %}green{% else %}red{% endif %}">
-                    {{ domain }} {% if not domain.has_cert %}<a class="btn btn-sm btn-ion generate-cert" href="{{ domain }}">Generate Cert</a>{% endif %}
+                    {{ domain }}
+                    {% if not domain.has_cert %}
+                    <form action="{% url 'add_ssl' site.id %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="domain" value="{{ domain }}" />
+                        <button type="submit" class="btn btn-sm btn-ion generate-cert">Generate Cert</button>
+                    </form>
+                    {% endif %}
                 </li>
                 {% empty %}
                 <p>No custom domains.</p>
