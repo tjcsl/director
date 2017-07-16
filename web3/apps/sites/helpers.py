@@ -1,10 +1,11 @@
 import os
 import shutil
 import stat
+import sys
 import time
 
 import shlex
-from subprocess import Popen, check_output, PIPE, CalledProcessError
+from subprocess import Popen, check_output, PIPE, CalledProcessError, STDOUT
 from threading import Timer
 
 from .models import Site
@@ -318,7 +319,17 @@ def clean_site_type(instance):
 
 def generate_ssl_certificate(domain):
     """Generate SSL certs for a domain and update the nginx config."""
-    process = Popen([
+    # success = Popen([
+    #     "/usr/bin/certbot",
+    #     "certonly",
+    #     "--webroot",
+    #     "-w",
+    #     settings.LE_WEBROOT,
+    #     "-d",
+    #     domain.domain,
+    #     "-n"
+    # ]).wait() == 0
+    with Popen([
         "/usr/bin/certbot",
         "certonly",
         "--webroot",
@@ -327,12 +338,13 @@ def generate_ssl_certificate(domain):
         "-d",
         domain.domain,
         "-n"
-    ])
-
-    success = process.wait() == 0
-
-    if success:
-        create_config_files(domain.site)
-        reload_services(domain.site)
-    else:
-        client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name))
+    ], stdout=PIPE, stderr=STDOUT, bufsize=1) as p, \
+         open('logfile', 'ab') as file:
+        for line in p.stdout: # b'\n'-separated lines
+            sys.stdout.buffer.write(line) # pass bytes as is
+            file.write(line)
+    # if success:
+    #     create_config_files(domain.site)
+    #     reload_services(domain.site)
+    # else:
+    #     client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name))
