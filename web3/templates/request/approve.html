@@ -13,7 +13,7 @@
 {% block mainclass %}narrow{% endblock %}
 
 {% block main %}
-<p><b>Hi!</b> You're probably seeing this page because a student created a website request and it requires teacher approval. You can approve these requests below. If you do not want to approve one of the sites below, please email <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.</p>
+<p><b>Hi!</b> You're probably seeing this page because a student created a website request and it requires teacher approval. You can approve these requests below.</p>
 <hr />
 <div class="submitted">
     {% for r in requests %}
@@ -32,7 +32,8 @@
                 <span class="custom-control-description">I am aware of the <a href="#" data-toggle="modal" data-target="#guidelines-modal">Guidelines for Web Pages</a> and have reviewed this with the above student. This student is responsible and can be trusted with the requested services of the Computer Systems Lab.</span>
             </label>
             <br />
-            <button type="submit" class="btn btn-ion"><i class="fa fa-check"></i> Approve</button>
+            <button type="submit" class="btn btn-ion" name="action" value="accept"><i class="fa fa-check"></i> Approve</button>
+            <button type="submit" class="btn btn-ion" name="action" value="reject"><i class="fa fa-times"></i> Reject</button>
         </form>
         {% endif %}
     </div>

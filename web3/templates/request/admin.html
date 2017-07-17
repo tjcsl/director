@@ -38,7 +38,7 @@
             <input type="hidden" name="request" value="{{ r.id }}" />
             <p style="margin-bottom:5px">You can mark this request as processed after you are finished creating the site.</p>
             <button type="submit" name="action" value="accept" class="btn btn-ion" {% if not r.teacher_approval %}disabled{% endif %}><i class="fa fa-check"></i> Mark as Processed</button>
-            <button type="submit" name="action" value="reject" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Request</button>
+            <button type="submit" name="action" value="reject" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Reject Request</button>
         </form>
         {% endif %}
     </div>

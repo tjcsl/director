@@ -22,18 +22,22 @@ def approve_view(request):
             messages.error(request, "You do not have permission to approve this request!")
             return redirect("approve_site")
         agreement = request.POST.get("agreement", False) is not False
+        action = request.POST.get("action")
         if not agreement:
             messages.error(request, "You must agree to the conditions in order to approve a site!")
-        else:
+        elif action == "accept":
             site_request.teacher_approval = True
             site_request.save()
             send_admin_request_email(site_request)
             messages.success(request, "Your approval has been added and the site will be created shortly!")
+        elif action == "reject":
+            site_request.teacher_approval = False
+            site_request.save()
+            messages.success(request, "You have rejected this site request.")
         return redirect("approve_site")
 
     context = {
-        "requests": request.user.site_requests.all().order_by("-request_date"),
-        "admin_requests": SiteRequest.objects.filter(teacher_approval=True).order_by("-request_date") if request.user.is_superuser else None
+        "requests": request.user.site_requests.all().order_by("-request_date")
     }
 
     return render(request, "request/approve.html", context)
@@ -49,8 +53,9 @@ def approve_admin_view(request):
             site_request.save()
             messages.success(request, "Request has been marked as processed!")
         elif action == "reject":
-            site_request.delete()
-            messages.success(request, "Request deleted!")
+            site_request.admin_approval = False
+            site_request.save()
+            messages.success(request, "Request has been marked as rejected!")
         return redirect("admin_site")
 
     context = {
