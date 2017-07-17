@@ -66,7 +66,7 @@
     {% for r in requests %}
     <div class="submission">
         <span class="activity">{{ r.activity }}</span> - {{ r.request_date }} - {{ r.teacher.full_name }}<br />
-        <i class="fa fa-{% if r.teacher_approval %}check{% else %}times{% endif %}"></i> Teacher Authorization - <i class="fa fa-{% if r.admin_approval %}check{% else %}times{% endif %}"></i> Processed
+        <i class="fa fa-{% if r.teacher_approval is None %}question{% elif r.teacher_approval %}check{% else %}times{% endif %}"></i> Teacher Authorization - <i class="fa fa-{% if r.admin_approval is None %}question{% elif r.admin_approval %}check{% else %}times{% endif %}"></i> Processed
     </div>
     {% endfor %}
 </div>
