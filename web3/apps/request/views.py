@@ -93,6 +93,6 @@ def request_view(request):
             else:
                 messages.warning(request, "Website request created, but failed to email teacher.")
 
-    context["requests"] = request.user.requested_sites.filter(admin_approval=False)
+    context["requests"] = request.user.requested_sites.filter(admin_approval__isnull=True)
 
     return render(request, "request/create.html", context)

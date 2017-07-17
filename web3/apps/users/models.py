@@ -67,9 +67,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.is_superuser:
             from ..request.models import SiteRequest
 
-            return SiteRequest.objects.filter(Q(teacher_approval=True, admin_approval=False) | Q(teacher=self, teacher_approval=False))
+            return SiteRequest.objects.filter(Q(teacher_approval=True, admin_approval__isnull=True) | Q(teacher=self, teacher_approval__isnull=True))
         else:
-            return self.site_requests.filter(teacher_approval=False)
+            return self.site_requests.filter(teacher_approval__isnull=True)
 
     def api_request(self, url, params={}, refresh=True):
         s = self.get_social_auth()
