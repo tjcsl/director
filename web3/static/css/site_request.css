@@ -28,6 +28,9 @@
 .submitted .fa-times {
     color: #F44336;
 }
+.submitted .fa-question {
+    color: #FFEB3B;
+}
 .submitted .submission {
     padding: 5px 10px;
     background-color: rgba(0, 0, 0, 0.07);

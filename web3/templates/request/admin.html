@@ -31,7 +31,7 @@
         Requested by <b>{{ r.user.full_name }}</b> ({{ r.user.email }})<br />
         Approved by <b>{{ r.teacher.full_name }}</b> ({{ r.teacher.email }})<br />
         {{ r.extra_information|default:"No Extra Information" }}<br />
-        <i class="fa fa-{% if r.teacher_approval is None %}question-circle{% elif r.teacher_approval %}check{% else %}times{% endif %}"></i> Approved - <i class="fa fa-{% if r.admin_approval is None %}question-circle{% elif r.admin_approval %}check{% else %}times{% endif %}"></i> Processed
+        <i class="fa fa-{% if r.teacher_approval is None %}question{% elif r.teacher_approval %}check{% else %}times{% endif %}"></i> Approved - <i class="fa fa-{% if r.admin_approval is None %}question{% elif r.admin_approval %}check{% else %}times{% endif %}"></i> Processed
         {% if r.admin_approval is None %}
         <form method="POST" class="approval">
             {% csrf_token %}

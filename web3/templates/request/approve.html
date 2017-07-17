@@ -21,7 +21,7 @@
         <span class="activity">{{ r.activity }}</span> - {{ r.request_date }}<br />
         Requested by {{ r.user.full_name }}<br />
         {{ r.extra_information|default:"No Extra Information" }}<br />
-        <i class="fa fa-{% if r.teacher_approval is None %}question-circle{% elif r.teacher_approval %}check{% else %}times{% endif %}"></i> Approved - <i class="fa fa-{% if r.admin_approval is None %}question-circle{% elif r.admin_approval %}check{% else %}times{% endif %}"></i> Processed
+        <i class="fa fa-{% if r.teacher_approval is None %}question{% elif r.teacher_approval %}check{% else %}times{% endif %}"></i> Approved - <i class="fa fa-{% if r.admin_approval is None %}question{% elif r.admin_approval %}check{% else %}times{% endif %}"></i> Processed
         {% if r.teacher_approval is None %}
         <form method="POST" class="approval">
             {% csrf_token %}
