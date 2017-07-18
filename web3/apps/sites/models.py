@@ -87,7 +87,7 @@ class Site(models.Model):
             d = self.domain_set.exclude(domain__endswith=".sites.tjhsst.edu").first()
             if not d:
                 return None
-            return "https://" + d.domain
+            return ("https://" if not d.domain.custom_ssl or d.domain.has_cert else "http://") + d.domain
 
     @property
     def private_path(self):
