@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 from ..users.models import User
 
@@ -19,10 +20,12 @@ class Article(models.Model):
 
     title = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True)
-    tag = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag)
     author = models.ManyToManyField(User)
 
     content = models.TextField()
 
-    posted = models.DateField(db_index=True, auto_now_add=True)
+    published = models.BooleanField(default=False)
+    history = HistoricalRecords()
+    posted = models.DateField(db_index=True)
     edited = models.DateField(db_index=True, auto_now_add=True)
