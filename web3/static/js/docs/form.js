@@ -23,4 +23,11 @@ $(document).ready(function () {
         textarea.val(editor.getSession().getValue());
         output.html(md.render(editor.getSession().getValue()));
     });
+
+    function onResize() {
+        $(".raw").height($(window).height() - $(".raw").position().top);
+        $(".output").height($(window).height() - $(".output").position().top - 30);
+    }
+    $(window).resize(onResize);
+    onResize();
 });
