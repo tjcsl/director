@@ -2,7 +2,8 @@
     padding: 0;
 }
 
-label[for="id_content"], textarea[name="content"] {
+label[for="id_content"], textarea[name="content"],
+label[for="id_published"], input[name="published"] {
     display: none;
 }
 
@@ -39,6 +40,7 @@ form input[name="title"] {
     border-radius: 3px;
     border: none;
     margin-bottom: 5px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 form.collapsed {
