@@ -16,6 +16,7 @@ $(document).ready(function () {
     var textarea = $("textarea[name='content']");
     var output = $(".output");
 
+    editor.setFontSize(16);
     editor.getSession().setUseWrapMode(true);
     editor.getSession().setMode("ace/mode/markdown");
     editor.getSession().on("change", function () {
