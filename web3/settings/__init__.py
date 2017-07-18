@@ -78,7 +78,8 @@ INSTALLED_APPS = [
     'web3.apps.users',
     'web3.apps.vms',
     'web3.apps.feedback',
-    'web3.apps.request'
+    'web3.apps.request',
+    'web3.apps.docs'
 ]
 
 MIDDLEWARE = [
