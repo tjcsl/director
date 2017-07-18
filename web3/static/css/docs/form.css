@@ -1,0 +1,69 @@
+.main {
+    padding: 0;
+}
+
+label[for="id_content"], textarea[name="content"] {
+    display: none;
+}
+
+form {
+    background-color: #339;
+    padding: 15px;
+}
+
+form label {
+    color: white;
+}
+
+form .inputs, form .buttons {
+    width: 45%;
+    display: inline-block;
+}
+
+form .buttons {
+    float: right;
+    text-align: right;
+}
+
+form table {
+    width: 100%;
+    max-width: 450px;
+}
+
+form input[name="title"] {
+    width: 100%;
+    font-size: 13px;
+    line-height: 18px;
+    padding: 8px;
+    border-radius: 3px;
+    border: none;
+    margin-bottom: 5px;
+}
+
+form.collapsed {
+    height: 50px;
+    position: fixed;
+}
+
+form.collapsed table {
+    display: none;
+}
+
+#editor {
+    width: 100%;
+    height: 100vh;
+}
+
+.output, .raw {
+    width: 50%;
+    height: 100vh;
+    padding: 15px;
+}
+
+.raw {
+    background-color: white;
+}
+
+.workspace {
+    display: flex;
+}

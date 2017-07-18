@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'selectize/selectize.default.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/docs/form.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/guide.css' %}" type="text/css">
+{% endblock css %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% static 'selectize/selectize.js' %}" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js" charset="utf-8"></script>
+    <script src="{% static 'js/docs/form.js' %}" charset="utf-8"></script>
+{% endblock js %}
+
+{% block main %}
+<div class="content narrow">
+    <form action="" method="POST" accept-charset="utf-8">
+        <div class="inputs">
+            <table>
+            {{ form.as_table }}
+            </table>
+        </div>
+        <div class="buttons">
+            <button class="btn btn-ion" type="submit" value="save"><i class="fa fa-floppy-o"></i> Save</button>
+            <button class="btn btn-ion" type="submit" value="post"><i class="fa fa-cloud-upload"></i> Post</button>
+        </div>
+    </form>
+    <div class="workspace">
+        <div class="raw">
+            <div id="editor">
+            </div>
+        </div>
+        <div class="output">
+        </div>
+    </div>
+</div>
+{% endblock main %}
