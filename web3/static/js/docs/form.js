@@ -2,7 +2,10 @@
         ace
 */
 $(document).ready(function () {
-    $("select").selectize();
+    $("select[name='author']").selectize();
+    $("select[name='tag']").selectize({
+        create: true
+    });
     var md = window.markdownit({
         html: true,
         linkify: true,
