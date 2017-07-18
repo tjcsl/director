@@ -9,6 +9,7 @@ label[for="id_content"], textarea[name="content"] {
 form {
     background-color: #339;
     padding: 15px;
+    padding-bottom: 0px;
 }
 
 form label {
@@ -57,6 +58,9 @@ form.collapsed table {
 .output, .raw {
     width: 50%;
     height: 100vh;
+}
+
+.output {
     padding: 15px;
 }
 
