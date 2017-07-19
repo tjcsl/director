@@ -18,7 +18,8 @@
 
 {% block main %}
 <div class="content narrow">
-    <form action="" method="POST" accept-charset="utf-8">
+    <form action="" method="post">
+        {% csrf_token %}
         <div class="inputs">
             <table>
             {{ form.as_table }}
@@ -36,4 +37,14 @@
         <div class="output"></div>
     </div>
 </div>
+<script charset="utf-8">
+    $("input[name='tags']").val(",{{ article_tags | join:"," }}");
+    $("input[name='tags']").selectize({
+        create: true,
+        persist: false,
+        options: [
+            {% for tag in tags %}{value:"{{ tag }}", text:"{{ tag }}"}{% if not forloop.last %},{% endif %}{% endfor %}
+        ]
+    });
+</script>
 {% endblock main %}

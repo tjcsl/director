@@ -3,9 +3,6 @@
 */
 $(document).ready(function () {
     $("select[name='author']").selectize();
-    $("select[name='tags']").selectize({
-        create: true
-    });
     var md = window.markdownit({
         html: true,
         linkify: true,
@@ -15,10 +12,12 @@ $(document).ready(function () {
     var editor = ace.edit("editor");
     var textarea = $("textarea[name='content']");
     var output = $(".output");
-    //
-    // if (textarea.val() !== "") {
-    //     editor.getSession.setValue(textarea.val());
-    // }
+
+    if (textarea.val() !== "") {
+        editor.setValue(textarea.val());
+        editor.clearSelection();
+        output.html(md.render(editor.getSession().getValue()));
+    }
 
     editor.setFontSize(16);
     editor.renderer.setShowGutter(false);
@@ -35,11 +34,4 @@ $(document).ready(function () {
     }
     $(window).resize(onResize);
     onResize();
-
-    $("button").click(function (e) {
-        e.preventDefault();
-        if ($(this).text() === "post") {
-            document.querySelector("#id_published").checked = true;
-        }
-    });
 });
