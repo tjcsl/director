@@ -2,6 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from simple_history.models import HistoricalRecords
 
+from ..helpers import ModelDiffMixin
 from ..users.models import User
 
 
@@ -15,7 +16,7 @@ class Tag(models.Model):
         return self.name
 
 
-class Article(models.Model):
+class Article(models.Model, ModelDiffMixin):
 
     """A piece of documentation"""
 
@@ -27,10 +28,16 @@ class Article(models.Model):
     content = models.TextField()
 
     history = HistoricalRecords()
-    posted = models.DateTimeField(db_index=True, null=True, blank=True)
-    edited = models.DateTimeField(db_index=True, auto_now_add=True)
+    publish_id = models.IntegerField(null=True, blank=True)
 
-    def save(self, *args, **kwargs):
+    def save(self, history=False, *args, **kwargs):
         if not self.id:
             self.slug = slugify(self.title)
-        super(Article, self).save(*args, **kwargs)
+        if (self.has_changed or not self.id) and history:
+            super().save(*args, **kwargs)
+        else:
+            self.skip_history_when_saving = True
+            try:
+                super().save(*args, **kwargs)
+            finally:
+                del self.skip_history_when_saving

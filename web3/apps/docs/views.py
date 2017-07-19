@@ -1,6 +1,6 @@
 import logging
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -15,9 +15,8 @@ logger = logging.getLogger(__name__)
 def index_view(request):
     """Home page for documentation"""
 
-    tags = Tag.objects.all()
+    tags = Tag.objects.filter(article__isnull=False).distinct()
     return render(request, 'docs/home.html', {'tags': tags})
-
 
 @login_required
 @superuser_required
@@ -31,9 +30,9 @@ def new_article_view(request):
             for tag_name in tags.split(','):
                 tag, created = Tag.objects.get_or_create(name=tag_name)
                 article.tags.add(tag)
-            article.save()
+            article.save(history=True)
             messages.success(request, 'Successfuly created document')
-            return render(request, 'docs/edit.html', {'form': form})
+            return redirect('edit_article_view', article_slug=article.slug)
         messages.error(request, 'Invalid form')
         return render(request, 'docs/edit.html', {'form': form})
 
@@ -43,9 +42,9 @@ def new_article_view(request):
 
 @login_required
 @superuser_required
-def edit_article_view(request, article_id):
+def edit_article_view(request, article_slug):
     """Edit preexisting article"""
-    article = get_object_or_404(Article, id=article_id)
+    article = get_object_or_404(Article, slug=article_slug)
     tags = Tag.objects.all()
 
     if request.method == 'POST':
@@ -57,7 +56,15 @@ def edit_article_view(request, article_id):
             for tag_name in tags.split(','):
                 tag, created = Tag.objects.get_or_create(name=tag_name)
                 article.tags.add(tag)
-            article.save()
+            if request.POST['submit'] == 'post':
+                try:
+                    article.publish_id = article.history.latest().history_id
+                    article.save(history=True)
+                    messages.success(request, 'Successfully published document :)')
+                except:
+                    messages.error(request, 'Failed to publish document')
+            else:
+                article.save()
             tags = Tag.objects.all()
             messages.success(request, 'Successfuly saved document')
             return render(request, 'docs/edit.html', {
@@ -71,7 +78,6 @@ def edit_article_view(request, article_id):
             'tags': tags,
             'article_tags': article.tags.all()
         })
-
     form = ArticleForm(instance=article)
     return render(request, 'docs/edit.html', {
         'form': form,
