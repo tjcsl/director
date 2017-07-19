@@ -1,4 +1,5 @@
 from django.db import models
+from django.template.defaultfilters import slugify
 from simple_history.models import HistoricalRecords
 
 from ..users.models import User
@@ -25,7 +26,11 @@ class Article(models.Model):
 
     content = models.TextField()
 
-    published = models.BooleanField(default=False)
     history = HistoricalRecords()
-    posted = models.DateField(db_index=True)
-    edited = models.DateField(db_index=True, auto_now_add=True)
+    posted = models.DateTimeField(db_index=True, null=True, blank=True)
+    edited = models.DateTimeField(db_index=True, auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.title)
+        super(Article, self).save(*args, **kwargs)
