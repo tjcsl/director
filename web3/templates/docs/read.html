@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/docs/default.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/guide.css' %}" type="text/css">
+{% endblock css %}
+
+{% block main %}
+<div class="main narrow">
+     <h1>{{ title }}</h1>
+     {% for author in article.author.all %}
+          <em>{{ author.full_name }}</em>
+     {% endfor %}
+     {% if request.user.is_superuser %}
+     <a href="{% url 'edit_article' article.slug %}" class="pull-right btn btn-sm btn-ion"><i class="fa fa-pencil-square-o"></i> Edit this Article</a>
+     {% endif %}
+     <br/>
+     {% for tag in article.tags.all %}
+     <a class="tag" href="">{{ tag }}</a>
+     {% endfor %}
+     <hr />
+     {% autoescape off %}
+     {{ content }}
+     {% endautoescape %}
+</div>
+{% endblock main %}
+

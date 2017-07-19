@@ -33,7 +33,7 @@ class Article(models.Model, ModelDiffMixin):
     def save(self, history=False, *args, **kwargs):
         if not self.id:
             self.slug = slugify(self.title)
-        if (self.has_changed or not self.id) and history:
+        if not self.id or history:
             super().save(*args, **kwargs)
         else:
             self.skip_history_when_saving = True
