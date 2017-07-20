@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/docs/default.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/docs/list.css' %}" type="text/css">
+{% endblock css %}
+
+{% block main %}
+<div class="main narrow">
+<h1>Articles</h1>
+<hr>
+<ul class="article-list">
+    {% for article in articles %}
+    <li><a href="{% url 'read_article' article.slug %}" class="article">
+            <b>{{ article.title }}</b><span class="pub-date pull-right"> {{ article.publish_date }}</span>
+            <div>
+                {% for tag in article.tags.all %}
+                <a href="{% url 'list_articles' %}?tags={{ tag }}" class="tag tag-primary tag-pill">{{ tag }}</a>
+                {% endfor %}
+                {% if request.user.is_superuser %}
+                 <a href="{% url 'edit_article' article.slug %}" class="pull-right btn btn-sm btn-ion"><i class="fa fa-pencil-square-o"></i> Edit this Article</a>
+                {% endif %}
+            </div>
+    </a></li>
+    {% empty %}
+    <li><a class="article">No articles found.</a></li>
+    {% endfor %}
+</ul>
+</div>
+{% endblock main %}
+

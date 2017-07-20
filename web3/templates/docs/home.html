@@ -10,7 +10,9 @@
     <p>Read the <a href="{% url 'guide' %}">help guide</a> to get started, or choose from one of the categories below:</p>
     <ul>
         {% for tag in tags %}
-        <li>{{ tag }}</li>
+        <li>
+            <a href="{% url 'list_articles' %}?tags={{ tag }}" class="tag tag-primary tag-pill">{{ tag }}</a>
+        </li>
         {% empty %}
         No tags in the database yet.
         {% endfor %}

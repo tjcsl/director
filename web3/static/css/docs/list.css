@@ -1,0 +1,25 @@
+.article-list {
+    list-style: none;
+    color: black;
+}
+
+.article-list li {
+    background-color: white;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #d8d8d8;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    overflow-x: auto;
+}
+
+.article-list b {
+    color: black;
+}
+
+.article-list .pub-date {
+    font-style: italic;
+    font-size: 0.8em;
+    color: #888;
+}

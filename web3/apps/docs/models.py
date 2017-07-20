@@ -2,6 +2,8 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from simple_history.models import HistoricalRecords
 
+import markdown2
+
 from ..helpers import ModelDiffMixin
 from ..users.models import User
 
@@ -29,6 +31,17 @@ class Article(models.Model, ModelDiffMixin):
 
     history = HistoricalRecords()
     publish_id = models.IntegerField(null=True, blank=True)
+
+    @property
+    def publish_date(self):
+        return self.history.get(history_id=self.publish_id).history_date
+
+    @property
+    def html(self):
+        return markdown2.markdown(self.content, extras=[
+            'fenced-code-blocks',
+            'header-ids'
+        ])
 
     def save(self, history=False, *args, **kwargs):
         if not self.id:

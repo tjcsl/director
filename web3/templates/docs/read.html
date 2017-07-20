@@ -9,7 +9,7 @@
 
 {% block main %}
 <div class="main narrow">
-     <h1>{{ title }}</h1>
+     <h1>{{ article.title }}</h1>
      {% for author in article.author.all %}
           <em>{{ author.full_name }}</em>
      {% endfor %}
@@ -18,11 +18,11 @@
      {% endif %}
      <br/>
      {% for tag in article.tags.all %}
-     <a class="tag" href="">{{ tag }}</a>
+     <a href="{% url 'list_articles' %}?tags={{ tag }}" class="tag tag-primary tag-pill">{{ tag }}</a>
      {% endfor %}
      <hr />
      {% autoescape off %}
-     {{ content }}
+     {{ article.html }}
      {% endautoescape %}
 </div>
 {% endblock main %}

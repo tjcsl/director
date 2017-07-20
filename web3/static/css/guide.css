@@ -87,16 +87,3 @@ pre {
     padding: 10px;
     border-radius: 5px;
 }
-
-.tag {
-    text-shadow: 0 1px 0 rgba(0, 51, 83, 0.3);
-    background-color: #1b9dec;
-    background-image: linear-gradient(to bottom, #1da7ee, #178ee9);
-    background-repeat: repeat-x;
-    border-radius: 3px;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 1px rgba(255, 255, 255, 0.03);
-    padding: 2px 6px;
-    font-size: 13px;
-    color: white;
-    font-weight: 400;
-}

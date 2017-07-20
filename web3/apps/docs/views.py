@@ -2,8 +2,6 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-import markdown2
-
 from .models import Tag, Article
 from .forms import ArticleForm
 from ..auth.decorators import superuser_required
@@ -13,17 +11,26 @@ def read_article_view(request, article_slug):
     """Read an article"""
 
     article = get_object_or_404(Article, slug=article_slug, publish_id__isnull=False)
-    public_article = get_object_or_404(article.history, history_id=article.publish_id)
+    public_article = article.history.as_of(article.history.get(history_id=article.publish_id).history_date)
     return render(request, 'docs/read.html', {
-        'title': public_article.title,
-        'article': article,
-        'content': markdown2.markdown(public_article.content, extras=[
-            'fenced-code-blocks',
-            'header-ids'
-        ])
+        'article': public_article,
     })
 
-@login_required
+def list_articles_view(request):
+    """Index of articles."""
+
+    tags = []
+    if 'tags' in request.GET:
+        tags = request.GET['tags'].split(' ')
+    if len(tags) > 0:
+        public_articles = Article.objects.filter(tags__name__in=tags).distinct()
+    else:
+        public_articles = Article.objects.filter(publish_id__isnull=False)
+
+    return render(request, 'docs/list.html', {
+        'articles': public_articles
+    })
+
 def index_view(request):
     """Home page for documentation"""
 
