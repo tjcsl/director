@@ -37,6 +37,15 @@ class Article(models.Model, ModelDiffMixin):
         return self.history.get(history_id=self.publish_id).history_date
 
     @property
+    def is_public(self):
+        return self.publish_id is not None
+
+    @property
+    def published_article(self):
+        """Returns Article that matches publish_id """
+        return self.history.as_of(self.history.get(history_id=self.publish_id).history_date)
+
+    @property
     def html(self):
         return markdown2.markdown(self.content, extras=[
             'fenced-code-blocks',
