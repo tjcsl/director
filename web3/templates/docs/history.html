@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/docs/default.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/docs/history.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/docs/list.css' %}" type="text/css">
+{% endblock css %}
+
+{% block main %}
+<div class="main">
+    <h1>Revisions</h1>
+    <hr>
+    <ul class="article-list">
+        {% for article in revisions %}
+        <li>
+            <a href="{% url 'read_article_revision' article.slug article.history_id %}" class="article">
+                <b>
+                    {{ article.history_date }}
+                    {% if article.history_id == publish_id %}
+                    <span class="tag tag-success tag-pill"> Public Version </span>
+                    {% endif %}
+                </b>
+            </a>
+            <div class="info"><b>User:</b> {{ article.history_user }}</div>
+            <div class="info"><b>Reason:</b> {{ article.history_change_reason }}</div>
+        </li>
+        {% empty %}
+        <li><a class="article">No revisions found.</a></li>
+        {% endfor %}
+    </ul>
+    <div class="output">
+    </div>
+</div>
+{% endblock main %}
+

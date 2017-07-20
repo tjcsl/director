@@ -7,13 +7,18 @@ from .forms import ArticleForm
 from ..auth.decorators import superuser_required
 
 
-def read_article_view(request, article_slug):
+def read_article_view(request, article_slug, revision_id=None):
     """Read an article"""
 
-    article = get_object_or_404(Article, slug=article_slug, publish_id__isnull=False)
-    public_article = article.history.as_of(article.history.get(history_id=article.publish_id).history_date)
+    if revision_id is not None and request.user.is_superuser:
+        article = get_object_or_404(Article, slug=article_slug)
+        public_article = article.get_revision(revision_id)
+    else:
+        article = get_object_or_404(Article, slug=article_slug, publish_id__isnull=False)
+        public_article = article.published_article
     return render(request, 'docs/read.html', {
         'article': public_article,
+        'revision': revision_id
     })
 
 def list_articles_view(request):
@@ -36,6 +41,17 @@ def index_view(request):
 
     tags = Tag.objects.filter(article__isnull=False).distinct()
     return render(request, 'docs/home.html', {'tags': tags})
+
+@login_required
+@superuser_required
+def article_history_view(request, article_slug):
+    article = Article.objects.get(slug=article_slug)
+    revisions = article.history.all()
+    messages.info(request, '{} revisions fetched'.format(len(revisions)))
+    return render(request, 'docs/history.html', {
+        'revisions': revisions,
+        'publish_id': article.publish_id
+    })
 
 @login_required
 @superuser_required

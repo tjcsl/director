@@ -1,0 +1,9 @@
+.article-list {
+    width: 40%;
+}
+
+.article-list .info {
+    font-color: #888;
+    font-size: .8em;
+    font-style: italic;
+}

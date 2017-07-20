@@ -45,6 +45,9 @@ class Article(models.Model, ModelDiffMixin):
         """Returns Article that matches publish_id """
         return self.history.as_of(self.history.get(history_id=self.publish_id).history_date)
 
+    def get_revision(self, revision_id):
+        return self.history.as_of(self.history.get(history_id=revision_id).history_date)
+
     @property
     def html(self):
         return markdown2.markdown(self.content, extras=[

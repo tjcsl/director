@@ -9,6 +9,12 @@
 
 {% block main %}
 <div class="main narrow">
+{% if revision %}
+<div class="alert alert-danger">
+    <i class="fa fa-exclamation-circle"></i>
+    You are currently reading revision #{{ revision }}. This may not be what the user sees on the website.
+</div>
+{% endif %}
      <h1>{{ article.title }}</h1>
      {% for author in article.author.all %}
           <em>{{ author.full_name }}</em>
