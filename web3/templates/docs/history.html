@@ -20,12 +20,11 @@
 
 {% block main %}
 <div class="main">
-    <h1>Revisions</h1>
+    <h1>Revisions <a class="btn btn-ion" href="{% url 'edit_article' article_slug %}"><i class="fa fa-pencil-square-o"></i> Edit</a></h1>
     <hr>
     <ul class="article-list">
         {% for article in revisions %}
         <li>
-{# {% url 'read_article_revision' article.slug article.id %} #}
 <a href="#{{ article.history_id }}" data-published="{% if article.history_id == publish_id %}true{% else %}false{% endif %}" data-rid="{{ article.history_id }}" class="article">
                 <b>
                     {{ article.history_date }}
@@ -47,7 +46,8 @@
     <div class="preview-template">
         <div class="preview-sticky alert alert-warning">
             <span class="sticky-text">Previewing Revision ID#{}</span>
-            <a class="btn btn-sm btn-ion pull-right" href="#"></a>
+            <a class="publish btn btn-sm btn-ion pull-right" href="#"></a>
+            <a class="preview btn btn-sm btn-ion pull-right" href="#">Preview</a>
         </div>
         <h1 class="preview-title">Title</h1>
         <div class="preview-output">

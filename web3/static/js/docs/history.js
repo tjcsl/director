@@ -22,7 +22,7 @@ $(function () {
         }
     });
 
-    $(".output").on("click", "a", function () {
+    $(".output").on("click", "a.publish", function () {
         var action = $(this).data("action");
         var rid = $(this).data("revision_id");
         if (action == "publish") {
@@ -57,10 +57,13 @@ function display(data, rid, published) {
     var output = $(".output");
     output.html($(".preview-template").html());
     output.find(".preview-sticky .sticky-text").text(`Previewing Revision ID#${rid}`);
-    output.find(".preview-sticky .btn")
+    output.find(".preview-sticky .publish")
         .text(`${(published) ? "Unpublish" : "Publish this Version"}`)
         .data("action", `${(published) ? "unpublish" : "publish"}`)
         .data("revision_id", rid);
+    output.find(".preview-sticky .preview")
+        .text("Preview")
+        .attr("href",`${revision_endpoint.slice(0, -1)}${rid}`);
     output.find(".preview-title").text(data.title);
     output.find(".preview-output").html(data.html);
 }
