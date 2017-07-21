@@ -30,6 +30,7 @@ def read_article_view(request, article_slug, revision_id=None):
         'revision': revision_id
     })
 
+
 def list_articles_view(request):
     """Index of articles."""
 
@@ -45,11 +46,13 @@ def list_articles_view(request):
         'articles': public_articles
     })
 
+
 def index_view(request):
     """Home page for documentation"""
 
     tags = Tag.objects.filter(article__publish_id__isnull=False).distinct()
     return render(request, 'docs/home.html', {'tags': tags})
+
 
 @superuser_required
 def article_history_view(request, article_slug):
@@ -60,6 +63,7 @@ def article_history_view(request, article_slug):
         'revisions': revisions,
         'publish_id': article.publish_id
     })
+
 
 @login_required
 @superuser_required
@@ -82,6 +86,7 @@ def new_article_view(request):
     tags = Tag.objects.all()
     form = ArticleForm()
     return render(request, 'docs/edit.html', {'form': form, 'tags': tags})
+
 
 @superuser_required
 def edit_article_view(request, article_slug):
@@ -131,6 +136,7 @@ def edit_article_view(request, article_slug):
         'article_tags': article.tags.all()
     })
 
+
 @require_http_methods(['POST'])
 @superuser_required
 @ensure_csrf_cookie
@@ -144,6 +150,7 @@ def publish_view(request, article_slug):
         return JsonResponse({'success': True})
     except:
         return JsonResponse({'success': False})
+
 
 @require_http_methods(['POST'])
 @superuser_required
