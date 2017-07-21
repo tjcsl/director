@@ -1,12 +1,23 @@
 /* global
         ace
+        hljs
 */
 $(document).ready(function () {
     $("select[name='author']").selectize();
     var md = window.markdownit({
         html: true,
         linkify: true,
-        typographer: true
+        typographer: true,
+        highlight: function (str, lang) {
+            if (lang && hljs.getLanguage(lang)) {
+                try {
+                    return hljs.highlight(lang, str).value;
+                } catch (e) {
+                    // Do nothing
+                }
+            }
+            return ""; // use external default escaping
+        }
     });
 
     var editor = ace.edit("editor");

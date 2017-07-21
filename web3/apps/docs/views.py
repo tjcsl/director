@@ -35,12 +35,16 @@ def list_articles_view(request):
     """Index of articles."""
 
     tags = []
+    if 'all' in request.GET and request.user.is_superuser:
+        available_articles = Article.objects.all()
+    else:
+        available_articles = Article.objects.filter(publish_id__isnull=False)
     if 'tags' in request.GET:
         tags = request.GET['tags'].split(' ')
     if len(tags) > 0:
-        public_articles = Article.objects.filter(tags__name__in=tags).distinct().filter(publish_id__isnull=False)
+        public_articles = available_articles.filter(tags__name__in=tags).distinct()
     else:
-        public_articles = Article.objects.filter(publish_id__isnull=False)
+        public_articles = available_articles
 
     return render(request, 'docs/list.html', {
         'articles': public_articles

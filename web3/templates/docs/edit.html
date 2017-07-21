@@ -3,6 +3,7 @@
 
 {% block css %}
     {{ block.super }}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
     <link rel="stylesheet" href="{% static 'selectize/selectize.default.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/docs/form.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/guide.css' %}" type="text/css">
@@ -12,6 +13,7 @@
     {{ block.super }}
     <script src="{% static 'selectize/selectize.js' %}" charset="utf-8"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js" charset="utf-8"></script>
     <script src="{% static 'js/docs/form.js' %}" charset="utf-8"></script>
 {% endblock js %}

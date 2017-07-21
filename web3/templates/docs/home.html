@@ -2,11 +2,15 @@
 {% block main %}
  <div class="main narrow">
     <h3>Director Documentation</h1>
-    <a class="btn btn-ion" href="{% url 'new_article' %}"><i class="fa fa-pencil-square-o"></i> Write an Article</a>
+    {% if user.is_superuser %}
+    <hr>
+    <b><p>You are a site admin.</p></b>
+    <p>
+        You can <a href="{% url 'new_article' %}"> write a new article</a> or <a href="{% url 'list_articles' %}?all">edit a preexisting article</a>.
+    </p>
+    {% endif %}
     <hr>
     <p>Welcome to the Director documentation. Here you'll find resources on how to set up Director resources, create web servers, and all sorts of other cool stuff.</p>
-    {% if user.is_superuser %}
-    {% endif %}
     <p>Read the <a href="{% url 'guide' %}">help guide</a> to get started, or choose from one of the categories below:</p>
     <ul>
         {% for tag in tags %}

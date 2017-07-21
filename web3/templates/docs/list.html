@@ -13,12 +13,15 @@
 <hr>
 <ul class="article-list">
     {% for article in articles %}
-    <li><a href="{% url 'read_article' article.slug %}" class="article">
+    <li><a href="{% if article.is_public %}{% url 'read_article' article.slug %}{% else %}{% url 'edit_article' article.slug %}{% endif %}" class="article">
             <b>{{ article.title }}</b><span class="pub-date pull-right"> {{ article.publish_date }}</span>
             <div>
                 {% for tag in article.tags.all %}
                 <a href="{% url 'list_articles' %}?tags={{ tag }}" class="tag tag-primary tag-pill">{{ tag }}</a>
                 {% endfor %}
+                {% if not article.is_public %}
+                <span class="tag tag-danger tag-pill"> Unpublished </span>
+                {% endif %}
                 {% if request.user.is_superuser %}
                  <a href="{% url 'article_history' article.slug %}" class="pull-right btn btn-sm btn-ion"><i class="fa fa-history"></i> Revision History</a>
                  <a href="{% url 'edit_article' article.slug %}" class="pull-right btn btn-sm btn-ion"><i class="fa fa-pencil-square-o"></i> Edit this Article</a>
