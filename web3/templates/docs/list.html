@@ -20,6 +20,7 @@
                 <a href="{% url 'list_articles' %}?tags={{ tag }}" class="tag tag-primary tag-pill">{{ tag }}</a>
                 {% endfor %}
                 {% if request.user.is_superuser %}
+                 <a href="{% url 'article_history' article.slug %}" class="pull-right btn btn-sm btn-ion"><i class="fa fa-history"></i> Revision History</a>
                  <a href="{% url 'edit_article' article.slug %}" class="pull-right btn btn-sm btn-ion"><i class="fa fa-pencil-square-o"></i> Edit this Article</a>
                 {% endif %}
             </div>

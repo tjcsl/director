@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="{% static 'css/docs/history.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/docs/list.css' %}" type="text/css">
 {% endblock css %}
+{% block js %}
+    {{ block.super }}
+    <script src="{% static 'js/docs/history.js' %}" charset="utf-8"></script>
+    <script src="{% static 'js/vendor/cookie.js' %}" charset="utf-8"></script>
+    <script charset="utf-8">
+        revision_endpoint = "{% url 'read_article_revision' revisions.first.slug 1 %}";
+        publish_endpoint = "{% url 'publish_article' revisions.first.slug %}";
+        unpublish_endpoint = "{% url 'unpublish_article' revisions.first.slug %}";
+    </script>
+{% endblock js %}
 
 {% block main %}
 <div class="main">
@@ -15,7 +25,8 @@
     <ul class="article-list">
         {% for article in revisions %}
         <li>
-            <a href="{% url 'read_article_revision' article.slug article.history_id %}" class="article">
+{# {% url 'read_article_revision' article.slug article.id %} #}
+<a href="#{{ article.history_id }}" data-published="{% if article.history_id == publish_id %}true{% else %}false{% endif %}" data-rid="{{ article.history_id }}" class="article">
                 <b>
                     {{ article.history_date }}
                     {% if article.history_id == publish_id %}
@@ -31,6 +42,20 @@
         {% endfor %}
     </ul>
     <div class="output">
+        Click on a revision to preview.
+    </div>
+    <div class="preview-template">
+        <div class="preview-sticky alert alert-warning">
+            <span class="sticky-text">Previewing Revision ID#{}</span>
+            <a class="btn btn-sm btn-ion pull-right" href="#"></a>
+        </div>
+        <h1 class="preview-title">Title</h1>
+        <div class="preview-output">
+            Text
+        </div>
+    </div>
+    <div class="public-tag-template">
+        <span class="tag tag-success tag-pill"> Public Version </span>
     </div>
 </div>
 {% endblock main %}

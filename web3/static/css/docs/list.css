@@ -1,5 +1,6 @@
 .article-list {
     list-style: none;
+    padding: 0;
     color: black;
 }
 

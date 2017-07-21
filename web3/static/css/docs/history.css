@@ -1,9 +1,24 @@
 .article-list {
     width: 40%;
+    display: inline-block;
 }
 
 .article-list .info {
     font-color: #888;
     font-size: .8em;
     font-style: italic;
+}
+
+.output {
+    width: 50%;
+    display: inline-block;
+    float: right;
+}
+
+.preview-template {
+    display: none;
+}
+
+.public-tag-template {
+    display: none;
 }

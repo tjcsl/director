@@ -42,11 +42,11 @@ class Article(models.Model, ModelDiffMixin):
 
     @property
     def published_article(self):
-        """Returns Article that matches publish_id """
-        return self.history.as_of(self.history.get(history_id=self.publish_id).history_date)
+        """returns article that matches publish_id """
+        return self.history.get(history_id=self.publish_id).instance
 
     def get_revision(self, revision_id):
-        return self.history.as_of(self.history.get(history_id=revision_id).history_date)
+        return self.history.get(history_id=revision_id).instance
 
     @property
     def html(self):

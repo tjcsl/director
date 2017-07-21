@@ -26,6 +26,9 @@
             </table>
         </div>
         <div class="buttons">
+            {% if slug %}
+            <a class="btn btn-ion" href="{% url 'article_history' slug %}"><i class="fa fa-history"></i> History</a>
+            {% endif %}
             <button class="btn btn-ion" type="submit" name="submit" value="save"><i class="fa fa-floppy-o"></i> Save</button>
             <button class="btn btn-ion" type="submit" name="submit" value="post"><i class="fa fa-cloud-upload"></i> Save and Post</button>
         </div>
