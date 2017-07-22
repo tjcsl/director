@@ -108,6 +108,7 @@ def edit_article_view(request, article_slug):
         'article_tags': article.tags.all()
     })
 
+
 @require_http_methods(['POST'])
 @superuser_required
 def save_view(request, article_slug):
@@ -123,6 +124,7 @@ def save_view(request, article_slug):
             article.save()
         return JsonResponse({'success': 'Successfully saved document.'})
     return JsonResponse({'error': 'Invalid Form'})
+
 
 @require_http_methods(['POST'])
 @superuser_required
@@ -145,6 +147,7 @@ def save_history_view(request, article_slug):
             'rid': article.history.first().history_id
         })
     return JsonResponse({'error': 'Invalid Form'})
+
 
 @require_http_methods(['POST'])
 @superuser_required
