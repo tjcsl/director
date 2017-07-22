@@ -15,6 +15,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js" charset="utf-8"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js" charset="utf-8"></script>
+    <script src="{% static 'js/vendor/cookie.js' %}" charset="utf-8"></script>
     <script src="{% static 'js/docs/form.js' %}" charset="utf-8"></script>
 {% endblock js %}
 
@@ -24,7 +25,10 @@
         {% csrf_token %}
         <div class="inputs">
             <table>
-            {{ form.as_table }}
+                <tr><th>{{ form.title.label_tag }}</th><td>{{ form.title }}</td></tr>
+                <tr><th>{{ form.author.label_tag }}</th><td>{{ form.author }}</td></tr>
+                <tr><th>{{ form.tags.label_tag }}</th><td>{{ form.tags }}</td></tr>
+                <tr><th>{{ form.content.label_tag }}</th><td>{{ form.content }}</td></tr>
             </table>
         </div>
         <div class="buttons">
@@ -33,6 +37,9 @@
             {% endif %}
             <button class="btn btn-ion" type="submit" name="submit" value="save"><i class="fa fa-floppy-o"></i> Save</button>
             <button class="btn btn-ion" type="submit" name="submit" value="post"><i class="fa fa-cloud-upload"></i> Save and Post</button>
+            {% if slug %}
+            <div>{{ form.reason }}</div>
+            {% endif %}
         </div>
     </form>
     <div class="workspace">
@@ -43,6 +50,13 @@
     </div>
 </div>
 <script charset="utf-8">
+    var editing = false;
+    {% if slug %}
+    editing = true;
+    var save_endpoint = "{% url 'save_article' slug %}";
+    var save_history_endpoint = "{% url 'save_history_article' slug %}";
+    var publish_endpoint = "{% url 'publish_article' slug %}";
+    {% endif %}
     $("input[name='tags']").val(",{{ article_tags | join:"," }}");
     $("input[name='tags']").selectize({
         create: true,

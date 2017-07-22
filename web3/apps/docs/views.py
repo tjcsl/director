@@ -1,9 +1,9 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import ensure_csrf_cookie
+from simple_history.utils import update_change_reason
 
 from .models import Tag, Article
 from .forms import ArticleForm
@@ -64,12 +64,12 @@ def article_history_view(request, article_slug):
     revisions = article.history.all()
     messages.info(request, '{} revisions fetched'.format(len(revisions)))
     return render(request, 'docs/history.html', {
+        'article_slug': article.slug,
         'revisions': revisions,
         'publish_id': article.publish_id
     })
 
 
-@login_required
 @superuser_required
 def new_article_view(request):
     """Write a new document"""
@@ -78,10 +78,12 @@ def new_article_view(request):
         if form.is_valid():
             tags = form.cleaned_data['tags']
             article = form.save(commit=True)
+            article.save()
             for tag_name in tags.split(','):
-                tag, created = Tag.objects.get_or_create(name=tag_name)
+                tag, created = Tag.objects.get_or_create(name=tag_name.lower())
                 article.tags.add(tag)
             article.save(history=True)
+            update_change_reason(article, "Initial Save")
             messages.success(request, 'Successfuly created document')
             return redirect('edit_article', article_slug=article.slug)
         messages.error(request, 'Invalid form')
@@ -98,40 +100,6 @@ def edit_article_view(request, article_slug):
     article = get_object_or_404(Article, slug=article_slug)
     tags = Tag.objects.all()
 
-    if request.method == 'POST':
-        form = ArticleForm(request.POST, instance=article)
-        if form.is_valid():
-            tags = form.cleaned_data['tags']
-            article = form.save(commit=True)
-            article.tags.clear()
-            for tag_name in tags.split(','):
-                tag, created = Tag.objects.get_or_create(name=tag_name)
-                article.tags.add(tag)
-            if request.POST['submit'] == 'post':
-                try:
-                    article.save(history=True)
-                    article.publish_id = article.history.latest().history_id
-                    article.save()
-                    messages.success(request, 'Successfully published document :)')
-                except:
-                    messages.error(request, 'Failed to publish document')
-            else:
-                article.save()
-            tags = Tag.objects.all()
-            messages.success(request, 'Successfuly saved document')
-            return render(request, 'docs/edit.html', {
-                'form': form,
-                'tags': tags,
-                'slug': article.slug,
-                'article_tags': article.tags.all()
-            })
-        messages.error(request, 'Invalid form')
-        return render(request, 'docs/edit.html', {
-            'form': form,
-            'tags': tags,
-            'slug': article.slug,
-            'article_tags': article.tags.all()
-        })
     form = ArticleForm(instance=article)
     return render(request, 'docs/edit.html', {
         'form': form,
@@ -140,6 +108,43 @@ def edit_article_view(request, article_slug):
         'article_tags': article.tags.all()
     })
 
+@require_http_methods(['POST'])
+@superuser_required
+def save_view(request, article_slug):
+    article = get_object_or_404(Article, slug=article_slug)
+    form = ArticleForm(request.POST, instance=article)
+    if form.is_valid():
+        tags = form.cleaned_data['tags']
+        article = form.save(commit=True)
+        article.tags.clear()
+        for tag_name in tags.split(','):
+            tag, created = Tag.objects.get_or_create(name=tag_name.lower())
+            article.tags.add(tag)
+            article.save()
+        return JsonResponse({'success': 'Successfully saved document.'})
+    return JsonResponse({'error': 'Invalid Form'})
+
+@require_http_methods(['POST'])
+@superuser_required
+def save_history_view(request, article_slug):
+    article = get_object_or_404(Article, slug=article_slug)
+    form = ArticleForm(request.POST, instance=article)
+    if form.is_valid():
+        tags = form.cleaned_data['tags']
+        article = form.save(commit=True)
+        article.tags.clear()
+        for tag_name in tags.split(','):
+            tag, created = Tag.objects.get_or_create(name=tag_name.lower())
+            if tag not in article.tags.all():
+                article.tags.add(tag)
+        article.save(history=True)
+        if 'reason' in form.cleaned_data:
+            update_change_reason(article, form.cleaned_data['reason'])
+        return JsonResponse({
+            'success': 'Successfully created revision with ID#{}'.format(article.history.first().history_id),
+            'rid': article.history.first().history_id
+        })
+    return JsonResponse({'error': 'Invalid Form'})
 
 @require_http_methods(['POST'])
 @superuser_required
