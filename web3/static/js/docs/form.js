@@ -8,6 +8,20 @@
         save_endpoint
         save_history_endpoint
 */
+
+var snippets = [
+    {
+        name: "click",
+        content: "<span class='click'><i class='fa fa-${1:info}'></i> ${2:Button}</span>",
+        tabTrigger: "click"
+    },
+    {
+        name: "note",
+        content: "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> ${1:Note Text}</div>",
+        tabTrigger: "note"
+    }
+];
+
 $(document).ready(function () {
     $("select[name='author']").selectize();
     var md = window.markdownit({
@@ -43,6 +57,24 @@ $(document).ready(function () {
     editor.getSession().on("change", function () {
         textarea.val(editor.getSession().getValue());
         output.html(md.render(editor.getSession().getValue()));
+    });
+
+    ace.config.loadModule("ace/ext/language_tools", function () {
+        var sm = ace.require("ace/snippets").snippetManager;
+        editor.setOptions({
+            enableSnippets: true,
+            enableLiveAutocompletion: false
+        });
+
+        ace.config.loadModule("ace/snippets/markdown", function(m) {
+            if (m) {
+                sm.files.markdown = m;
+                m.snippets = sm.parseSnippetFile(m.snippetText);
+
+                snippets.forEach(function (s) { m.snippets.push(s); });
+                sm.register(m.snippets, m.scope);
+            }
+        });
     });
 
     function onResize() {
