@@ -1,0 +1,119 @@
+.step {
+    border-left: 5px solid #aaa;
+    padding-left: 10px;
+}
+
+blockquote {
+    padding: .5rem 1rem;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    border-left: .25rem solid #E0E0E0;
+}
+
+.path {
+    color: #880000;
+}
+
+pre, code {
+    background-color: #E0E0E0;
+}
+.file {
+    padding: 3px 10px;
+    background-color: #E0E0E0;
+    border-radius: 5px 5px 0 0;
+    font-family: monospace;
+}
+.search-example {
+    margin-left: 20px;
+    font-style: italic;
+}
+
+h6 {
+    font-size: 1.1rem;
+}
+
+.click {
+    text-decoration: none;
+    color: #484848;
+    display: inline-block;
+    line-height: 18px;
+    padding: 7px 10px;
+    margin: 2px 0;
+    font-size: 13px;
+    font-weight: bold;
+    text-shadow: 0 1px 0 rgba(255,255,255,.9);
+    white-space: nowrap;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background: #f7f7f4;
+    background: -moz-linear-gradient(top,#f7f7f4 0%,#eaeaea 100%);
+    background: -webkit-linear-gradient(top,#f7f7f4 0%,#eaeaea 100%);
+    background: linear-gradient(to bottom,#f7f7f4 0%,#eaeaea 100%);
+    border: 1px solid #ddd;
+    border-bottom-color: #c5c5c5;
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    -moz-box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    -pie-box-shadow: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+}
+
+@media (max-width: 767px) {
+    {
+        margin-left: 0px;
+        width: 100%;
+    }
+}
+.navbar {
+    z-index: 1;
+}
+.toc {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+}
+.toc h5 {
+    cursor: pointer;
+}
+.toc .level {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-decoration: none;
+    display: block;
+    color: #484848;
+}
+.toc .level:hover {
+    background-color: #eee;
+}
+.toc .level.active {
+    color: #00008b;
+}
+.toc .level-h5 {
+    padding-left: 15px;
+    font-size: 15px;
+}
+.toc .level-h6 {
+    padding-left: 30px;
+    font-size: 14px;
+}
+.search-box {
+    display: inline-block;
+    font-family: "FontAwesome", "Open Sans", sans-serif;
+    padding: 0.25rem 0.50rem;
+    width: 300px;
+}
+
+pre {
+    padding: 10px;
+    border-radius: 5px;
+}
