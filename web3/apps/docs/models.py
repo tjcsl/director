@@ -1,10 +1,8 @@
-import re
-
 from django.db import models
 from django.template.defaultfilters import slugify
 from simple_history.models import HistoricalRecords
 
-import markdown2
+import markdown
 
 from ..helpers import ModelDiffMixin
 from ..users.models import User
@@ -52,13 +50,10 @@ class Article(models.Model, ModelDiffMixin):
 
     @property
     def html(self):
-        link_patterns = [(re.compile(r'((([A-Za-z]{2,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+(:[0-9]+)?|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)'), r'\1')]
-        return markdown2.markdown(self.content, extras=[
-            'fenced-code-blocks',
-            'header-ids',
-            'tables',
-            'code-friendly'
-        ], link_patterns=link_patterns)
+        return markdown.markdown(self.content, extensions=[
+            'pymdownx.github',
+            'pymdownx.mark'
+        ])
 
     def save(self, history=False, *args, **kwargs):
         if not self.id:
