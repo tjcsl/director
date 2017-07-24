@@ -15,7 +15,6 @@ Markdown==2.6.8
 mysqlclient==1.3.10
 oauthlib==2.0.2
 packaging==16.8
-pkg-resources==0.0.0
 psycopg2==2.7.1
 pyasn1==0.2.3
 Pygments==2.2.0
