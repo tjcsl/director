@@ -17,8 +17,13 @@ var snippets = [
     },
     {
         name: "note",
-        content: "<div class='alert alert-warning'><i class='fa fa-exclamation-triangle'></i> ${1:Note Text}</div>",
+        content: "<div class='alert alert-success'><i class='fa fa-info-circle'></i> ${1:Note Text}</div>",
         tabTrigger: "note"
+    },
+    {
+        name: "warn",
+        content: "<div class='alert alert-danger'><i class='fa fa-exclamation-triangle'></i> ${1:Warning Text}</div>",
+        tabTrigger: "warn"
     }
 ];
 
