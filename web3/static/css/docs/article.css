@@ -38,9 +38,9 @@ h6 {
 .click {
     text-decoration: none;
     color: #484848;
-    display: inline-block;
+    display: inline;
     line-height: 18px;
-    padding: 7px 10px;
+    padding: 3px 6px;
     margin: 2px 0;
     font-size: 13px;
     font-weight: bold;
