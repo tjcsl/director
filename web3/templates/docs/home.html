@@ -4,12 +4,9 @@
 
 {% block main %}
 <h3>Director Documentation</h1>
-{% if user.is_superuser %}
-<hr>
-<p><b>You are a site admin.</b></p>
-<p>
-    You can <a href="{% url 'new_article' %}"> write a new article</a> or <a href="{% url 'list_articles' %}?all">edit a preexisting article</a>.
-</p>
+{% if user.is_staff %}
+<hr />
+<p>You have permission to edit the documentation. You can <a href="{% url 'new_article' %}"> write a new article</a> or <a href="{% url 'list_articles' %}?all">edit a preexisting article</a>.</p>
 {% endif %}
 <hr>
 <p>Welcome to the Director documentation. Here you'll find resources on how to set up Director resources, create web servers, and all sorts of other cool stuff.</p>

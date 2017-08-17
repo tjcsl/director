@@ -13,7 +13,7 @@ from ..auth.decorators import superuser_required
 def read_article_view(request, article_slug, revision_id=None):
     """Read an article."""
 
-    if revision_id is not None and request.user.is_superuser:
+    if revision_id is not None and request.user.is_staff:
         article = get_object_or_404(Article, slug=article_slug)
         public_article = article.get_revision(revision_id)
         if 'text' in request.GET:
@@ -35,7 +35,7 @@ def list_articles_view(request):
     """Index of articles."""
 
     tags = []
-    if 'all' in request.GET and request.user.is_superuser:
+    if 'all' in request.GET and request.user.is_staff:
         available_articles = Article.objects.all()
     else:
         available_articles = Article.objects.filter(publish_id__isnull=False)
