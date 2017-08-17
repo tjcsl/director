@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="{% static 'css/docs/default.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/docs/history.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/docs/list.css' %}" type="text/css">
-{% endblock css %}
+{% endblock %}
+
 {% block js %}
     {{ block.super }}
     <script src="{% static 'js/docs/history.js' %}" charset="utf-8"></script>
@@ -16,18 +17,18 @@
         publish_endpoint = "{% url 'publish_article' revisions.first.slug %}";
         unpublish_endpoint = "{% url 'unpublish_article' revisions.first.slug %}";
     </script>
-{% endblock js %}
+{% endblock %}
 
 {% block main %}
-<div class="main">
-    <h1>Revisions <a class="btn btn-ion" href="{% url 'edit_article' article_slug %}"><i class="fa fa-pencil-square-o"></i> Edit</a></h1>
-    <hr>
-    <ul class="article-list">
+<h1>Revisions <a class="btn btn-ion" href="{% url 'edit_article' article_slug %}"><i class="fa fa-pencil-square-o"></i> Edit</a></h1>
+<hr>
+<div class="row">
+    <ul class="col-md-6 article-list">
         {% for article in revisions %}
         {% if not forloop.last %}
         {# TODO: This doesn't display the duplicated revision from the beginning. This is only aesthetic, and the underlying code should be fixed so the duplicates do not appear. #}
          <li>
-<a href="#{{ article.history_id }}" data-published="{% if article.history_id == publish_id %}true{% else %}false{% endif %}" data-rid="{{ article.history_id }}" class="article">
+                <a href="#{{ article.history_id }}" data-published="{% if article.history_id == publish_id %}true{% else %}false{% endif %}" data-rid="{{ article.history_id }}" class="article">
                 <b>
                     {{ article.history_date }}
                     {% if article.history_id == publish_id %}
@@ -43,25 +44,25 @@
         <li><a class="article">No revisions found.</a></li>
         {% endfor %}
     </ul>
-    <div class="output">
+    <div class="col-md-6 output">
         Click on a revision to preview.
     </div>
-    <div class="preview-template">
-        <div class="preview-sticky alert alert-warning">
-            <span class="sticky-text">Previewing Revision ID #{}</span>
-            <div class="pull-right">
-                <a class="publish btn btn-sm btn-ion" href="#"></a>
-                <a class="preview btn btn-sm btn-ion" href="#">Preview</a>
-            </div>
-        </div>
-        <h1 class="preview-title">Title</h1>
-        <div class="preview-output">
-            Text
+</div>
+<div class="preview-template">
+    <div class="preview-sticky alert alert-warning">
+        <span class="sticky-text">Previewing Revision ID #{}</span>
+        <div class="pull-right">
+            <a class="publish btn btn-sm btn-ion" href="#"></a>
+            <a class="preview btn btn-sm btn-ion" href="#">Preview</a>
         </div>
     </div>
-    <div class="public-tag-template">
-        <span class="tag tag-success tag-pill"> Public Version </span>
+    <h1 class="preview-title">Title</h1>
+    <div class="preview-output">
+        Text
     </div>
 </div>
-{% endblock main %}
+<div class="public-tag-template">
+    <span class="tag tag-success tag-pill"> Public Version </span>
+</div>
+{% endblock %}
 
