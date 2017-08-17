@@ -4,6 +4,10 @@
     color: black;
 }
 
+.article-title {
+    font-size: 2rem;
+}
+
 .article-list li {
     background-color: white;
     -webkit-border-radius: 5px;

@@ -9,8 +9,8 @@
 
 {% block main %}
 <div class="main narrow">
-<h1>Articles</h1>
-<hr>
+<h1 class="article-title">Articles</h1>
+<hr />
 <ul class="article-list">
     {% for article in articles %}
     <li><a href="{% if article.is_public %}{% url 'read_article' article.slug %}{% else %}{% url 'edit_article' article.slug %}{% endif %}" class="article">
