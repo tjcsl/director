@@ -52,7 +52,7 @@ def list_articles_view(request):
 
 
 def index_view(request):
-    """Home page for documentation"""
+    """Home page for documentation."""
 
     tags = Tag.objects.filter(article__publish_id__isnull=False).order_by("name").distinct()
     return render(request, 'docs/home.html', {'tags': tags})
@@ -62,7 +62,7 @@ def index_view(request):
 def article_history_view(request, article_slug):
     article = Article.objects.get(slug=article_slug)
     revisions = article.history.all()
-    messages.info(request, '{} revisions fetched'.format(len(revisions)))
+    messages.info(request, 'Fetched {} revisions.'.format(revisions.count()))
     return render(request, 'docs/history.html', {
         'article_slug': article.slug,
         'revisions': revisions,
@@ -80,11 +80,11 @@ def new_article_view(request):
             article = form.save(commit=True)
             article.save()
             for tag_name in tags.split(','):
-                tag, created = Tag.objects.get_or_create(name=tag_name.lower())
+                tag, created = Tag.objects.get_or_create(name=tag_name.strip().lower())
                 article.tags.add(tag)
             article.save(history=True)
             update_change_reason(article, "Initial Save")
-            messages.success(request, 'Successfuly created document')
+            messages.success(request, 'Successfuly created document!')
             return redirect('edit_article', article_slug=article.slug)
         messages.error(request, 'Invalid form')
         return render(request, 'docs/edit.html', {'form': form})
@@ -119,7 +119,7 @@ def save_view(request, article_slug):
         article = form.save(commit=True)
         article.tags.clear()
         for tag_name in tags.split(','):
-            tag, created = Tag.objects.get_or_create(name=tag_name.lower())
+            tag, created = Tag.objects.get_or_create(name=tag_name.strip().lower())
             article.tags.add(tag)
             article.save()
         return JsonResponse({'success': 'Successfully saved document.'})
@@ -136,14 +136,14 @@ def save_history_view(request, article_slug):
         article = form.save(commit=True)
         article.tags.clear()
         for tag_name in tags.split(','):
-            tag, created = Tag.objects.get_or_create(name=tag_name.lower())
+            tag, created = Tag.objects.get_or_create(name=tag_name.strip().lower())
             if tag not in article.tags.all():
                 article.tags.add(tag)
         article.save(history=True)
         if 'reason' in form.cleaned_data:
             update_change_reason(article, form.cleaned_data['reason'])
         return JsonResponse({
-            'success': 'Successfully created revision with ID#{}'.format(article.history.first().history_id),
+            'success': 'Successfully created revision with ID #{}'.format(article.history.first().history_id),
             'rid': article.history.first().history_id
         })
     return JsonResponse({'error': 'Invalid Form'})
@@ -153,7 +153,7 @@ def save_history_view(request, article_slug):
 @superuser_required
 @ensure_csrf_cookie
 def publish_view(request, article_slug):
-    """Publish specified revision"""
+    """Publish specified revision."""
     article = get_object_or_404(Article, slug=article_slug)
     revision_id = request.POST['revision_id']
     try:
@@ -168,7 +168,7 @@ def publish_view(request, article_slug):
 @superuser_required
 @ensure_csrf_cookie
 def unpublish_view(request, article_slug):
-    """Mark article as unpublished"""
+    """Mark article as unpublished."""
     article = get_object_or_404(Article, slug=article_slug)
     try:
         article.publish_id = None
