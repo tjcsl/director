@@ -15,13 +15,15 @@
     You are currently reading revision ID#{{ revision }}. This may not be what the user sees on the website.
 </div>
 {% endif %}
-     <h1>{{ article.title }}</h1>
+     <h1 class="article-title">{{ article.title }}</h1>
      {% for author in article.author.all %}
           <em>{{ author.full_name }}</em>
      {% endfor %}
      {% if request.user.is_superuser %}
-     <a href="{% url 'article_history' article.slug %}" class="pull-right btn btn-sm btn-ion"><i class="fa fa-history"></i> Revision History</a>
-     <a href="{% url 'edit_article' article.slug %}" class="pull-right btn btn-sm btn-ion"><i class="fa fa-pencil-square-o"></i> Edit this Article</a>
+     <div class="pull-right">
+         <a href="{% url 'article_history' article.slug %}" class="btn btn-sm btn-ion"><i class="fa fa-history"></i> Revision History</a>
+         <a href="{% url 'edit_article' article.slug %}" class="btn btn-sm btn-ion"><i class="fa fa-pencil-square-o"></i> Edit this Article</a>
+     </div>
      {% endif %}
      <br/>
      {% for tag in article.tags.all %}
