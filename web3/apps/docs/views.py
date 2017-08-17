@@ -20,7 +20,7 @@ def read_article_view(request, article_slug, revision_id=None):
             return JsonResponse({
                 'title': public_article.title,
                 'html': public_article.html,
-                'tags': public_article.tags.values_list("name", flat=True).order_by("name")
+                'tags': list(public_article.tags.values_list("name", flat=True).order_by("name"))
             })
     else:
         article = get_object_or_404(Article, slug=article_slug, publish_id__isnull=False)
