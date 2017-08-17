@@ -20,8 +20,14 @@
 {% endblock %}
 
 {% block main %}
-<h1>Revisions <a class="btn btn-ion" href="{% url 'edit_article' article_slug %}"><i class="fa fa-pencil-square-o"></i> Edit</a></h1>
-<hr>
+<h1 class="article-title">
+    Revisions
+    <div class="pull-right">
+        <a class="btn btn-ion" href="{% url 'read_article' article_slug %}"><i class="fa fa-eye"></i> View</a>
+        <a class="btn btn-ion" href="{% url 'edit_article' article_slug %}"><i class="fa fa-pencil-square-o"></i> Edit</a>
+    </div>
+</h1>
+<hr />
 <div class="row">
     <ul class="col-md-6 article-list">
         {% for article in revisions %}
