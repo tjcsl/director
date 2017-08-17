@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="{% static 'css/docs/list.css' %}" type="text/css">
 {% endblock css %}
 
+{% block mainclass %}narrow{% endblock %}
+
 {% block main %}
-<div class="main narrow">
-<h1 class="article-title">Articles</h1>
+<h1 class="article-title">Articles <a href="{% url 'docs_home' %}" class="btn btn-ion pull-right">Back</a></h1>
 <hr />
 <ul class="article-list">
     {% for article in articles %}
@@ -34,6 +35,5 @@
     <li><a class="article">No articles found.</a></li>
     {% endfor %}
 </ul>
-</div>
 {% endblock main %}
 

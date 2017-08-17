@@ -7,32 +7,30 @@
     <link rel="stylesheet" href="{% static 'css/docs/article.css' %}" type="text/css">
 {% endblock css %}
 
+{% block mainclass %}narrow{% endblock %}
+
 {% block main %}
-<div class="main narrow">
 {% if revision %}
 <div class="alert alert-danger">
     <i class="fa fa-exclamation-circle"></i>
-    You are currently reading revision ID#{{ revision }}. This may not be what the user sees on the website.
+    You are currently reading revision ID #{{ revision }}. This may not be what the user sees on the website.
 </div>
 {% endif %}
-     <h1 class="article-title">{{ article.title }}</h1>
-     {% for author in article.author.all %}
-          <em>{{ author.full_name }}</em>{% if not forloop.last %}, {% endif %}
-     {% endfor %}
-     {% if request.user.is_superuser %}
-     <div class="pull-right">
-         <a href="{% url 'article_history' article.slug %}" class="btn btn-sm btn-ion"><i class="fa fa-history"></i> Revision History</a>
-         <a href="{% url 'edit_article' article.slug %}" class="btn btn-sm btn-ion"><i class="fa fa-pencil-square-o"></i> Edit this Article</a>
-     </div>
-     {% endif %}
-     <br/>
-     {% for tag in article.tags.all %}
-     <a href="{% url 'list_articles' %}?tags={{ tag }}" class="tag tag-primary tag-pill">{{ tag }}</a>
-     {% endfor %}
-     <hr />
-     {% autoescape off %}
-     {{ article.html }}
-     {% endautoescape %}
+<h1 class="article-title">{{ article.title }}</h1>
+{% for author in article.author.all %}
+  <em>{{ author.full_name }}</em>{% if not forloop.last %}, {% endif %}
+{% endfor %}
+{% if request.user.is_superuser %}
+<div class="pull-right">
+    <a href="{% url 'article_history' article.slug %}" class="btn btn-sm btn-ion"><i class="fa fa-history"></i> Revision History</a>
+    <a href="{% url 'edit_article' article.slug %}" class="btn btn-sm btn-ion"><i class="fa fa-pencil-square-o"></i> Edit this Article</a>
 </div>
+{% endif %}
+<br />
+{% for tag in article.tags.all %}
+<a href="{% url 'list_articles' %}?tags={{ tag }}" class="tag tag-primary tag-pill">{{ tag }}</a>
+{% endfor %}
+<hr />
+{{ article.html|safe }}
 {% endblock main %}
 
