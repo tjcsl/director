@@ -17,8 +17,7 @@
 {% endif %}
      <h1 class="article-title">{{ article.title }}</h1>
      {% for author in article.author.all %}
-          <em>{{ author.full_name }}</em>
-          {% if not forloop.last %}, {% endif %}
+          <em>{{ author.full_name }}</em>{% if not forloop.last %}, {% endif %}
      {% endfor %}
      {% if request.user.is_superuser %}
      <div class="pull-right">
