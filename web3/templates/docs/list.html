@@ -10,7 +10,7 @@
 {% block mainclass %}narrow{% endblock %}
 
 {% block main %}
-<h1 class="article-title">Articles <a href="{% url 'docs_home' %}" class="btn btn-ion pull-right">Back</a></h1>
+<h1 class="article-title">Articles <a href="{% url 'docs_home' %}" class="btn btn-ion pull-right"><i class="fa fa-arrow-left"></i> Back</a></h1>
 <hr />
 <ul class="article-list">
     {% for article in articles %}
@@ -21,7 +21,7 @@
                 <a href="{% url 'list_articles' %}?tags={{ tag }}" class="tag tag-primary tag-pill">{{ tag }}</a>
                 {% endfor %}
                 {% if not article.is_public %}
-                <span class="tag tag-danger tag-pill"> Unpublished </span>
+                <span class="tag tag-danger tag-pill">Unpublished</span>
                 {% endif %}
                 {% if request.user.is_superuser %}
                 <div class="pull-right">
