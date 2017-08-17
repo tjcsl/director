@@ -20,4 +20,4 @@ You can restart the server using the commands `supervisorctl restart director` o
 
 The Conductor agent is not installed by default. To install the Conductor agent, SSH into the machine and run `sudo bash director/config/provision_conductor.sh`.
 
-Current Director maintainer: [Eric Wang](https://github.com/ezwang) (TJ 2017)
+Current Director maintainer: [Naitian Zhou](https://github.com/naitian) (TJ 2018)
