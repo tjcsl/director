@@ -11,7 +11,7 @@ from ..auth.decorators import superuser_required
 
 
 def read_article_view(request, article_slug, revision_id=None):
-    """Read an article"""
+    """Read an article."""
 
     if revision_id is not None and request.user.is_superuser:
         article = get_object_or_404(Article, slug=article_slug)
@@ -20,7 +20,7 @@ def read_article_view(request, article_slug, revision_id=None):
             return JsonResponse({
                 'title': public_article.title,
                 'html': public_article.html,
-                'tags': [tag.name for tag in public_article.tags.all()]
+                'tags': public_article.tags.values_list("name", flat=True).order_by("name")
             })
     else:
         article = get_object_or_404(Article, slug=article_slug, publish_id__isnull=False)
@@ -54,7 +54,7 @@ def list_articles_view(request):
 def index_view(request):
     """Home page for documentation"""
 
-    tags = Tag.objects.filter(article__publish_id__isnull=False).distinct()
+    tags = Tag.objects.filter(article__publish_id__isnull=False).order_by("name").distinct()
     return render(request, 'docs/home.html', {'tags': tags})
 
 
@@ -72,7 +72,7 @@ def article_history_view(request, article_slug):
 
 @superuser_required
 def new_article_view(request):
-    """Write a new document"""
+    """Write a new document."""
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
@@ -96,9 +96,9 @@ def new_article_view(request):
 
 @superuser_required
 def edit_article_view(request, article_slug):
-    """Edit preexisting article"""
+    """Edit preexisting article."""
     article = get_object_or_404(Article, slug=article_slug)
-    tags = Tag.objects.all()
+    tags = Tag.objects.all().order_by("name")
 
     form = ArticleForm(instance=article)
     return render(request, 'docs/edit.html', {
