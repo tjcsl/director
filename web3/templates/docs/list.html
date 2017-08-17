@@ -23,7 +23,7 @@
                 {% if not article.is_public %}
                 <span class="tag tag-danger tag-pill">Unpublished</span>
                 {% endif %}
-                {% if request.user.is_staff %}
+                {% if request.user.can_edit_docs %}
                 <div class="pull-right">
                     <a href="{% url 'article_history' article.slug %}" class="btn btn-sm btn-ion"><i class="fa fa-history"></i> Revision History</a>
                     <a href="{% url 'edit_article' article.slug %}" class="btn btn-sm btn-ion"><i class="fa fa-pencil-square-o"></i> Edit this Article</a>

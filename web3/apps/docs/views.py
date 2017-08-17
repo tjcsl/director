@@ -4,16 +4,17 @@ from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import ensure_csrf_cookie
 from simple_history.utils import update_change_reason
+from django.db.models import Q
 
 from .models import Tag, Article
 from .forms import ArticleForm
-from ..auth.decorators import superuser_required
+from ..auth.decorators import edit_docs_required, superuser_required
 
 
 def read_article_view(request, article_slug, revision_id=None):
     """Read an article."""
 
-    if revision_id is not None and request.user.is_staff:
+    if revision_id is not None:
         article = get_object_or_404(Article, slug=article_slug)
         public_article = article.get_revision(revision_id)
         if 'text' in request.GET:
@@ -37,6 +38,8 @@ def list_articles_view(request):
     tags = []
     if 'all' in request.GET and request.user.is_staff:
         available_articles = Article.objects.all()
+    elif request.user.can_edit_docs:
+        available_articles = Article.objects.filter(Q(publish_id__isnull=False) | Q(author=request.user))
     else:
         available_articles = Article.objects.filter(publish_id__isnull=False)
     if 'tags' in request.GET:
@@ -58,7 +61,7 @@ def index_view(request):
     return render(request, 'docs/home.html', {'tags': tags})
 
 
-@superuser_required
+@edit_docs_required
 def article_history_view(request, article_slug):
     article = Article.objects.get(slug=article_slug)
     revisions = article.history.all()
@@ -70,10 +73,11 @@ def article_history_view(request, article_slug):
     })
 
 
-@superuser_required
+@edit_docs_required
 def new_article_view(request):
     """Write a new document."""
-    if request.method == 'POST':
+
+    if request.method == "POST":
         form = ArticleForm(request.POST)
         if form.is_valid():
             tags = form.cleaned_data['tags']
@@ -94,7 +98,7 @@ def new_article_view(request):
     return render(request, 'docs/edit.html', {'form': form, 'tags': tags})
 
 
-@superuser_required
+@edit_docs_required
 def edit_article_view(request, article_slug):
     """Edit preexisting article."""
     article = get_object_or_404(Article, slug=article_slug)
@@ -110,7 +114,7 @@ def edit_article_view(request, article_slug):
 
 
 @require_http_methods(['POST'])
-@superuser_required
+@edit_docs_required
 def save_view(request, article_slug):
     article = get_object_or_404(Article, slug=article_slug)
     form = ArticleForm(request.POST, instance=article)
@@ -127,7 +131,7 @@ def save_view(request, article_slug):
 
 
 @require_http_methods(['POST'])
-@superuser_required
+@edit_docs_required
 def save_history_view(request, article_slug):
     article = get_object_or_404(Article, slug=article_slug)
     form = ArticleForm(request.POST, instance=article)
@@ -150,7 +154,7 @@ def save_history_view(request, article_slug):
 
 
 @require_http_methods(['POST'])
-@superuser_required
+@edit_docs_required
 @ensure_csrf_cookie
 def publish_view(request, article_slug):
     """Publish specified revision."""

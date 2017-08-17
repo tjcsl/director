@@ -50,6 +50,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.staff = False
 
     @property
+    def can_edit_docs(self):
+        return self.is_staff
+
+    @property
     def short_name(self):
         return self.username
 

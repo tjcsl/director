@@ -4,7 +4,7 @@
 
 {% block main %}
 <h3>Director Documentation</h1>
-{% if user.is_staff %}
+{% if request.user.can_edit_docs %}
 <hr />
 <p>You have permission to edit the documentation. You can <a href="{% url 'new_article' %}"> write a new article</a> or <a href="{% url 'list_articles' %}?all">edit a preexisting article</a>.</p>
 {% endif %}
