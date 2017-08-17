@@ -160,6 +160,9 @@ class Domain(models.Model):
 
     @property
     def has_cert(self):
+        if self.site and self.domain.endswith(".sites.tjhsst.edu"):
+            if self.site.purpose == "user" or self.site.purpose == "activity":
+                return True
         return os.path.isfile("/etc/letsencrypt/live/{}/cert.pem".format(self.domain))
 
     def __str__(self):
