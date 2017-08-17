@@ -22,3 +22,7 @@
 .public-tag-template {
     display: none;
 }
+
+.preview-title {
+    font-size: 2.25em;
+}
