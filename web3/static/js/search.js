@@ -121,6 +121,9 @@ $(document).ready(function() {
                 else if (cmpObj.hasClass("fa-globe")) {
                     cmp = "activity";
                 }
+                else if (cmpObj.hasClass("project")) {
+                    cmp = "project";
+                }
                 var ok = false;
                 $.each(types, function(k, v) {
                     if (cmp.includes(v)) {
