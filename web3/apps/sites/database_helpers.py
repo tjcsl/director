@@ -130,7 +130,7 @@ def list_tables(database):
             )
             cursor = conn.cursor()
             try:
-                cursor.execute("SHOW TABLES IN {}".format(database.db_name))
+                cursor.execute("SHOW TABLES IN `{}`".format(database.db_name))
                 return [table[0] for table in cursor.fetchall()]
             finally:
                 conn.close()
