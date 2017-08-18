@@ -41,7 +41,8 @@ wss.on("connection", function(ws) {
             uid: data.uid,
             sid: data.site,
             vmid: data.vm,
-            access_token: data.token
+            access_token: data.token,
+            command: data.command
         });
         var req = http.request({
             method: "POST",
