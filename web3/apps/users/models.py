@@ -51,7 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def can_edit_docs(self):
-        return self.is_staff
+        return self.is_authenticated
 
     @property
     def short_name(self):
