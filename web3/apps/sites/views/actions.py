@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from ..models import Site, Domain, Database
+from ..models import Site, Domain, Database, DatabaseHost
 from ..helpers import clean_site_type, do_git_pull, fix_permissions, generate_ssh_key, make_site_dirs, run_as_site, create_config_files, reload_services, add_access_token, generate_ssl_certificate
 from ..database_helpers import create_mysql_database
 from ...users.models import User
@@ -100,7 +100,7 @@ def install_wordpress_view(request, site_id):
         else:
             db = Database.objects.create(
                 site=site,
-                category="mysql",
+                host=DatabaseHost.objects.filter(dbms="mysql").first(),
                 password=User.objects.make_random_password(length=24)
             )
             if not create_mysql_database(db):
