@@ -91,8 +91,7 @@ def switch_site_php(site):
 def provision_mysql_database(site):
     if hasattr(site, "database"):
         if not site.database.category == "mysql":
-            messages.error(request, "A database has already been provisioned and it is not MySQL!")
-            return redirect("install_wordpress", site_id=site.id)
+            return (False, "A database has already been provisioned and it is not MySQL!")
     else:
         db = Database.objects.create(
             site=site,
@@ -101,11 +100,11 @@ def provision_mysql_database(site):
         )
         if not create_mysql_database(db):
             db.delete()
-            messages.error(request, "Failed to create MySQL database!")
-            return redirect("install_wordpress", site_id=site.id)
+            return (False, "Failed to create MySQL database!")
         else:
             create_config_files(site)
             reload_php_fpm()
+    return (True, None)
 
 
 @login_required
@@ -117,7 +116,11 @@ def install_wordpress_view(request, site_id):
 
     if request.method == "POST":
         switch_site_php(site)
-        provision_mysql_database(site)
+        status, msg = provision_mysql_database(site)
+        if msg:
+            messages.error(request, msg)
+        if not status:
+            return redirect("install_wordpress", site_id=site.id)
 
         return render(request, "sites/web_terminal.html", {"site": site, "command": "/scripts/wordpress.sh"})
 
@@ -133,7 +136,11 @@ def install_drupal_view(request, site_id):
 
     if request.method == "POST":
         switch_site_php(site)
-        provision_mysql_database(site)
+        status, msg = provision_mysql_database(site)
+        if msg:
+            messages.error(request, msg)
+        if not status:
+            return redirect("install_drupal", site_id=site.id)
 
         return render(request, "sites/web_terminal.html", {"site": site, "command": "/scripts/drupal.sh"})
 
