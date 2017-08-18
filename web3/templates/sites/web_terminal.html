@@ -48,7 +48,7 @@
         if (command) {
             $("#command-info").show().find("b").text(command);
         }
-        registerTerminal($(".console-wrapper"), { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}", type: "terminal", command: command }, {
+        registerTerminal($(".console-wrapper"), { uid: "{{ request.user.id }}", token: "{{ request.user.access_token }}", site: "{{ site.id }}", type: "terminal", custom: { command: command } }, {
             onClose: function() {
                 if (command) {
                     $(".disconnect").html("<span style='color:green'><b>Command Finished</b>, press <kbd>ENTER</kbd> to go back</span>");

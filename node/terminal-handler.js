@@ -30,8 +30,8 @@ module.exports = {
             }
             else {
                 var args = [data.user];
-                if (data.command) {
-                    args.push(data.command);
+                if (data.custom && data.custom.command) {
+                    args.push(data.custom.command);
                 }
                 term = pty.spawn(__dirname + "/shell.sh", args, {
                     name: "xterm-color",
