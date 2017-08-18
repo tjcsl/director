@@ -214,7 +214,7 @@ class DatabaseHost(models.Model):
     ))
 
     def __str__(self):
-        return "<{} {}>".format(hostname, port)
+        return "<{} {}>".format(self.hostname, self.port)
 
 
 class Database(models.Model):
