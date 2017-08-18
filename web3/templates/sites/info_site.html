@@ -52,24 +52,27 @@
         {% endif %}
 
         {% if site.category != "vm" %}
-        <a href="{% url 'web_terminal' site.id %}" class="btn btn-ion"><i class="fa fa-terminal"></i> Web Terminal</a>
-        <a href="{% url 'editor' site.id %}" class="btn btn-ion"><i class="fa fa-folder-open"></i> Online Editor</a>
-        <a href="{% url 'install_options' site.id %}" class="btn btn-ion"><i class="fa fa-archive"></i> Quick Install</a>
-        <br /><br />
+        <p>
+            <a href="{% url 'web_terminal' site.id %}" class="btn btn-ion"><i class="fa fa-terminal"></i> Web Terminal</a>
+            <a href="{% url 'editor' site.id %}" class="btn btn-ion"><i class="fa fa-folder-open"></i> Online Editor</a>
+            <a href="{% url 'install_options' site.id %}" class="btn btn-ion"><i class="fa fa-archive"></i> Quick Install</a>
+        </p>
         {% endif %}
 
+        <p>
         <a href="{% url 'config_site' site.id %}" class="btn btn-ion"><i class="fa fa-refresh"></i> Rewrite Configuration</a>
         {% if site.category != "vm" %}
         <a href="{% url 'permission_site' site.id %}" class="btn btn-ion"><i class="fa fa-wrench"></i> Reset File Permissions</a>
         {% endif %}
-        <br /><br />
+        </p>
 
-        <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
-        <a href="{% url 'edit_site' site.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Configure Site</a>
-        {% if request.user.is_superuser or site.purpose == "project" %}
-        <a href="{% url 'delete_site' site.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Site</a>
-        {% endif %}
-        <br /><br />
+        <p>
+            <a href="{% url 'index' %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+            <a href="{% url 'edit_site' site.id %}" class="btn btn-ion"><i class="fa fa-pencil"></i> Configure Site</a>
+            {% if request.user.is_superuser or site.purpose == "project" %}
+            <a href="{% url 'delete_site' site.id %}" class="btn btn-ion btn-danger"><i class="fa fa-trash-o"></i> Delete Site</a>
+            {% endif %}
+        </p>
     </div>
     <div class="col-md-6">
         {% if site.category != "static" or site.database or request.user.is_superuser %}
