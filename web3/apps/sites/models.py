@@ -213,6 +213,9 @@ class DatabaseHost(models.Model):
         ("mysql", "MySQL")
     ))
 
+    def __str__(self):
+        return "<{} {}>".format(hostname, port)
+
 
 class Database(models.Model):
     """Represents an SQL database that is associated with a website.
