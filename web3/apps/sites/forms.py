@@ -78,7 +78,7 @@ class SiteForm(forms.ModelForm):
                     if not self._user.is_superuser:
                         raise forms.ValidationError("Only administrators can set up *.tjhsst.edu domains.")
             elif domain.endswith(settings.PROJECT_DOMAIN):
-                if not domain[:-len(settings.PROJECT_DOMAIN).rstrip(".")] == self.cleaned_data["name"]:
+                if not domain[:-len(settings.PROJECT_DOMAIN)].rstrip(".") == self.cleaned_data["name"]:
                     if not self._user.is_superuser:
                         raise forms.ValidationError("Your subdomain for {} must match your site name!".format(settings.PROJECT_DOMAIN))
             else:
