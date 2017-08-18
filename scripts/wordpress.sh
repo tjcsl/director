@@ -53,14 +53,14 @@ then
             read -e -p "Do you want to overwrite the existing installation? [y/N] " choice
             if [[ "$choice" == [Yy]* ]];
             then
-                rm -r public
+                rm -rf public
             else
                 echo "Aborting installation..."
                 exit 1
             fi
         fi
     else
-        rm -r public
+        rm -rf public
     fi
 fi
 

@@ -53,14 +53,14 @@ then
             read -e -p "Do you want to overwrite the existing installation? [y/N] " choice
             if [[ "$choice" == [Yy]* ]];
             then
-                rm -r public
+                rm -rf public
             else
                 echo "Aborting installation..."
                 exit 1
             fi
         fi
     else
-        rm -r public
+        rm -rf public
     fi
 fi
 
@@ -86,4 +86,4 @@ echo "   This ensures that Drupal will be able to correctly apply updates."
 echo
 echo "2) Proceed to $SITE_URL to finish the Drupal installation process."
 
-sleep 1
+sleep 3
