@@ -4,7 +4,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.conf import settings
 
-from .models import Site, Process, Database, Domain
+from .models import Site, Process, Database, DatabaseHost, Domain
 from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, reload_php_fpm, update_supervisor, clean_site_type
 from .database_helpers import create_postgres_database, create_mysql_database
 
@@ -196,7 +196,7 @@ class DatabaseForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
-
+        instance.host = DatabaseHost.objects.get(dbms=self.cleaned_data["category"])
         instance.password = User.objects.make_random_password(length=24)
 
         if commit:
@@ -219,4 +219,4 @@ class DatabaseForm(forms.ModelForm):
 
     class Meta:
         model = Database
-        fields = ["site", "category"]
+        fields = ["site"]

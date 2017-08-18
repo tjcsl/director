@@ -188,6 +188,32 @@ class Process(models.Model):
             return "Unknown Site"
 
 
+class DatabaseHost(models.Model):
+    """Represents a host for a collection of SQL databases.
+
+    Attributes:
+        hostname
+            The host to connect to (ex: postgres1.csl.tjhsst.edu).
+        port
+            The port the database server is running on.
+        username
+            The administrator username for creating and managing databases.
+        password
+            The administrator password for creating and managing databases.
+        dbms
+            The type of database (ex: postgres, mysql).
+    """
+
+    hostname = models.CharField(max_length=255)
+    port = models.PositiveIntegerField()
+    username = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+    dbms = models.CharField(max_length=16, choices=(
+        ("postgresql", "PostgreSQL"),
+        ("mysql", "MySQL")
+    ))
+
+
 class Database(models.Model):
     """Represents an SQL database that is associated with a website.
 
@@ -201,11 +227,12 @@ class Database(models.Model):
             This is automatically generated in most cases.
     """
     site = models.OneToOneField(Site)
-    category = models.CharField(max_length=16, choices=(
-        ("postgresql", "PostgreSQL"),
-        ("mysql", "MySQL")
-    ))
+    host = models.ForeignKey(DatabaseHost, on_delete=models.CASCADE)
     password = models.CharField(max_length=255)
+
+    @property
+    def category(self):
+        return self.host.dbms
 
     @property
     def db_name(self):
@@ -213,21 +240,21 @@ class Database(models.Model):
 
     @property
     def username(self):
-        if self.category == "mysql":
+        if self.host.dbms == "mysql":
             return "site_{}".format(self.site.name)[:16].lower()
         return "site_{}".format(self.site.name).lower()
 
     @property
     def db_host(self):
-        return settings.POSTGRES_DB_HOST if self.category == "postgresql" else settings.MYSQL_DB_HOST
+        return self.host.hostname
 
     @property
     def db_port(self):
-        return settings.POSTGRES_DB_PORT if self.category == "postgresql" else settings.MYSQL_DB_PORT
+        return self.host.port
 
     @property
     def db_type(self):
-        return "postgres" if self.category == "postgresql" else "mysql"
+        return "postgres" if self.host.dbms == "postgresql" else "mysql"
 
     @property
     def db_full_host(self):

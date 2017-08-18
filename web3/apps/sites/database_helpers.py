@@ -2,7 +2,6 @@ import psycopg2
 import MySQLdb
 from _mysql_exceptions import ProgrammingError as MySQLProgrammingError, OperationalError as MySQLOperationalError
 
-from django.conf import settings
 from django.core.cache import cache
 
 from .helpers import run_as_site
@@ -11,18 +10,15 @@ from raven.contrib.django.raven_compat.models import client
 
 
 def create_postgres_database(database):
-    if not settings.POSTGRES_DB_HOST:
-        return True
-
     conn = None
 
     try:
         conn = psycopg2.connect(
             dbname="postgres",
-            host=settings.POSTGRES_DB_HOST,
-            user=settings.POSTGRES_DB_USER,
-            password=settings.POSTGRES_DB_PASS,
-            port=settings.POSTGRES_DB_PORT
+            host=database.host.hostname,
+            user=database.host.username,
+            password=database.host.password,
+            port=database.host.port
         )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = conn.cursor()
@@ -33,7 +29,7 @@ def create_postgres_database(database):
             cursor.execute("ALTER USER \"{}\" WITH PASSWORD '{}'".format(database.username, database.password))
         cursor.execute("SELECT 1 FROM pg_database WHERE datname = '{}'".format(database.db_name))
         if cursor.rowcount == 0:
-            cursor.execute("CREATE DATABASE \"{}\" WITH OWNER = \"{}\"".format(database.db_name, settings.POSTGRES_DB_USER))
+            cursor.execute("CREATE DATABASE \"{}\" WITH OWNER = \"{}\"".format(database.db_name, database.host.username))
         cursor.execute("GRANT ALL PRIVILEGES ON DATABASE \"{}\" TO \"{}\"".format(database.db_name, database.username))
     except psycopg2.DatabaseError:
         client.captureException()
@@ -46,10 +42,10 @@ def create_postgres_database(database):
     try:
         conn = psycopg2.connect(
             dbname=database.db_name,
-            host=settings.POSTGRES_DB_HOST,
-            user=settings.POSTGRES_DB_USER,
-            password=settings.POSTGRES_DB_PASS,
-            port=settings.POSTGRES_DB_PORT
+            host=database.host.hostname,
+            user=database.host.username,
+            password=database.host.password,
+            port=database.host.port
         )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = conn.cursor()
@@ -64,17 +60,14 @@ def create_postgres_database(database):
 
 
 def change_postgres_password(database):
-    if not settings.POSTGRES_DB_HOST:
-        return True
-
     conn = None
     try:
         conn = psycopg2.connect(
             dbname="postgres",
-            host=settings.POSTGRES_DB_HOST,
-            user=settings.POSTGRES_DB_USER,
-            password=settings.POSTGRES_DB_PASS,
-            port=settings.POSTGRES_DB_PORT
+            host=database.host.hostname,
+            user=database.host.username,
+            password=database.host.password,
+            port=database.host.port
         )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = conn.cursor()
@@ -89,17 +82,14 @@ def change_postgres_password(database):
 
 
 def delete_postgres_database(database):
-    if not settings.POSTGRES_DB_HOST:
-        return True
-
     conn = None
     try:
         conn = psycopg2.connect(
             dbname="postgres",
-            host=settings.POSTGRES_DB_HOST,
-            user=settings.POSTGRES_DB_USER,
-            password=settings.POSTGRES_DB_PASS,
-            port=settings.POSTGRES_DB_PORT
+            host=database.host.hostname,
+            user=database.host.username,
+            password=database.host.password,
+            port=database.host.port
         )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = conn.cursor()
@@ -118,15 +108,12 @@ def delete_postgres_database(database):
 def list_tables(database):
     try:
         if database.category == "postgresql":
-            if not settings.POSTGRES_DB_HOST:
-                return []
-
             conn = psycopg2.connect(
                 dbname=database.db_name,
-                host=settings.POSTGRES_DB_HOST,
-                user=settings.POSTGRES_DB_USER,
-                password=settings.POSTGRES_DB_PASS,
-                port=settings.POSTGRES_DB_PORT
+                host=database.host.hostname,
+                user=database.host.username,
+                password=database.host.password,
+                port=database.host.port
             )
             cursor = conn.cursor()
             try:
@@ -135,10 +122,12 @@ def list_tables(database):
             finally:
                 conn.close()
         elif database.category == "mysql":
-            if not settings.MYSQL_DB_HOST:
-                return []
-
-            conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, port=settings.MYSQL_DB_PORT, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+            conn = MySQLdb.connect(
+                host=database.host.hostname,
+                user=database.host.username,
+                password=database.host.password,
+                port=database.host.port
+            )
             cursor = conn.cursor()
             try:
                 cursor.execute("SHOW TABLES IN {}".format(database.db_name))
@@ -151,10 +140,12 @@ def list_tables(database):
 
 
 def create_mysql_database(database):
-    if not settings.MYSQL_DB_HOST:
-        return True
-
-    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, port=settings.MYSQL_DB_PORT, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+    conn = MySQLdb.connect(
+        host=database.host.hostname,
+        user=database.host.username,
+        password=database.host.password,
+        port=database.host.port
+    )
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT 1 FROM mysql.user WHERE user = '{}'".format(database.username))
@@ -172,10 +163,12 @@ def create_mysql_database(database):
 
 
 def change_mysql_password(database):
-    if not settings.MYSQL_DB_HOST:
-        return True
-
-    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, port=settings.MYSQL_DB_PORT, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+    conn = MySQLdb.connect(
+        host=database.host.hostname,
+        user=database.host.username,
+        password=database.host.password,
+        port=database.host.port
+    )
     cursor = conn.cursor()
     try:
         cursor.execute("SET PASSWORD FOR '{}'@'%' = PASSWORD('{}');".format(database.username, database.password))
@@ -189,10 +182,12 @@ def change_mysql_password(database):
 
 
 def delete_mysql_database(database):
-    if not settings.MYSQL_DB_HOST:
-        return True
-
-    conn = MySQLdb.connect(host=settings.MYSQL_DB_HOST, port=settings.MYSQL_DB_PORT, user=settings.MYSQL_DB_USER, password=settings.MYSQL_DB_PASS)
+    conn = MySQLdb.connect(
+        host=database.host.hostname,
+        user=database.host.username,
+        password=database.host.password,
+        port=database.host.port
+    )
     cursor = conn.cursor()
     try:
         cursor.execute("DROP DATABASE IF EXISTS `{}`;".format(database.db_name))
