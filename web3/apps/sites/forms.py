@@ -185,8 +185,8 @@ class ProcessForm(forms.ModelForm):
 
 class DatabaseForm(forms.ModelForm):
     site = forms.ModelChoiceField(queryset=Site.objects.all(), disabled=True)
-    category = forms.ChoiceField(choices=(("postgresql", "PostgreSQL"), ("mysql", "MySQL")),
-                                 widget=forms.RadioSelect(), label="Type")
+    host = forms.ModelChoiceField(queryset=DatabaseHost.objects.all(),
+                                  widget=forms.RadioSelect(), label="Type", empty_label=None)
 
     def __init__(self, user, *args, **kwargs):
         super(DatabaseForm, self).__init__(*args, **kwargs)
@@ -196,7 +196,6 @@ class DatabaseForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
-        instance.host = DatabaseHost.objects.get(dbms=self.cleaned_data["category"])
         instance.password = User.objects.make_random_password(length=24)
 
         if commit:
@@ -219,4 +218,4 @@ class DatabaseForm(forms.ModelForm):
 
     class Meta:
         model = Database
-        fields = ["site"]
+        fields = ["site", "host"]
