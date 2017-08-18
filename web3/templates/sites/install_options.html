@@ -19,7 +19,8 @@
         <h4><i class="fa fa-drupal"></i> Drupal</h4>
         <a href="https://www.drupal.org/">https://www.drupal.org/</a>
         <p>Drupal is a free content management system written in PHP. It can use both MySQL and PostgreSQL as a database backend.</p>
-        <i>Coming Soon!</i>
+        <a href="{% url 'info_site' site.id %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+        <a href="{% url 'install_drupal' site.id %}" class="btn btn-ion"><i class="fa fa-drupal"></i> Install Drupal</a>
     </div>
 </div>
 <div class="card">

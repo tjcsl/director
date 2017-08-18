@@ -78,6 +78,36 @@ def install_options_view(request, site_id):
     return render(request, "sites/install_options.html", {"site": site})
 
 
+def switch_site_php(site):
+    if not site.category == "php":
+        site.category = "php"
+        site.save()
+
+        clean_site_type(site)
+        create_config_files(site)
+        reload_services()
+
+
+def provision_mysql_database(site):
+    if hasattr(site, "database"):
+        if not site.database.category == "mysql":
+            messages.error(request, "A database has already been provisioned and it is not MySQL!")
+            return redirect("install_wordpress", site_id=site.id)
+    else:
+        db = Database.objects.create(
+            site=site,
+            host=DatabaseHost.objects.filter(dbms="mysql").first(),
+            password=User.objects.make_random_password(length=24)
+        )
+        if not create_mysql_database(db):
+            db.delete()
+            messages.error(request, "Failed to create MySQL database!")
+            return redirect("install_wordpress", site_id=site.id)
+        else:
+            create_config_files(site)
+            reload_php_fpm()
+
+
 @login_required
 @add_access_token
 def install_wordpress_view(request, site_id):
@@ -86,35 +116,28 @@ def install_wordpress_view(request, site_id):
         raise PermissionDenied
 
     if request.method == "POST":
-        if not site.category == "php":
-            site.category = "php"
-            site.save()
-
-            clean_site_type(site)
-            create_config_files(site)
-            reload_services()
-
-        if hasattr(site, "database"):
-            if not site.database.category == "mysql":
-                messages.error(request, "A database has already been provisioned and it is not MySQL!")
-                return redirect("install_wordpress", site_id=site.id)
-        else:
-            db = Database.objects.create(
-                site=site,
-                host=DatabaseHost.objects.filter(dbms="mysql").first(),
-                password=User.objects.make_random_password(length=24)
-            )
-            if not create_mysql_database(db):
-                db.delete()
-                messages.error(request, "Failed to create MySQL database!")
-                return redirect("install_wordpress", site_id=site.id)
-            else:
-                create_config_files(site)
-                reload_php_fpm()
+        switch_site_php(site)
+        provision_mysql_database(site)
 
         return render(request, "sites/web_terminal.html", {"site": site, "command": "/scripts/wordpress.sh"})
 
     return render(request, "sites/install_wordpress.html", {"site": site})
+
+
+@login_required
+@add_access_token
+def install_drupal_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    if request.method == "POST":
+        switch_site_php(site)
+        provision_mysql_database(site)
+
+        return render(request, "sites/web_terminal.html", {"site": site, "command": "/scripts/drupal.sh"})
+
+    return render(request, "sites/install_drupal.html", {"site": site})
 
 
 @csrf_exempt
