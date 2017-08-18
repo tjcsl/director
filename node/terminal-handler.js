@@ -29,7 +29,11 @@ module.exports = {
                 ws.close();
             }
             else {
-                term = pty.spawn(__dirname + "/shell.sh", [data.user], {
+                var args = [data.user];
+                if (data.command) {
+                    args.push(data.command);
+                }
+                term = pty.spawn(__dirname + "/shell.sh", args, {
                     name: "xterm-color",
                     cols: 80,
                     rows: 30,

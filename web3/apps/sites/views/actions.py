@@ -112,7 +112,7 @@ def install_wordpress_view(request, site_id):
                 create_config_files(site)
                 reload_php_fpm()
 
-        return render(request, "sites/web_terminal.html", {"site": site, "command": "/scripts/wordpress.sh && exit"})
+        return render(request, "sites/web_terminal.html", {"site": site, "command": "/scripts/wordpress.sh"})
 
     return render(request, "sites/install_wordpress.html", {"site": site})
 
