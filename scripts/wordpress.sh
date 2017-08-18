@@ -14,7 +14,7 @@ else
     exit 1
 fi
 
-if [ $SITE_PURPOSE != "user" ] && [ $SITE_PURPOSE != "activity" ];
+if [ $SITE_PURPOSE != "user" ] && [ $SITE_PURPOSE != "activity" ] && [ $SITE_PURPOSE != "project" ];
 then
     echo "Please enter the URL of the website without a trailing slash."
     echo "For example, you should put 'https://example.com' if your website is located at example.com."

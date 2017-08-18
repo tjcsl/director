@@ -125,7 +125,8 @@ def node_auth_view(request):
                         "name": site.name,
                         "homedir": site.path,
                         "purpose": site.purpose,
-                        "user": site.user.username
+                        "user": site.user.username,
+                        "url": site.url
                     },
                     "userid": user.id,
                     "user": user.username

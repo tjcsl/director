@@ -37,7 +37,8 @@ module.exports = {
                     env: {
                         SITE_ROOT: data.site.homedir,
                         SITE_NAME: data.site.name,
-                        SITE_PURPOSE: data.site.purpose
+                        SITE_PURPOSE: data.site.purpose,
+                        SITE_URL: data.site.url
                     }
                 });
             }
