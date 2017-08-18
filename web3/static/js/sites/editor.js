@@ -1617,7 +1617,7 @@ $(document).ready(function() {
     });
 
     $(window).bind("beforeunload", function(e) {
-        if ($(".file-indicator:not(.saved)").length && settings["confirm-leave"]) {
+        if ($(".file-indicator:not(.saved):not(.readonly)").length && settings["confirm-leave"]) {
             var msg = "You have unsaved files. Are you sure you want to exit?";
             e.returnValue = msg;
             return msg;
