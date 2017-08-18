@@ -64,8 +64,10 @@ $(document).ready(function() {
     });
     $(".generate-cert").submit(function(e) {
         e.preventDefault();
+        var t = $(this);
         $.post(add_ssl_endpoint, $(this).serialize(), function() {
             Messenger().info("Sent request to generate certificate. Check back later to see if it worked.");
+            t.prop("disabled", true);
         });
     });
 
