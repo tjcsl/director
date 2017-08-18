@@ -7,7 +7,6 @@ from django.conf import settings
 from django.db import models
 
 from ..users.models import User, Group
-from .database_helpers import delete_postgres_database, delete_mysql_database
 
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -273,6 +272,7 @@ class Database(models.Model):
 
 @receiver(pre_delete, sender=Database, dispatch_uid="database_delete_signal")
 def pre_database_delete(sender, instance, using, **kwargs):
+    from .database_helpers import delete_postgres_database, delete_mysql_database
     if instance.category == "mysql":
         delete_mysql_database(instance)
     else:
