@@ -10,7 +10,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from ..models import Site, Domain, Database, DatabaseHost
-from ..helpers import clean_site_type, do_git_pull, fix_permissions, generate_ssh_key, make_site_dirs, run_as_site, create_config_files, reload_services, add_access_token, generate_ssl_certificate
+from ..helpers import (clean_site_type, do_git_pull, fix_permissions, generate_ssh_key, make_site_dirs, run_as_site, create_config_files,
+                       reload_services, add_access_token, generate_ssl_certificate, reload_php_fpm)
 from ..database_helpers import create_mysql_database
 from ...users.models import User
 
@@ -107,6 +108,9 @@ def install_wordpress_view(request, site_id):
                 db.delete()
                 messages.error(request, "Failed to create MySQL database!")
                 return redirect("install_wordpress", site_id=site.id)
+            else:
+                create_config_files(site)
+                reload_php_fpm()
 
         return render(request, "sites/web_terminal.html", {"site": site, "command": "/scripts/wordpress.sh && exit"})
 
