@@ -10,18 +10,18 @@ def forwards_func(apps, schema_editor):
     Database = apps.get_model("sites", "Database")
 
     mysql, created = DatabaseHost.objects.get_or_create(
-        hostname=settings.MYSQL_DB_HOST,
-        port=settings.MYSQL_DB_PORT,
-        username=settings.MYSQL_DB_USER,
-        password=settings.MYSQL_DB_PASS,
+        hostname=settings.MYSQL_DB_HOST if hasattr(settings, "MYSQL_DB_HOST") else "mysql1",
+        port=settings.MYSQL_DB_PORT if hasattr(settings, "MYSQL_DB_PORT") else 3306,
+        username=settings.MYSQL_DB_USER if hasattr(settings, "MYSQL_DB_USER") else "web3",
+        password=settings.MYSQL_DB_PASS if hasattr(settings, "MYSQL_DB_PASS") else "web3",
         dbms="mysql"
     )
 
     postgresql, created = DatabaseHost.objects.get_or_create(
-        hostname=settings.POSTGRES_DB_HOST,
-        port=settings.POSTGRES_DB_PORT,
-        username=settings.POSTGRES_DB_USER,
-        password=settings.POSTGRES_DB_PASS,
+        hostname=settings.POSTGRES_DB_HOST if hasattr(settings, "POSTGRES_DB_HOST") else "postgres1",
+        port=settings.POSTGRES_DB_PORT if hasattr(settings, "POSTGRES_DB_PORT") else 5432,
+        username=settings.POSTGRES_DB_USER if hasattr(settings, "POSTGRES_DB_USER") else "web3",
+        password=settings.POSTGRES_DB_PASS if hasattr(settings, "POSTGRES_DB_PASS") else "web3",
         dbms="postgresql"
     )
 
