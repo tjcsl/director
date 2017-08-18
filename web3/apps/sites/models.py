@@ -7,6 +7,10 @@ from django.conf import settings
 from django.db import models
 
 from ..users.models import User, Group
+from .database_helpers import delete_postgres_database, delete_mysql_database
+
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 
 class Site(models.Model):
@@ -265,3 +269,11 @@ class Database(models.Model):
 
     def __str__(self):
         return "{}://{}:{}@{}/{}".format(self.db_type, self.username, self.password, self.db_full_host, self.db_name)
+
+
+@receiver(pre_delete, sender=Database, dispatch_uid="database_delete_signal")
+def pre_database_delete(sender, instance, using, **kwargs):
+    if instance.category == "mysql":
+        delete_mysql_database(instance)
+    else:
+        delete_postgres_database(instance)

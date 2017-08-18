@@ -12,7 +12,7 @@ from django.views.decorators.http import require_http_methods
 from raven.contrib.django.raven_compat.models import client
 
 from ..helpers import run_as_site, create_config_files, demote, reload_php_fpm, update_supervisor
-from ..database_helpers import delete_postgres_database, change_postgres_password, delete_mysql_database, change_mysql_password, list_tables, get_sql_version
+from ..database_helpers import change_postgres_password, change_mysql_password, list_tables, get_sql_version
 from ..models import Site, User
 from ..forms import DatabaseForm
 
@@ -184,14 +184,6 @@ def delete_database_view(request, site_id):
             messages.error(request, "Delete confirmation failed!")
             return redirect("delete_database", site_id=site_id)
         if site.database:
-            flag = False
-            if site.database.category == "postgresql":
-                flag = delete_postgres_database(site.database)
-            elif site.database.category == "mysql":
-                flag = delete_mysql_database(site.database)
-            if not flag:
-                messages.error(request, "Failed to delete database!")
-                return redirect("info_site", site_id=site.id)
             site.database.delete()
             create_config_files(site)
             if site.category == "php":
