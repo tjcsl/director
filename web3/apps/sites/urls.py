@@ -50,6 +50,9 @@ urlpatterns = [
     url("^(?P<site_id>\d+)/action/git_pull$", actions.git_pull_view, name="git_pull"),
     url("^(?P<site_id>\d+)/action/git_setup$", actions.git_setup_view, name="github_automatic_setup"),
     url("^(?P<site_id>\d+)/action/git_path$", actions.set_git_path_view, name="set_git_path"),
+    url("^(?P<site_id>\d+)/webhook$", actions.webhook_view, name="git_webhook"),
+
+    # Installers
+    url("^(?P<site_id>\d+)/install$", actions.install_options_view, name="install_options"),
     url("^(?P<site_id>\d+)/action/wordpress$", actions.install_wordpress_view, name="install_wordpress"),
-    url("^(?P<site_id>\d+)/webhook$", actions.webhook_view, name="git_webhook")
 ]

@@ -69,6 +69,15 @@ def git_pull_view(request, site_id):
 
 
 @login_required
+def install_options_view(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+        raise PermissionDenied
+
+    return render(request, "sites/install_options.html", {"site": site})
+
+
+@login_required
 @add_access_token
 def install_wordpress_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)

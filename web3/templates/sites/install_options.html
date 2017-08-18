@@ -1,0 +1,33 @@
+{% extends "sites/base.html" %}
+
+{% block mainclass %}narrow{% endblock %}
+
+{% block main %}
+<h3><i class="fa fa-archive"></i> Quick Installation</h3>
+<hr />
+<div class="card">
+    <div class="card-block">
+        <h4><i class="fa fa-wordpress"></i> WordPress</h4>
+        <a href="https://wordpress.org/">https://wordpress.org/</a>
+        <p>WordPress is a free content management system written in PHP and MySQL.</p>
+        <a href="{% url 'info_site' site.id %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+        <a href="{% url 'install_wordpress' site.id %}" class="btn btn-ion"><i class="fa fa-wordpress"></i> Install Wordpress</a>
+    </div>
+</div>
+<div class="card">
+    <div class="card-block">
+        <h4><i class="fa fa-drupal"></i> Drupal</h4>
+        <a href="https://www.drupal.org/">https://www.drupal.org/</a>
+        <p>Drupal is a free content management system written in PHP. It can use both MySQL and PostgreSQL as a database backend.</p>
+        <i>Coming Soon!</i>
+    </div>
+</div>
+<div class="card">
+    <div class="card-block">
+        <h4><i class="fa fa-joomla  "></i> Joomla</h4>
+        <a href="https://www.joomla.org/">https://www.joomla.org/</a>
+        <p>Joomla is a free content management system written in PHP. It can use both MySQL and PostgreSQL as a database backend.</p>
+        <i>Coming Soon!</i>
+    </div>
+</div>
+{% endblock %}
