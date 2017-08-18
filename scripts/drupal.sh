@@ -70,7 +70,7 @@ echo
 VER="8.3.7"
 
 wget https://ftp.drupal.org/files/projects/drupal-$VER.tar.gz
-tar -xvf drupal-$VER.tar.gz
+tar -xf drupal-$VER.tar.gz
 rm drupal-$VER.tar.gz
 
 mv drupal-$VER public
@@ -86,4 +86,4 @@ echo "   This ensures that Drupal will be able to correctly apply updates."
 echo
 echo "2) Proceed to $SITE_URL to finish the Drupal installation process."
 
-sleep 3
+sleep 1
