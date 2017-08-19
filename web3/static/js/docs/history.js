@@ -32,8 +32,11 @@ $(function () {
                     csrfmiddlewaretoken: Cookies.get("csrftoken")
                 }, function (data) {
                     if (data.success) {
-                        Messenger().success("Successfully published article :)");
+                        Messenger().success("Successfully published article! :)");
                         rerender(rid, "publish");
+                    }
+                    else if (data.error) {
+                        Messenger().error(data.error);
                     }
                 });
         } else if (action == "unpublish") {
@@ -43,12 +46,15 @@ $(function () {
                     csrfmiddlewaretoken: Cookies.get("csrftoken")
                 }, function (data) {
                     if (data.success) {
-                        Messenger().success("Successfully unpublished article");
+                        Messenger().success("Successfully unpublished article!");
                         rerender(rid, "unpublish");
+                    }
+                    else if (data.error) {
+                        Messenger().error(data.error);
                     }
                 });
         } else {
-            Messenger().error("Unsupported action");
+            Messenger().error("Unsupported action!");
         }
     });
 });
@@ -56,7 +62,7 @@ $(function () {
 function display(data, rid, published) {
     var output = $(".output");
     output.html($(".preview-template").html());
-    output.find(".preview-sticky .sticky-text").text(`Previewing Revision ID#${rid}`);
+    output.find(".preview-sticky .sticky-text").text(`Previewing Revision ID #${rid}`);
     output.find(".preview-sticky .publish")
         .text(`${(published) ? "Unpublish" : "Publish this Version"}`)
         .data("action", `${(published) ? "unpublish" : "publish"}`)

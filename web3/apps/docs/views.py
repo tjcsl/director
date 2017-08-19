@@ -8,7 +8,7 @@ from django.db.models import Q
 
 from .models import Tag, Article
 from .forms import ArticleForm
-from ..auth.decorators import edit_docs_required, superuser_required
+from ..auth.decorators import edit_docs_required
 
 
 def read_article_view(request, article_slug, revision_id=None):

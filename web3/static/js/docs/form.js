@@ -122,14 +122,10 @@ $(document).ready(function () {
                     }, function (data) {
                         if (data.success) {
                             Messenger().success("Successfully published article :)");
-                            $("#id_reason")
-                                .val("")
-                                .input();
+                            $("#id_reason").val("");
                         }
                     });
-                    $("#id_reason")
-                        .val("")
-                        .input();
+                    $("#id_reason").val("");
                 } else if (data.error) {
                     Messenger().error(data.error);
                 }
