@@ -108,6 +108,7 @@ def edit_article_view(request, article_slug):
     return render(request, 'docs/edit.html', {
         'form': form,
         'tags': tags,
+        'article': article,
         'slug': article.slug,
         'article_tags': article.tags.all()
     })
