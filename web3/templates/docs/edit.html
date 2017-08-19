@@ -17,6 +17,26 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js" charset="utf-8"></script>
     <script src="{% static 'js/vendor/cookie.js' %}" charset="utf-8"></script>
     <script src="{% static 'js/docs/form.js' %}" charset="utf-8"></script>
+    <script charset="utf-8">
+        {% if slug %}
+        var editing = true;
+        var save_endpoint = "{% url 'save_article' slug %}";
+        var save_history_endpoint = "{% url 'save_history_article' slug %}";
+        var publish_endpoint = "{% url 'publish_article' slug %}";
+        {% else %}
+        var editing = false;
+        {% endif %}
+        $(document).ready(function() {
+            $("input[name='tags']").val(",{{ article_tags | join:"," }}");
+            $("input[name='tags']").selectize({
+                create: true,
+                persist: false,
+                options: [
+                    {% for tag in tags %}{value:"{{ tag }}", text:"{{ tag }}"}{% if not forloop.last %},{% endif %}{% endfor %}
+                ]
+            });
+        });
+    </script>
 {% endblock js %}
 
 {% block main %}
@@ -52,21 +72,4 @@
         <div class="output"></div>
     </div>
 </div>
-<script charset="utf-8">
-    var editing = false;
-    {% if slug %}
-    editing = true;
-    var save_endpoint = "{% url 'save_article' slug %}";
-    var save_history_endpoint = "{% url 'save_history_article' slug %}";
-    var publish_endpoint = "{% url 'publish_article' slug %}";
-    {% endif %}
-    $("input[name='tags']").val(",{{ article_tags | join:"," }}");
-    $("input[name='tags']").selectize({
-        create: true,
-        persist: false,
-        options: [
-            {% for tag in tags %}{value:"{{ tag }}", text:"{{ tag }}"}{% if not forloop.last %},{% endif %}{% endfor %}
-        ]
-    });
-</script>
 {% endblock main %}
