@@ -36,7 +36,8 @@ $(function () {
         $("a[href='" + window.location.hash  + "']").click();
     }
 
-    $(".output").on("click", "a.publish", function () {
+    $(".output").on("click", "a.publish", function (e) {
+        e.preventDefault();
         var action = $(this).data("action");
         var rid = $(this).data("revision_id");
         if (action == "publish") {

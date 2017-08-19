@@ -81,17 +81,16 @@ def new_article_view(request):
         form = ArticleForm(request.POST)
         if form.is_valid():
             tags = form.cleaned_data['tags']
-            article = form.save(commit=True)
-            article.save()
+            article = form.save(commit=False)
+            article.save(history=True)
             for tag_name in [x.strip().lower() for x in tags.split(',')]:
                 if tag_name:
                     tag, created = Tag.objects.get_or_create(name=tag_name)
                     article.tags.add(tag)
-            article.save(history=True)
             update_change_reason(article, "Initial Save")
             messages.success(request, 'Successfuly created document!')
             return redirect('edit_article', article_slug=article.slug)
-        messages.error(request, 'Invalid form')
+        messages.error(request, 'Invalid form!')
         return render(request, 'docs/edit.html', {'form': form})
 
     tags = Tag.objects.all()
@@ -129,7 +128,7 @@ def save_view(request, article_slug):
                 tag, created = Tag.objects.get_or_create(name=tag_name)
                 article.tags.add(tag)
         return JsonResponse({'success': 'Successfully saved document.'})
-    return JsonResponse({'error': 'Invalid Form'})
+    return JsonResponse({'error': 'Invalid form!'})
 
 
 @require_http_methods(['POST'])

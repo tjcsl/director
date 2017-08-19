@@ -31,8 +31,6 @@
 <div class="row">
     <ul class="col-md-6 article-list">
         {% for article in revisions %}
-        {% if not forloop.last %}
-        {# TODO: This doesn't display the duplicated revision from the beginning. This is only aesthetic, and the underlying code should be fixed so the duplicates do not appear. #}
          <li>
                 <a href="#{{ article.history_id }}" data-published="{% if article.history_id == publish_id %}true{% else %}false{% endif %}" data-rid="{{ article.history_id }}" class="article">
                 <b>
@@ -45,7 +43,6 @@
             <div class="info"><b>User:</b> {{ article.history_user }}</div>
             <div class="info"><b>Reason:</b> {{ article.history_change_reason }}</div>
         </li>
-        {% endif %}
         {% empty %}
         <li><a class="article">No revisions found.</a></li>
         {% endfor %}
