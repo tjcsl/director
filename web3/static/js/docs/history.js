@@ -24,7 +24,11 @@ $(function () {
     });
 
     $(".article-list").on("click", "li", function(e) {
-        $(this).find("a").click();
+        var link = $(this).find("a");
+        link.click();
+        if (history.pushState) {
+            history.pushState(null, null, link.attr("href"));
+        }
         e.preventDefault();
     });
 
