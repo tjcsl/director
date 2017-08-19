@@ -27,6 +27,9 @@
 #sites .site .tag {
     margin-left: 5px;
 }
+#sites .site .project {
+    color: #00a;
+}
 #sites .site:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }
