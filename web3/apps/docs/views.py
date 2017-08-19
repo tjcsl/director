@@ -67,7 +67,7 @@ def article_history_view(request, article_slug):
     revisions = article.history.all()
     messages.info(request, 'Fetched {} revisions.'.format(revisions.count()))
     return render(request, 'docs/history.html', {
-        'article_slug': article.slug,
+        'article': article,
         'revisions': revisions,
         'publish_id': article.publish_id
     })

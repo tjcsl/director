@@ -23,8 +23,8 @@
 <h1 class="article-title">
     Revisions
     <div class="pull-right">
-        <a class="btn btn-ion" href="{% url 'read_article' article_slug %}"><i class="fa fa-eye"></i> View</a>
-        <a class="btn btn-ion" href="{% url 'edit_article' article_slug %}"><i class="fa fa-pencil-square-o"></i> Edit</a>
+        {% if article.is_public %}<a class="btn btn-ion" href="{% url 'read_article' article.slug %}"><i class="fa fa-eye"></i> View</a>{% endif %}
+        <a class="btn btn-ion" href="{% url 'edit_article' article.slug %}"><i class="fa fa-pencil-square-o"></i> Edit</a>
     </div>
 </h1>
 <hr />
