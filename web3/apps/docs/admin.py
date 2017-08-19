@@ -1,10 +1,7 @@
 from django.contrib import admin
+from simple_history.admin import SimpleHistoryAdmin
 
 from .models import Article
 
 
-class ArticleAdmin(admin.ModelAdmin):
-    pass
-
-
-admin.site.register(Article, ArticleAdmin)
+admin.site.register(Article, SimpleHistoryAdmin)

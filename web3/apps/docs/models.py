@@ -66,3 +66,6 @@ class Article(models.Model, ModelDiffMixin):
                 super().save(*args, **kwargs)
             finally:
                 del self.skip_history_when_saving
+
+    def __str__(self):
+        return self.title
