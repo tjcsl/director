@@ -97,10 +97,9 @@ $(document).ready(function () {
             $.post(endpoint, form.serialize(), function (data) {
                 if (data.success) {
                     Messenger().success(data.success);
-                    $("#id_reason")
-                        .val("")
-                        .input();
-                } else if (data.error) {
+                    $("#id_reason").val("");
+                }
+                else if (data.error) {
                     Messenger().error(data.error);
                 }
             });
@@ -126,7 +125,8 @@ $(document).ready(function () {
                         }
                     });
                     $("#id_reason").val("");
-                } else if (data.error) {
+                }
+                else if (data.error) {
                     Messenger().error(data.error);
                 }
             });
