@@ -61,7 +61,9 @@ $(function () {
 
 function display(data, rid, published) {
     var output = $(".output");
-    output.html($(".preview-template").html());
+    if (data) {
+        output.html($(".preview-template").html());
+    }
     output.find(".preview-sticky .sticky-text").text(`Previewing Revision ID #${rid}`);
     output.find(".preview-sticky .publish")
         .text(`${(published) ? "Unpublish" : "Publish this Version"}`)
@@ -70,8 +72,10 @@ function display(data, rid, published) {
     output.find(".preview-sticky .preview")
         .text("Preview")
         .attr("href",`${revision_endpoint.slice(0, -1)}${rid}`);
-    output.find(".preview-title").text(data.title);
-    output.find(".preview-output").html(data.html);
+    if (data) {
+        output.find(".preview-title").text(data.title);
+        output.find(".preview-output").html(data.html);
+    }
 }
 
 function rerender (rid, action) {
@@ -84,4 +88,5 @@ function rerender (rid, action) {
             .attr("data-published", true)
             .find("b").append($(".public-tag-template").html());
     }
+    display(null, rid, action == "publish");
 }
