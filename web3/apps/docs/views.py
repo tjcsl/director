@@ -170,7 +170,7 @@ def publish_view(request, article_slug):
 
 
 @require_http_methods(['POST'])
-@superuser_required
+@edit_docs_required
 @ensure_csrf_cookie
 def unpublish_view(request, article_slug):
     """Mark article as unpublished."""
