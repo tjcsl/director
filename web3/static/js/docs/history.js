@@ -9,7 +9,7 @@
 var revisions = {};
 
 $(function () {
-    $("a.article").click(function () {
+    $("a.article").click(function (e) {
         var id = $(this).data("rid");
         var published = $(this).data("published");
         if (revisions[id]) {
@@ -20,7 +20,17 @@ $(function () {
                 display(data, id, published);
             });
         }
+        e.stopPropagation();
     });
+
+    $(".article-list").on("click", "li", function(e) {
+        $(this).find("a").click();
+        e.preventDefault();
+    });
+
+    if (window.location.hash) {
+        $("a[href='" + window.location.hash  + "']").click();
+    }
 
     $(".output").on("click", "a.publish", function () {
         var action = $(this).data("action");
