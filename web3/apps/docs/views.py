@@ -83,9 +83,10 @@ def new_article_view(request):
             tags = form.cleaned_data['tags']
             article = form.save(commit=True)
             article.save()
-            for tag_name in tags.split(','):
-                tag, created = Tag.objects.get_or_create(name=tag_name.strip().lower())
-                article.tags.add(tag)
+            for tag_name in [x.strip().lower() for x in tags.split(',')]:
+                if tag_name:
+                    tag, created = Tag.objects.get_or_create(name=tag_name)
+                    article.tags.add(tag)
             article.save(history=True)
             update_change_reason(article, "Initial Save")
             messages.success(request, 'Successfuly created document!')
@@ -123,10 +124,10 @@ def save_view(request, article_slug):
         tags = form.cleaned_data['tags']
         article = form.save(commit=True)
         article.tags.clear()
-        for tag_name in tags.split(','):
-            tag, created = Tag.objects.get_or_create(name=tag_name.strip().lower())
-            article.tags.add(tag)
-            article.save()
+        for tag_name in [x.strip().lower() for x in tags.split(',')]:
+            if tag_name:
+                tag, created = Tag.objects.get_or_create(name=tag_name)
+                article.tags.add(tag)
         return JsonResponse({'success': 'Successfully saved document.'})
     return JsonResponse({'error': 'Invalid Form'})
 
@@ -140,10 +141,11 @@ def save_history_view(request, article_slug):
         tags = form.cleaned_data['tags']
         article = form.save(commit=True)
         article.tags.clear()
-        for tag_name in tags.split(','):
-            tag, created = Tag.objects.get_or_create(name=tag_name.strip().lower())
-            if tag not in article.tags.all():
-                article.tags.add(tag)
+        for tag_name in [x.strip().lower() for x in tags.split(',')]:
+            if tag_name:
+                tag, created = Tag.objects.get_or_create(name=tag_name)
+                if tag not in article.tags.all():
+                    article.tags.add(tag)
         article.save(history=True)
         if 'reason' in form.cleaned_data:
             update_change_reason(article, form.cleaned_data['reason'])
