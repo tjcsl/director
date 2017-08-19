@@ -10,7 +10,7 @@ from ..users.models import User
 
 class Tag(models.Model):
 
-    """Tag for article"""
+    """Tag for Article."""
 
     name = models.CharField(max_length=50, unique=True)
 
@@ -20,7 +20,7 @@ class Tag(models.Model):
 
 class Article(models.Model, ModelDiffMixin):
 
-    """A piece of documentation"""
+    """A piece of documentation."""
 
     title = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True)
@@ -42,7 +42,7 @@ class Article(models.Model, ModelDiffMixin):
 
     @property
     def published_article(self):
-        """returns article that matches publish_id """
+        """Returns article that matches publish_id."""
         return self.history.get(history_id=self.publish_id).instance
 
     def get_revision(self, revision_id):
