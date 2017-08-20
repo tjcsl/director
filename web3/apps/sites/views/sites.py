@@ -179,8 +179,6 @@ def delete_process_view(request, site_id):
         raise PermissionDenied
     if request.method == "POST":
         try:
-            delete_process_config(site.process)
-            update_supervisor()
             site.process.delete()
             messages.success(request, "Process deleted!")
         except Site.process.RelatedObjectDoesNotExist:

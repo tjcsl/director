@@ -199,14 +199,14 @@ class DatabaseForm(forms.ModelForm):
         instance.password = User.objects.make_random_password(length=24)
 
         if commit:
-            instance.save()
             flag = False
             if instance.category == "postgresql":
                 flag = create_postgres_database(instance)
             elif instance.category == "mysql":
                 flag = create_mysql_database(instance)
-            if not flag:
-                instance.delete()
+            if flag:
+                instance.save()
+            else:
                 return None
             create_config_files(instance.site)
             if instance.site.category == "php":

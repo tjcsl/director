@@ -95,17 +95,17 @@ def provision_mysql_database(site):
         if not site.database.category == "mysql":
             return (False, "A database has already been provisioned and it is not MySQL!")
     else:
-        db = Database.objects.create(
+        db = Database(
             site=site,
             host=DatabaseHost.objects.filter(dbms="mysql").first(),
             password=User.objects.make_random_password(length=24)
         )
-        if not create_mysql_database(db):
-            db.delete()
-            return (False, "Failed to create MySQL database!")
-        else:
+        if create_mysql_database(db):
+            db.save()
             create_config_files(site)
             reload_php_fpm()
+        else:
+            return (False, "Failed to create MySQL database!")
     return (True, None)
 
 
