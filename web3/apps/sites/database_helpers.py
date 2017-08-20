@@ -193,7 +193,7 @@ def delete_mysql_database(database):
         cursor.execute("DROP DATABASE IF EXISTS `{}`;".format(database.db_name))
         cursor.execute("DROP USER '{}'@'%';".format(database.username))
         return True
-    except MySQLProgrammingError:
+    except (MySQLProgrammingError, MySQLOperationalError):
         client.captureException()
         return False
     finally:
