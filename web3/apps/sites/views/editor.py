@@ -14,7 +14,7 @@ from django.views.decorators.http import require_http_methods
 from ..models import Site, Process
 from ..helpers import (fix_permissions, create_process_config, reload_php_fpm,
                        render_to_string, check_nginx_config, reload_nginx_config,
-                       create_config_files, delete_process_config, update_supervisor,
+                       create_config_files, update_supervisor,
                        add_access_token)
 from ..database_helpers import get_sql_version
 
@@ -434,8 +434,6 @@ def site_type_view(request, site_id):
 
     create_config_files(site)
     if site.category != "dynamic" and hasattr(site, "process"):
-        delete_process_config(site.process)
-        update_supervisor()
         site.process.delete()
 
     if site.category == "php":

@@ -308,8 +308,6 @@ def clean_site_type(instance):
         delete_php_config(instance)
 
     if instance.category != "dynamic" and hasattr(instance, "process"):
-        delete_process_config(instance.process)
-        update_supervisor()
         instance.process.delete()
 
     if instance.category != "vm" and hasattr(instance, "virtual_machine"):
