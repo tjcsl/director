@@ -83,11 +83,6 @@ def delete_view(request, site_id):
         if not request.POST.get("confirm", None) == site.name:
             messages.error(request, "Delete confirmation failed!")
             return redirect("delete_site", site_id=site_id)
-        delete_site_files(site)
-        reload_services()
-
-        site.user.delete()
-        site.group.delete()
         site.delete()
         messages.success(request, "Site {} deleted!".format(site.name))
         return redirect("index")
