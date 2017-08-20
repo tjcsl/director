@@ -43,10 +43,11 @@ DEBUG = True
 DB_USERNAME = "web3"
 DB_PASSWORD = "web3"
 
-# Default project domain
+# Default project domain, subdomains are used for project websites.
 PROJECT_DOMAIN = "tjhsst.io"
 
-# Default to not allow password authentication
+# Enables existing accounts to login with a username and password.
+# Default to not allow password authentication.
 PASSWORD_AUTH = False
 
 # Let's Encrypt Settings
