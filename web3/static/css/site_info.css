@@ -77,6 +77,10 @@
     color: red;
 }
 
+.grey {
+    color: #888;
+}
+
 .generate-cert {
     display: inline-block;
 }

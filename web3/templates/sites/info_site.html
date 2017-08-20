@@ -154,7 +154,7 @@
             <p>You can add SSL certificates to your custom domains. All *.tjhsst.edu domains already have certificates.</p>
             <ul>
                 {% for domain in site.custom_domains %}
-                <li class="{% if domain.has_cert %}green{% else %}red{% endif %}">
+                <li class="{% if domain.has_cert is None %}grey{% elif domain.has_cert %}green{% else %}red{% endif %}">
                     {{ domain }}
                     {% if domain.has_cert is False %}
                     <form class="generate-cert" action="{% url 'add_ssl' site.id %}" method="POST">
