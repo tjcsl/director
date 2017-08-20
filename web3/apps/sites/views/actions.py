@@ -1,10 +1,11 @@
 import os
 import threading
+import collections
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -75,7 +76,7 @@ def install_options_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    return render(request, "sites/install_options.html", {"site": site})
+    return render(request, "sites/install_options.html", {"site": site, "packages": PACKAGES})
 
 
 def switch_site_php(site):
@@ -86,6 +87,7 @@ def switch_site_php(site):
         clean_site_type(site)
         create_config_files(site)
         reload_services()
+    return (True, None)
 
 
 def provision_mysql_database(site):
@@ -107,44 +109,60 @@ def provision_mysql_database(site):
     return (True, None)
 
 
+PACKAGES = collections.OrderedDict([
+    ("wordpress", {
+        "name": "WordPress",
+        "icon": "wordpress",
+        "description": "WordPress is a free content management system written in PHP and MySQL.",
+        "url": "https://wordpress.org/",
+        "actions": [
+            ("function", switch_site_php, "Switch site type to PHP"),
+            ("function", provision_mysql_database, "Provision a MySQL database"),
+            ("terminal", "/scripts/wordpress.sh", "Install Wordpress in the public folder")
+        ]
+    }),
+    ("drupal", {
+        "name": "Drupal",
+        "icon": "drupal",
+        "description": "Drupal is a free content management system written in PHP. It can use both MySQL and PostgreSQL as a database backend.",
+        "url": "https://www.drupal.org/",
+        "actions": [
+            ("function", switch_site_php, "Switch site type to PHP"),
+            ("function", provision_mysql_database, "Provision a MySQL database"),
+            ("terminal", "/scripts/drupal.sh", "Install Drupal in the public folder")
+        ]
+    }),
+    ("joomla", {
+        "name": "Joomla",
+        "icon": "joomla",
+        "description": "Joomla is a free content management system written in PHP. It can use both MySQL and PostgreSQL as a database backend.",
+        "url": "https://www.joomla.org/"
+    })
+])
+
+
 @login_required
 @add_access_token
-def install_wordpress_view(request, site_id):
+def install_package_view(request, site_id, package):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    if request.method == "POST":
-        switch_site_php(site)
-        status, msg = provision_mysql_database(site)
-        if msg:
-            messages.error(request, msg)
-        if not status:
-            return redirect("install_wordpress", site_id=site.id)
-
-        return render(request, "sites/web_terminal.html", {"site": site, "command": "/scripts/wordpress.sh"})
-
-    return render(request, "sites/install_wordpress.html", {"site": site})
-
-
-@login_required
-@add_access_token
-def install_drupal_view(request, site_id):
-    site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
-        raise PermissionDenied
+    if package not in PACKAGES:
+        raise Http404
 
     if request.method == "POST":
-        switch_site_php(site)
-        status, msg = provision_mysql_database(site)
-        if msg:
-            messages.error(request, msg)
-        if not status:
-            return redirect("install_drupal", site_id=site.id)
+        for action in PACKAGES[package]["actions"]:
+            if action[0] == "function":
+                status, msg = action[1](site)
+                if msg:
+                    messages.error(request, msg)
+                if not status:
+                    return redirect("install_package", site_id=site.id, package=package)
+            elif action[0] == "terminal":
+                return render(request, "sites/web_terminal.html", {"site": site, "command": action[1]})
 
-        return render(request, "sites/web_terminal.html", {"site": site, "command": "/scripts/drupal.sh"})
-
-    return render(request, "sites/install_drupal.html", {"site": site})
+    return render(request, "sites/install_package.html", {"site": site, "package": PACKAGES[package]})
 
 
 @csrf_exempt

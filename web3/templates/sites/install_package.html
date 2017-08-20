@@ -1,0 +1,20 @@
+{% extends "sites/base.html" %}
+
+{% block mainclass %}narrow{% endblock %}
+
+{% block main %}
+<form method="POST">
+    {% csrf_token %}
+    <h3><i class="fa fa-{{ package.icon }}"></i> Install {{ package.name }}</h3>
+    <p>You can use this page to automatically install {{ package.name }} for you. The script will perform the following actions:</p>
+    <ul>
+        {% for action in package.actions %}
+        <li>{{ action.2 }}</li>
+        {% endfor %}
+    </ul>
+    <p>Are you sure you want to continue?</p>
+
+    <a href="{% url 'install_options' site.id %}" class="btn btn-ion"><i class="fa fa-undo"></i> Back</a>
+    <button type="submit" class="btn btn-ion"><i class="fa fa-{{ package.icon }}"></i> Install {{ package.name }}</button>
+</form>
+{% endblock %}

@@ -54,6 +54,5 @@ urlpatterns = [
 
     # Installers
     url("^(?P<site_id>\d+)/install$", actions.install_options_view, name="install_options"),
-    url("^(?P<site_id>\d+)/action/wordpress$", actions.install_wordpress_view, name="install_wordpress"),
-    url("^(?P<site_id>\d+)/action/drupal$", actions.install_drupal_view, name="install_drupal"),
+    url("^(?P<site_id>\d+)/action/(?P<package>\w+)$", actions.install_package_view, name="install_package"),
 ]
