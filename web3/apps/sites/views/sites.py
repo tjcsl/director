@@ -8,8 +8,7 @@ from django.conf import settings
 from ..models import Site
 from ..forms import SiteForm, ProcessForm
 from ..helpers import (reload_services, update_supervisor, create_config_files, create_process_config, restart_supervisor,
-                       get_supervisor_status, delete_process_config, write_new_index_file, get_latest_commit, reload_nginx_config,
-                       list_executable_files)
+                       get_supervisor_status, write_new_index_file, get_latest_commit, reload_nginx_config, list_executable_files)
 
 from ...vms.models import VirtualMachine
 from ...request.models import SiteRequest

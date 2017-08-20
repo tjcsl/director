@@ -51,7 +51,7 @@ var registerConsole = function (console, exitCallback) {
         if (e.which == 13) {
             var val = $(this).val();
             if (val) {
-                if (val == "quit" || val == "exit" || val == "\\q" || val == ".q") {
+                if (val == "quit" || val == "exit" || val == "\\q" || val == ".q" || val == "\\quit") {
                     if (exitCallback) {
                         exitCallback();
                         return;
