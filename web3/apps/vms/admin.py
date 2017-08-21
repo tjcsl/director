@@ -4,3 +4,4 @@ from .models import VirtualMachine
 # Register your models here.
 
 admin.site.register(VirtualMachine)
+admin.site.register(VirtualMachineHost)
