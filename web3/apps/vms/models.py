@@ -11,8 +11,40 @@ from .helpers import call_api
 from django.core.cache import cache
 
 
+class VirtualMachineHost(models.Model):
+    """Represents a host for virtual machines.
+
+    Attributes:
+        hostname
+            The host to connect to (ex: conductor.tjhsst.edu).
+    """
+    hostname = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.hostname
+
+
 class VirtualMachine(models.Model):
+    """Represents a virtual machine.
+
+    Attributes:
+        name
+            The name of this virtual machine. The slugified version of this field is the host name of the machine.
+        uuid
+            The UUID of this virtual machine. Used by the API to identify virtual machines.
+        description
+            A description for the purpose of this virtual machine.
+        owner
+            The owner of this virtual machine. The owner can delete the machine and add other members.
+        users
+            The other users that have access to the virtual machine.
+        password
+            The password for the root account on the virtual machine.
+        site
+            If this field is set, the site proxies all requests to the virtual machine.
+    """
     name = models.CharField(max_length=255, unique=True)
+    host = models.ForeignKey(VirtualMachineHost)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     description = models.TextField(blank=True)
     owner = models.ForeignKey(User, null=True)

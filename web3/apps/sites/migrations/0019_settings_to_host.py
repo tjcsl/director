@@ -41,6 +41,7 @@ def reverse_func(apps, schema_editor):
             db.category = "mysql"
         else:
             db.category = "postgresql"
+        db.host = None
         db.save()
 
 
