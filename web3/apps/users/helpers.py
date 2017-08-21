@@ -1,5 +1,5 @@
 from .models import User, Group
-from ..sites.models import Site, Domain
+from ..sites.models import Site, SiteHost, Domain
 from ..sites.helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, reload_nginx_config
 from ...utils.tjldap import get_uid, get_full_name
 
@@ -65,6 +65,7 @@ def create_webdocs(user, batch=False, purpose="user"):
 
     site = Site(
         name=username,
+        host=SiteHost.objects.first(),
         description=full_name,
         category="php",
         purpose=purpose,

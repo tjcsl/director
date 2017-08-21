@@ -4,7 +4,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.conf import settings
 
-from .models import Site, Process, Database, DatabaseHost, Domain
+from .models import Site, Process, Database, DatabaseHost, Domain, SiteHost
 from .helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, reload_php_fpm, update_supervisor, clean_site_type
 from .database_helpers import create_postgres_database, create_mysql_database
 
@@ -97,6 +97,7 @@ class SiteForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
+        instance.host = SiteHost.objects.first()
 
         old_save_m2m = self.save_m2m
 
