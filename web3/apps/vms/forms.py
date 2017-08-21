@@ -6,7 +6,7 @@ from django.core.cache import cache
 
 from ..users.models import User
 from ..sites.models import Site
-from .models import VirtualMachine
+from .models import VirtualMachine, VirtualMachineHost
 from .helpers import call_api
 
 from raven.contrib.django.raven_compat.models import client
@@ -18,6 +18,7 @@ class VirtualMachineForm(forms.ModelForm):
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
     site = forms.ModelChoiceField(required=False, queryset=Site.objects.filter(category="vm"))
     owner = forms.ModelChoiceField(required=True, queryset=User.objects.filter(service=False))
+    host = forms.ModelChoiceField(required=True, queryset=VirtualMachineHost.objects.all())
 
     def clean_name(self):
         name = self.cleaned_data["name"].strip()
@@ -81,4 +82,4 @@ class VirtualMachineForm(forms.ModelForm):
 
     class Meta:
         model = VirtualMachine
-        fields = ["name", "description", "owner", "users", "site"]
+        fields = ["name", "description", "owner", "users", "site", "host"]
