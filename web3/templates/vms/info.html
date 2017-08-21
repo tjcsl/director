@@ -22,6 +22,7 @@
             <b>UUID:</b> {{ vm.uuid }}<br />
             <b>Hostname:</b> {{ vm.hostname }}<span style="color:#888">.vm.sites.tjhsst.edu</span><br />
             <b>Description:</b> {{ vm.description|default:"None" }}<br />
+            <b>VM Host:</b> {{ vm.host }}<br />
             <b>Owner:</b> {{ vm.owner.username|default:"None" }}<br />
             <b>Users:</b> {{ vm.users.all|join:", "|default:"None" }}<br />
             <b>State:</b> {% if vm_state == 0 %}<span style="color:#4CAF50">Running</a>{% elif vm_state == None %}<span style="color:#FBC02D">Unknown</span>{% else %}<span style="color:#F44336">Not Running{% endif %}</span><br />
