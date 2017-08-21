@@ -9,6 +9,16 @@ from django.db import models
 from ..users.models import User, Group
 
 
+class SiteHost(models.Model):
+    """Represents a Director instance.
+
+    Attributes:
+        hostname
+            The hostname of the Director instance.
+    """
+    hostname = models.CharField(max_length=255)
+
+
 class Site(models.Model):
 
     """Represents a website.
@@ -16,6 +26,8 @@ class Site(models.Model):
     Attributes:
         name
             The name of the website, max length 32 characters.
+        host
+            The Director instance that this site is running on.
         category
             What the website runs in the backend.
             If set to static, the webserver will serve static files in the public folder.
@@ -38,6 +50,7 @@ class Site(models.Model):
             The path of the GitHub repository used for webhooks relative to site.path.
     """
     name = models.CharField(max_length=32, unique=True)
+    host = models.ForeignKey(SiteHost)
     category = models.CharField(max_length=16, choices=(
         ("static", "Static"),
         ("php", "PHP"),
