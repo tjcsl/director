@@ -18,7 +18,7 @@ class VirtualMachineForm(forms.ModelForm):
     users = forms.ModelMultipleChoiceField(required=False, queryset=User.objects.filter(service=False))
     site = forms.ModelChoiceField(required=False, queryset=Site.objects.filter(category="vm"))
     owner = forms.ModelChoiceField(required=True, queryset=User.objects.filter(service=False))
-    host = forms.ModelChoiceField(required=True, queryset=VirtualMachineHost.objects.all(), widget=forms.RadioSelect(), empty_label=None)
+    host = forms.ModelChoiceField(required=True, queryset=VirtualMachineHost.objects.all(), widget=forms.RadioSelect(), empty_label=None, initial=0)
 
     def clean_name(self):
         name = self.cleaned_data["name"].strip()

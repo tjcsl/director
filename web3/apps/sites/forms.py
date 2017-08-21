@@ -186,7 +186,7 @@ class ProcessForm(forms.ModelForm):
 class DatabaseForm(forms.ModelForm):
     site = forms.ModelChoiceField(queryset=Site.objects.all(), disabled=True)
     host = forms.ModelChoiceField(queryset=DatabaseHost.objects.all(),
-                                  widget=forms.RadioSelect(), empty_label=None)
+                                  widget=forms.RadioSelect(), empty_label=None, initial=0)
 
     def __init__(self, user, *args, **kwargs):
         super(DatabaseForm, self).__init__(*args, **kwargs)
