@@ -17,7 +17,7 @@
             <div class="controls">
             {% for radio in field %}
             <label class="custom-control custom-radio">
-                <input id="{{ radio.id_for_label }}" name="{{ radio.data.name }}" type="radio" value="{{ radio.data.value }}" class="custom-control-input" {% if radio.is_checked %}checked{% endif %} required>
+                <input id="{{ radio.id_for_label }}" name="{{ radio.data.name }}" type="radio" value="{{ radio.data.value }}" class="custom-control-input" {% if radio.data.value == field.value %}checked{% endif %} required>
                 <span class="custom-control-indicator"></span>
                 <span class="custom-control-description">{{ radio.data.label }}</span>
             </label>
