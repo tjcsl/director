@@ -18,7 +18,6 @@ def forwards_func(apps, schema_editor):
 
 
 def reverse_func(apps, schema_editor):
-    SiteHost = apps.get_model("sites", "SiteHost")
     Site = apps.get_model("sites", "Site")
 
     for site in Site.objects.filter(host__isnull=False):
