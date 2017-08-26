@@ -63,6 +63,7 @@ $(document).ready(function () {
         textarea.val(editor.getSession().getValue());
         output.html(md.render(editor.getSession().getValue()));
     });
+    editor.setOption("scrollPastEnd", 0.7);
 
     ace.config.loadModule("ace/ext/language_tools", function () {
         var sm = ace.require("ace/snippets").snippetManager;
