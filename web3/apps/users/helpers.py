@@ -28,7 +28,7 @@ def create_user(request, username):
 
     profile = request.user.api_request("profile/{}".format(username))
 
-    full_name = profile.get("common_name", get_full_name(username))
+    full_name = profile.get("full_name", get_full_name(username))
 
     if not full_name:
         return None

@@ -210,5 +210,5 @@ def teacher_lookup_view(request):
         "teachers": [{
             "username": x["username"],
             "name": x["full_name"]
-        } for x in responses["results"] if x["user_type"] == "tjhsstTeacher"]
+        } for x in responses["results"] if x["user_type"] == "teacher"]
     })
