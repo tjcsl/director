@@ -20,8 +20,6 @@ from ....utils.emails import send_new_site_email
 def create_view(request):
     # Redirect the user if any approvals need to be done.
     if request.user.is_staff:
-        if request.user.is_superuser and SiteRequest.objects.filter(teacher_approval=True, admin_approval__isnull=True).exists():
-            return redirect("admin_site")
         if request.user.site_requests.filter(teacher_approval__isnull=True).exists():
             return redirect("approve_site")
 
