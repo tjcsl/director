@@ -1,5 +1,7 @@
 # Director [![Build Status](https://travis-ci.org/tjcsl/director.svg?branch=master)](https://travis-ci.org/tjcsl/director)
 
+[![Join the chat at https://gitter.im/tjcsl/director](https://badges.gitter.im/tjcsl/director.svg)](https://gitter.im/tjcsl/director?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Director (web3) is a website management platform for [TJHSST](https://www.tjhsst.edu/).
 
 ## Developing for Director
