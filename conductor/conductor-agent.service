@@ -1,7 +1,14 @@
 [Unit]
 Description=Conductor agent
+After=syslog.target
 
 [Service]
-Type=simple
-ExecStart=/root/conductor-agent/start.sh
-Restart=no
+Type=notify
+ExecStart=/usr/bin/uwsgi --ini /usr/local/director/conductor/conductor-agent.ini
+Restart=always
+KillSignal=SIGQUIT
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

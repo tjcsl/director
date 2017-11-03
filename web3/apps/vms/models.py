@@ -66,7 +66,7 @@ class VirtualMachine(models.Model):
     @property
     def ip_address(self):
         ips = self.ips
-        return ips[0] if len(ips) else None
+        return ips[-1] if len(ips) else None
 
     @property
     def hostname(self):
