@@ -197,7 +197,7 @@ class Process(models.Model):
     def __str__(self):
         try:
             return self.site.name
-        except:
+        except Exception:
             return "Unknown Site"
 
 

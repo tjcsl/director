@@ -6,8 +6,8 @@ import lxc
 from agent import rpc
 
 
-def make_random_chars(l=32, allowed="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"):
-    return "".join([choice(allowed) for i in range(l)])
+def make_random_chars(length=32, allowed="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"):
+    return "".join([choice(allowed) for i in range(length)])
 
 
 def replace_in_file(fn, find, replace):

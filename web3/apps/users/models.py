@@ -84,7 +84,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             if refresh:
                 try:
                     self.get_social_auth().refresh_token(load_strategy())
-                except:
+                except Exception:
                     client.captureException()
                 return self.api_request(url, params, False)
             else:

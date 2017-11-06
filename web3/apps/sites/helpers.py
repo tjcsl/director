@@ -99,7 +99,7 @@ def delete_site_files(site):
                 client.captureException()
     try:
         shutil.rmtree(site.path)
-    except:
+    except Exception:
         client.captureException()
 
 
@@ -246,7 +246,7 @@ def do_git_pull(site):
 def get_latest_commit(site):
     try:
         output = run_as_site(site, ["git", "log", "-n", "1"], cwd=site.git_path)
-    except:
+    except Exception:
         client.captureException()
         return "Error"
     if not output[0] == 0:
@@ -262,7 +262,7 @@ def fix_permissions(site):
             path = os.path.join(root, f)
             try:
                 st = os.lstat(path)
-            except:
+            except Exception:
                 client.captureException()
                 continue
             os.lchown(path, site.user.id, site.group.id)

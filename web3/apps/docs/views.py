@@ -166,7 +166,7 @@ def publish_view(request, article_slug):
         article.publish_id = revision_id
         article.save()
         return JsonResponse({'success': True})
-    except:
+    except Exception:
         return JsonResponse({'success': False})
 
 
@@ -180,5 +180,5 @@ def unpublish_view(request, article_slug):
         article.publish_id = None
         article.save()
         return JsonResponse({'success': True})
-    except:
+    except Exception:
         return JsonResponse({'success': False})

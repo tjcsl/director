@@ -134,7 +134,7 @@ def list_tables(database):
                 return [table[0] for table in cursor.fetchall()]
             finally:
                 conn.close()
-    except:
+    except Exception:
         client.captureException()
     return None
 

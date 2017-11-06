@@ -37,7 +37,7 @@ def create_database_view(request, site_id):
     else:
         try:
             form = DatabaseForm(request.user, instance=site.database)
-        except:
+        except Exception:
             form = DatabaseForm(request.user, initial={"site": site.id})
     context = {
         "form": form,
