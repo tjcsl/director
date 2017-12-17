@@ -20,3 +20,4 @@ script:
     - ./node/node_modules/eslint/bin/eslint.js --env node node/
     - ./node/node_modules/eslint/bin/eslint.js --env browser web3/static/js/
     - ./manage.py migrate
+    - ./manage.py test
