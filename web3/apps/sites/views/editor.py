@@ -234,7 +234,11 @@ def editor_rename_view(request, site_id):
     if not new_name:
         return JsonResponse({"error": "You must enter a valid name!", "path": path})
 
-    os.rename(path, os.path.join(os.path.dirname(path), new_name))
+    try:
+        os.rename(path, os.path.join(os.path.dirname(path), new_name))
+    except OSError as e:
+        client.captureException()
+        return JsonResponse({"error": str(e), "path": path})
 
     return JsonResponse({"success": True})
 
