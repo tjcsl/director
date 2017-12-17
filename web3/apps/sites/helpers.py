@@ -150,27 +150,42 @@ def get_supervisor_statuses(sites):
 
 
 def reload_services():
-    reload_nginx_config()
-    reload_php_fpm()
-    update_supervisor()
+    a = reload_nginx_config()
+    b = reload_php_fpm()
+    c = update_supervisor()
+    return a and b and c
+
+
+def root_exec(cmd):
+    p = Popen(shlex.split(cmd) if isinstance(cmd, str) else cmd, stdout=PIPE, stderr=PIPE)
+    output = p.stdout.read()
+    error = p.stderr.read()
+    if p.wait() == 0:
+        return True
+    else:
+        client.captureMessage("Failed to execute command: {}".format(cmd), data={
+            "stdout": output,
+            "stderr": error
+        })
+        return False
 
 
 def update_supervisor():
-    if Popen(["supervisorctl", "reread"]).wait() != 0:
-        client.captureMessage("Failed to reread supervisor configuration.")
-    if Popen(["supervisorctl", "update"]).wait() != 0:
-        client.captureMessage("Failed to update supervisor.")
+    a = root_exec(["supervisorctl", "reread"])
+    b = root_exec(["supervisorctl", "update"])
+    return a and b
 
 
 def reload_php_fpm():
-    if Popen(["systemctl", "reload", "php7.0-fpm"]).wait() != 0:
-        if Popen(["systemctl", "restart", "php7.0-fpm"]).wait() != 0:
-            client.captureMessage("Failed to reload the PHP FPM service.")
+    if root_exec(["systemctl", "reload", "php7.0-fpm"]):
+        return root_exec(["systemctl", "restart", "php7.0-fpm"])
+    return False
 
 
 def reload_nginx_config():
-    if Popen(["/usr/sbin/nginx", "-s", "reload"]).wait() != 0:
-        client.captureMessage("Failed to reload the nginx service.")
+    if root_exec(["/usr/sbin/nginx", "-t"]):
+        return root_exec(["/usr/sbin/nginx", "-s", "reload"])
+    return False
 
 
 def check_nginx_config():
@@ -187,6 +202,7 @@ def flush_permissions():
 
 
 def run_as_site(site, cmd, cwd=None, env=None, timeout=15):
+    """Runs a command as a specific user."""
     proc = Popen(shlex.split(cmd) if isinstance(cmd, str) else cmd, preexec_fn=demote(
         site.user.id, site.group.id), cwd=cwd or site.path, env=env, stdout=PIPE, stderr=PIPE)
     timer = Timer(timeout, lambda p: p.terminate(), [proc])
@@ -207,6 +223,7 @@ def demote(uid, gid):
 
 
 def generate_ssh_key(site, overwrite=True):
+    """Generate an ssh key for a site user."""
     sshpath = os.path.join(site.private_path, ".ssh")
     keypath = os.path.join(sshpath, "id_rsa")
     if not os.path.exists(sshpath):
@@ -233,6 +250,7 @@ def generate_ssh_key(site, overwrite=True):
 
 
 def do_git_pull(site):
+    """Perform a git pull on a certain site."""
     fix_permissions(site)
     output = run_as_site(site, "git pull", cwd=site.git_path, env={
         "GIT_SSH_COMMAND": "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
@@ -244,6 +262,7 @@ def do_git_pull(site):
 
 
 def get_latest_commit(site):
+    """Get the latest commit in the git repository inside the site."""
     try:
         output = run_as_site(site, ["git", "log", "-n", "1"], cwd=site.git_path)
     except Exception:
@@ -327,7 +346,7 @@ def generate_ssl_certificate(domain, renew=False):
         "-d",
         domain.domain,
         "-n"
-    ])
+    ], stdout=PIPE, stderr=PIPE)
 
     success = process.wait() == 0
 
@@ -336,4 +355,7 @@ def generate_ssl_certificate(domain, renew=False):
             create_config_files(domain.site)
             reload_services()
     else:
-        client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name))
+        client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name), data={
+            "stdout": process.stdout.read(),
+            "stderr": process.stderr.read()
+        })

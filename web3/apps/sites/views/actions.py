@@ -24,9 +24,12 @@ def config_view(request, site_id):
         raise PermissionDenied
 
     create_config_files(site)
-    reload_services()
+    reloaded = reload_services()
 
-    messages.success(request, "Configuration files regenerated!")
+    if reloaded:
+        messages.success(request, "Configuration files regenerated!")
+    else:
+        messages.error(request, "Failed to reload some services.")
     return redirect("info_site", site_id=site_id)
 
 
