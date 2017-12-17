@@ -152,6 +152,7 @@
             {% endif %}
             <h4><i class="fa fa-shield"></i> SSL Certificates</h4>
             <p>You can add SSL certificates to your custom domains. All *.tjhsst.edu domains already have certificates.</p>
+            <p><small>For custom domains, you must first point your domain towards <span class="path">{{ site.host.hostname }}</span> and ensure that HTTP works correctly in order for certificate generation to work.</small></p>
             <ul>
                 {% for domain in site.custom_domains %}
                 <li class="{% if domain.has_cert is None %}grey{% elif domain.has_cert %}green{% else %}red{% endif %}">
