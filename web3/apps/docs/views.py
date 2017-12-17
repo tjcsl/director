@@ -38,7 +38,7 @@ def list_articles_view(request):
     tags = []
     if 'all' in request.GET and request.user.is_staff:
         available_articles = Article.objects.all()
-    elif request.user.can_edit_docs:
+    elif request.user.is_authenticated and request.user.can_edit_docs:
         available_articles = Article.objects.filter(Q(publish_id__isnull=False) | Q(author=request.user))
     else:
         available_articles = Article.objects.filter(publish_id__isnull=False)
