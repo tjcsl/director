@@ -50,7 +50,7 @@ class Site(models.Model):
             The path of the GitHub repository used for webhooks relative to site.path.
     """
     name = models.CharField(max_length=32, unique=True)
-    host = models.ForeignKey(SiteHost)
+    host = models.ForeignKey(SiteHost, on_delete=models.PROTECT)
     category = models.CharField(max_length=16, choices=(
         ("static", "Static"),
         ("php", "PHP"),

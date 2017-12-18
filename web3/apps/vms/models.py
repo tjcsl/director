@@ -44,7 +44,7 @@ class VirtualMachine(models.Model):
             If this field is set, the site proxies all requests to the virtual machine.
     """
     name = models.CharField(max_length=255, unique=True)
-    host = models.ForeignKey(VirtualMachineHost)
+    host = models.ForeignKey(VirtualMachineHost, on_delete=models.PROTECT)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     description = models.TextField(blank=True)
     owner = models.ForeignKey(User, null=True)
