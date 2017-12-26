@@ -9,7 +9,12 @@ Clone this repository, and copy `config/devconfig.json.sample` to `config/devcon
 Edit the `devconfig.json` file and fill out the `ion_key` and `ion_secret` fields with your Ion OAuth credentials.
 
 To develop for Director, you will need to download [Vagrant](https://www.vagrantup.com/downloads.html).
-After it is downloaded, you can run `vagrant up` in the folder with the `Vagrantfile`.
+After it is downloaded, you should install the following Vagrant plugins:
+
+- vagrant-bindfs
+- vagrant-winnfsd (if you're using Windows)
+
+Then you can run `vagrant up` in the folder with the `Vagrantfile`.
 This will create a virtual machine to run the Director development environment.
 After provisioning is finished, you should be able to access Director at `localhost:8000`.
 

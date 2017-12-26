@@ -31,9 +31,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.memory = 1024 # the default of 512 gives us a OOM during setup.
     # vb.gui = true
   end
-
+  config.bindfs.default_options = {
+    force_user:   'ubuntu',
+    force_group:  'ubuntu',
+    perms:        'u=rwX:g=rD:o=rD'
+  }
+  config.vm.network :private_network, ip: '192.168.50.50'
   config.vm.synced_folder ".", "/vagrant", disabled: true
-  config.vm.synced_folder ".", "/home/ubuntu/director"
+  config.nfs.map_uid = Process.uid
+  config.nfs.map_gid = Process.gid
+  config.vm.synced_folder "../director", "/vagrant-nfs", type: :nfs
+  config.bindfs.bind_folder "/vagrant-nfs", "/home/ubuntu/director",
+    force_user: 'ubuntu',
+    force_group: 'ubuntu'
 
   RSA_PUB = File.join(ENV["HOME"], ".ssh/id_rsa.pub")
   RSA_PRIV = File.join(ENV["HOME"], ".ssh/id_rsa")
