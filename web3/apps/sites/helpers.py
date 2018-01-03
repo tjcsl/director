@@ -163,7 +163,7 @@ def root_exec(cmd):
     if p.wait() == 0:
         return True
     else:
-        client.captureMessage("Failed to execute command: {}".format(cmd), data={
+        client.captureMessage("Failed to execute command: {}".format(cmd), extra={
             "stdout": output,
             "stderr": error
         })
@@ -355,7 +355,7 @@ def generate_ssl_certificate(domain, renew=False):
             create_config_files(domain.site)
             reload_services()
     else:
-        client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name), data={
+        client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name), extra={
             "stdout": process.stdout.read(),
             "stderr": process.stderr.read()
         })
