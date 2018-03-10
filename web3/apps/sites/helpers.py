@@ -149,10 +149,19 @@ def get_supervisor_statuses(sites):
     return statuses
 
 
-def reload_services():
+def reload_services(site):
+    a = True
+    b = True
+    c = True
     a = reload_nginx_config()
-    b = reload_php_fpm()
-    c = update_supervisor()
+    if site.category == "static":
+        return a
+    if site.category == "php":
+        b = reload_php_fpm()
+        return a and b
+    if site.category == "dynamic" or site.category == "vm":
+        c = update_supervisor()
+        return a and c
     return a and b and c
 
 
