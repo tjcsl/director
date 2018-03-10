@@ -52,6 +52,7 @@ class SiteForm(forms.ModelForm):
                 self.fields["description"].disabled = False
                 self.fields["category"].disabled = False
                 self.fields["domain"].disabled = False
+                self.field["users"].disabled = False
             self._old_path = instance.path
             if instance.purpose == "legacy" or (hasattr(self, "_user") and self._user.is_superuser):
                 purpose_choices = self.fields["purpose"].choices
@@ -62,7 +63,6 @@ class SiteForm(forms.ModelForm):
                 self.fields["purpose"].initial = "project"
                 self.fields["purpose"].disabled = True
                 self.fields["users"].initial = (self._user.id,)
-                self.fields["users"].disabled = True
                 self.fields["custom_nginx"].disabled = True
             self._old_path = None
 
