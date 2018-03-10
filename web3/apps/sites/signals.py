@@ -18,7 +18,7 @@ def pre_database_delete(sender, instance, using, **kwargs):
 @receiver(pre_delete, sender=Site, dispatch_uid="site_delete_signal")
 def pre_site_delete(sender, instance, using, **kwargs):
     delete_site_files(instance)
-    reload_services()
+    reload_services(instance)
 
     instance.user.delete()
     instance.group.delete()

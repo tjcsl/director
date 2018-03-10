@@ -149,11 +149,16 @@ def get_supervisor_statuses(sites):
     return statuses
 
 
-def reload_services(site):
+def reload_services(site=None):
     a = True
     b = True
     c = True
     a = reload_nginx_config()
+    if site is None:
+        a = reload_nginx_config()
+        b = reload_php_fpm()
+        c = update_supervisor()
+        return a and b and c
     if site.category == "static":
         return a
     if site.category == "php":
@@ -362,7 +367,7 @@ def generate_ssl_certificate(domain, renew=False):
     if success:
         if not renew:
             create_config_files(domain.site)
-            reload_services()
+            reload_services(domain.site)
     else:
         client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name), extra={
             "stdout": process.stdout.read(),
