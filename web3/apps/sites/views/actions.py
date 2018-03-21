@@ -232,14 +232,16 @@ def git_setup_view(request, site_id):
 
                         # If the key does not already exist in GitHub, add it.
                         if not key_exists:
-                            resp = request.user.github_api_request("/repos/{}/keys".format(out), method="POST", data={"title": "Director", "key": site.public_key.strip(), "read_only": True})
+                            resp = request.user.github_api_request("/repos/{}/keys".format(out), method="POST",
+                                                                   data={"title": "Director", "key": site.public_key.strip(), "read_only": True})
                         else:
                             resp = True
                         if resp:
                             # If the webhook does not exist, create it.
                             resp = request.user.github_api_request("/repos/{}/hooks".format(out))
                             if resp is not None:
-                                webhook_url = request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
+                                webhook_url = request.build_absolute_uri(reverse("git_webhook",
+                                                                                 kwargs={"site_id": site_id})).replace("http://", "https://")
                                 for i in resp:
                                     if i["config"]["url"] == webhook_url:
                                         break

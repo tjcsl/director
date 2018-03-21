@@ -266,8 +266,9 @@ def generate_ssh_key(site, overwrite=True):
 def do_git_pull(site):
     """Perform a git pull on a certain site."""
     fix_permissions(site)
+    CMD = "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}"
     output = run_as_site(site, "git pull", cwd=site.git_path, env={
-        "GIT_SSH_COMMAND": "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}".format(os.path.join(site.private_path, ".ssh/id_rsa")),
+        "GIT_SSH_COMMAND": CMD.format(os.path.join(site.private_path, ".ssh/id_rsa")),
         "HOME": site.private_path
     })
     if site.category == "dynamic":

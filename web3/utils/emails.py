@@ -44,7 +44,8 @@ def send_admin_request_email(request):
         print(plain_message)
         return 0
     else:
-        msg = EmailMultiAlternatives(subject="{} A website request ({} - {}) requires processing!".format(settings.EMAIL_SUBJECT_PREFIX, request.activity, request.user.full_name),
+        subject = "{} A website request ({} - {}) requires processing!"
+        msg = EmailMultiAlternatives(subject=subject.format(settings.EMAIL_SUBJECT_PREFIX, request.activity, request.user.full_name),
                                      body=plain_message,
                                      from_email=settings.EMAIL_FROM,
                                      to=[settings.EMAIL_FEEDBACK],
