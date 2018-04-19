@@ -112,7 +112,7 @@ def editor_save_view(request, site_id):
         else:
             set_perms = True
 
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         f.write(request.POST.get("contents"))
 
     if set_perms:
@@ -393,10 +393,10 @@ def edit_nginx_view(request, site_id):
             else:
                 return JsonResponse({"error": "You must enable custom nginx configuration before editing this file.", "force": True})
         if request.POST.get("editor", None):
-            with open(nginx_path, "w") as f:
+            with open(nginx_path, "w", encoding="utf-8") as f:
                 f.write(request.POST["editor"])
             if not check_nginx_config():
-                with open(nginx_path, "w") as f:
+                with open(nginx_path, "w", encoding="utf-8") as f:
                     f.write(contents)
                 return JsonResponse({"error": "Invalid nginx configuration!"})
             else:
