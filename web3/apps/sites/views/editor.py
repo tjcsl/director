@@ -80,7 +80,7 @@ def editor_load_view(request, site_id):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
 
     try:
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             contents = f.read()
     except UnicodeDecodeError:
         return JsonResponse({"error": "Editing binary files is not supported!"})
@@ -171,7 +171,7 @@ def editor_create_view(request, site_id):
         return JsonResponse({"error": "The file or folder you are trying to create already exists!"})
 
     if is_file:
-        open(new_path, "a").close()
+        open(new_path, "a", encoding="utf-8").close()
     else:
         os.mkdir(new_path)
 
@@ -378,7 +378,7 @@ def edit_nginx_view(request, site_id):
     nginx_path = "/etc/nginx/director.d/{}.conf".format(site.name)
 
     if os.path.isfile(nginx_path):
-        with open(nginx_path, "r") as f:
+        with open(nginx_path, "r", encoding="utf-8") as f:
             contents = f.read()
     else:
         contents = render_to_string("config/nginx.conf", {"site": site})

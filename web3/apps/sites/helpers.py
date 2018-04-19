@@ -83,7 +83,7 @@ def delete_php_config(site):
 
 def write_new_index_file(site):
     """Creates a default index file for new sites."""
-    with open(os.path.join(site.path, "public", "index.html"), "w+") as f:
+    with open(os.path.join(site.path, "public", "index.html"), "w+", encoding="utf-8") as f:
         f.write(render_to_string("config/index.html", {"site": site}))
 
 
@@ -104,7 +104,7 @@ def delete_site_files(site):
 
 
 def create_process_config(process):
-    with open("/etc/supervisor/director.d/{}.conf".format(process.site.name), "w+") as f:
+    with open("/etc/supervisor/director.d/{}.conf".format(process.site.name), "w+", encoding="utf-8") as f:
         f.write(render_to_string("config/supervisor.conf", {"process": process}))
 
 
@@ -209,7 +209,7 @@ def check_nginx_config():
 def flush_permissions():
     """Resets any cached users or groups."""
     if os.path.isfile("/proc/net/rpc/auth.unix.gid/flush"):
-        with open("/proc/net/rpc/auth.unix.gid/flush", "w") as f:
+        with open("/proc/net/rpc/auth.unix.gid/flush", "w", encoding="utf-8") as f:
             f.write(str(int(time.time())))
     Popen(["/usr/sbin/nscd", "-i", "group"])
     Popen(["/usr/sbin/nscd", "-i", "passwd"])
