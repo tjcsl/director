@@ -301,6 +301,8 @@ def add_ssl_view(request, site_id):
         raise PermissionDenied
     name = request.POST.get("domain")
     domain = get_object_or_404(Domain, domain=name)
+    if domain.domain.endswith(".sites.tjhsst.edu"):
+        return JsonResponse({"success": True})
 
     t = threading.Thread(target=generate_ssl_certificate, args=(domain,))
     t.daemon = True
