@@ -97,7 +97,7 @@ class Site(models.Model):
         elif self.purpose == "legacy":
             return "https://www.tjhsst.edu/~{}/".format(self.name)
         else:
-            d = self.domain_set.exclude(domain__endswith=".sites.tjhsst.edu").first()
+            d = self.domain_set.first()
             if not d:
                 return None
             return ("https://" if not d.custom_ssl or d.has_cert else "http://") + d.domain
