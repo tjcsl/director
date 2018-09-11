@@ -59,7 +59,9 @@
             <ul class="dropdown-menu">
                 <div class="arrow"></div>
                 <li><a href="{% url 'user_settings' %}"><i class="fa fa-fw fa-cog"></i> Settings</a></li>
+                {% comment %}
                 <li><a href="{% url 'vm_list' %}"><i class="fa fa-fw fa-server"></i> Virtual Machines</a></li>
+                {% endcomment %}
                 {% if request.user.is_superuser %}
                     <li><a href="{% url 'user_management' %}"><i class="fa fa-fw fa-users"></i> User Admin</a></li>
                     {% if request.user.is_staff %}
