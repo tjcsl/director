@@ -16,7 +16,7 @@ fi
 function devconfig() {
     python3 -c "
 import json
-with open('/home/ubuntu/director/config/devconfig.json', 'r') as f:
+with open('/home/vagrant/director/config/devconfig.json', 'r') as f:
     print(json.load(f)['$1'])"
 }
 
@@ -46,9 +46,10 @@ mkdir -p /var/log/gunicorn/
 cd director/
 
 # Install node dependencies
-sudo -i -u ubuntu bash <<EOF
-cd director/node
+sudo -i -u vagrant bash <<EOF
+cd ~/director/node
 npm install
+cd ..
 EOF
 
 # Copy over the secret file
@@ -88,13 +89,13 @@ useradd www-data || echo "www-data user already exists"
 
 mkdir -p /web
 
-sudo -i -u ubuntu bash <<EOF
-cd director
+sudo -i -u vagrant bash <<EOF
+cd ~/director
 if [ ! -d "venv" ]; then
     virtualenv --python python3 venv
 fi
 source venv/bin/activate
-pip install -U -r requirements.txt
+pip3 install -U -r requirements.txt
 
 ./manage.py migrate --no-input
 EOF
@@ -127,3 +128,25 @@ cp scripts/* /scripts/
 # Setup supervisor
 cp config/dev-supervisord.conf /etc/supervisor/supervisord.conf
 systemctl restart supervisor
+
+# Install oh-my-zsh and zsh
+apt-get install -y zsh zsh-syntax-highlighting
+git clone https://github.com/robbyrussell/oh-my-zsh /root/.oh-my-zsh || true
+cp -r /root/.oh-my-zsh /home/vagrant/.oh-my-zsh
+cp /root/.oh-my-zsh/templates/zshrc.zsh-template /root/.zshrc
+chown -R vagrant:vagrant /home/vagrant/.oh-my-zsh
+
+# Add syntax highlighting
+if ! grep 'zsh-syntax-highlighting' /root/.zshrc >/dev/null; then
+    echo 'source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' >> /root/.zshrc
+fi
+
+# change theme to gentoo
+sed -i 's/robbyrussell/gentoo/g' /root/.zshrc || true
+
+cp /root/.zshrc /home/vagrant/.zshrc
+chown vagrant:vagrant /home/vagrant/.zshrc
+
+# change shell to zsh
+chsh -s '/bin/zsh' || true
+chsh -s '/bin/zsh' vagrant || true

@@ -13,7 +13,7 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu/xenial64"
   config.vm.boot_timeout = 1000
-  config.vm.network "public_network", bridge: devconfig["network_interface"]
+  # config.vm.network "public_network", bridge: devconfig["network_interface"]
   config.vm.network "forwarded_port", guest: 8000, host: 8000
 
   config.ssh.forward_agent = true
@@ -32,18 +32,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # vb.gui = true
   end
   config.bindfs.default_options = {
-    force_user:   'ubuntu',
-    force_group:  'ubuntu',
+    force_user:   'vagrant',
+    force_group:  'vagrant',
     perms:        'u=rwX:g=rD:o=rD'
   }
   config.vm.network :private_network, ip: '192.168.50.50'
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.nfs.map_uid = Process.uid
   config.nfs.map_gid = Process.gid
-  config.vm.synced_folder "../director", "/vagrant-nfs", type: :nfs
-  config.bindfs.bind_folder "/vagrant-nfs", "/home/ubuntu/director",
-    force_user: 'ubuntu',
-    force_group: 'ubuntu'
+  config.vm.synced_folder "../director", "/vagrant-nfs", type: :nfs, nfs_udp: false
+  config.bindfs.bind_folder "/vagrant-nfs", "/home/vagrant/director",
+    force_user: 'vagrant',
+    force_group: 'vagrant'
 
   RSA_PUB = File.join(ENV["HOME"], ".ssh/id_rsa.pub")
   RSA_PRIV = File.join(ENV["HOME"], ".ssh/id_rsa")
