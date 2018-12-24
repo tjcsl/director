@@ -1,14 +1,14 @@
+import threading
 import uuid
 
+import libvirt
+from django.core.cache import cache
 from django.db import models
 from django.utils.text import slugify
 
-from ..users.models import User
-from ..sites.models import Site
-
 from .helpers import call_api
-
-from django.core.cache import cache
+from ..sites.models import Site
+from ..users.models import User
 
 
 class VirtualMachineHost(models.Model):
@@ -19,6 +19,14 @@ class VirtualMachineHost(models.Model):
             The host to connect to (ex: lxc1.csl.tjhsst.edu).
     """
     hostname = models.CharField(max_length=255)
+
+    @property
+    def connection(self) -> libvirt.virConnect:
+        if not hasattr(self, 'libvirt_connection'):
+            conn = libvirt.open('lxc+ssh://root@{}/'.format(self.hostname))
+            self.libvirt_connection = conn
+        # TODO: figure out how to check if a connection is still open
+        return self.libvirt_connection
 
     def __str__(self):
         return self.hostname
@@ -49,16 +57,13 @@ class VirtualMachine(models.Model):
     users = models.ManyToManyField(User, related_name='vms')
     site = models.OneToOneField(Site, related_name="virtual_machine", blank=True, null=True)
 
+    def is_online(self):
+        return self.host.connection.lookupByUUIDString(str(self.uuid)).isActive()
+
     @property
     def ips(self):
-        key = "vm:ip:{}".format(self.id)
-        obj = cache.get(key)
-        if obj:
-            return obj
-        else:
-            vm_ips = call_api("container.ips", name=str(self.uuid))[1]
-            cache.set(key, vm_ips)
-        return vm_ips
+        # TODO fix this
+        return ['1.2.3.4']
 
     @property
     def ip_address(self):

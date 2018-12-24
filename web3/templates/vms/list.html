@@ -4,7 +4,7 @@
 
 {% block css %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/vm_list.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vm_list.css' %}"/>
 {% endblock %}
 
 {% block js %}
@@ -13,37 +13,44 @@
 {% endblock %}
 
 {% block navbar %}
-<input class="form-control search-box" data-search="#vms .vm" data-fields=".name,.owner,.sub" type="text" placeholder="&#xf002; Search VMs" />
+    <input class="form-control search-box" data-search="#vms .vm" data-fields=".name,.owner,.sub" type="text"
+           placeholder="&#xf002; Search VMs"/>
 {% endblock %}
 
 {% block main %}
-<div class="subheading clearfix">
-    <h3 class="pull-left">Virtual Machines <span id="filtered"></span></h3>
-    <a href="{% url 'create_vm' %}" class="pull-right btn btn-ion"><i class="fa fa-plus"></i> Create VM</a>
-</div>
-<div id="vms">
-{% for vm in vm_list %}
-{% with status=vm_status|lookup:vm.uuid %}
-<a href="{% url 'vm_info' vm.id %}" class="vm clearfix">
-    {% if vm.site %}<span class="pull-right tag tag-success">Site</span>{% endif %}
-    <i class="pull-left fa fa-2x fa-fw fa-cube"><span class="{% if status == "RUNNING" %}green{% elif status == "STOPPED" %}red{% endif %}" /></i>
-    <b class="name">{{ vm.name }}</b> <span class="owner">{{ vm.owner.username|default:"No Owner" }}</span>
-    <div class="sub">{{ vm.description|default:"No Description" }}</div>
-</a>
-{% endwith %}
-{% endfor %}
-{% for vm in su_vm_list %}
-{% with status=vm_status|lookup:vm.uuid %}
-<a href="{% url 'vm_info' vm.id %}" class="vm clearfix">
-    <span class="pull-right tag tag-warning">Admin</span>
-    {% if vm.site %}<span class="pull-right tag tag-success">Site</span>{% endif %}
-    <i class="pull-left fa fa-2x fa-fw fa-cube"><span class="{% if status == "RUNNING" %}green{% elif status == "STOPPED" %}red{% endif %}" /></i>
-    <b class="name">{{ vm.name }}</b> <span class="owner">{{ vm.owner.username|default:"No Owner" }}</span>
-    <div class="sub">{{ vm.description|default:"No Description" }}</div>
-</a>
-{% endwith %}
-{% endfor %}
-{% if vm_list|length == 0 and su_vm_list|length == 0 %}
-<p id="empty">You have no virtual machines!</p>
-{% endif %}
+    <div class="subheading clearfix">
+        <h3 class="pull-left">Virtual Machines <span id="filtered"></span></h3>
+        <a href="{% url 'create_vm' %}" class="pull-right btn btn-ion"><i class="fa fa-plus"></i> Create VM</a>
+    </div>
+    <div id="vms">
+    {% for vm in vm_list %}
+        {% with status=vm_status|lookup:vm.uuid %}
+            <a href="{% url 'vm_info' vm.id %}" class="vm clearfix">
+                {% if vm.site %}<span class="pull-right tag tag-success">Site</span>{% endif %}
+                <i class="pull-left fa fa-2x fa-fw fa-cube">
+                    <span class="{% if status == 1 %}green{% elif status == 0 %}red{% endif %}"></span>
+                </i>
+                <b class="name">{{ vm.name }}</b> <span class="owner">{{ vm.owner.username|default:"No Owner" }}</span>
+                <div class="sub">{{ vm.description|default:"No Description" }}</div>
+            </a>
+        {% endwith %}
+    {% endfor %}
+    {% for vm in su_vm_list %}
+        {% with status=vm_status|lookup:vm.uuid %}
+            <a href="{% url 'vm_info' vm.id %}" class="vm clearfix">
+                <span class="pull-right tag tag-warning">Admin</span>
+                {% if vm.site %}<span class="pull-right tag tag-success">Site</span>{% endif %}
+                <i class="pull-left fa fa-2x fa-fw fa-cube">
+                    <span class="{% if status == "RUNNING" %}green{% elif status == "STOPPED" %}red{% endif %}"></span>
+                </i>
+                <b class="name">{{ vm.name }}</b> <span class="owner">{{ vm.owner.username|default:"No Owner" }}</span>
+                <div class="sub">{{ vm.description|default:"No Description" }}</div>
+            </a>
+        {% endwith %}
+    {% endfor %}
+    {% if vm_list|length == 0 and su_vm_list|length == 0 %}
+        <p id="empty">You have no virtual machines!</p>
+        <p id="empty">Click on the "Create VM" button to make one.</p>
+    {% endif %}
+    </div>
 {% endblock %}

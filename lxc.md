@@ -7,12 +7,15 @@
  - Hostname is the same as name
  - IP: Probably give it an internal IPv4, routed through LXC host.  Probably ephemeral as well?
  - Static IPv6 is fine
+ - Template model as well
 
 
 
 TODO: 
- - [ ] list
+ - [x] list
  - [ ] console
  - [ ] create
  - [ ] delete
  - [ ] info
+    - [ ] status
+    - [ ] ip addrs
