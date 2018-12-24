@@ -16,7 +16,7 @@ class VirtualMachineHost(models.Model):
 
     Attributes:
         hostname
-            The host to connect to (ex: conductor.tjhsst.edu).
+            The host to connect to (ex: lxc1.csl.tjhsst.edu).
     """
     hostname = models.CharField(max_length=255)
 
@@ -38,8 +38,6 @@ class VirtualMachine(models.Model):
             The owner of this virtual machine. The owner can delete the machine and add other members.
         users
             The other users that have access to the virtual machine.
-        password
-            The password for the root account on the virtual machine.
         site
             If this field is set, the site proxies all requests to the virtual machine.
     """
@@ -49,7 +47,6 @@ class VirtualMachine(models.Model):
     description = models.TextField(blank=True)
     owner = models.ForeignKey(User, null=True)
     users = models.ManyToManyField(User, related_name='vms')
-    password = models.TextField(blank=True)
     site = models.OneToOneField(Site, related_name="virtual_machine", blank=True, null=True)
 
     @property

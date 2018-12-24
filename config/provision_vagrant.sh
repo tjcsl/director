@@ -33,6 +33,7 @@ apt-get install -y htop
 apt-get install -y php-fpm
 
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+apt-get install -y python3-libvirt libvirt lxc pkg-config libvirt-dev
 apt-get install -y sudo python python-dev python3 python3-dev python3-pip virtualenv libnss-pgsql2 nodejs supervisor
 apt-get install -y postgresql postgresql-contrib libpq-dev nginx
 apt-get install -y libmysqlclient-dev mysql-client-core-5.7
@@ -92,7 +93,7 @@ mkdir -p /web
 sudo -i -u vagrant bash <<EOF
 cd ~/director
 if [ ! -d "venv" ]; then
-    virtualenv --python python3 venv
+    virtualenv --python python3 venv --system-site-packages
 fi
 source venv/bin/activate
 pip3 install -U -r requirements.txt
@@ -150,3 +151,11 @@ chown vagrant:vagrant /home/vagrant/.zshrc
 # change shell to zsh
 chsh -s '/bin/zsh' || true
 chsh -s '/bin/zsh' vagrant || true
+
+# setup passwordless ssh to localhost
+ssh-keygen -f /root/.ssh/id_rsa -P '' || true
+cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
+cat /home/vagrant/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+# get host key in known_hosts
+ssh -o StrictHostKeyChecking=no localhost true
+sudo -iu vagrant ssh -o StrictHostKeyChecking=no localhost true
