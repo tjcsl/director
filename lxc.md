@@ -14,7 +14,13 @@
 TODO: 
  - [x] list
  - [ ] console
+     - [x] SSH terminal
+     - [ ] serial terminal (for recovery)
  - [ ] create
+     - [ ] generate + copy SSH key
+        - SSH keys stored in ~/vm_ssh_keys/uuid{,.pub}
+        - `ssh-keygen -N '' -f ~/vm_ssh_keys/<uuid>`
+        - enable ssh
      - [ ] add VMs to DNS
  - [x] delete
      - [ ] have it delete the actual files upon destruction
@@ -23,3 +29,4 @@ TODO:
     - [x] status
     - [x] pause/resume
     - [ ] ip addrs
+        - ip addrs are going to need DHCP server :(

@@ -1,28 +1,28 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import logout, login, authenticate
-from django.contrib.auth.decorators import login_required
-from django.db.models import Count
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
-from django.utils.crypto import get_random_string
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.signals import user_logged_in
-from django.conf import settings
-from django.contrib import messages
-
-from ..sites.models import Site
-from ..vms.models import VirtualMachine
-from ..users.models import User
-from ..sites.helpers import get_supervisor_statuses
-
-from raven.contrib.django.raven_compat.models import client
+import datetime
 
 import hashlib
-import datetime
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.signals import user_logged_in
+from django.db.models import Count
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, redirect
+from django.utils.crypto import get_random_string
+from django.views.decorators.csrf import csrf_exempt
+from raven.contrib.django.raven_compat.models import client
+
+from ..sites.helpers import get_supervisor_statuses
+from ..sites.models import Site
+from ..users.models import User
+from ..vms.models import VirtualMachine
 
 
 def index_view(request):
     if request.user.is_authenticated():
-        sites = Site.objects.annotate(num_users=Count("group__users")).filter(group__users=request.user).order_by("name")
+        sites = Site.objects.annotate(num_users=Count("group__users")).filter(group__users=request.user).order_by(
+            "name")
 
         if sites.count() == 0:
             return redirect("start")
@@ -30,8 +30,10 @@ def index_view(request):
         statuses = get_supervisor_statuses(list(sites.filter(category="dynamic").values_list("name", flat=True)))
 
         if request.user.is_superuser and request.GET.get("all", False):
-            other_sites = Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name")
-            other_statuses = get_supervisor_statuses(list(other_sites.filter(category="dynamic").values_list("name", flat=True)))
+            other_sites = Site.objects.exclude(group__users=request.user).annotate(
+                num_users=Count("group__users")).order_by("name")
+            other_statuses = get_supervisor_statuses(
+                list(other_sites.filter(category="dynamic").values_list("name", flat=True)))
         else:
             other_sites = None
             other_statuses = None
@@ -117,7 +119,9 @@ def node_auth_view(request):
             if siteid is not None and siteid != "":
                 site = Site.objects.get(id=int(siteid))
                 if not user.is_superuser and not site.group.users.filter(id=user.id).exists():
-                    return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status=403)
+                    return JsonResponse(
+                        {"granted": False, "error": "User does not have permission to access this website."},
+                        status=403)
                 return JsonResponse({
                     "granted": True,
                     "site": {
@@ -135,15 +139,17 @@ def node_auth_view(request):
             if vmid is not None and vmid != "":
                 vm = VirtualMachine.objects.get(id=int(vmid))
                 if not user.is_superuser and not vm.owner == user and not vm.users.filter(id=user.id).exists():
-                    return JsonResponse({"granted": False, "error": "User does not have permission to access this virtual machine."}, status=403)
-                if not vm.ip_address or not vm.password:
-                    return JsonResponse({"granted": False, "error": "No IP address or root password set!"})
+                    return JsonResponse(
+                        {"granted": False, "error": "User does not have permission to access this virtual machine."},
+                        status=403)
+                if not vm.ip_address:
+                    return JsonResponse({"granted": False, "error": "No IP address set!"})
                 return JsonResponse({
                     "granted": True,
                     "vm": {
                         "id": vm.id,
                         "ip": vm.ip_address,
-                        "password": vm.password
+                        "uuid": str(vm.uuid)
                     },
                     "userid": user.id,
                     "user": user.username
@@ -171,7 +177,8 @@ def set_access_cookie_view(request):
         messages.error(request, "You do not have permissions to view this site!")
         return redirect("index")
     response = HttpResponseRedirect(request.GET.get("next", "/"))
-    response.set_cookie("site_{}".format(site.name), cookie_value(request.user.username, site.name), domain=".tjhsst.edu", httponly=True)
+    response.set_cookie("site_{}".format(site.name), cookie_value(request.user.username, site.name),
+                        domain=".tjhsst.edu", httponly=True)
     return response
 
 

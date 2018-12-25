@@ -194,15 +194,7 @@ def terminal_view(request, vm_id):
             id=request.user.id).exists() and not vm.owner == request.user:
         raise PermissionDenied
 
-    if not vm.password:
-        ret = call_api("container.reset_root_password", name=str(vm.uuid))
-        if ret[0] == 0:
-            vm.password = ret[1]
-            vm.save()
-        else:
-            messages.error(request, "Failed to set VM password!")
+    if not vm.is_online():
+        messages.error(request, "VM is not online!")
 
-    context = {
-        "vm": vm
-    }
-    return render(request, "vms/web_terminal.html", context)
+    return render(request, "vms/web_terminal.html", {"vm": vm})

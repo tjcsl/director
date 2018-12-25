@@ -48,13 +48,10 @@ module.exports = {
             }
         }
         else if (data.vm) {
-            term = pty.spawn(__dirname + "/ssh.sh", [data.vm.ip], {
+            term = pty.spawn(__dirname + "/ssh.sh", [data.vm.ip, data.vm.uuid], {
                 name: "xterm-color",
                 cols: 80,
-                rows: 30,
-                env: {
-                    SSHPASS: data.vm.password
-                }
+                rows: 30
             });
         }
         else {

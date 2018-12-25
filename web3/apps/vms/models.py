@@ -103,7 +103,7 @@ class VirtualMachine(models.Model):
     @property
     def ips(self):
         # TODO fix this
-        return ['1.2.3.4']
+        return ['192.168.122.201']
 
     @property
     def ip_address(self):
