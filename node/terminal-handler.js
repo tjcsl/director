@@ -48,7 +48,7 @@ module.exports = {
             }
         }
         else if (data.vm) {
-            term = pty.spawn(__dirname + "/ssh.sh", [data.vm.ip, data.vm.uuid], {
+            term = pty.spawn(__dirname + "/ssh.sh", [data.vm.ip, data.vm.uuid, data.user], {
                 name: "xterm-color",
                 cols: 80,
                 rows: 30

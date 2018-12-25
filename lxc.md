@@ -12,21 +12,22 @@
 
 
 TODO: 
- - [x] list
- - [ ] console
-     - [x] SSH terminal
-     - [ ] serial terminal (for recovery)
- - [ ] create
-     - [ ] generate + copy SSH key
-        - SSH keys stored in ~/vm_ssh_keys/uuid{,.pub}
-        - `ssh-keygen -N '' -f ~/vm_ssh_keys/<uuid>`
-        - enable ssh
-     - [ ] add VMs to DNS
- - [x] delete
-     - [ ] have it delete the actual files upon destruction
-     - [ ] remove VM from DNS
- - [x] info
-    - [x] status
-    - [x] pause/resume
-    - [ ] ip addrs
-        - ip addrs are going to need DHCP server :(
+- [x] list
+- [x] console
+    - [x] SSH terminal
+    - [ ] serial terminal (for recovery)
+- [ ] create
+    - [ ] generate + copy SSH key
+       - SSH keys stored in ~/vm_ssh_keys/uuid{,.pub}
+       - `ssh-keygen -N '' -f ~/vm_ssh_keys/<uuid>`
+       - enable ssh
+    - [ ] add VM to DHCP
+    - [ ] add VM to DNS
+- [x] delete
+    - [ ] have it delete the actual files upon destruction
+    - [ ] remove VM from DNS
+- [x] info
+   - [x] status
+   - [x] pause/resume
+- [ ] ip addrs
+   - ip addrs are going to need DHCP server :(
