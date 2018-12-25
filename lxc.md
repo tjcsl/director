@@ -15,7 +15,11 @@ TODO:
  - [x] list
  - [ ] console
  - [ ] create
- - [ ] delete
- - [ ] info
-    - [ ] status
+     - [ ] add VMs to DNS
+ - [x] delete
+     - [ ] have it delete the actual files upon destruction
+     - [ ] remove VM from DNS
+ - [x] info
+    - [x] status
+    - [x] pause/resume
     - [ ] ip addrs

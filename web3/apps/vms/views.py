@@ -1,5 +1,4 @@
-from threading import Thread
-
+import libvirt
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -23,7 +22,7 @@ def list_view(request):
 
     statuses = dict()
     for vm in vm_list:
-        statuses[str(vm.uuid)] = vm.is_online()
+        statuses[str(vm.uuid)] = vm.get_state()
 
     if request.user.is_superuser:
         su_vm_list = VirtualMachine.objects.exclude(Q(users=request.user) | Q(owner=request.user)).distinct().order_by(
@@ -49,7 +48,7 @@ def info_view(request, vm_id):
     else:
         vm_ips = []
 
-    return render(request, "vms/info.html", {"vm": vm, "vm_state": vm.is_online(), "vm_ips": vm_ips, "owner": is_owner})
+    return render(request, "vms/info.html", {"vm": vm, "vm_state": vm.get_state(), "vm_ips": vm_ips, "owner": is_owner})
 
 
 @require_http_methods(["POST"])
@@ -60,14 +59,11 @@ def start_view(request, vm_id):
             id=request.user.id).exists() and not vm.owner == request.user:
         raise PermissionDenied
 
-    ret = call_api("container.power", state=1, name=str(vm.uuid))
-    if ret == 0:
-        t = Thread(target=call_api, args=["dns.add"], kwargs={"host": vm.hostname, "ip": vm.ip_address})
-        t.daemon = True
-        t.start()
+    try:
+        vm.power_on()
         messages.success(request, "Virtual machine started!")
-    else:
-        messages.error(request, "Failed to start virtual machine! ({})".format(ret))
+    except libvirt.libvirtError:
+        messages.error(request, "Failed to start virtual machine!")
 
     return redirect("vm_info", vm_id=vm_id)
 
@@ -80,29 +76,45 @@ def stop_view(request, vm_id):
             id=request.user.id).exists() and not vm.owner == request.user:
         raise PermissionDenied
 
-    if call_api("container.power", state=0, name=str(vm.uuid)) == 0:
+    try:
+        vm.power_off()
         messages.success(request, "Virtual machine stopped!")
-    else:
-        messages.error(request, "Failed to stop virtual machine!")
+    except libvirt.libvirtError as e:
+        messages.error(request, "Failed to stop virtual machine! ({})".format(e))
 
     return redirect("vm_info", vm_id=vm_id)
 
 
 @require_http_methods(["POST"])
 @login_required
-def password_view(request, vm_id):
+def pause_view(request, vm_id):
     vm = get_object_or_404(VirtualMachine, id=vm_id)
     if not request.user.is_superuser and not vm.users.filter(
             id=request.user.id).exists() and not vm.owner == request.user:
         raise PermissionDenied
 
-    ret = call_api("container.reset_root_password", name=str(vm.uuid))
-    if ret[0] == 0:
-        vm.password = ret[1]
-        vm.save()
-        messages.success(request, "Root password set!")
-    else:
-        messages.error(request, "Failed to set root password!")
+    try:
+        vm.get_domain().suspend()
+        messages.success(request, "Virtual machine paused.")
+    except libvirt.libvirtError as e:
+        messages.error(request, "Failed to pause virtual machine. ({})".format(e))
+
+    return redirect("vm_info", vm_id=vm_id)
+
+
+@require_http_methods(["POST"])
+@login_required
+def resume_view(request, vm_id):
+    vm = get_object_or_404(VirtualMachine, id=vm_id)
+    if not request.user.is_superuser and not vm.users.filter(
+            id=request.user.id).exists() and not vm.owner == request.user:
+        raise PermissionDenied
+
+    try:
+        vm.get_domain().resume()
+        messages.success(request, "Virtual machine resumed.")
+    except libvirt.libvirtError as e:
+        messages.error(request, "Failed to resume virtual machine. ({})".format(e))
 
     return redirect("vm_info", vm_id=vm_id)
 
@@ -116,16 +128,13 @@ def delete_view(request, vm_id):
 
     if request.method == "POST":
         if request.POST.get("confirm", None) == vm.name:
-            ret = call_api("container.destroy", name=str(vm.uuid))
-            hostname = vm.hostname
-            if ret == 0:
+            try:
+                vm.get_domain().destroy()
+                vm.get_domain().undefine()
                 vm.delete()
-                t = Thread(target=call_api, args=["dns.remove"], kwargs={"host": hostname})
-                t.daemon = True
-                t.start()
                 messages.success(request, "Virtual machine deleted!")
-            else:
-                messages.error(request, "Failed to delete VM! ({})".format(ret))
+            except libvirt.libvirtError:
+                messages.error(request, "Failed to delete VM! ({})")
             return redirect("vm_list")
         else:
             messages.error(request, "Failed deletion confirmation!")

@@ -1,12 +1,9 @@
-import threading
 import uuid
 
 import libvirt
-from django.core.cache import cache
 from django.db import models
 from django.utils.text import slugify
 
-from .helpers import call_api
 from ..sites.models import Site
 from ..users.models import User
 
@@ -57,8 +54,51 @@ class VirtualMachine(models.Model):
     users = models.ManyToManyField(User, related_name='vms')
     site = models.OneToOneField(Site, related_name="virtual_machine", blank=True, null=True)
 
+    def get_domain(self) -> libvirt.virDomain:
+        """
+        Get the underlying libvirt.virDomain that corresponds to this VirtualMachine
+        :return: the actual virDomain object
+        """
+        return self.host.connection.lookupByUUIDString(str(self.uuid))
+
     def is_online(self):
-        return self.host.connection.lookupByUUIDString(str(self.uuid)).isActive()
+        """
+        Is the domain online?
+        :return: whether or not the domain is online
+        """
+        return self.get_domain().isActive()
+
+    def get_state(self):
+        """
+        Get the current domain state.
+        :return: the domain state
+        """
+        try:
+            state = self.get_domain().state()[0]
+        except libvirt.libvirtError:
+            state = -42
+        if state == 1:
+            return "RUNNING"
+        elif state == 3:
+            return "PAUSED"
+        elif state in [0, 4, 5, 6]:
+            return "SHUTDOWN"
+        else:
+            return "UNKNOWN"
+
+    def power_on(self):
+        """
+        Power on the virtual machine
+        :return: success value (probably 0? it raises an exception if it fails)
+        """
+        return self.get_domain().create()
+
+    def power_off(self):
+        """
+        Turn off the virtual machine.
+        :return: if it did
+        """
+        return self.get_domain().destroy()
 
     @property
     def ips(self):
