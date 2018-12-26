@@ -8,7 +8,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 
 from .forms import VirtualMachineForm
-from .helpers import call_api
 from .models import VirtualMachine
 from ..sites.helpers import add_access_token
 
@@ -131,6 +130,8 @@ def delete_view(request, vm_id):
             try:
                 vm.get_domain().destroy()
                 vm.get_domain().undefine()
+                # TODO remove VM from dhcp
+                # TODO remove VM files
                 vm.delete()
                 messages.success(request, "Virtual machine deleted!")
             except libvirt.libvirtError:

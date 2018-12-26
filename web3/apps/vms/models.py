@@ -30,7 +30,8 @@ class VirtualMachineHost(models.Model):
 
 
 class VirtualMachine(models.Model):
-    """Represents a virtual machine.
+    """
+    Represents a virtual machine.
 
     Attributes:
         name
@@ -45,6 +46,8 @@ class VirtualMachine(models.Model):
             The other users that have access to the virtual machine.
         site
             If this field is set, the site proxies all requests to the virtual machine.
+        template
+            Whether or not this VM is a template.  Remember that templated VMs are public!
     """
     name = models.CharField(max_length=255, unique=True)
     host = models.ForeignKey(VirtualMachineHost, on_delete=models.PROTECT)
@@ -53,6 +56,7 @@ class VirtualMachine(models.Model):
     owner = models.ForeignKey(User, null=True)
     users = models.ManyToManyField(User, related_name='vms')
     site = models.OneToOneField(Site, related_name="virtual_machine", blank=True, null=True)
+    is_template = models.BooleanField(default=False)
 
     def get_domain(self) -> libvirt.virDomain:
         """

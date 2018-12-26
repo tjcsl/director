@@ -1,15 +1,15 @@
 import uuid
+
+import os
 import re
-
+import shutil
 from django import forms
-from django.core.cache import cache
-
-from ..users.models import User
-from ..sites.models import Site
-from .models import VirtualMachine, VirtualMachineHost
-from .helpers import call_api
-
+from django.conf import settings
 from raven.contrib.django.raven_compat.models import client
+
+from .models import VirtualMachine, VirtualMachineHost
+from ..sites.models import Site
+from ..users.models import User
 
 
 class VirtualMachineForm(forms.ModelForm):
@@ -20,6 +20,7 @@ class VirtualMachineForm(forms.ModelForm):
     owner = forms.ModelChoiceField(required=True, queryset=User.objects.filter(service=False))
     host = forms.ModelChoiceField(required=True, queryset=VirtualMachineHost.objects.all(), widget=forms.RadioSelect(),
                                   empty_label=None)
+    is_template = forms.BooleanField(required=False)
 
     def clean_name(self):
         name = self.cleaned_data["name"].strip()
@@ -42,17 +43,14 @@ class VirtualMachineForm(forms.ModelForm):
             self.fields["owner"].queryset = User.objects.filter(id=self.user.id)
             self.fields["owner"].disabled = True
             self.fields["site"].queryset = Site.objects.filter(group__users=self.user, category="vm")
+            self.fields["is_template"].disabled = True
         if self.instance and self.instance.pk:
             self.old_hostname = self.instance.hostname
         else:
-            vm_key = "vm:templates"
-            vm_templates = cache.get(vm_key)
-            if not vm_templates:
-                vm_templates = call_api("container.templates")
-                cache.set(vm_key, vm_templates)
-            if vm_templates:
-                self.fields["template"] = forms.ChoiceField(choices=[(x, x.title()) for x in vm_templates],
-                                                            widget=forms.Select(attrs={"class": "form-control"}))
+            templates = VirtualMachine.objects.all().filter(is_template=True)
+            self.fields["template"] = forms.ChoiceField(choices=[(x, x.name) for x in templates],
+                                                        widget=forms.Select(attrs={"class": "form-control"}),
+                                                        required=True)
 
     def save(self, commit=True):
         instance = forms.ModelForm.save(self, commit=False)
@@ -64,7 +62,13 @@ class VirtualMachineForm(forms.ModelForm):
             self.save_m2m()
             instance.users.remove(instance.owner)
             if not editing:
-                ret = call_api("container.create", name=hostname, template=self.cleaned_data.get("template", "debian"))
+                # TODO: Create VM _asynchronously_
+                client.captureMessage("Creating VM...")
+                template_path = os.path.join(settings.LXC_PATH, self.template.hostname + "-" + str(self.template.uuid))
+                new_path = os.path.join(settings.LXC_PATH, instance.hostname + "-" + str(instance.uuid))
+                shutil.copytree(template_path, new_path)
+                # i'm lazy and this is bad
+                old_xml = self.template.get_domain().
                 if ret is None or ret[0] == 1:
                     client.captureMessage("Failed to create VM: {}".format(ret))
                     instance.delete()
@@ -75,7 +79,7 @@ class VirtualMachineForm(forms.ModelForm):
                         instance.save()
             elif not self.old_hostname == hostname:
                 if "name" in self.changed_data:
-                    ret = call_api("container.set_hostname", name=str(instance.uuid), old_hostname=self.old_hostname, new_hostname=hostname)
+                    # TODO change hostname
                     if ret is None or ret != 0:
                         client.captureMessage("Failed to change VM hostname: {}".format(ret))
                         return instance
@@ -84,4 +88,4 @@ class VirtualMachineForm(forms.ModelForm):
 
     class Meta:
         model = VirtualMachine
-        fields = ["name", "description", "owner", "users", "site", "host"]
+        fields = ["name", "description", "owner", "users", "site", "host", "is_template"]
