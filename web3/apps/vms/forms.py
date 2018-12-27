@@ -1,8 +1,9 @@
-import uuid
+import subprocess
+import sys
+import traceback
 
 import os
 import re
-import shutil
 from django import forms
 from django.conf import settings
 from raven.contrib.django.raven_compat.models import client
@@ -20,7 +21,8 @@ class VirtualMachineForm(forms.ModelForm):
     owner = forms.ModelChoiceField(required=True, queryset=User.objects.filter(service=False))
     host = forms.ModelChoiceField(required=True, queryset=VirtualMachineHost.objects.all(), widget=forms.RadioSelect(),
                                   empty_label=None)
-    is_template = forms.BooleanField(required=False)
+    is_template = forms.BooleanField(required=False,
+                                     widget=forms.CheckboxInput(attrs={"class": "custom-control-input"}))
 
     def clean_name(self):
         name = self.cleaned_data["name"].strip()
@@ -62,21 +64,33 @@ class VirtualMachineForm(forms.ModelForm):
             self.save_m2m()
             instance.users.remove(instance.owner)
             if not editing:
-                # TODO: Create VM _asynchronously_
-                client.captureMessage("Creating VM...")
-                template_path = os.path.join(settings.LXC_PATH, self.template.hostname + "-" + str(self.template.uuid))
-                new_path = os.path.join(settings.LXC_PATH, instance.hostname + "-" + str(instance.uuid))
-                shutil.copytree(template_path, new_path)
-                # i'm lazy and this is bad
-                old_xml = self.template.get_domain().
-                if ret is None or ret[0] == 1:
-                    client.captureMessage("Failed to create VM: {}".format(ret))
+                # Create the VM instead of editing it
+                try:
+                    # TODO: Create VM _asynchronously_
+                    # ok it legit needs to be async
+                    print("hello", file=sys.stderr)
+                    template = VirtualMachine.objects.get(name=self.cleaned_data['template'])
+                    old_congealed = template.hostname + "-" + str(template.uuid)
+                    new_congealed = hostname + "-" + str(instance.uuid)
+                    template_path = os.path.join(settings.LXC_PATH, old_congealed)
+                    new_path = os.path.join(settings.LXC_PATH, new_congealed)
+                    print("hello2", file=sys.stderr)
+                    # shutil.copytree(template_path, new_path)
+                    subprocess.run(['rsync', '-ar', os.path.join(template_path, 'rootfs'), new_path],
+                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    # i'm lazy and this is bad
+                    old_xml = template.get_domain().XMLDesc()
+                    new_xml = old_xml.replace(old_congealed, new_congealed).replace(str(template.uuid),
+                                                                                    str(instance.uuid))
+                    print("hello3", file=sys.stderr)
+                    instance.host.connection.defineXML(new_xml)
+                    instance.save()
+                except Exception as e:
+                    client.captureMessage("Failed to create VM: {}".format(e))
+                    with open("/exc", 'w') as f:  # le hacc
+                        traceback.print_exc(file=f)
                     instance.delete()
                     return None
-                else:
-                    if ret[0] != 2:
-                        instance.uuid = uuid.UUID(ret[1].split("\n")[-1])
-                        instance.save()
             elif not self.old_hostname == hostname:
                 if "name" in self.changed_data:
                     # TODO change hostname

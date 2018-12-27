@@ -17,10 +17,14 @@ TODO:
     - [x] SSH terminal
     - [ ] serial terminal (for recovery)
 - [ ] create
+    - [x] copy template
+    - [x] define domain
+    - [ ] change MAC address
     - [ ] generate + copy SSH key
        - SSH keys stored in ~/vm_ssh_keys/uuid{,.pub}
        - `ssh-keygen -N '' -f ~/vm_ssh_keys/<uuid>`
        - enable ssh
+    - [ ] notify user of completion once it is complete
     - [ ] add VM to DHCP
     - [ ] add VM to DNS
 - [x] delete

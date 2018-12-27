@@ -1,3 +1,5 @@
+import threading
+
 import libvirt
 from django.conf import settings
 from django.contrib import messages
@@ -153,13 +155,10 @@ def create_view(request):
             return redirect("vm_list")
         form = VirtualMachineForm(request.POST, user=request.user)
         if form.is_valid():
-            instance = form.save()
-            if instance:
-                messages.success(request, "Virtual machine created!")
-                return redirect("vm_info", vm_id=instance.id)
-            else:
-                messages.error(request, "Failed to create virtual machine!")
-                return redirect("vm_list")
+            # TODO notify user of completion/failure
+            threading.Thread(target=lambda: form.save(), daemon=True).start()
+            messages.success(request, "Virtual machine creation in progress...")
+            return redirect("vm_list")
     else:
         form = VirtualMachineForm(user=request.user)
     return render(request, "vms/create.html", {"form": form, "vm": None})
