@@ -1,6 +1,9 @@
 import uuid
+from xml.etree import ElementTree
 
 import libvirt
+import os
+from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 
@@ -58,7 +61,8 @@ class VirtualMachine(models.Model):
     site = models.OneToOneField(Site, related_name="virtual_machine", blank=True, null=True)
     is_template = models.BooleanField(default=False)
 
-    def get_domain(self) -> libvirt.virDomain:
+    @property
+    def domain(self) -> libvirt.virDomain:
         """
         Get the underlying libvirt.virDomain that corresponds to this VirtualMachine
         :return: the actual virDomain object
@@ -70,7 +74,7 @@ class VirtualMachine(models.Model):
         Is the domain online?
         :return: whether or not the domain is online
         """
-        return self.get_domain().isActive()
+        return self.domain.isActive()
 
     def get_state(self):
         """
@@ -78,7 +82,7 @@ class VirtualMachine(models.Model):
         :return: the domain state
         """
         try:
-            state = self.get_domain().state()[0]
+            state = self.domain.state()[0]
         except libvirt.libvirtError:
             state = -42
         if state == 1:
@@ -95,28 +99,41 @@ class VirtualMachine(models.Model):
         Power on the virtual machine
         :return: success value (probably 0? it raises an exception if it fails)
         """
-        return self.get_domain().create()
+        return self.domain.create()
 
     def power_off(self):
         """
         Turn off the virtual machine.
         :return: if it did
         """
-        return self.get_domain().destroy()
-
-    @property
-    def ips(self):
-        # TODO fix this
-        return ['192.168.122.201']
+        return self.domain.destroy()
 
     @property
     def ip_address(self):
-        ips = self.ips
-        return ips[-1] if len(ips) else None
+        net_xml = ElementTree.fromstring(self.host.connection.networkLookupByName(settings.LIBVIRT_NET).XMLDesc())
+        for host in net_xml.find('ip').find('dhcp').findall('host'):
+            if 'name' in host.attrib and host.attrib['name'] == self.internal_name:
+                return host.attrib['ip']
+        return None
 
     @property
     def hostname(self):
         return slugify(self.name).replace("_", "-")
+
+    @property
+    def internal_name(self):
+        """
+        The internal name used in libvirt to refer to the vm.  Should be
+        safe to throw around in shell commands, but no guarantees!
+        """
+        return self.hostname + '-' + str(self.uuid)
+
+    @property
+    def root_path(self):
+        """
+        Path to the VM's files.  Should be on shared storage.
+        """
+        return os.path.join(settings.LXC_PATH, self.internal_name, 'rootfs')
 
     def __str__(self):
         return self.name

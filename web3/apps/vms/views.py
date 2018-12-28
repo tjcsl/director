@@ -1,4 +1,7 @@
+import os
+import subprocess
 import threading
+from xml.etree import ElementTree
 
 import libvirt
 from django.conf import settings
@@ -45,7 +48,7 @@ def info_view(request, vm_id):
 
     # vm_state = call_api("container.state", name=str(vm.uuid))
     if vm.is_online():
-        vm_ips = vm.ips
+        vm_ips = [vm.ip_address]  # TODO fix tempalte so that it don't require a list
     else:
         vm_ips = []
 
@@ -95,7 +98,7 @@ def pause_view(request, vm_id):
         raise PermissionDenied
 
     try:
-        vm.get_domain().suspend()
+        vm.domain.suspend()
         messages.success(request, "Virtual machine paused.")
     except libvirt.libvirtError as e:
         messages.error(request, "Failed to pause virtual machine. ({})".format(e))
@@ -112,7 +115,7 @@ def resume_view(request, vm_id):
         raise PermissionDenied
 
     try:
-        vm.get_domain().resume()
+        vm.domain.resume()
         messages.success(request, "Virtual machine resumed.")
     except libvirt.libvirtError as e:
         messages.error(request, "Failed to resume virtual machine. ({})".format(e))
@@ -130,14 +133,27 @@ def delete_view(request, vm_id):
     if request.method == "POST":
         if request.POST.get("confirm", None) == vm.name:
             try:
-                vm.get_domain().destroy()
-                vm.get_domain().undefine()
-                # TODO remove VM from dhcp
-                # TODO remove VM files
+                try:
+                    vm.domain.destroy()
+                except libvirt.libvirtError:
+                    # throws error if domain ain't running
+                    pass
+                # TODO remove VM from dns
+                # TODO make all of this async
+                vm.domain.undefine()
+                subprocess.run(['rm', '-rf', os.path.dirname(vm.root_path)])
+                # Remove host from DHCP
+                net_xml = ElementTree.fromstring(vm.host.connection.networkLookupByName(settings.LIBVIRT_NET).XMLDesc())
+                host_entry = next(filter(lambda x: True if x.get('host', '') == vm.internal_name else False,
+                                         net_xml.find('ip').find('dhcp').findall('host')))
+                subprocess.run(
+                    ['virsh', '-c', 'lxc+ssh://root@' + vm.host.hostname + '/', 'net-update', settings.libvirt_net,
+                     'delete', 'ip-dhcp-host', ElementTree.tostring(host_entry).decode('utf8')])
+                # TODO delete SSH key from user homedir
                 vm.delete()
                 messages.success(request, "Virtual machine deleted!")
-            except libvirt.libvirtError:
-                messages.error(request, "Failed to delete VM! ({})")
+            except libvirt.libvirtError as e:
+                messages.error(request, "Failed to delete VM! ({})".format(e))
             return redirect("vm_list")
         else:
             messages.error(request, "Failed deletion confirmation!")

@@ -1,9 +1,11 @@
+import pwd
 import subprocess
-import sys
 import traceback
+import xml.etree.ElementTree as ElementTree
 
 import os
 import re
+import shutil
 from django import forms
 from django.conf import settings
 from raven.contrib.django.raven_compat.models import client
@@ -11,6 +13,16 @@ from raven.contrib.django.raven_compat.models import client
 from .models import VirtualMachine, VirtualMachineHost
 from ..sites.models import Site
 from ..users.models import User
+
+
+def gen_random_mac():
+    mac = b'\x02\x00\x00' + os.urandom(3)
+    # Setting this bit marks the mac address as locally administered
+    # make hex
+    mac = mac.hex()
+    # add colons
+    mac = ':'.join(mac[i * 2:i * 2 + 2] for i in range(6))
+    return mac
 
 
 class VirtualMachineForm(forms.ModelForm):
@@ -68,22 +80,43 @@ class VirtualMachineForm(forms.ModelForm):
                 try:
                     # TODO: Create VM _asynchronously_
                     # ok it legit needs to be async
-                    print("hello", file=sys.stderr)
                     template = VirtualMachine.objects.get(name=self.cleaned_data['template'])
-                    old_congealed = template.hostname + "-" + str(template.uuid)
-                    new_congealed = hostname + "-" + str(instance.uuid)
-                    template_path = os.path.join(settings.LXC_PATH, old_congealed)
-                    new_path = os.path.join(settings.LXC_PATH, new_congealed)
-                    print("hello2", file=sys.stderr)
-                    # shutil.copytree(template_path, new_path)
-                    subprocess.run(['rsync', '-ar', os.path.join(template_path, 'rootfs'), new_path],
-                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                    # i'm lazy and this is bad
-                    old_xml = template.get_domain().XMLDesc()
-                    new_xml = old_xml.replace(old_congealed, new_congealed).replace(str(template.uuid),
-                                                                                    str(instance.uuid))
-                    print("hello3", file=sys.stderr)
-                    instance.host.connection.defineXML(new_xml)
+                    subprocess.run(
+                        ['rsync', '-ar', os.path.dirname(template.root_path) + '/',
+                         os.path.dirname(instance.root_path) + '/'],
+                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    # Coerce the XML into being right and define the domain
+                    mac = gen_random_mac()
+                    dom_xml = ElementTree.fromstring(template.domain.XMLDesc())
+                    dom_xml.find('name').text = instance.internal_name
+                    dom_xml.find('uuid').text = str(instance.uuid)
+                    dom_xml.find('devices').find('interface').find('mac').attrib['address'] = mac
+                    dom_xml.find('devices').find('filesystem').find('source').attrib['dir'] = instance.root_path
+                    instance.host.connection.defineXML(ElementTree.tostring(dom_xml).decode('utf8'))
+                    # Add host to DHCP
+                    host_sub = ElementTree.Element("host")
+                    host_sub.set('mac', mac)
+                    host_sub.set('name', instance.internal_name)
+                    host_sub.set('ip', '192.168.122.6')
+                    # excuse me what the f why doesn't this update running config
+                    subprocess.run(
+                        ['virsh', '-c', 'lxc+ssh://root@' + instance.host.hostname + '/', 'net-update',
+                         settings.LIBVIRT_NET, 'add', 'ip-dhcp-host', ElementTree.tostring(host_sub).decode('utf8')])
+                    # Generate and set perms on SSH key
+                    privkey_path = '/home/' + instance.owner.username + '/.ssh/' + str(instance.uuid)
+                    subprocess.run(['ssh-keygen', '-N', '', '-f', privkey_path])
+                    unix_user = pwd.getpwnam(instance.owner.username)
+                    os.chown(privkey_path, unix_user.pw_uid, unix_user.pw_gid)
+                    os.chmod(privkey_path, 0o600)
+                    os.chown(privkey_path + '.pub', unix_user.pw_uid, unix_user.pw_gid)
+                    os.chmod(privkey_path + '.pub', 0o600)
+                    # Copy SSH key to domain
+                    # TODO figure out if we need to change perms on the instance files
+                    authkeys_path = os.path.join(instance.root_path, 'root', '.ssh', 'authorized_keys')
+                    instance_ssh_path = os.path.dirname(authkeys_path)
+                    if not os.path.exists(instance_ssh_path):
+                        os.mkdir(instance_ssh_path)
+                    shutil.copy(privkey_path + '.pub', authkeys_path)
                     instance.save()
                 except Exception as e:
                     client.captureMessage("Failed to create VM: {}".format(e))
@@ -94,12 +127,14 @@ class VirtualMachineForm(forms.ModelForm):
             elif not self.old_hostname == hostname:
                 if "name" in self.changed_data:
                     # TODO change hostname
-                    if ret is None or ret != 0:
-                        client.captureMessage("Failed to change VM hostname: {}".format(ret))
-                        return instance
+                    client.captureMessage("Failed to change VM hostname: Not implemented")
 
         return instance
 
     class Meta:
         model = VirtualMachine
         fields = ["name", "description", "owner", "users", "site", "host", "is_template"]
+
+
+def get_named_elements(xml_tree, element_name):
+    return [e for e in xml_tree if e.tag == element_name]

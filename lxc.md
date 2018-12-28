@@ -13,25 +13,26 @@
 
 TODO: 
 - [x] list
-- [x] console
+- [-] console
     - [x] SSH terminal
     - [ ] serial terminal (for recovery)
-- [ ] create
+- [-] create
     - [x] copy template
     - [x] define domain
-    - [ ] change MAC address
-    - [ ] generate + copy SSH key
-       - SSH keys stored in ~/vm_ssh_keys/uuid{,.pub}
-       - `ssh-keygen -N '' -f ~/vm_ssh_keys/<uuid>`
+    - [x] change MAC address
+    - [x] generate + copy SSH key
+       - SSH keys stored in /home/<owner>/.ssh/uuid{,.pub}
+       - `ssh-keygen -N '' -f /home/<owner>/.ssh/<uuid>`
        - enable ssh
     - [ ] notify user of completion once it is complete
-    - [ ] add VM to DHCP
+    - [x] add VM to DHCP
     - [ ] add VM to DNS
-- [x] delete
-    - [ ] have it delete the actual files upon destruction
+- [-] delete
+    - [x] have it delete the actual files upon destruction
+    - [x] remove VM from DHCP
     - [ ] remove VM from DNS
 - [x] info
    - [x] status
    - [x] pause/resume
-- [ ] ip addrs
+- [x] ip addrs
    - ip addrs are going to need DHCP server :(
