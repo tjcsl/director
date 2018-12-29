@@ -34,5 +34,7 @@ TODO:
 - [x] info
    - [x] status
    - [x] pause/resume
-- [x] ip addrs
-   - ip addrs are going to need DHCP server :(
+- [-] Networking
+   - [ ] Better allocation scheme
+   - [ ] Route from syslab to VMs (implementation problem?)
+   

@@ -37,7 +37,7 @@ MAX_VMS = 5
 GLOBAL_WARNING = None
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Default database password used in development.
 DB_USERNAME = "web3"

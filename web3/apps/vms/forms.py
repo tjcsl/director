@@ -4,6 +4,7 @@ import traceback
 import xml.etree.ElementTree as ElementTree
 
 import os
+import random
 import re
 import shutil
 from django import forms
@@ -97,15 +98,21 @@ class VirtualMachineForm(forms.ModelForm):
                     host_sub = ElementTree.Element("host")
                     host_sub.set('mac', mac)
                     host_sub.set('name', instance.internal_name)
-                    host_sub.set('ip', '192.168.122.6')
-                    # excuse me what the f why doesn't this update running config
+                    # TODO get a better IP allocation scheme
+                    nextNet = random.randint(1, 65534)
+                    host_sub.set('ip', '10.128.{}.{}'.format(nextNet & 0xFF, (nextNet >> 8) & 0xFF))
+                    # excuse me what the f why doesn't this update running config sometimes
                     subprocess.run(
                         ['virsh', '-c', 'lxc+ssh://root@' + instance.host.hostname + '/', 'net-update',
                          settings.LIBVIRT_NET, 'add', 'ip-dhcp-host', ElementTree.tostring(host_sub).decode('utf8')])
                     # Generate and set perms on SSH key
-                    privkey_path = '/home/' + instance.owner.username + '/.ssh/' + str(instance.uuid)
-                    subprocess.run(['ssh-keygen', '-N', '', '-f', privkey_path])
                     unix_user = pwd.getpwnam(instance.owner.username)
+                    ssh_path = os.path.join(unix_user.pw_dir, '.ssh')
+                    privkey_path = os.path.join(ssh_path, str(instance.uuid))
+                    if not os.path.exists(ssh_path):
+                        os.mkdir(ssh_path, 0o700)
+                        os.chown(ssh_path, unix_user.pw_uid, unix_user.pw_gid)
+                    subprocess.run(['ssh-keygen', '-N', '', '-f', privkey_path])
                     os.chown(privkey_path, unix_user.pw_uid, unix_user.pw_gid)
                     os.chmod(privkey_path, 0o600)
                     os.chown(privkey_path + '.pub', unix_user.pw_uid, unix_user.pw_gid)
@@ -118,10 +125,14 @@ class VirtualMachineForm(forms.ModelForm):
                         os.mkdir(instance_ssh_path)
                     shutil.copy(privkey_path + '.pub', authkeys_path)
                     instance.save()
+                    # Overwrite hostname on target
+                    with open(os.path.join(instance.root_path, 'etc', 'hostname'), 'w') as f:
+                        f.write(instance.hostname)
                 except Exception as e:
                     client.captureMessage("Failed to create VM: {}".format(e))
                     with open("/exc", 'w') as f:  # le hacc
                         traceback.print_exc(file=f)
+                    traceback.print_exc()
                     instance.delete()
                     return None
             elif not self.old_hostname == hostname:
@@ -134,7 +145,3 @@ class VirtualMachineForm(forms.ModelForm):
     class Meta:
         model = VirtualMachine
         fields = ["name", "description", "owner", "users", "site", "host", "is_template"]
-
-
-def get_named_elements(xml_tree, element_name):
-    return [e for e in xml_tree if e.tag == element_name]

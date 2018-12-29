@@ -143,12 +143,12 @@ def delete_view(request, vm_id):
                 vm.domain.undefine()
                 subprocess.run(['rm', '-rf', os.path.dirname(vm.root_path)])
                 # Remove host from DHCP
-                net_xml = ElementTree.fromstring(vm.host.connection.networkLookupByName(settings.LIBVIRT_NET).XMLDesc())
-                host_entry = next(filter(lambda x: True if x.get('host', '') == vm.internal_name else False,
-                                         net_xml.find('ip').find('dhcp').findall('host')))
+                # net_xml = ElementTree.fromstring(vm.host.connection.networkLookupByName(settings.LIBVIRT_NET).XMLDesc())
+                # host_entry = next(filter(lambda x: True if x.get('host', '') == vm.internal_name else False,
+                #                          net_xml.find('ip').find('dhcp').findall('host')))
                 subprocess.run(
-                    ['virsh', '-c', 'lxc+ssh://root@' + vm.host.hostname + '/', 'net-update', settings.libvirt_net,
-                     'delete', 'ip-dhcp-host', ElementTree.tostring(host_entry).decode('utf8')])
+                    ['virsh', '-c', 'lxc+ssh://root@' + vm.host.hostname + '/', 'net-update', settings.LIBVIRT_NET,
+                     'delete', 'ip-dhcp-host', "<host name='{}' />".format(vm.internal_name)])
                 # TODO delete SSH key from user homedir
                 vm.delete()
                 messages.success(request, "Virtual machine deleted!")

@@ -31,6 +31,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.memory = 1024 # the default of 512 gives us a OOM during setup.
     # vb.gui = true
   end
+  config.vm.provider :libvirt do |libvirt|
+      libvirt.cpus = 4
+      libvirt.memory = 1024
+  end
   config.bindfs.default_options = {
     force_user:   'vagrant',
     force_group:  'vagrant',
