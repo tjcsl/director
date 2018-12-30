@@ -43,7 +43,8 @@ def create_user(request, username):
     )
 
     if not Group.objects.filter(id=user.id).exists():
-        group = Group.objects.create(id=user.id, service=False, name=user.username)
+        group = Group.objects.create(
+            id=user.id, service=False, name=user.username)
         group.users.add(user.pk)
         group.save()
 
@@ -73,14 +74,15 @@ def create_webdocs(user, batch=False, purpose="user"):
     )
     create_site_users(site)
 
-    Domain.objects.create(site=site, domain="{}.sites.tjhsst.edu".format(username))
+    Domain.objects.create(
+        site=site, domain="{}.sites.tjhsst.edu".format(username))
 
     if not isinstance(user, str):
         site.group.users.add(user)
 
-    make_site_dirs(site)
-    create_config_files(site)
+    make_site_dirs.delay(site.pk)
+    create_config_files.delay(site.pk)
     if not batch:
         flush_permissions()
-        reload_nginx_config()
+        reload_nginx_config.delay()
     return site

@@ -16,11 +16,14 @@ class Command(BaseCommand):
         mappings = {
         }
         for name in mappings:
-            s = Site(name=name, domain="{}.sites.tjhsst.edu".format(name), category="php", purpose=mappings[name])
+            s = Site(name=name, domain="{}.sites.tjhsst.edu".format(
+                name), category="php", purpose=mappings[name])
             create_site_users(s)
-            make_site_dirs(s)
-            create_config_files(s)
-            shutil.move("/web_old/{}/public/".format(s.name), "{}public".format(s.path))
-            os.system("chown -R {}:{} {}".format(s.user.username, s.group.name, s.path))
+            make_site_dirs.delay(s.pk)
+            create_config_files.delay(s.pk)
+            shutil.move("/web_old/{}/public/".format(s.name),
+                        "{}public".format(s.path))
+            os.system(
+                "chown -R {}:{} {}".format(s.user.username, s.group.name, s.path))
             self.stdout.write("Created Site: {}".format(s))
         reload_services()

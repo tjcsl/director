@@ -7,8 +7,10 @@ import shlex
 from subprocess import Popen, check_output, PIPE, CalledProcessError
 from threading import Timer
 
-from .models import Site
+from .models import Site, Process
 from ..users.models import User, Group
+
+from celery import shared_task
 
 from django.conf import settings
 from django.utils.crypto import get_random_string
@@ -21,11 +23,13 @@ def create_site_users(site):
     try:
         user = User.objects.get(username="site_{}".format(site.name))
     except User.DoesNotExist:
-        user = User.objects.create(id=get_next_id(), service=True, username="site_{}".format(site.name), email="site_{}@tjhsst.edu".format(site.name))
+        user = User.objects.create(id=get_next_id(), service=True, username="site_{}".format(
+            site.name), email="site_{}@tjhsst.edu".format(site.name))
     try:
         group = Group.objects.get(name="site_{}".format(site.name))
     except Group.DoesNotExist:
-        group = Group.objects.create(id=user.id, service=True, name="site_{}".format(site.name))
+        group = Group.objects.create(
+            id=user.id, service=True, name="site_{}".format(site.name))
         group.users.add(user)
         group.save()
     site.user = user
@@ -53,18 +57,24 @@ def get_next_id():
     return User.objects.filter(service=True).order_by('-id')[0].id + 1
 
 
-def make_site_dirs(site):
+@shared_task
+def make_site_dirs(site_pk):
+    site = Site.objects.get(pk=site_pk)
     for i in ["", "public", "private"]:
         path = os.path.join(site.path, i)
         if not os.path.exists(path):
             os.makedirs(path)
         os.chown(path, site.user.id, site.group.id)
-        os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISGID)
+        os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |
+                 stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISGID)
     Popen(["/usr/bin/setfacl", "-m", "u:www-data:rx", site.path])
-    Popen(["/usr/bin/setfacl", "-m", "u:www-data:rx", os.path.join(site.path, "public")])
+    Popen(["/usr/bin/setfacl", "-m", "u:www-data:rx",
+           os.path.join(site.path, "public")])
 
 
-def create_config_files(site):
+@shared_task
+def create_config_files(site_pk):
+    site = Site.objects.get(pk=site_pk)
     if not site.custom_nginx:
         with open("/etc/nginx/director.d/{}.conf".format(site.name), "w+") as f:
             f.write(render_to_string("config/nginx.conf", {"site": site}))
@@ -72,10 +82,12 @@ def create_config_files(site):
         with open("/etc/php/7.0/fpm/pool.d/{}.conf".format(site.name), "w+") as f:
             f.write(render_to_string("config/phpfpm.conf", {"site": site}))
     elif site.category == "dynamic" and hasattr(site, "process"):
-        create_process_config(site.process)
+        create_process_config.delay(site.process.pk)
 
 
-def delete_php_config(site):
+@shared_task
+def delete_php_config(site_pk):
+    site = Site.objects.get(pk=site_pk)
     filename = "/etc/php/7.0/fpm/pool.d/{}.conf".format(site.name)
     if os.path.exists(filename):
         os.remove(filename)
@@ -87,9 +99,11 @@ def write_new_index_file(site):
         f.write(render_to_string("config/index.html", {"site": site}))
 
 
+@shared_task
 def delete_site_files(site):
     """Deletes all site content and configuration files."""
-    files = ["/etc/nginx/director.d/{}.conf", "/etc/php/7.0/fpm/pool.d/{}.conf", "/etc/supervisor/director.d/{}.conf"]
+    files = ["/etc/nginx/director.d/{}.conf",
+             "/etc/php/7.0/fpm/pool.d/{}.conf", "/etc/supervisor/director.d/{}.conf"]
     files = [x.format(site.name) for x in files]
     for f in files:
         if os.path.isfile(f):
@@ -103,12 +117,17 @@ def delete_site_files(site):
         client.captureException()
 
 
-def create_process_config(process):
+@shared_task
+def create_process_config(process_pk):
+    process = Process.objects.get(pk=process_pk)
     with open("/etc/supervisor/director.d/{}.conf".format(process.site.name), "w+", encoding="utf-8") as f:
-        f.write(render_to_string("config/supervisor.conf", {"process": process}))
+        f.write(render_to_string(
+            "config/supervisor.conf", {"process": process}))
 
 
-def delete_process_config(process):
+@shared_task
+def delete_process_config(process_pk):
+    process = Process.objects.get(pk=process_pk)
     filename = "/etc/supervisor/director.d/{}.conf".format(process.site.name)
     if os.path.isfile(filename):
         os.remove(filename)
@@ -153,25 +172,26 @@ def reload_services(site=None):
     a = True
     b = True
     c = True
-    a = reload_nginx_config()
+    a = reload_nginx_config.delay()
     if site is None:
-        a = reload_nginx_config()
-        b = reload_php_fpm()
-        c = update_supervisor()
+        a = reload_nginx_config.delay()
+        b = reload_php_fpm.delay()
+        c = update_supervisor.delay()
         return a and b and c
     if site.category == "static":
         return a
     if site.category == "php":
-        b = reload_php_fpm()
+        b = reload_php_fpm.delay()
         return a and b
     if site.category == "dynamic" or site.category == "vm":
-        c = update_supervisor()
+        c = update_supervisor.delay()
         return a and c
     return a and b and c
 
 
 def root_exec(cmd):
-    p = Popen(shlex.split(cmd) if isinstance(cmd, str) else cmd, stdout=PIPE, stderr=PIPE)
+    p = Popen(shlex.split(cmd) if isinstance(cmd, str)
+              else cmd, stdout=PIPE, stderr=PIPE)
     output = p.stdout.read()
     error = p.stderr.read()
     if p.wait() == 0:
@@ -184,18 +204,21 @@ def root_exec(cmd):
         return False
 
 
+@shared_task
 def update_supervisor():
     a = root_exec(["supervisorctl", "reread"])
     b = root_exec(["supervisorctl", "update"])
     return a and b
 
 
+@shared_task
 def reload_php_fpm():
     if root_exec(["systemctl", "reload", "php7.0-fpm"]):
         return root_exec(["systemctl", "restart", "php7.0-fpm"])
     return False
 
 
+@shared_task
 def reload_nginx_config():
     if root_exec(["/usr/sbin/nginx", "-t"]):
         return root_exec(["/usr/sbin/nginx", "-s", "reload"])
@@ -251,10 +274,12 @@ def generate_ssh_key(site, overwrite=True):
     if os.path.isfile(keypath + ".pub"):
         os.remove(keypath + ".pub")
 
-    output = run_as_site(site, ["/usr/bin/ssh-keygen", "-t", "rsa", "-b", "4096", "-N", "", "-f", keypath])
+    output = run_as_site(
+        site, ["/usr/bin/ssh-keygen", "-t", "rsa", "-b", "4096", "-N", "", "-f", keypath])
 
     if not output[0] == 0:
-        raise IOError("Could not generate RSA keys ({}) - {} - {}".format(output[0], output[1], output[2]))
+        raise IOError(
+            "Could not generate RSA keys ({}) - {} - {}".format(output[0], output[1], output[2]))
 
     os.chown(keypath, site.user.id, site.group.id)
     os.chown(keypath + ".pub", site.user.id, site.group.id)
@@ -265,7 +290,7 @@ def generate_ssh_key(site, overwrite=True):
 
 def do_git_pull(site):
     """Perform a git pull on a certain site."""
-    fix_permissions(site)
+    fix_permissions.delay(site)
     CMD = "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}"
     output = run_as_site(site, "git pull", cwd=site.git_path, env={
         "GIT_SSH_COMMAND": CMD.format(os.path.join(site.private_path, ".ssh/id_rsa")),
@@ -279,7 +304,8 @@ def do_git_pull(site):
 def get_latest_commit(site):
     """Get the latest commit in the git repository inside the site."""
     try:
-        output = run_as_site(site, ["git", "log", "-n", "1"], cwd=site.git_path)
+        output = run_as_site(
+            site, ["git", "log", "-n", "1"], cwd=site.git_path)
     except Exception:
         client.captureException()
         return "Error"
@@ -288,8 +314,10 @@ def get_latest_commit(site):
     return output[1]
 
 
-def fix_permissions(site):
+@shared_task
+def fix_permissions(site_pk):
     """Makes sure that all files are owned by the site user and the site group has access."""
+    site = Site.objects.get(pk=site_pk)
     for root, dirs, files in os.walk(site.path):
         dirs[:] = [d for d in dirs if not d == ".ssh"]
         for f in files + dirs:
@@ -303,7 +331,8 @@ def fix_permissions(site):
             if stat.S_ISLNK(st.st_mode):
                 pass
             elif stat.S_ISDIR(st.st_mode):
-                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
+                os.chmod(path, st.st_mode | stat.S_IRGRP |
+                         stat.S_IWGRP | stat.S_IXGRP)
             else:
                 os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
 
@@ -316,7 +345,8 @@ def list_executable_files(path, level):
     for root, dirs, files in os.walk(path):
         # ignore hidden files and folders, ignore common npm install path
         files = [f for f in files if not f[0] == "."]
-        dirs[:] = [d for d in dirs if not d[0] == "." and not d == "node_modules"]
+        dirs[:] = [d for d in dirs if not d[0]
+                   == "." and not d == "node_modules"]
 
         # ignore files in virtual environments
         if "pip-selfcheck.json" in files:
@@ -339,7 +369,7 @@ def list_executable_files(path, level):
 def clean_site_type(instance):
     """Destroy any old site configuration caused by changing site types."""
     if instance.category != "php":
-        delete_php_config(instance)
+        delete_php_config.delay(instance.pk)
 
     if instance.category != "dynamic" and hasattr(instance, "process"):
         instance.process.delete()
@@ -367,7 +397,7 @@ def generate_ssl_certificate(domain, renew=False):
 
     if success:
         if not renew:
-            create_config_files(domain.site)
+            create_config_files.delay(domain.site.pk)
             reload_services(domain.site)
     else:
         client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name), extra={

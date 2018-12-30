@@ -25,6 +25,10 @@ timedatectl set-timezone America/New_York
 DB_PASS='web3'
 NSS_PASS='web3'
 
+wget -O - "https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc" | sudo apt-key add -
+wget -O - "https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc" | sudo apt-key add -
+echo "deb https://dl.bintray.com/rabbitmq/debian xenial main" | tee /etc/apt/sources.list.d/bintray.rabbitmq.list
+echo "deb https://packages.erlang-solutions.com/ubuntu xenial contrib" | tee /etc/apt/sources.list.d/erlang.list
 apt-get update
 apt-get upgrade -y
 
@@ -37,6 +41,10 @@ apt-get install -y python3-libvirt libvirt lxc pkg-config libvirt-dev
 apt-get install -y sudo python python-dev python3 python3-dev python3-pip virtualenv libnss-pgsql2 nodejs supervisor
 apt-get install -y postgresql postgresql-contrib libpq-dev nginx
 apt-get install -y libmysqlclient-dev mysql-client-core-5.7
+apt-get install -y rabbitmq-server
+rabbitmqctl add_user director director
+rabbitmqctl add_vhost director
+rabbitmqctl set_permissions -p director director ".*" ".*" ".*"
 
 npm install -g nodemon
 
@@ -89,6 +97,7 @@ sudo -u postgres psql -c "ALTER USER nss WITH PASSWORD '$NSS_PASS';"
 useradd www-data || echo "www-data user already exists"
 
 mkdir -p /web
+pip3 install -U pip
 
 sudo -i -u vagrant bash <<EOF
 cd ~/director
@@ -96,6 +105,7 @@ if [ ! -d "venv" ]; then
     virtualenv --python python3 venv --system-site-packages
 fi
 source venv/bin/activate
+pip3 install -U pip
 pip3 install -U -r requirements.txt
 
 ./manage.py migrate --no-input

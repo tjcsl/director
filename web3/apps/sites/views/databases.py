@@ -24,9 +24,11 @@ def create_database_view(request, site_id):
         raise PermissionDenied
     if request.method == "POST":
         try:
-            form = DatabaseForm(request.user, request.POST, instance=site.database)
+            form = DatabaseForm(request.user, request.POST,
+                                instance=site.database)
         except Site.database.RelatedObjectDoesNotExist:
-            form = DatabaseForm(request.user, request.POST, initial={"site": site.id})
+            form = DatabaseForm(request.user, request.POST,
+                                initial={"site": site.id})
         if form.is_valid():
             instance = form.save()
             if instance:
@@ -83,7 +85,8 @@ def sql_database_view(request, site_id):
         if not settings.MYSQL_DB_HOST:
             return HttpResponse("Director has been improperly configured! (Missing MYSQL_DB_HOST)", content_type="text/plain")
 
-        ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql], env={"SHELL": "/usr/sbin/nologin"})
+        ret, out, err = run_as_site(site, ["psql", str(
+            site.database), "-c", sql], env={"SHELL": "/usr/sbin/nologin"})
     return HttpResponse(out + err, content_type="text/plain")
 
 
@@ -134,7 +137,8 @@ def load_database_view(request, site_id):
         messages.success(request, "Database import completed!")
     else:
         messages.error(request, "Database import failed!")
-        client.captureMessage("Database import failed, ({}) - {} - {}".format(proc.returncode, out.decode("utf-8"), err.decode("utf-8")))
+        client.captureMessage("Database import failed, ({}) - {} - {}".format(
+            proc.returncode, out.decode("utf-8"), err.decode("utf-8")))
 
     return redirect("info_site", site_id=site.id)
 
@@ -153,18 +157,21 @@ def dump_database_view(request, site_id):
         return redirect("info_site", site_id=site.id)
 
     if site.database.category == "postgresql":
-        ret, out, err = run_as_site(site, ["pg_dump", str(site.database)], timeout=60)
+        ret, out, err = run_as_site(
+            site, ["pg_dump", str(site.database)], timeout=60)
     elif site.database.category == "mysql":
         ret, out, err = run_as_site(
             site, ["mysqldump", "-u", site.database.username, "--password={}".format(site.database.password), "-h", settings.MYSQL_DB_HOST, site.database.db_name], timeout=60)
 
     if ret == 0:
         resp = HttpResponse(out, content_type="application/force-download")
-        resp["Content-Disposition"] = "attachment; filename=dump_{}_{}.sql".format(site.name, datetime.datetime.now().strftime("%m%d%Y"))
+        resp["Content-Disposition"] = "attachment; filename=dump_{}_{}.sql".format(
+            site.name, datetime.datetime.now().strftime("%m%d%Y"))
         return resp
     else:
         messages.error(request, "Failed to export database!")
-        client.captureMessage("Database export failed, ({}) - {} - {}".format(ret, out, err))
+        client.captureMessage(
+            "Database export failed, ({}) - {} - {}".format(ret, out, err))
 
     return redirect("info_site", site_id=site.id)
 
@@ -185,11 +192,11 @@ def delete_database_view(request, site_id):
             return redirect("delete_database", site_id=site_id)
         if site.database:
             site.database.delete()
-            create_config_files(site)
+            create_config_files.delay(site.pk)
             if site.category == "php":
-                reload_php_fpm()
+                reload_php_fpm.delay()
             elif site.category == "dynamic":
-                update_supervisor()
+                update_supervisor.delay()
             messages.success(request, "Database deleted!")
         else:
             messages.error(request, "Database doesn't exist!")
@@ -218,11 +225,11 @@ def regenerate_database_view(request, site_id):
         flag = change_mysql_password(site.database)
 
     if flag:
-        create_config_files(site)
+        create_config_files.delay(site.pk)
         if site.category == "php":
-            reload_php_fpm()
+            reload_php_fpm.delay()
         elif site.category == "dynamic":
-            update_supervisor()
+            update_supervisor.delay()
         messages.success(request, "Database credentials regenerated!")
     else:
         messages.error(request, "Failed to regenerate database credentials!")

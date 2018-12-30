@@ -267,7 +267,7 @@ def editor_upload_view(request, site_id):
             for chunk in f.chunks():
                 dest.write(chunk)
 
-    fix_permissions(site)
+    fix_permissions.delay(site.pk)
 
     return JsonResponse({"success": True})
 
@@ -330,8 +330,8 @@ def editor_process_view(request, site_id):
     else:
         proc = Process.objects.create(site=site, path=path)
 
-    create_process_config(proc)
-    update_supervisor()
+    create_process_config.delay(proc.pk)
+    update_supervisor.delay()
 
     return JsonResponse({"success": True})
 
@@ -400,7 +400,7 @@ def edit_nginx_view(request, site_id):
                     f.write(contents)
                 return JsonResponse({"error": "Invalid nginx configuration!"})
             else:
-                reload_nginx_config()
+                reload_nginx_config.delay()
                 return JsonResponse({"success": "Nginx configuration updated!"})
         else:
             return JsonResponse({"error": "You must have a nginx configuration!"})
@@ -436,13 +436,13 @@ def site_type_view(request, site_id):
     site.category = request.POST.get("type")
     site.save()
 
-    create_config_files(site)
+    create_config_files.delay(site.pk)
     if site.category != "dynamic" and hasattr(site, "process"):
         site.process.delete()
 
     if site.category == "php":
-        reload_php_fpm()
+        reload_php_fpm.delay()
 
-    reload_nginx_config()
+    reload_nginx_config.delay()
 
     return JsonResponse({"success": True})

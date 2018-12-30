@@ -35,7 +35,8 @@ def settings_view(request):
         messages.success(request, "Your email address has been updated!")
         return redirect("user_settings")
 
-    github_info = get_github_info(request) if request.user.github_token else None
+    github_info = get_github_info(
+        request) if request.user.github_token else None
     context = {
         "groups": Group.objects.filter(users__id=request.user.id).order_by("name"),
         "github_username": github_info.get("login", None) if github_info else None
@@ -50,8 +51,10 @@ def create_view(request):
         if form.is_valid():
             user = form.save()
             if not user.full_name:
-                profile = request.user.api_request("profile/{}".format(user.username))
-                user.full_name = profile.get("common_name", get_full_name(user.username))
+                profile = request.user.api_request(
+                    "profile/{}".format(user.username))
+                user.full_name = profile.get(
+                    "common_name", get_full_name(user.username))
                 user.save()
             messages.success(request, "User {} created!".format(user.username))
             return redirect("user_management")
@@ -77,7 +80,8 @@ def edit_view(request, user_id):
                 if ldap_full_name:
                     user.full_name = ldap_full_name
                 else:
-                    profile = request.user.api_request("profile/{}".format(user.username))
+                    profile = request.user.api_request(
+                        "profile/{}".format(user.username))
                     user.full_name = profile.get("common_name", "")
                 user.save()
             messages.success(request, "User {} edited!".format(user.username))
@@ -109,7 +113,8 @@ def create_webdocs_view(request):
             accepted = request.POST.get("agreement", False)
 
             if not accepted:
-                messages.error(request, "You must accept the agreement to create a webdocs!")
+                messages.error(
+                    request, "You must accept the agreement to create a webdocs!")
                 return redirect("create_webdocs")
 
             site = create_webdocs(request.user, purpose="user")
@@ -129,7 +134,8 @@ def create_webdocs_view(request):
         if no_users == "false":
             no_users = False
 
-        students = [x.strip() for x in request.POST.get("students", "").split("\n")]
+        students = [x.strip()
+                    for x in request.POST.get("students", "").split("\n")]
         students = [x for x in students if x]
 
         success = []
@@ -139,7 +145,8 @@ def create_webdocs_view(request):
             if not no_users:
                 user = create_user(request, username)
             if no_users or user:
-                site = create_webdocs(username if no_users else user, batch=True, purpose=("legacy" if import_legacy else "user"))
+                site = create_webdocs(username if no_users else user, batch=True, purpose=(
+                    "legacy" if import_legacy else "user"))
                 if site:
                     success.append(username)
                     continue

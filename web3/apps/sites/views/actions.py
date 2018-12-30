@@ -23,7 +23,7 @@ def config_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    create_config_files(site)
+    create_config_files.delay(site.pk)
     reloaded = reload_services()
 
     if reloaded:
@@ -33,21 +33,15 @@ def config_view(request, site_id):
     return redirect("info_site", site_id=site_id)
 
 
-def fix_permissions_threaded(site):
-    t = threading.Thread(target=fix_permissions, args=(site,))
-    t.setDaemon(True)
-    t.start()
-
-
 @login_required
 def permission_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    make_site_dirs(site)
+    make_site_dirs.delay(site.pk)
 
-    fix_permissions_threaded(site)
+    fix_permissions.delay(site.pk)
 
     messages.success(request, "File permissions regenerated!")
     return redirect("info_site", site_id=site.id)
@@ -92,7 +86,7 @@ def switch_site_php(site):
         site.save()
 
         clean_site_type(site)
-        create_config_files(site)
+        create_config_files.delay(site.pk)
         reload_services()
     return (True, None)
 
@@ -109,8 +103,8 @@ def provision_mysql_database(site):
         )
         if create_mysql_database(db):
             db.save()
-            create_config_files(site)
-            reload_php_fpm()
+            create_config_files.delay(site.pk)
+            reload_php_fpm.delay()
         else:
             return (False, "Failed to create MySQL database!")
     return (True, None)
@@ -125,7 +119,8 @@ PACKAGES = collections.OrderedDict([
         "actions": [
             ("function", switch_site_php, "Switch site type to PHP"),
             ("function", provision_mysql_database, "Provision a MySQL database"),
-            ("terminal", "/scripts/wordpress.sh", "Install Wordpress in the public folder")
+            ("terminal", "/scripts/wordpress.sh",
+             "Install Wordpress in the public folder")
         ]
     }),
     ("drupal", {
@@ -136,7 +131,8 @@ PACKAGES = collections.OrderedDict([
         "actions": [
             ("function", switch_site_php, "Switch site type to PHP"),
             ("function", provision_mysql_database, "Provision a MySQL database"),
-            ("terminal", "/scripts/drupal.sh", "Install Drupal in the public folder")
+            ("terminal", "/scripts/drupal.sh",
+             "Install Drupal in the public folder")
         ]
     }),
     ("joomla", {
@@ -204,11 +200,14 @@ def git_setup_view(request, site_id):
             messages.error(request, "Failed to detect the remote repository!")
         else:
             # Try to identify which remote is the GitHub repository.
-            out = [[y for y in x.replace("\t", " ").split(" ") if y] for x in out.split("\n") if x]
+            out = [[y for y in x.replace("\t", " ").split(
+                " ") if y] for x in out.split("\n") if x]
             out = [x[1] for x in out if x[2] == "(fetch)"]
-            out = [x for x in out if x.startswith("git@github.com") or x.startswith("https://github.com")]
+            out = [x for x in out if x.startswith(
+                "git@github.com") or x.startswith("https://github.com")]
             if not out:
-                messages.error(request, "Did not find any remote repositories to pull from!")
+                messages.error(
+                    request, "Did not find any remote repositories to pull from!")
             else:
                 out = out[0]
                 if out.startswith("git@github.com"):
@@ -216,9 +215,11 @@ def git_setup_view(request, site_id):
                 else:
                     a = out.rsplit("/", 2)
                     out = "{}/{}".format(a[-2], a[-1].rsplit(".", 1)[0])
-                repo_info = request.user.github_api_request("/repos/{}".format(out))
+                repo_info = request.user.github_api_request(
+                    "/repos/{}".format(out))
                 if repo_info is not None:
-                    resp = request.user.github_api_request("/repos/{}/keys".format(out))
+                    resp = request.user.github_api_request(
+                        "/repos/{}/keys".format(out))
                     if resp is not None:
                         # Delete all keys from Director that do not match the current key.
                         ssh_rsa, existing_key, existing_host = site.public_key.strip().split(" ")
@@ -228,7 +229,8 @@ def git_setup_view(request, site_id):
                                 key_exists = True
                                 continue
                             if i["title"] == "Director":
-                                request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
+                                request.user.github_api_request(
+                                    "/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
 
                         # If the key does not already exist in GitHub, add it.
                         if not key_exists:
@@ -238,7 +240,8 @@ def git_setup_view(request, site_id):
                             resp = True
                         if resp:
                             # If the webhook does not exist, create it.
-                            resp = request.user.github_api_request("/repos/{}/hooks".format(out))
+                            resp = request.user.github_api_request(
+                                "/repos/{}/hooks".format(out))
                             if resp is not None:
                                 webhook_url = request.build_absolute_uri(reverse("git_webhook",
                                                                                  kwargs={"site_id": site_id})).replace("http://", "https://")
@@ -254,18 +257,24 @@ def git_setup_view(request, site_id):
                                         },
                                         "active": True
                                     })
-                                messages.success(request, "The integration was set up!")
+                                messages.success(
+                                    request, "The integration was set up!")
                             else:
-                                messages.error(request, "Failed to retrieve repository webhooks!")
+                                messages.error(
+                                    request, "Failed to retrieve repository webhooks!")
                         else:
-                            messages.error(request, "Failed to add new deploy key!")
+                            messages.error(
+                                request, "Failed to add new deploy key!")
                     else:
                         if not repo_info["permissions"]["admin"]:
-                            messages.error(request, "You do not have permission to add deploy keys. Ask the owner of the repository to set this integration up for you.")
+                            messages.error(
+                                request, "You do not have permission to add deploy keys. Ask the owner of the repository to set this integration up for you.")
                         else:
-                            messages.error(request, "Failed to retrieve deploy keys!")
+                            messages.error(
+                                request, "Failed to retrieve deploy keys!")
                 else:
-                    messages.error(request, "Failed to retrieve repository information from GitHub! Do you have access to this repository?")
+                    messages.error(
+                        request, "Failed to retrieve repository information from GitHub! Do you have access to this repository?")
 
     return redirect(reverse("info_site", kwargs={"site_id": site.id}) + "#github-automatic")
 
@@ -280,7 +289,8 @@ def set_git_path_view(request, site_id):
         path = request.POST.get("path", site.git_path)
 
         if not path.startswith(site.path) or not os.path.isdir(path):
-            messages.error(request, "You entered a invalid or nonexistent path!")
+            messages.error(
+                request, "You entered a invalid or nonexistent path!")
             return redirect("set_git_path", site_id=site_id)
 
         site.repo_path = path

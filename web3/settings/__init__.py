@@ -53,6 +53,10 @@ PASSWORD_AUTH = False
 # Let's Encrypt Settings
 LE_WEBROOT = "/var/www/certbot/"
 
+CELERY_BROKER_URL = 'pyamqp://director:director@localhost/director'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_IMPORTS = ['web3.apps.sites.helpers']
+
 try:
     from .secret import *  # noqa
 except ImportError:
@@ -71,6 +75,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
     'django_extensions',
     'social_django',
     'simple_history',
@@ -81,7 +86,7 @@ INSTALLED_APPS = [
     'web3.apps.vms',
     'web3.apps.feedback',
     'web3.apps.request',
-    'web3.apps.docs'
+    'web3.apps.docs',
 ]
 
 MIDDLEWARE = [
@@ -207,7 +212,8 @@ AUTHENTICATION_BACKENDS = (
 
 AUTH_USER_MODEL = "users.User"
 
-SOCIAL_AUTH_USER_FIELDS = ['username', 'full_name', 'email', 'id', 'is_superuser', 'is_staff']
+SOCIAL_AUTH_USER_FIELDS = ['username', 'full_name',
+                           'email', 'id', 'is_superuser', 'is_staff']
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 

@@ -50,7 +50,8 @@ def edit_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
     if request.method == "POST":
-        current_members = list(site.group.users.filter(service=False).values_list('id', flat=True))
+        current_members = list(site.group.users.filter(
+            service=False).values_list('id', flat=True))
         form = SiteForm(request.POST, instance=site, user=request.user)
         if form.is_valid():
             site = form.save()
@@ -103,17 +104,20 @@ def modify_process_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
     if site.category != "dynamic":
-        messages.error(request, "You must set your site type to dynamic before adding a process.")
+        messages.error(
+            request, "You must set your site type to dynamic before adding a process.")
         return redirect("info_site", site_id=site_id)
     if request.method == "POST":
         try:
-            form = ProcessForm(request.user, request.POST, instance=site.process)
+            form = ProcessForm(request.user, request.POST,
+                               instance=site.process)
         except Site.process.RelatedObjectDoesNotExist:
-            form = ProcessForm(request.user, request.POST, initial={"site": site.id})
+            form = ProcessForm(request.user, request.POST,
+                               initial={"site": site.id})
         if form.is_valid():
             proc = form.save()
-            create_process_config(proc)
-            update_supervisor()
+            create_process_config.delay(proc.pk)
+            update_supervisor.delay()
             messages.success(request, "Process modified!")
             return redirect("info_site", site_id=proc.site.id)
     else:
@@ -150,8 +154,8 @@ def modify_vm_view(request, site_id):
             new_vm.site = site
             new_vm.save()
 
-        create_config_files(site)
-        reload_nginx_config()
+        create_config_files.delay(site.pk)
+        reload_nginx_config.delay()
 
         messages.success(request, "Virtual machine successfully linked!")
         return redirect("info_site", site_id=site.id)
@@ -159,7 +163,8 @@ def modify_vm_view(request, site_id):
     if request.user.is_superuser:
         vms = VirtualMachine.objects.all().order_by("name")
     else:
-        vms = VirtualMachine.objects.filter(users=request.user).order_by("name")
+        vms = VirtualMachine.objects.filter(
+            users=request.user).order_by("name")
 
     context = {
         "site": site,
