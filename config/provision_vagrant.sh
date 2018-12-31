@@ -37,14 +37,14 @@ apt-get install -y htop
 apt-get install -y php-fpm
 
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-apt-get install -y python3-libvirt libvirt lxc pkg-config libvirt-dev
+apt-get install -y python3-libvirt lxc pkg-config libvirt-dev
 apt-get install -y sudo python python-dev python3 python3-dev python3-pip virtualenv libnss-pgsql2 nodejs supervisor
 apt-get install -y postgresql postgresql-contrib libpq-dev nginx
 apt-get install -y libmysqlclient-dev mysql-client-core-5.7
 apt-get install -y rabbitmq-server
-rabbitmqctl add_user director director
-rabbitmqctl add_vhost director
-rabbitmqctl set_permissions -p director director ".*" ".*" ".*"
+rabbitmqctl add_user director director || echo "user director already exists"
+rabbitmqctl add_vhost director || echo "vhost director already exists"
+rabbitmqctl set_permissions -p director director ".*" ".*" ".*" || echo "permissions already set"
 
 npm install -g nodemon
 
@@ -163,7 +163,7 @@ chsh -s '/bin/zsh' || true
 chsh -s '/bin/zsh' vagrant || true
 
 # setup passwordless ssh to localhost
-ssh-keygen -f /root/.ssh/id_rsa -P '' || true
+ssh-keygen -f /root/.ssh/id_rsa -N '' || true
 cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
 cat /home/vagrant/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 # get host key in known_hosts

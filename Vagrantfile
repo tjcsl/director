@@ -12,7 +12,7 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # config.vm.box = "ubuntu/xenial64"
-  config.vm.box = "default/ubuntu1604"
+  config.vm.box = "generic/ubuntu1604"
   config.vm.boot_timeout = 1000
   # config.vm.network "public_network", bridge: devconfig["network_interface"]
   config.vm.network "forwarded_port", guest: 8000, host: 8000
