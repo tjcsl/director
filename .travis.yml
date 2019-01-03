@@ -1,14 +1,17 @@
 language: python
 python:
     - '3.5'
-sudo: false
+sudo: required
 cache:
     directories:
         - "$HOME/.cache/pip"
         - "node/node_modules"
 services:
     - postgresql
+before_install:
+    - sudo apt-get -y update
 install:
+    - sudo apt-get -y install libvirt-dev
     - pip install -U pip flake8 -r requirements.txt
     - nvm install 6
     - cd node; npm install; cd ..
