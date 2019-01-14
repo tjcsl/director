@@ -26,10 +26,10 @@ python-social-auth==0.3.6
 python3-openid==3.1.0
 pytz==2018.5
 raven==6.9.0
-requests==2.18.4
+requests==2.20.0
 requests-oauthlib==0.8.0
 six==1.11.0
 social-auth-app-django==1.2.0
 social-auth-core==1.4.0
 sqlparse==0.2.4
-urllib3==1.22
+urllib3==1.23
