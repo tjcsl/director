@@ -21,7 +21,7 @@ class PAMAuthenticationBackend(object):
             return None
 
         # remove all non-alphanumeric characters
-        username = re.sub("\W", "", username)
+        username = re.sub(r"\W", "", username)
 
         p = pam.pam()
         if p.authenticate(username, password, service="sshd"):
