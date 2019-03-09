@@ -42,7 +42,8 @@ module.exports = {
                         SITE_ROOT: data.site.homedir,
                         SITE_NAME: data.site.name,
                         SITE_PURPOSE: data.site.purpose,
-                        SITE_URL: data.site.url
+                        SITE_URL: data.site.url,
+                        LANG: "en-US.UTF-8"
                     }
                 });
             }
