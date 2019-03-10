@@ -13,7 +13,7 @@ from raven.contrib.django.raven_compat.models import client
 
 from ..helpers import run_as_site, create_config_files, demote, reload_php_fpm, update_supervisor
 from ..database_helpers import change_postgres_password, change_mysql_password, list_tables, get_sql_version
-from ..models import Site, User
+from ..models import Site, User, Database
 from ..forms import DatabaseForm
 
 
@@ -175,7 +175,9 @@ def delete_database_view(request, site_id):
     if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
         raise PermissionDenied
 
-    if not site.database:
+    try:
+        site.database
+    except Database.DoesNotExist:
         messages.error(request, "No database provisioned!")
         return redirect("info_site", site_id=site.id)
 
