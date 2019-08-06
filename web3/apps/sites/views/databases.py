@@ -1,31 +1,23 @@
 import datetime
+from subprocess import PIPE, Popen
 
-from subprocess import Popen, PIPE
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.core.exceptions import PermissionDenied
-from django.contrib import messages
-from django.conf import settings
-from django.http import HttpResponse
-from django.views.decorators.http import require_http_methods
 from raven.contrib.django.raven_compat.models import client
 
-from ..helpers import (
-    run_as_site,
-    create_config_files,
-    demote,
-    reload_php_fpm,
-    update_supervisor,
-)
-from ..database_helpers import (
-    change_postgres_password,
-    change_mysql_password,
-    list_tables,
-    get_sql_version,
-)
-from ..models import Site, User, Database
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
+
+from ..database_helpers import (change_mysql_password,
+                                change_postgres_password, get_sql_version,
+                                list_tables)
 from ..forms import DatabaseForm
+from ..helpers import (create_config_files, demote, reload_php_fpm,
+                       run_as_site, update_supervisor)
+from ..models import Database, Site, User
 
 
 @login_required

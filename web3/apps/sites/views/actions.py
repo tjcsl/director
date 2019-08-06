@@ -1,31 +1,22 @@
+import collections
 import os
 import threading
-import collections
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.http import JsonResponse, Http404
-from django.shortcuts import render, redirect, get_object_or_404, reverse
+from django.http import Http404, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from ..models import Site, Domain, Database, DatabaseHost
-from ..helpers import (
-    clean_site_type,
-    do_git_pull,
-    fix_permissions,
-    generate_ssh_key,
-    make_site_dirs,
-    run_as_site,
-    create_config_files,
-    reload_services,
-    add_access_token,
-    generate_ssl_certificate,
-    reload_php_fpm,
-)
-from ..database_helpers import create_mysql_database
 from ...users.models import User
+from ..database_helpers import create_mysql_database
+from ..helpers import (add_access_token, clean_site_type, create_config_files,
+                       do_git_pull, fix_permissions, generate_ssh_key,
+                       generate_ssl_certificate, make_site_dirs,
+                       reload_php_fpm, reload_services, run_as_site)
+from ..models import Database, DatabaseHost, Domain, Site
 
 
 @login_required

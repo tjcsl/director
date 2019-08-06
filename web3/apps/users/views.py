@@ -1,24 +1,25 @@
-import requests
 import json
 
+import requests
+from requests.utils import quote
+
 from django.conf import settings
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import csrf_exempt
 
+from ...utils.tjldap import get_full_name
+from ..auth.decorators import superuser_required
+from ..sites.helpers import (flush_permissions, reload_services,
+                             write_new_index_file)
+from ..sites.models import Site
 from .forms import UserForm
 from .helpers import create_user, create_webdocs
-from ..auth.decorators import superuser_required
-from ..sites.helpers import flush_permissions, write_new_index_file, reload_services
-from ...utils.tjldap import get_full_name
-
-from requests.utils import quote
-from .models import User, Group
-from ..sites.models import Site
+from .models import Group, User
 
 
 @login_required

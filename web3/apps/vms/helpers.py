@@ -1,9 +1,9 @@
-import requests
 import json
 
-from django.conf import settings
-
+import requests
 from raven.contrib.django.raven_compat.models import client
+
+from django.conf import settings
 
 
 def call_api(action=None, **kwargs):

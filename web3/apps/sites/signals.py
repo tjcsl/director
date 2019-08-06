@@ -1,15 +1,10 @@
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from .models import Database, Site, Process
-
-from .helpers import (
-    delete_site_files,
-    reload_services,
-    delete_process_config,
-    update_supervisor,
-)
-from .database_helpers import delete_postgres_database, delete_mysql_database
+from .database_helpers import delete_mysql_database, delete_postgres_database
+from .helpers import (delete_process_config, delete_site_files,
+                      reload_services, update_supervisor)
+from .models import Database, Process, Site
 
 
 @receiver(pre_delete, sender=Database, dispatch_uid="database_delete_signal")

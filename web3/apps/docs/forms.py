@@ -1,7 +1,7 @@
 from django import forms
 
-from .models import Article
 from ..users.models import User
+from .models import Article
 
 
 class ArticleForm(forms.ModelForm):

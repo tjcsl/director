@@ -1,13 +1,9 @@
-from .models import User, Group
-from ..sites.models import Site, SiteHost, Domain
-from ..sites.helpers import (
-    create_site_users,
-    make_site_dirs,
-    create_config_files,
-    flush_permissions,
-    reload_nginx_config,
-)
-from ...utils.tjldap import get_uid, get_full_name
+from ...utils.tjldap import get_full_name, get_uid
+from ..sites.helpers import (create_config_files, create_site_users,
+                             flush_permissions, make_site_dirs,
+                             reload_nginx_config)
+from ..sites.models import Domain, Site, SiteHost
+from .models import Group, User
 
 
 def generate_debug_id(username):

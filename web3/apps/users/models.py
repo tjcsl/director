@@ -1,21 +1,17 @@
 from __future__ import unicode_literals
 
-from django.db import models
-from django.core import validators
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    PermissionsMixin,
-    UserManager as DjangoUserManager,
-)
-from django.utils import timezone
-from django.db.models import Q
+import json
 
+import requests
+from raven.contrib.django.raven_compat.models import client
 from social_django.utils import load_strategy
 
-import json
-import requests
-
-from raven.contrib.django.raven_compat.models import client
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import UserManager as DjangoUserManager
+from django.core import validators
+from django.db import models
+from django.db.models import Q
+from django.utils import timezone
 
 
 class UserManager(DjangoUserManager):

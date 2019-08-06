@@ -1,28 +1,19 @@
-from django.shortcuts import render, redirect, get_object_or_404, reverse
-from django.core.exceptions import PermissionDenied
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-from django.conf import settings
-
-from ..models import Site
-from ..forms import SiteForm, ProcessForm
-from ..helpers import (
-    reload_services,
-    update_supervisor,
-    create_config_files,
-    create_process_config,
-    restart_supervisor,
-    get_supervisor_status,
-    write_new_index_file,
-    get_latest_commit,
-    reload_nginx_config,
-    list_executable_files,
-)
-
-from ...vms.models import VirtualMachine
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 
 from ....utils.emails import send_new_site_email
+from ...vms.models import VirtualMachine
+from ..forms import ProcessForm, SiteForm
+from ..helpers import (create_config_files, create_process_config,
+                       get_latest_commit, get_supervisor_status,
+                       list_executable_files, reload_nginx_config,
+                       reload_services, restart_supervisor, update_supervisor,
+                       write_new_index_file)
+from ..models import Site
 
 
 @login_required

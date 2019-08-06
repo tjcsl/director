@@ -2,8 +2,8 @@ import uuid
 
 from django.core.management.base import BaseCommand
 
-from ...models import VirtualMachine
 from ...helpers import call_api
+from ...models import VirtualMachine
 
 
 class Command(BaseCommand):

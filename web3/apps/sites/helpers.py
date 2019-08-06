@@ -1,20 +1,19 @@
 import os
+import shlex
 import shutil
 import stat
 import time
-
-import shlex
-from subprocess import Popen, check_output, PIPE, CalledProcessError
+from subprocess import PIPE, CalledProcessError, Popen, check_output
 from threading import Timer
 
-from .models import Site
-from ..users.models import User, Group
+from raven.contrib.django.raven_compat.models import client
 
 from django.conf import settings
-from django.utils.crypto import get_random_string
 from django.template.loader import render_to_string
+from django.utils.crypto import get_random_string
 
-from raven.contrib.django.raven_compat.models import client
+from ..users.models import Group, User
+from .models import Site
 
 
 def create_site_users(site):

@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+
+from ...utils.emails import (send_admin_request_email,
+                             send_approval_request_email)
 from ..auth.decorators import superuser_required
-
 from ..users.helpers import create_user
-
-from ...utils.emails import send_approval_request_email, send_admin_request_email
 from .models import SiteRequest
 
 

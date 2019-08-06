@@ -1,23 +1,23 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import logout, login, authenticate
-from django.contrib.auth.decorators import login_required
-from django.db.models import Count
-from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
-from django.utils.crypto import get_random_string
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.signals import user_logged_in
-from django.conf import settings
-from django.contrib import messages
-
-from ..sites.models import Site
-from ..vms.models import VirtualMachine
-from ..users.models import User
-from ..sites.helpers import get_supervisor_statuses
+import datetime
+import hashlib
 
 from raven.contrib.django.raven_compat.models import client
 
-import hashlib
-import datetime
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.signals import user_logged_in
+from django.db.models import Count
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect, render
+from django.utils.crypto import get_random_string
+from django.views.decorators.csrf import csrf_exempt
+
+from ..sites.helpers import get_supervisor_statuses
+from ..sites.models import Site
+from ..users.models import User
+from ..vms.models import VirtualMachine
 
 
 def index_view(request):

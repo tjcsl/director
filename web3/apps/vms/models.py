@@ -1,14 +1,12 @@
 import uuid
 
+from django.core.cache import cache
 from django.db import models
 from django.utils.text import slugify
 
-from ..users.models import User
 from ..sites.models import Site
-
+from ..users.models import User
 from .helpers import call_api
-
-from django.core.cache import cache
 
 
 class VirtualMachineHost(models.Model):

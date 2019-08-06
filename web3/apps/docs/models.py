@@ -1,8 +1,8 @@
-from django.db import models
-from django.template.defaultfilters import slugify
+import markdown
 from simple_history.models import HistoricalRecords
 
-import markdown
+from django.db import models
+from django.template.defaultfilters import slugify
 
 from ..helpers import ModelDiffMixin
 from ..users.models import User

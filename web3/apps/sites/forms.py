@@ -1,22 +1,15 @@
 import os
 
 from django import forms
-from django.core.validators import RegexValidator
 from django.conf import settings
+from django.core.validators import RegexValidator
 
-from .models import Site, Process, Database, DatabaseHost, Domain, SiteHost
-from .helpers import (
-    create_site_users,
-    make_site_dirs,
-    create_config_files,
-    flush_permissions,
-    reload_php_fpm,
-    update_supervisor,
-    clean_site_type,
-)
-from .database_helpers import create_postgres_database, create_mysql_database
-
-from ..users.models import User, Group
+from ..users.models import Group, User
+from .database_helpers import create_mysql_database, create_postgres_database
+from .helpers import (clean_site_type, create_config_files, create_site_users,
+                      flush_permissions, make_site_dirs, reload_php_fpm,
+                      update_supervisor)
+from .models import Database, DatabaseHost, Domain, Process, Site, SiteHost
 
 
 class SiteForm(forms.ModelForm):

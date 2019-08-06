@@ -1,15 +1,15 @@
-import uuid
 import re
+import uuid
+
+from raven.contrib.django.raven_compat.models import client
 
 from django import forms
 from django.core.cache import cache
 
-from ..users.models import User
 from ..sites.models import Site
-from .models import VirtualMachine, VirtualMachineHost
+from ..users.models import User
 from .helpers import call_api
-
-from raven.contrib.django.raven_compat.models import client
+from .models import VirtualMachine, VirtualMachineHost
 
 
 class VirtualMachineForm(forms.ModelForm):

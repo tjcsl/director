@@ -1,6 +1,6 @@
-from django.conf import settings
+from ldap3 import Connection, Server
 
-from ldap3 import Server, Connection
+from django.conf import settings
 
 
 def get_uid(username):

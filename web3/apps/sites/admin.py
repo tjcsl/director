@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Site, Process, Database, DatabaseHost, SiteHost
+from .models import Database, DatabaseHost, Process, Site, SiteHost
 
 # Register your models here.
 

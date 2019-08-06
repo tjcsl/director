@@ -1,18 +1,17 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from threading import Thread
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.views.decorators.http import require_http_methods
-from django.conf import settings
 from django.db.models import Q
-
-from threading import Thread
-
-from .forms import VirtualMachineForm
-from .models import VirtualMachine
-from .helpers import call_api
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_http_methods
 
 from ..sites.helpers import add_access_token
+from .forms import VirtualMachineForm
+from .helpers import call_api
+from .models import VirtualMachine
 
 
 @login_required

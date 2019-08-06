@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from django.core.management.base import BaseCommand
+from web3.apps.sites.models import Domain, Site
 
-from web3.apps.sites.models import Site, Domain
+from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):

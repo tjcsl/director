@@ -1,9 +1,8 @@
 from django import forms
 from django.core.validators import EmailValidator
 
-from .models import User, Group
-
 from ...utils.tjldap import get_uid
+from .models import Group, User
 
 
 class UserForm(forms.ModelForm):

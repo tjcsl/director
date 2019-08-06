@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import sites, databases, editor, actions
+from .views import actions, databases, editor, sites
 
 urlpatterns = [
     url(r"^create$", sites.create_view, name="create_site"),

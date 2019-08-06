@@ -1,31 +1,24 @@
-import os
 import io
+import mimetypes
+import os
 import shutil
 import stat
 import zipfile
-import mimetypes
-
-from django.http import JsonResponse, HttpResponse, Http404
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
-from django.views.decorators.http import require_http_methods
-
-from ..models import Site, Process
-from ..helpers import (
-    fix_permissions,
-    create_process_config,
-    reload_php_fpm,
-    render_to_string,
-    check_nginx_config,
-    reload_nginx_config,
-    create_config_files,
-    update_supervisor,
-    add_access_token,
-)
-from ..database_helpers import get_sql_version
 
 from raven.contrib.django.raven_compat.models import client
+
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_http_methods
+
+from ..database_helpers import get_sql_version
+from ..helpers import (add_access_token, check_nginx_config,
+                       create_config_files, create_process_config,
+                       fix_permissions, reload_nginx_config, reload_php_fpm,
+                       render_to_string, update_supervisor)
+from ..models import Process, Site
 
 
 @login_required

@@ -1,15 +1,12 @@
-import psycopg2
 import MySQLdb
-from _mysql_exceptions import (
-    ProgrammingError as MySQLProgrammingError,
-    OperationalError as MySQLOperationalError,
-)
+import psycopg2
+from _mysql_exceptions import OperationalError as MySQLOperationalError
+from _mysql_exceptions import ProgrammingError as MySQLProgrammingError
+from raven.contrib.django.raven_compat.models import client
 
 from django.core.cache import cache
 
 from .helpers import run_as_site
-
-from raven.contrib.django.raven_compat.models import client
 
 
 def create_postgres_database(database):

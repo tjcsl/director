@@ -1,14 +1,15 @@
-from django.shortcuts import redirect, render, get_object_or_404
-from django.http import JsonResponse
-from django.contrib import messages
-from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import ensure_csrf_cookie
 from simple_history.utils import update_change_reason
-from django.db.models import Q
 
-from .models import Tag, Article
-from .forms import ArticleForm
+from django.contrib import messages
+from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_http_methods
+
 from ..auth.decorators import edit_docs_required
+from .forms import ArticleForm
+from .models import Article, Tag
 
 
 def read_article_view(request, article_slug, revision_id=None):
