@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from web3.apps.sites.helpers import (create_config_files, fix_permissions,
-                                     make_site_dirs, reload_services)
+from web3.apps.sites.helpers import (
+    create_config_files,
+    fix_permissions,
+    make_site_dirs,
+    reload_services,
+)
 from web3.apps.sites.models import Site
 
 from django.core.management.base import BaseCommand

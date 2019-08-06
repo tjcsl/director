@@ -12,10 +12,19 @@ from django.views.decorators.http import require_http_methods
 
 from ...users.models import User
 from ..database_helpers import create_mysql_database
-from ..helpers import (add_access_token, clean_site_type, create_config_files,
-                       do_git_pull, fix_permissions, generate_ssh_key,
-                       generate_ssl_certificate, make_site_dirs,
-                       reload_php_fpm, reload_services, run_as_site)
+from ..helpers import (
+    add_access_token,
+    clean_site_type,
+    create_config_files,
+    do_git_pull,
+    fix_permissions,
+    generate_ssh_key,
+    generate_ssl_certificate,
+    make_site_dirs,
+    reload_php_fpm,
+    reload_services,
+    run_as_site,
+)
 from ..models import Database, DatabaseHost, Domain, Site
 
 

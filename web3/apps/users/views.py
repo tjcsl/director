@@ -14,8 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from ...utils.tjldap import get_full_name
 from ..auth.decorators import superuser_required
-from ..sites.helpers import (flush_permissions, reload_services,
-                             write_new_index_file)
+from ..sites.helpers import flush_permissions, reload_services, write_new_index_file
 from ..sites.models import Site
 from .forms import UserForm
 from .helpers import create_user, create_webdocs

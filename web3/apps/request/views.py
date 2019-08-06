@@ -3,8 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from ...utils.emails import (send_admin_request_email,
-                             send_approval_request_email)
+from ...utils.emails import send_admin_request_email, send_approval_request_email
 from ..auth.decorators import superuser_required
 from ..users.helpers import create_user
 from .models import SiteRequest

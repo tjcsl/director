@@ -14,10 +14,17 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_http_methods
 
 from ..database_helpers import get_sql_version
-from ..helpers import (add_access_token, check_nginx_config,
-                       create_config_files, create_process_config,
-                       fix_permissions, reload_nginx_config, reload_php_fpm,
-                       render_to_string, update_supervisor)
+from ..helpers import (
+    add_access_token,
+    check_nginx_config,
+    create_config_files,
+    create_process_config,
+    fix_permissions,
+    reload_nginx_config,
+    reload_php_fpm,
+    render_to_string,
+    update_supervisor,
+)
 from ..models import Process, Site
 
 

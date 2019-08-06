@@ -2,8 +2,12 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
 from .database_helpers import delete_mysql_database, delete_postgres_database
-from .helpers import (delete_process_config, delete_site_files,
-                      reload_services, update_supervisor)
+from .helpers import (
+    delete_process_config,
+    delete_site_files,
+    reload_services,
+    update_supervisor,
+)
 from .models import Database, Process, Site
 
 

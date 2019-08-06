@@ -1,7 +1,11 @@
 from ...utils.tjldap import get_full_name, get_uid
-from ..sites.helpers import (create_config_files, create_site_users,
-                             flush_permissions, make_site_dirs,
-                             reload_nginx_config)
+from ..sites.helpers import (
+    create_config_files,
+    create_site_users,
+    flush_permissions,
+    make_site_dirs,
+    reload_nginx_config,
+)
 from ..sites.models import Domain, Site, SiteHost
 from .models import Group, User
 

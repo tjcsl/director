@@ -6,9 +6,15 @@ from django.core.validators import RegexValidator
 
 from ..users.models import Group, User
 from .database_helpers import create_mysql_database, create_postgres_database
-from .helpers import (clean_site_type, create_config_files, create_site_users,
-                      flush_permissions, make_site_dirs, reload_php_fpm,
-                      update_supervisor)
+from .helpers import (
+    clean_site_type,
+    create_config_files,
+    create_site_users,
+    flush_permissions,
+    make_site_dirs,
+    reload_php_fpm,
+    update_supervisor,
+)
 from .models import Database, DatabaseHost, Domain, Process, Site, SiteHost
 
 

@@ -8,11 +8,18 @@ from django.shortcuts import get_object_or_404, redirect, render, reverse
 from ....utils.emails import send_new_site_email
 from ...vms.models import VirtualMachine
 from ..forms import ProcessForm, SiteForm
-from ..helpers import (create_config_files, create_process_config,
-                       get_latest_commit, get_supervisor_status,
-                       list_executable_files, reload_nginx_config,
-                       reload_services, restart_supervisor, update_supervisor,
-                       write_new_index_file)
+from ..helpers import (
+    create_config_files,
+    create_process_config,
+    get_latest_commit,
+    get_supervisor_status,
+    list_executable_files,
+    reload_nginx_config,
+    reload_services,
+    restart_supervisor,
+    update_supervisor,
+    write_new_index_file,
+)
 from ..models import Site
 
 

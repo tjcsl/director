@@ -11,12 +11,20 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
-from ..database_helpers import (change_mysql_password,
-                                change_postgres_password, get_sql_version,
-                                list_tables)
+from ..database_helpers import (
+    change_mysql_password,
+    change_postgres_password,
+    get_sql_version,
+    list_tables,
+)
 from ..forms import DatabaseForm
-from ..helpers import (create_config_files, demote, reload_php_fpm,
-                       run_as_site, update_supervisor)
+from ..helpers import (
+    create_config_files,
+    demote,
+    reload_php_fpm,
+    run_as_site,
+    update_supervisor,
+)
 from ..models import Database, Site, User
 
 
