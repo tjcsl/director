@@ -18,6 +18,7 @@ class VirtualMachineHost(models.Model):
         hostname
             The host to connect to (ex: conductor.tjhsst.edu).
     """
+
     hostname = models.CharField(max_length=255)
 
     def __str__(self):
@@ -43,14 +44,17 @@ class VirtualMachine(models.Model):
         site
             If this field is set, the site proxies all requests to the virtual machine.
     """
+
     name = models.CharField(max_length=255, unique=True)
     host = models.ForeignKey(VirtualMachineHost, on_delete=models.PROTECT)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     description = models.TextField(blank=True)
     owner = models.ForeignKey(User, null=True)
-    users = models.ManyToManyField(User, related_name='vms')
+    users = models.ManyToManyField(User, related_name="vms")
     password = models.TextField(blank=True)
-    site = models.OneToOneField(Site, related_name="virtual_machine", blank=True, null=True)
+    site = models.OneToOneField(
+        Site, related_name="virtual_machine", blank=True, null=True
+    )
 
     @property
     def ips(self):

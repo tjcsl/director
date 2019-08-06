@@ -23,6 +23,7 @@ class SiteRequest(models.Model):
             Extra information about the request, such as additional software to be installed.
 
     """
+
     user = models.ForeignKey(User, related_name="requested_sites")
     teacher = models.ForeignKey(User, related_name="site_requests")
 

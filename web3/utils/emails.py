@@ -12,9 +12,15 @@ def send_new_site_email(user, site):
         print(plain_message)
         return 0
     else:
-        return send_mail("{} You've been added to a new website!".format(settings.EMAIL_SUBJECT_PREFIX),
-                         plain_message, settings.EMAIL_FROM,
-                         [user.email], html_message=html_message)
+        return send_mail(
+            "{} You've been added to a new website!".format(
+                settings.EMAIL_SUBJECT_PREFIX
+            ),
+            plain_message,
+            settings.EMAIL_FROM,
+            [user.email],
+            html_message=html_message,
+        )
 
 
 def send_approval_request_email(request):
@@ -26,11 +32,15 @@ def send_approval_request_email(request):
         print(plain_message)
         return 0
     else:
-        msg = EmailMultiAlternatives(subject="{} A website request ({}) needs your approval!".format(settings.EMAIL_SUBJECT_PREFIX, request.activity),
-                                     body=plain_message,
-                                     from_email=settings.EMAIL_FROM,
-                                     to=[request.teacher.email],
-                                     reply_to=[settings.EMAIL_FEEDBACK])
+        msg = EmailMultiAlternatives(
+            subject="{} A website request ({}) needs your approval!".format(
+                settings.EMAIL_SUBJECT_PREFIX, request.activity
+            ),
+            body=plain_message,
+            from_email=settings.EMAIL_FROM,
+            to=[request.teacher.email],
+            reply_to=[settings.EMAIL_FEEDBACK],
+        )
         msg.attach_alternative(html_message, "text/html")
         return msg.send()
 
@@ -45,11 +55,15 @@ def send_admin_request_email(request):
         return 0
     else:
         subject = "{} A website request ({} - {}) requires processing!"
-        msg = EmailMultiAlternatives(subject=subject.format(settings.EMAIL_SUBJECT_PREFIX, request.activity, request.user.full_name),
-                                     body=plain_message,
-                                     from_email=settings.EMAIL_FROM,
-                                     to=[settings.EMAIL_FEEDBACK],
-                                     reply_to=[request.user.email, settings.EMAIL_FEEDBACK])
+        msg = EmailMultiAlternatives(
+            subject=subject.format(
+                settings.EMAIL_SUBJECT_PREFIX, request.activity, request.user.full_name
+            ),
+            body=plain_message,
+            from_email=settings.EMAIL_FROM,
+            to=[settings.EMAIL_FEEDBACK],
+            reply_to=[request.user.email, settings.EMAIL_FEEDBACK],
+        )
         msg.attach_alternative(html_message, "text/html")
         return msg.send()
 
@@ -59,7 +73,7 @@ def send_feedback_email(request, comments):
         "request": request,
         "feedback": comments,
         "useragent": request.META["HTTP_USER_AGENT"],
-        "remote_ip": get_remote_ip(request)
+        "remote_ip": get_remote_ip(request),
     }
     plain_message = render_to_string("emails/feedback.txt", context)
     html_message = render_to_string("emails/feedback.html", context)
@@ -67,11 +81,15 @@ def send_feedback_email(request, comments):
         print(plain_message)
         return 0
     else:
-        msg = EmailMultiAlternatives(subject="{} Feedback from {}".format(settings.EMAIL_SUBJECT_PREFIX, request.user.username),
-                                     body=plain_message,
-                                     from_email=settings.EMAIL_FROM,
-                                     to=[settings.EMAIL_FEEDBACK],
-                                     reply_to=[request.user.email, settings.EMAIL_FEEDBACK])
+        msg = EmailMultiAlternatives(
+            subject="{} Feedback from {}".format(
+                settings.EMAIL_SUBJECT_PREFIX, request.user.username
+            ),
+            body=plain_message,
+            from_email=settings.EMAIL_FROM,
+            to=[settings.EMAIL_FEEDBACK],
+            reply_to=[request.user.email, settings.EMAIL_FEEDBACK],
+        )
         msg.attach_alternative(html_message, "text/html")
         return msg.send()
 

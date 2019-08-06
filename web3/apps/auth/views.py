@@ -22,26 +22,46 @@ import datetime
 
 def index_view(request):
     if request.user.is_authenticated():
-        sites = Site.objects.annotate(num_users=Count("group__users")).filter(group__users=request.user).order_by("name")
+        sites = (
+            Site.objects.annotate(num_users=Count("group__users"))
+            .filter(group__users=request.user)
+            .order_by("name")
+        )
 
         if sites.count() == 0:
             return redirect("start")
 
-        statuses = get_supervisor_statuses(list(sites.filter(category="dynamic").values_list("name", flat=True)))
+        statuses = get_supervisor_statuses(
+            list(sites.filter(category="dynamic").values_list("name", flat=True))
+        )
 
         if request.user.is_superuser and request.GET.get("all", False):
-            other_sites = Site.objects.exclude(group__users=request.user).annotate(num_users=Count("group__users")).order_by("name")
-            other_statuses = get_supervisor_statuses(list(other_sites.filter(category="dynamic").values_list("name", flat=True)))
+            other_sites = (
+                Site.objects.exclude(group__users=request.user)
+                .annotate(num_users=Count("group__users"))
+                .order_by("name")
+            )
+            other_statuses = get_supervisor_statuses(
+                list(
+                    other_sites.filter(category="dynamic").values_list(
+                        "name", flat=True
+                    )
+                )
+            )
         else:
             other_sites = None
             other_statuses = None
 
-        return render(request, "dashboard.html", {
-            "sites": sites,
-            "other_sites": other_sites,
-            "statuses": statuses,
-            "other_statuses": other_statuses
-        })
+        return render(
+            request,
+            "dashboard.html",
+            {
+                "sites": sites,
+                "other_sites": other_sites,
+                "statuses": statuses,
+                "other_statuses": other_statuses,
+            },
+        )
     else:
         return login_view(request)
 
@@ -51,9 +71,7 @@ def about_view(request):
 
 
 def guide_view(request):
-    context = {
-        'project_domain': settings.PROJECT_DOMAIN
-    }
+    context = {"project_domain": settings.PROJECT_DOMAIN}
 
     return render(request, "guide.html", context)
 
@@ -76,9 +94,7 @@ def login_view(request):
 
         return redirect("index")
 
-    context = {
-        "password_auth": settings.PASSWORD_AUTH
-    }
+    context = {"password_auth": settings.PASSWORD_AUTH}
 
     return render(request, "login.html", context)
 
@@ -105,53 +121,88 @@ def node_auth_view(request):
     if request.method == "POST":
         try:
             if not request.POST.get("uid", None):
-                return JsonResponse({"granted": False, "error": "No user id sent to server!"})
+                return JsonResponse(
+                    {"granted": False, "error": "No user id sent to server!"}
+                )
 
             user = User.objects.get(id=int(request.POST.get("uid")))
             siteid = request.POST.get("sid", None)
             vmid = request.POST.get("vmid", None)
 
             if user.access_token != request.POST.get("access_token"):
-                return JsonResponse({"granted": False, "error": "Invalid access token."})
+                return JsonResponse(
+                    {"granted": False, "error": "Invalid access token."}
+                )
 
             if siteid is not None and siteid != "":
                 site = Site.objects.get(id=int(siteid))
-                if not user.is_superuser and not site.group.users.filter(id=user.id).exists():
-                    return JsonResponse({"granted": False, "error": "User does not have permission to access this website."}, status=403)
-                return JsonResponse({
-                    "granted": True,
-                    "site": {
-                        "id": site.id,
-                        "name": site.name,
-                        "homedir": site.path,
-                        "purpose": site.purpose,
-                        "user": site.user.username,
-                        "url": site.url
-                    },
-                    "userid": user.id,
-                    "user": user.username
-                })
+                if (
+                    not user.is_superuser
+                    and not site.group.users.filter(id=user.id).exists()
+                ):
+                    return JsonResponse(
+                        {
+                            "granted": False,
+                            "error": "User does not have permission to access this website.",
+                        },
+                        status=403,
+                    )
+                return JsonResponse(
+                    {
+                        "granted": True,
+                        "site": {
+                            "id": site.id,
+                            "name": site.name,
+                            "homedir": site.path,
+                            "purpose": site.purpose,
+                            "user": site.user.username,
+                            "url": site.url,
+                        },
+                        "userid": user.id,
+                        "user": user.username,
+                    }
+                )
 
             if vmid is not None and vmid != "":
                 vm = VirtualMachine.objects.get(id=int(vmid))
-                if not user.is_superuser and not vm.owner == user and not vm.users.filter(id=user.id).exists():
-                    return JsonResponse({"granted": False, "error": "User does not have permission to access this virtual machine."}, status=403)
+                if (
+                    not user.is_superuser
+                    and not vm.owner == user
+                    and not vm.users.filter(id=user.id).exists()
+                ):
+                    return JsonResponse(
+                        {
+                            "granted": False,
+                            "error": "User does not have permission to access this virtual machine.",
+                        },
+                        status=403,
+                    )
                 if not vm.ip_address or not vm.password:
-                    return JsonResponse({"granted": False, "error": "No IP address or root password set!"})
-                return JsonResponse({
-                    "granted": True,
-                    "vm": {
-                        "id": vm.id,
-                        "ip": vm.ip_address,
-                        "password": vm.password
-                    },
-                    "userid": user.id,
-                    "user": user.username
-                })
+                    return JsonResponse(
+                        {
+                            "granted": False,
+                            "error": "No IP address or root password set!",
+                        }
+                    )
+                return JsonResponse(
+                    {
+                        "granted": True,
+                        "vm": {
+                            "id": vm.id,
+                            "ip": vm.ip_address,
+                            "password": vm.password,
+                        },
+                        "userid": user.id,
+                        "user": user.username,
+                    }
+                )
 
         except Exception as e:
             client.captureException()
-            return JsonResponse({"granted": False, "error": "Malformed request.", "exception": str(e)}, status=400)
+            return JsonResponse(
+                {"granted": False, "error": "Malformed request.", "exception": str(e)},
+                status=400,
+            )
     else:
         return JsonResponse({"error": "Method not allowed."}, status=405)
 
@@ -167,11 +218,19 @@ def set_access_cookie_view(request):
     except Site.DoesNotExist:
         messages.error(request, "Invalid site!")
         return redirect("index")
-    if not request.user.is_staff and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_staff
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         messages.error(request, "You do not have permissions to view this site!")
         return redirect("index")
     response = HttpResponseRedirect(request.GET.get("next", "/"))
-    response.set_cookie("site_{}".format(site.name), cookie_value(request.user.username, site.name), domain=".tjhsst.edu", httponly=True)
+    response.set_cookie(
+        "site_{}".format(site.name),
+        cookie_value(request.user.username, site.name),
+        domain=".tjhsst.edu",
+        httponly=True,
+    )
     return response
 
 
@@ -191,6 +250,8 @@ def check_access_cookie_view(request):
 
 def cookie_value(username, site_name):
     today = datetime.datetime.now().date()
-    hashval = "{}{}{}{}{}{}".format(settings.COOKIE_SECRET, username, today.year, today.month, today.day, site_name)
+    hashval = "{}{}{}{}{}{}".format(
+        settings.COOKIE_SECRET, username, today.year, today.month, today.day, site_name
+    )
     hashed = hashlib.sha256(hashval.encode()).hexdigest()
     return "{}_{}".format(username, hashed)

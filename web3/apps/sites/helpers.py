@@ -21,11 +21,18 @@ def create_site_users(site):
     try:
         user = User.objects.get(username="site_{}".format(site.name))
     except User.DoesNotExist:
-        user = User.objects.create(id=get_next_id(), service=True, username="site_{}".format(site.name), email="site_{}@tjhsst.edu".format(site.name))
+        user = User.objects.create(
+            id=get_next_id(),
+            service=True,
+            username="site_{}".format(site.name),
+            email="site_{}@tjhsst.edu".format(site.name),
+        )
     try:
         group = Group.objects.get(name="site_{}".format(site.name))
     except Group.DoesNotExist:
-        group = Group.objects.create(id=user.id, service=True, name="site_{}".format(site.name))
+        group = Group.objects.create(
+            id=user.id, service=True, name="site_{}".format(site.name)
+        )
         group.users.add(user)
         group.save()
     site.user = user
@@ -39,18 +46,20 @@ def add_access_token(func):
 
     Used to ensure that the user can authenticate with the Node.js server for cases like the web terminal.
     """
+
     def func_wrapper(request, **kwargs):
         if not request.user.access_token:
             request.user.access_token = get_random_string(24)
             request.user.save()
         return func(request, **kwargs)
+
     return func_wrapper
 
 
 def get_next_id():
     if User.objects.filter(service=True).count() == 0:
         return 10000
-    return User.objects.filter(service=True).order_by('-id')[0].id + 1
+    return User.objects.filter(service=True).order_by("-id")[0].id + 1
 
 
 def make_site_dirs(site):
@@ -59,9 +68,20 @@ def make_site_dirs(site):
         if not os.path.exists(path):
             os.makedirs(path)
         os.chown(path, site.user.id, site.group.id)
-        os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISGID)
+        os.chmod(
+            path,
+            stat.S_IRUSR
+            | stat.S_IWUSR
+            | stat.S_IXUSR
+            | stat.S_IRGRP
+            | stat.S_IWGRP
+            | stat.S_IXGRP
+            | stat.S_ISGID,
+        )
     Popen(["/usr/bin/setfacl", "-m", "u:www-data:rx", site.path])
-    Popen(["/usr/bin/setfacl", "-m", "u:www-data:rx", os.path.join(site.path, "public")])
+    Popen(
+        ["/usr/bin/setfacl", "-m", "u:www-data:rx", os.path.join(site.path, "public")]
+    )
 
 
 def create_config_files(site):
@@ -83,13 +103,19 @@ def delete_php_config(site):
 
 def write_new_index_file(site):
     """Creates a default index file for new sites."""
-    with open(os.path.join(site.path, "public", "index.html"), "w+", encoding="utf-8") as f:
+    with open(
+        os.path.join(site.path, "public", "index.html"), "w+", encoding="utf-8"
+    ) as f:
         f.write(render_to_string("config/index.html", {"site": site}))
 
 
 def delete_site_files(site):
     """Deletes all site content and configuration files."""
-    files = ["/etc/nginx/director.d/{}.conf", "/etc/php/7.0/fpm/pool.d/{}.conf", "/etc/supervisor/director.d/{}.conf"]
+    files = [
+        "/etc/nginx/director.d/{}.conf",
+        "/etc/php/7.0/fpm/pool.d/{}.conf",
+        "/etc/supervisor/director.d/{}.conf",
+    ]
     files = [x.format(site.name) for x in files]
     for f in files:
         if os.path.isfile(f):
@@ -104,7 +130,11 @@ def delete_site_files(site):
 
 
 def create_process_config(process):
-    with open("/etc/supervisor/director.d/{}.conf".format(process.site.name), "w+", encoding="utf-8") as f:
+    with open(
+        "/etc/supervisor/director.d/{}.conf".format(process.site.name),
+        "w+",
+        encoding="utf-8",
+    ) as f:
         f.write(render_to_string("config/supervisor.conf", {"process": process}))
 
 
@@ -171,16 +201,18 @@ def reload_services(site=None):
 
 
 def root_exec(cmd):
-    p = Popen(shlex.split(cmd) if isinstance(cmd, str) else cmd, stdout=PIPE, stderr=PIPE)
+    p = Popen(
+        shlex.split(cmd) if isinstance(cmd, str) else cmd, stdout=PIPE, stderr=PIPE
+    )
     output = p.stdout.read()
     error = p.stderr.read()
     if p.wait() == 0:
         return True
     else:
-        client.captureMessage("Failed to execute command: {}".format(cmd), extra={
-            "stdout": output,
-            "stderr": error
-        })
+        client.captureMessage(
+            "Failed to execute command: {}".format(cmd),
+            extra={"stdout": output, "stderr": error},
+        )
         return False
 
 
@@ -217,15 +249,25 @@ def flush_permissions():
 
 def run_as_site(site, cmd, cwd=None, env=None, timeout=15):
     """Runs a command as a specific user."""
-    proc = Popen(shlex.split(cmd) if isinstance(cmd, str) else cmd, preexec_fn=demote(
-        site.user.id, site.group.id), cwd=cwd or site.path, env=env, stdout=PIPE, stderr=PIPE)
+    proc = Popen(
+        shlex.split(cmd) if isinstance(cmd, str) else cmd,
+        preexec_fn=demote(site.user.id, site.group.id),
+        cwd=cwd or site.path,
+        env=env,
+        stdout=PIPE,
+        stderr=PIPE,
+    )
     timer = Timer(timeout, lambda p: p.terminate(), [proc])
     try:
         timer.start()
         out, err = proc.communicate()
     finally:
         timer.cancel()
-    return (proc.returncode, out.decode("utf-8", "replace"), err.decode("utf-8", "replace"))
+    return (
+        proc.returncode,
+        out.decode("utf-8", "replace"),
+        err.decode("utf-8", "replace"),
+    )
 
 
 def demote(uid, gid):
@@ -233,6 +275,7 @@ def demote(uid, gid):
         os.setgroups([gid])
         os.setgid(gid)
         os.setuid(uid)
+
     return result
 
 
@@ -251,10 +294,17 @@ def generate_ssh_key(site, overwrite=True):
     if os.path.isfile(keypath + ".pub"):
         os.remove(keypath + ".pub")
 
-    output = run_as_site(site, ["/usr/bin/ssh-keygen", "-t", "rsa", "-b", "4096", "-N", "", "-f", keypath])
+    output = run_as_site(
+        site,
+        ["/usr/bin/ssh-keygen", "-t", "rsa", "-b", "4096", "-N", "", "-f", keypath],
+    )
 
     if not output[0] == 0:
-        raise IOError("Could not generate RSA keys ({}) - {} - {}".format(output[0], output[1], output[2]))
+        raise IOError(
+            "Could not generate RSA keys ({}) - {} - {}".format(
+                output[0], output[1], output[2]
+            )
+        )
 
     os.chown(keypath, site.user.id, site.group.id)
     os.chown(keypath + ".pub", site.user.id, site.group.id)
@@ -267,10 +317,17 @@ def do_git_pull(site):
     """Perform a git pull on a certain site."""
     fix_permissions(site)
     CMD = "ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {}"
-    output = run_as_site(site, "git pull", cwd=site.git_path, env={
-        "GIT_SSH_COMMAND": CMD.format(os.path.join(site.private_path, ".ssh/id_rsa")),
-        "HOME": site.private_path
-    })
+    output = run_as_site(
+        site,
+        "git pull",
+        cwd=site.git_path,
+        env={
+            "GIT_SSH_COMMAND": CMD.format(
+                os.path.join(site.private_path, ".ssh/id_rsa")
+            ),
+            "HOME": site.private_path,
+        },
+    )
     if site.category == "dynamic":
         restart_supervisor(site)
     return output
@@ -352,16 +409,20 @@ def clean_site_type(instance):
 
 def generate_ssl_certificate(domain, renew=False):
     """Generate SSL certs for a domain and update the nginx config."""
-    process = Popen([
-        "/usr/bin/certbot",
-        "certonly",
-        "--webroot",
-        "-w",
-        settings.LE_WEBROOT,
-        "-d",
-        domain.domain,
-        "-n"
-    ], stdout=PIPE, stderr=PIPE)
+    process = Popen(
+        [
+            "/usr/bin/certbot",
+            "certonly",
+            "--webroot",
+            "-w",
+            settings.LE_WEBROOT,
+            "-d",
+            domain.domain,
+            "-n",
+        ],
+        stdout=PIPE,
+        stderr=PIPE,
+    )
 
     success = process.wait() == 0
 
@@ -370,7 +431,9 @@ def generate_ssl_certificate(domain, renew=False):
             create_config_files(domain.site)
             reload_services(domain.site)
     else:
-        client.captureMessage("Failed to generate SSL certificate for domain {} on site {}".format(domain.domain, domain.site.name), extra={
-            "stdout": process.stdout.read(),
-            "stderr": process.stderr.read()
-        })
+        client.captureMessage(
+            "Failed to generate SSL certificate for domain {} on site {}".format(
+                domain.domain, domain.site.name
+            ),
+            extra={"stdout": process.stdout.read(), "stderr": process.stderr.read()},
+        )

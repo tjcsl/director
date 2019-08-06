@@ -14,7 +14,9 @@ def create_user_group(strategy, details, user, *args, **kwargs):
     try:
         group = Group.objects.get(id=user.id)
     except Group.DoesNotExist:
-        group = Group.objects.create(id=user.id, service=user.service, name=user.username)
+        group = Group.objects.create(
+            id=user.id, service=user.service, name=user.username
+        )
         group.users.add(user.pk)
     group.save()
     return {"group": group}
@@ -26,32 +28,31 @@ def add_to_global_group(strategy, details, user, *args, **kwargs):
 
 
 class IonOauth2(BaseOAuth2):
-    name = 'ion'
-    AUTHORIZATION_URL = 'https://ion.tjhsst.edu/oauth/authorize'
-    ACCESS_TOKEN_URL = 'https://ion.tjhsst.edu/oauth/token'
-    ACCESS_TOKEN_METHOD = 'POST'
-    EXTRA_DATA = [
-        ('refresh_token', 'refresh_token', True),
-        ('expires_in', 'expires')
-    ]
+    name = "ion"
+    AUTHORIZATION_URL = "https://ion.tjhsst.edu/oauth/authorize"
+    ACCESS_TOKEN_URL = "https://ion.tjhsst.edu/oauth/token"
+    ACCESS_TOKEN_METHOD = "POST"
+    EXTRA_DATA = [("refresh_token", "refresh_token", True), ("expires_in", "expires")]
 
     def get_scope(self):
         return ["read"]
 
     def get_user_details(self, response):
-        profile = self.get_json('https://ion.tjhsst.edu/api/profile',
-                                params={'access_token': response['access_token']})
+        profile = self.get_json(
+            "https://ion.tjhsst.edu/api/profile",
+            params={"access_token": response["access_token"]},
+        )
 
         # fields used to populate/update User model
         return {
-            'username': profile['ion_username'],
-            'full_name': profile['full_name'],
-            'id': get_uid(profile['ion_username']),
-            'email': profile['tj_email'],
-            'service': False,
-            'is_superuser': False,
-            'staff': profile['is_teacher'] and not profile['is_student']
+            "username": profile["ion_username"],
+            "full_name": profile["full_name"],
+            "id": get_uid(profile["ion_username"]),
+            "email": profile["tj_email"],
+            "service": False,
+            "is_superuser": False,
+            "staff": profile["is_teacher"] and not profile["is_student"],
         }
 
     def get_user_id(self, details, response):
-        return details['id']
+        return details["id"]

@@ -11,8 +11,19 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from ..models import Site, Domain, Database, DatabaseHost
-from ..helpers import (clean_site_type, do_git_pull, fix_permissions, generate_ssh_key, make_site_dirs, run_as_site, create_config_files,
-                       reload_services, add_access_token, generate_ssl_certificate, reload_php_fpm)
+from ..helpers import (
+    clean_site_type,
+    do_git_pull,
+    fix_permissions,
+    generate_ssh_key,
+    make_site_dirs,
+    run_as_site,
+    create_config_files,
+    reload_services,
+    add_access_token,
+    generate_ssl_certificate,
+    reload_php_fpm,
+)
 from ..database_helpers import create_mysql_database
 from ...users.models import User
 
@@ -20,7 +31,10 @@ from ...users.models import User
 @login_required
 def config_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     create_config_files(site)
@@ -42,7 +56,10 @@ def fix_permissions_threaded(site):
 @login_required
 def permission_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     make_site_dirs(site)
@@ -57,19 +74,27 @@ def permission_view(request, site_id):
 @login_required
 def generate_key_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     generate_ssh_key(site)
 
     messages.success(request, "Generated new RSA public private key-pair!")
-    return redirect(reverse("info_site", kwargs={"site_id": site_id}) + "#github-manual")
+    return redirect(
+        reverse("info_site", kwargs={"site_id": site_id}) + "#github-manual"
+    )
 
 
 @login_required
 def git_pull_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     output = do_git_pull(site)
@@ -80,10 +105,15 @@ def git_pull_view(request, site_id):
 @login_required
 def install_options_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
-    return render(request, "sites/install_options.html", {"site": site, "packages": PACKAGES})
+    return render(
+        request, "sites/install_options.html", {"site": site, "packages": PACKAGES}
+    )
 
 
 def switch_site_php(site):
@@ -100,12 +130,15 @@ def switch_site_php(site):
 def provision_mysql_database(site):
     if hasattr(site, "database"):
         if not site.database.category == "mysql":
-            return (False, "A database has already been provisioned and it is not MySQL!")
+            return (
+                False,
+                "A database has already been provisioned and it is not MySQL!",
+            )
     else:
         db = Database(
             site=site,
             host=DatabaseHost.objects.filter(dbms="mysql").first(),
-            password=User.objects.make_random_password(length=24)
+            password=User.objects.make_random_password(length=24),
         )
         if create_mysql_database(db):
             db.save()
@@ -116,43 +149,73 @@ def provision_mysql_database(site):
     return (True, None)
 
 
-PACKAGES = collections.OrderedDict([
-    ("wordpress", {
-        "name": "WordPress",
-        "icon": "wordpress",
-        "description": "WordPress is a free content management system written in PHP and MySQL.",
-        "url": "https://wordpress.org/",
-        "actions": [
-            ("function", switch_site_php, "Switch site type to PHP"),
-            ("function", provision_mysql_database, "Provision a MySQL database"),
-            ("terminal", "/scripts/wordpress.sh", "Install Wordpress in the public folder")
-        ]
-    }),
-    ("drupal", {
-        "name": "Drupal",
-        "icon": "drupal",
-        "description": "Drupal is a free content management system written in PHP. It can use both MySQL and PostgreSQL as a database backend.",
-        "url": "https://www.drupal.org/",
-        "actions": [
-            ("function", switch_site_php, "Switch site type to PHP"),
-            ("function", provision_mysql_database, "Provision a MySQL database"),
-            ("terminal", "/scripts/drupal.sh", "Install Drupal in the public folder")
-        ]
-    }),
-    ("joomla", {
-        "name": "Joomla",
-        "icon": "joomla",
-        "description": "Joomla is a free content management system written in PHP. It can use both MySQL and PostgreSQL as a database backend.",
-        "url": "https://www.joomla.org/"
-    })
-])
+PACKAGES = collections.OrderedDict(
+    [
+        (
+            "wordpress",
+            {
+                "name": "WordPress",
+                "icon": "wordpress",
+                "description": "WordPress is a free content management system written in PHP and MySQL.",
+                "url": "https://wordpress.org/",
+                "actions": [
+                    ("function", switch_site_php, "Switch site type to PHP"),
+                    (
+                        "function",
+                        provision_mysql_database,
+                        "Provision a MySQL database",
+                    ),
+                    (
+                        "terminal",
+                        "/scripts/wordpress.sh",
+                        "Install Wordpress in the public folder",
+                    ),
+                ],
+            },
+        ),
+        (
+            "drupal",
+            {
+                "name": "Drupal",
+                "icon": "drupal",
+                "description": "Drupal is a free content management system written in PHP. It can use both MySQL and PostgreSQL as a database backend.",
+                "url": "https://www.drupal.org/",
+                "actions": [
+                    ("function", switch_site_php, "Switch site type to PHP"),
+                    (
+                        "function",
+                        provision_mysql_database,
+                        "Provision a MySQL database",
+                    ),
+                    (
+                        "terminal",
+                        "/scripts/drupal.sh",
+                        "Install Drupal in the public folder",
+                    ),
+                ],
+            },
+        ),
+        (
+            "joomla",
+            {
+                "name": "Joomla",
+                "icon": "joomla",
+                "description": "Joomla is a free content management system written in PHP. It can use both MySQL and PostgreSQL as a database backend.",
+                "url": "https://www.joomla.org/",
+            },
+        ),
+    ]
+)
 
 
 @login_required
 @add_access_token
 def install_package_view(request, site_id, package):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     if package not in PACKAGES:
@@ -167,9 +230,17 @@ def install_package_view(request, site_id, package):
                 if not status:
                     return redirect("install_package", site_id=site.id, package=package)
             elif action[0] == "terminal":
-                return render(request, "sites/web_terminal.html", {"site": site, "command": action[1]})
+                return render(
+                    request,
+                    "sites/web_terminal.html",
+                    {"site": site, "command": action[1]},
+                )
 
-    return render(request, "sites/install_package.html", {"site": site, "package": PACKAGES[package]})
+    return render(
+        request,
+        "sites/install_package.html",
+        {"site": site, "package": PACKAGES[package]},
+    )
 
 
 @csrf_exempt
@@ -181,7 +252,9 @@ def webhook_view(request, site_id):
         if request.META["HTTP_X_GITHUB_EVENT"] == "ping":
             return JsonResponse({"success": True})
         if not request.META["HTTP_X_GITHUB_EVENT"] == "push":
-            return JsonResponse({"error": "Only push events are supported at this time!"})
+            return JsonResponse(
+                {"error": "Only push events are supported at this time!"}
+            )
         output = do_git_pull(site)
         return JsonResponse({"success": bool(output[0] == 0)})
     else:
@@ -192,7 +265,10 @@ def webhook_view(request, site_id):
 @login_required
 def git_setup_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     if not request.user.github_token:
@@ -204,11 +280,21 @@ def git_setup_view(request, site_id):
             messages.error(request, "Failed to detect the remote repository!")
         else:
             # Try to identify which remote is the GitHub repository.
-            out = [[y for y in x.replace("\t", " ").split(" ") if y] for x in out.split("\n") if x]
+            out = [
+                [y for y in x.replace("\t", " ").split(" ") if y]
+                for x in out.split("\n")
+                if x
+            ]
             out = [x[1] for x in out if x[2] == "(fetch)"]
-            out = [x for x in out if x.startswith("git@github.com") or x.startswith("https://github.com")]
+            out = [
+                x
+                for x in out
+                if x.startswith("git@github.com") or x.startswith("https://github.com")
+            ]
             if not out:
-                messages.error(request, "Did not find any remote repositories to pull from!")
+                messages.error(
+                    request, "Did not find any remote repositories to pull from!"
+                )
             else:
                 out = out[0]
                 if out.startswith("git@github.com"):
@@ -221,59 +307,91 @@ def git_setup_view(request, site_id):
                     resp = request.user.github_api_request("/repos/{}/keys".format(out))
                     if resp is not None:
                         # Delete all keys from Director that do not match the current key.
-                        ssh_rsa, existing_key, existing_host = site.public_key.strip().split(" ")
+                        ssh_rsa, existing_key, existing_host = site.public_key.strip().split(
+                            " "
+                        )
                         key_exists = False
                         for i in resp:
                             if i["key"].strip().split(" ")[1] == existing_key:
                                 key_exists = True
                                 continue
                             if i["title"] == "Director":
-                                request.user.github_api_request("/repos/{}/keys/{}".format(out, i["id"]), method="DELETE")
+                                request.user.github_api_request(
+                                    "/repos/{}/keys/{}".format(out, i["id"]),
+                                    method="DELETE",
+                                )
 
                         # If the key does not already exist in GitHub, add it.
                         if not key_exists:
-                            resp = request.user.github_api_request("/repos/{}/keys".format(out), method="POST",
-                                                                   data={"title": "Director", "key": site.public_key.strip(), "read_only": True})
+                            resp = request.user.github_api_request(
+                                "/repos/{}/keys".format(out),
+                                method="POST",
+                                data={
+                                    "title": "Director",
+                                    "key": site.public_key.strip(),
+                                    "read_only": True,
+                                },
+                            )
                         else:
                             resp = True
                         if resp:
                             # If the webhook does not exist, create it.
-                            resp = request.user.github_api_request("/repos/{}/hooks".format(out))
+                            resp = request.user.github_api_request(
+                                "/repos/{}/hooks".format(out)
+                            )
                             if resp is not None:
-                                webhook_url = request.build_absolute_uri(reverse("git_webhook",
-                                                                                 kwargs={"site_id": site_id})).replace("http://", "https://")
+                                webhook_url = request.build_absolute_uri(
+                                    reverse("git_webhook", kwargs={"site_id": site_id})
+                                ).replace("http://", "https://")
                                 for i in resp:
                                     if i["config"]["url"] == webhook_url:
                                         break
                                 else:
-                                    request.user.github_api_request("/repos/{}/hooks".format(out), method="POST", data={
-                                        "name": "web",
-                                        "config": {
-                                            "url": webhook_url,
-                                            "content_type": "json"
+                                    request.user.github_api_request(
+                                        "/repos/{}/hooks".format(out),
+                                        method="POST",
+                                        data={
+                                            "name": "web",
+                                            "config": {
+                                                "url": webhook_url,
+                                                "content_type": "json",
+                                            },
+                                            "active": True,
                                         },
-                                        "active": True
-                                    })
+                                    )
                                 messages.success(request, "The integration was set up!")
                             else:
-                                messages.error(request, "Failed to retrieve repository webhooks!")
+                                messages.error(
+                                    request, "Failed to retrieve repository webhooks!"
+                                )
                         else:
                             messages.error(request, "Failed to add new deploy key!")
                     else:
                         if not repo_info["permissions"]["admin"]:
-                            messages.error(request, "You do not have permission to add deploy keys. Ask the owner of the repository to set this integration up for you.")
+                            messages.error(
+                                request,
+                                "You do not have permission to add deploy keys. Ask the owner of the repository to set this integration up for you.",
+                            )
                         else:
                             messages.error(request, "Failed to retrieve deploy keys!")
                 else:
-                    messages.error(request, "Failed to retrieve repository information from GitHub! Do you have access to this repository?")
+                    messages.error(
+                        request,
+                        "Failed to retrieve repository information from GitHub! Do you have access to this repository?",
+                    )
 
-    return redirect(reverse("info_site", kwargs={"site_id": site.id}) + "#github-automatic")
+    return redirect(
+        reverse("info_site", kwargs={"site_id": site.id}) + "#github-automatic"
+    )
 
 
 @login_required
 def set_git_path_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     if request.method == "POST":
@@ -297,7 +415,10 @@ def set_git_path_view(request, site_id):
 def add_ssl_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
 
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
     name = request.POST.get("domain")
     domain = get_object_or_404(Domain, domain=name)

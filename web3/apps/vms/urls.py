@@ -11,5 +11,5 @@ urlpatterns = [
     url(r"^(?P<vm_id>\d+)/delete$", views.delete_view, name="vm_delete"),
     url(r"^(?P<vm_id>\d+)/start$", views.start_view, name="start_vm"),
     url(r"^(?P<vm_id>\d+)/stop$", views.stop_view, name="stop_vm"),
-    url(r"^(?P<vm_id>\d+)/password", views.password_view, name="set_vm_password")
+    url(r"^(?P<vm_id>\d+)/password", views.password_view, name="set_vm_password"),
 ]

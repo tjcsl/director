@@ -43,5 +43,4 @@ class ModelDiffMixin(object):
 
     @property
     def _dict(self):
-        return model_to_dict(self, fields=[field.name for field in
-                             self._meta.fields])
+        return model_to_dict(self, fields=[field.name for field in self._meta.fields])

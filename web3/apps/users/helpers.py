@@ -1,6 +1,12 @@
 from .models import User, Group
 from ..sites.models import Site, SiteHost, Domain
-from ..sites.helpers import create_site_users, make_site_dirs, create_config_files, flush_permissions, reload_nginx_config
+from ..sites.helpers import (
+    create_site_users,
+    make_site_dirs,
+    create_config_files,
+    flush_permissions,
+    reload_nginx_config,
+)
 from ...utils.tjldap import get_uid, get_full_name
 
 
@@ -14,7 +20,7 @@ def generate_debug_id(username):
     if User.objects.filter(service=False).count() == 0:
         return 30000
 
-    return User.objects.filter(service=False).order_by('-id')[0].id + 1
+    return User.objects.filter(service=False).order_by("-id")[0].id + 1
 
 
 def create_user(request, username):
@@ -39,7 +45,7 @@ def create_user(request, username):
         full_name=full_name,
         email=profile.get("tj_email", "{}@tjhsst.edu".format(username)),
         staff=profile.get("is_teacher", False),
-        is_superuser=profile.get("is_eighth_admin", False)
+        is_superuser=profile.get("is_eighth_admin", False),
     )
 
     if not Group.objects.filter(id=user.id).exists():
@@ -69,7 +75,7 @@ def create_webdocs(user, batch=False, purpose="user"):
         description=full_name,
         category="php",
         purpose=purpose,
-        custom_nginx=False
+        custom_nginx=False,
     )
     create_site_users(site)
 

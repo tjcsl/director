@@ -38,7 +38,7 @@ def settings_view(request):
     github_info = get_github_info(request) if request.user.github_token else None
     context = {
         "groups": Group.objects.filter(users__id=request.user.id).order_by("name"),
-        "github_username": github_info.get("login", None) if github_info else None
+        "github_username": github_info.get("login", None) if github_info else None,
     }
     return render(request, "users/settings.html", context)
 
@@ -51,16 +51,16 @@ def create_view(request):
             user = form.save()
             if not user.full_name:
                 profile = request.user.api_request("profile/{}".format(user.username))
-                user.full_name = profile.get("common_name", get_full_name(user.username))
+                user.full_name = profile.get(
+                    "common_name", get_full_name(user.username)
+                )
                 user.save()
             messages.success(request, "User {} created!".format(user.username))
             return redirect("user_management")
     else:
         form = UserForm()
 
-    context = {
-        "form": form
-    }
+    context = {"form": form}
     return render(request, "users/create_user.html", context)
 
 
@@ -77,7 +77,9 @@ def edit_view(request, user_id):
                 if ldap_full_name:
                     user.full_name = ldap_full_name
                 else:
-                    profile = request.user.api_request("profile/{}".format(user.username))
+                    profile = request.user.api_request(
+                        "profile/{}".format(user.username)
+                    )
                     user.full_name = profile.get("common_name", "")
                 user.save()
             messages.success(request, "User {} edited!".format(user.username))
@@ -85,18 +87,13 @@ def edit_view(request, user_id):
     else:
         form = UserForm(instance=user)
 
-    context = {
-        "form": form,
-        "groups": user.unix_groups.all()
-    }
+    context = {"form": form, "groups": user.unix_groups.all()}
     return render(request, "users/create_user.html", context)
 
 
 @superuser_required
 def manage_view(request):
-    context = {
-        "users": User.objects.filter(service=False).order_by("username")
-    }
+    context = {"users": User.objects.filter(service=False).order_by("username")}
     return render(request, "users/management.html", context)
 
 
@@ -104,12 +101,17 @@ def manage_view(request):
 def create_webdocs_view(request):
     if not request.user.is_staff:
         if request.user.has_webdocs:
-            return redirect("info_site", site_id=Site.objects.get(name=request.user.username, purpose="user").id)
+            return redirect(
+                "info_site",
+                site_id=Site.objects.get(name=request.user.username, purpose="user").id,
+            )
         if request.method == "POST":
             accepted = request.POST.get("agreement", False)
 
             if not accepted:
-                messages.error(request, "You must accept the agreement to create a webdocs!")
+                messages.error(
+                    request, "You must accept the agreement to create a webdocs!"
+                )
                 return redirect("create_webdocs")
 
             site = create_webdocs(request.user, purpose="user")
@@ -139,7 +141,11 @@ def create_webdocs_view(request):
             if not no_users:
                 user = create_user(request, username)
             if no_users or user:
-                site = create_webdocs(username if no_users else user, batch=True, purpose=("legacy" if import_legacy else "user"))
+                site = create_webdocs(
+                    username if no_users else user,
+                    batch=True,
+                    purpose=("legacy" if import_legacy else "user"),
+                )
                 if site:
                     success.append(username)
                     continue
@@ -151,18 +157,22 @@ def create_webdocs_view(request):
         if request.GET.get("json", False) is not False:
             return JsonResponse({"success": success, "failure": failure})
         else:
-            return render(request, "users/create_webdocs.html", {
-                "finished": True,
-                "success": success,
-                "failure": failure
-            })
+            return render(
+                request,
+                "users/create_webdocs.html",
+                {"finished": True, "success": success, "failure": failure},
+            )
 
     return render(request, "users/create_webdocs.html", {"finished": False})
 
 
 @login_required
 def github_link_view(request):
-    return redirect("https://github.com/login/oauth/authorize?client_id={}&scope={}".format(settings.GITHUB_CLIENT_ID, "repo"))
+    return redirect(
+        "https://github.com/login/oauth/authorize?client_id={}&scope={}".format(
+            settings.GITHUB_CLIENT_ID, "repo"
+        )
+    )
 
 
 @login_required
@@ -183,11 +193,15 @@ def github_oauth_view(request):
         messages.error(request, "No code supplied with request!")
         return redirect("user_settings")
 
-    r = requests.post("https://github.com/login/oauth/access_token", data={
-        "client_id": settings.GITHUB_CLIENT_ID,
-        "client_secret": settings.GITHUB_CLIENT_SECRET,
-        "code": code
-    }, headers={"Accept": "application/json"})
+    r = requests.post(
+        "https://github.com/login/oauth/access_token",
+        data={
+            "client_id": settings.GITHUB_CLIENT_ID,
+            "client_secret": settings.GITHUB_CLIENT_SECRET,
+            "code": code,
+        },
+        headers={"Accept": "application/json"},
+    )
     response = json.loads(r.text)
     request.user.github_token = response.get("access_token", "")
     request.user.save()
@@ -206,9 +220,12 @@ def teacher_lookup_view(request):
     if not name:
         return JsonResponse({"teachers": []})
     responses = request.user.api_request("search/{}".format(quote(name)))
-    return JsonResponse({
-        "teachers": [{
-            "username": x["username"],
-            "name": x["full_name"]
-        } for x in responses["results"] if x["user_type"] == "teacher"]
-    })
+    return JsonResponse(
+        {
+            "teachers": [
+                {"username": x["username"], "name": x["full_name"]}
+                for x in responses["results"]
+                if x["user_type"] == "teacher"
+            ]
+        }
+    )

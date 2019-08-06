@@ -3,7 +3,12 @@ from django.dispatch import receiver
 
 from .models import Database, Site, Process
 
-from .helpers import delete_site_files, reload_services, delete_process_config, update_supervisor
+from .helpers import (
+    delete_site_files,
+    reload_services,
+    delete_process_config,
+    update_supervisor,
+)
 from .database_helpers import delete_postgres_database, delete_mysql_database
 
 

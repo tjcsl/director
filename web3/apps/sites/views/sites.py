@@ -7,8 +7,18 @@ from django.conf import settings
 
 from ..models import Site
 from ..forms import SiteForm, ProcessForm
-from ..helpers import (reload_services, update_supervisor, create_config_files, create_process_config, restart_supervisor,
-                       get_supervisor_status, write_new_index_file, get_latest_commit, reload_nginx_config, list_executable_files)
+from ..helpers import (
+    reload_services,
+    update_supervisor,
+    create_config_files,
+    create_process_config,
+    restart_supervisor,
+    get_supervisor_status,
+    write_new_index_file,
+    get_latest_commit,
+    reload_nginx_config,
+    list_executable_files,
+)
 
 from ...vms.models import VirtualMachine
 
@@ -36,35 +46,34 @@ def create_view(request):
     else:
         form = SiteForm(user=request.user)
 
-    context = {
-        "form": form,
-        "site": None,
-        "project_domain": settings.PROJECT_DOMAIN
-    }
+    context = {"form": form, "site": None, "project_domain": settings.PROJECT_DOMAIN}
     return render(request, "sites/create_site.html", context)
 
 
 @login_required
 def edit_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
     if request.method == "POST":
-        current_members = list(site.group.users.filter(service=False).values_list('id', flat=True))
+        current_members = list(
+            site.group.users.filter(service=False).values_list("id", flat=True)
+        )
         form = SiteForm(request.POST, instance=site, user=request.user)
         if form.is_valid():
             site = form.save()
-            for user in site.group.users.filter(service=False).exclude(id__in=current_members):
+            for user in site.group.users.filter(service=False).exclude(
+                id__in=current_members
+            ):
                 send_new_site_email(user, site)
             reload_services()
             return redirect("info_site", site_id=site_id)
     else:
         form = SiteForm(instance=site, user=request.user)
-    context = {
-        "form": form,
-        "site": site,
-        "project_domain": settings.PROJECT_DOMAIN
-    }
+    context = {"form": form, "site": site, "project_domain": settings.PROJECT_DOMAIN}
     return render(request, "sites/create_site.html", context)
 
 
@@ -72,7 +81,10 @@ def edit_view(request, site_id):
 def delete_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
 
-    if not request.user.is_superuser and not (site.purpose == "project" and site.group.users.filter(id=request.user.id).exists()):
+    if not request.user.is_superuser and not (
+        site.purpose == "project"
+        and site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     if request.method == "POST":
@@ -82,16 +94,17 @@ def delete_view(request, site_id):
         site.delete()
         messages.success(request, "Site {} deleted!".format(site.name))
         return redirect("index")
-    context = {
-        "site": site
-    }
+    context = {"site": site}
     return render(request, "sites/delete_site.html", context)
 
 
 @login_required
 def process_status_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     return HttpResponse(get_supervisor_status(site))
@@ -100,10 +113,15 @@ def process_status_view(request, site_id):
 @login_required
 def modify_process_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
     if site.category != "dynamic":
-        messages.error(request, "You must set your site type to dynamic before adding a process.")
+        messages.error(
+            request, "You must set your site type to dynamic before adding a process."
+        )
         return redirect("info_site", site_id=site_id)
     if request.method == "POST":
         try:
@@ -124,7 +142,7 @@ def modify_process_view(request, site_id):
     context = {
         "form": form,
         "site": site,
-        "files": list_executable_files(site.path, level=3)
+        "files": list_executable_files(site.path, level=3),
     }
     return render(request, "sites/create_process.html", context)
 
@@ -132,7 +150,10 @@ def modify_process_view(request, site_id):
 @login_required
 def modify_vm_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
     if not site.category == "vm":
         messages.error(request, "Not a VM site!")
@@ -161,17 +182,17 @@ def modify_vm_view(request, site_id):
     else:
         vms = VirtualMachine.objects.filter(users=request.user).order_by("name")
 
-    context = {
-        "site": site,
-        "vms": vms
-    }
+    context = {"site": site, "vms": vms}
     return render(request, "sites/edit_vm.html", context)
 
 
 @login_required
 def delete_process_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
     if request.method == "POST":
         try:
@@ -187,7 +208,10 @@ def delete_process_view(request, site_id):
 @login_required
 def restart_process_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     restart_supervisor(site)
@@ -199,7 +223,10 @@ def restart_process_view(request, site_id):
 @login_required
 def info_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     context = {
@@ -207,6 +234,8 @@ def info_view(request, site_id):
         "users": site.group.users.filter(service=False).order_by("username"),
         "status": get_supervisor_status(site),
         "latest_commit": get_latest_commit(site),
-        "webhook_url": request.build_absolute_uri(reverse("git_webhook", kwargs={"site_id": site_id})).replace("http://", "https://")
+        "webhook_url": request.build_absolute_uri(
+            reverse("git_webhook", kwargs={"site_id": site_id})
+        ).replace("http://", "https://"),
     }
     return render(request, "sites/info_site.html", context)

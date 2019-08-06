@@ -16,6 +16,7 @@ class SiteHost(models.Model):
         hostname
             The hostname of the Director instance.
     """
+
     hostname = models.CharField(max_length=255)
 
 
@@ -49,21 +50,28 @@ class Site(models.Model):
         repo_path
             The path of the GitHub repository used for webhooks relative to site.path.
     """
+
     name = models.CharField(max_length=32, unique=True)
     host = models.ForeignKey(SiteHost, on_delete=models.PROTECT)
-    category = models.CharField(max_length=16, choices=(
-        ("static", "Static"),
-        ("php", "PHP"),
-        ("dynamic", "Dynamic"),
-        ("vm", "Virtual Machine")
-    ))
-    purpose = models.CharField(max_length=16, choices=(
-        ("legacy", "Legacy"),
-        ("user", "User"),
-        ("project", "Project"),
-        ("activity", "Activity"),
-        ("other", "Other")
-    ))
+    category = models.CharField(
+        max_length=16,
+        choices=(
+            ("static", "Static"),
+            ("php", "PHP"),
+            ("dynamic", "Dynamic"),
+            ("vm", "Virtual Machine"),
+        ),
+    )
+    purpose = models.CharField(
+        max_length=16,
+        choices=(
+            ("legacy", "Legacy"),
+            ("user", "User"),
+            ("project", "Project"),
+            ("activity", "Activity"),
+            ("other", "Other"),
+        ),
+    )
     description = models.TextField(blank=True)
 
     user = models.OneToOneField(User)
@@ -90,9 +98,13 @@ class Site(models.Model):
         if self.purpose == "user":
             return "https://user.tjhsst.edu/{}/".format(self.name)
         elif self.purpose == "activity":
-            different_url = self.domain_set.filter(domain__endswith=".sites.tjhsst.edu").first()
+            different_url = self.domain_set.filter(
+                domain__endswith=".sites.tjhsst.edu"
+            ).first()
             if different_url:
-                return "https://activities.tjhsst.edu/{}/".format(different_url.domain.split(".", 1)[0])
+                return "https://activities.tjhsst.edu/{}/".format(
+                    different_url.domain.split(".", 1)[0]
+                )
             return "https://activities.tjhsst.edu/{}/".format(self.name)
         elif self.purpose == "legacy":
             return "https://www.tjhsst.edu/~{}/".format(self.name)
@@ -100,7 +112,9 @@ class Site(models.Model):
             d = self.domain_set.first()
             if not d:
                 return None
-            return ("https://" if not d.custom_ssl or d.has_cert else "http://") + d.domain
+            return (
+                "https://" if not d.custom_ssl or d.has_cert else "http://"
+            ) + d.domain
 
     @property
     def private_path(self):
@@ -133,7 +147,9 @@ class Site(models.Model):
     def has_rsa_key(self):
         if hasattr(self, "_has_rsa_key"):
             return self._has_rsa_key
-        self._has_rsa_key = os.path.isfile(os.path.join(self.private_path, ".ssh/id_rsa"))
+        self._has_rsa_key = os.path.isfile(
+            os.path.join(self.private_path, ".ssh/id_rsa")
+        )
         return self._has_rsa_key
 
     @property
@@ -148,7 +164,9 @@ class Site(models.Model):
     def supports_ssl(self):
         if hasattr(self, "_supports_ssl"):
             return self._supports_ssl
-        self._supports_ssl = len([domain for domain in self.domain_set.all() if domain.has_cert]) > 0
+        self._supports_ssl = (
+            len([domain for domain in self.domain_set.all() if domain.has_cert]) > 0
+        )
         return self._supports_ssl
 
     def __str__(self):
@@ -164,6 +182,7 @@ class Domain(models.Model):
         domain
             The domain as a string.
     """
+
     site = models.ForeignKey(Site, null=True, on_delete=models.CASCADE)
     domain = models.CharField(max_length=255, unique=True)
 
@@ -190,6 +209,7 @@ class Process(models.Model):
         path
             The absolute path of the script file to run.
     """
+
     site = models.OneToOneField(Site)
     path = models.FilePathField(path=settings.WEB_ROOT)
 
@@ -220,10 +240,9 @@ class DatabaseHost(models.Model):
     port = models.PositiveIntegerField()
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
-    dbms = models.CharField(max_length=16, choices=(
-        ("postgresql", "PostgreSQL"),
-        ("mysql", "MySQL")
-    ))
+    dbms = models.CharField(
+        max_length=16, choices=(("postgresql", "PostgreSQL"), ("mysql", "MySQL"))
+    )
 
     def __str__(self):
         return "<{}:{}>".format(self.hostname, self.port)
@@ -241,6 +260,7 @@ class Database(models.Model):
             The password of the user used to connect to the database.
             This is automatically generated in most cases.
     """
+
     site = models.OneToOneField(Site)
     host = models.ForeignKey(DatabaseHost, on_delete=models.CASCADE)
     password = models.CharField(max_length=255)
@@ -276,4 +296,6 @@ class Database(models.Model):
         return "{}:{}".format(self.db_host, self.db_port)
 
     def __str__(self):
-        return "{}://{}:{}@{}/{}".format(self.db_type, self.username, self.password, self.db_full_host, self.db_name)
+        return "{}://{}:{}@{}/{}".format(
+            self.db_type, self.username, self.password, self.db_full_host, self.db_name
+        )

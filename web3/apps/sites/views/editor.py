@@ -12,10 +12,17 @@ from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_http_methods
 
 from ..models import Site, Process
-from ..helpers import (fix_permissions, create_process_config, reload_php_fpm,
-                       render_to_string, check_nginx_config, reload_nginx_config,
-                       create_config_files, update_supervisor,
-                       add_access_token)
+from ..helpers import (
+    fix_permissions,
+    create_process_config,
+    reload_php_fpm,
+    render_to_string,
+    check_nginx_config,
+    reload_nginx_config,
+    create_config_files,
+    update_supervisor,
+    add_access_token,
+)
 from ..database_helpers import get_sql_version
 
 from raven.contrib.django.raven_compat.models import client
@@ -25,13 +32,16 @@ from raven.contrib.django.raven_compat.models import client
 @add_access_token
 def editor_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     context = {
         "site": site,
         "raven_dsn": client.get_public_dsn(),
-        "sql_version": get_sql_version(site) if hasattr(site, "database") else None
+        "sql_version": get_sql_version(site) if hasattr(site, "database") else None,
     }
 
     return render(request, "sites/editor.html", context)
@@ -41,7 +51,10 @@ def editor_view(request, site_id):
 def editor_path_view(request, site_id):
     """Returns a list of files and folders in the requested path."""
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     requested_path = request.GET.get("path", "")
@@ -58,19 +71,32 @@ def editor_path_view(request, site_id):
         if stat.S_ISDIR(fmode):
             obj = {"type": "d", "name": f}
         else:
-            obj = {"type": "f", "name": f, "executable": fmode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)}
+            obj = {
+                "type": "f",
+                "name": f,
+                "executable": fmode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH),
+            }
         if stat.S_ISLNK(fmode):
             obj["link"] = True
         filesystem.append(obj)
 
-    return JsonResponse({"files": sorted(filesystem, key=lambda x: (x["type"], x["name"][0] == ".", x["name"]))})
+    return JsonResponse(
+        {
+            "files": sorted(
+                filesystem, key=lambda x: (x["type"], x["name"][0] == ".", x["name"])
+            )
+        }
+    )
 
 
 @login_required
 def editor_load_view(request, site_id):
     """Reads the requested file and returns it to the client."""
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     requested_path = request.GET.get("name", "")
@@ -93,7 +119,10 @@ def editor_load_view(request, site_id):
 @login_required
 def editor_save_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     requested_path = request.GET.get("name", "")
@@ -108,7 +137,13 @@ def editor_save_view(request, site_id):
         if os.path.exists(path):
             return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
         if not request.POST.get("force", False):
-            return JsonResponse({"error": "The file you are editing does not exist anymore!", "path": path, "force": True})
+            return JsonResponse(
+                {
+                    "error": "The file you are editing does not exist anymore!",
+                    "path": path,
+                    "force": True,
+                }
+            )
         else:
             set_perms = True
 
@@ -127,14 +162,21 @@ def editor_save_view(request, site_id):
 @login_required
 def editor_delete_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     requested_path = request.POST.getlist("name[]")
     path = [os.path.abspath(os.path.join(site.path, x)) for x in requested_path]
 
-    if not all(x.startswith(site.path) for x in path) or not all(os.path.exists(x) for x in path):
-        return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": path})
+    if not all(x.startswith(site.path) for x in path) or not all(
+        os.path.exists(x) for x in path
+    ):
+        return JsonResponse(
+            {"error": "Invalid or nonexistent file or folder!", "path": path}
+        )
 
     for p in path:
         try:
@@ -153,7 +195,10 @@ def editor_delete_view(request, site_id):
 @login_required
 def editor_create_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     is_file = request.POST.get("type", "f") == "f"
@@ -168,7 +213,9 @@ def editor_create_view(request, site_id):
     new_path = os.path.join(path, requested_new)
 
     if os.path.exists(new_path):
-        return JsonResponse({"error": "The file or folder you are trying to create already exists!"})
+        return JsonResponse(
+            {"error": "The file or folder you are trying to create already exists!"}
+        )
 
     if is_file:
         open(new_path, "a", encoding="utf-8").close()
@@ -183,7 +230,10 @@ def editor_create_view(request, site_id):
 @login_required
 def editor_download_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     requested_path = request.GET.get("name", "")
@@ -198,7 +248,9 @@ def editor_download_view(request, site_id):
             response["Content-Type"] = mimetypes.guess_type(path)[0]
         else:
             response["Content-Type"] = "application/octet-stream"
-            response["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(path))
+            response["Content-Disposition"] = "attachment; filename={}".format(
+                os.path.basename(path)
+            )
         return response
     else:
         zip_io = io.BytesIO()
@@ -206,10 +258,12 @@ def editor_download_view(request, site_id):
             for root, dirs, files in os.walk(path):
                 for f in files:
                     filepath = os.path.join(root, f)
-                    zipf.write(filepath, filepath[len(path):])
+                    zipf.write(filepath, filepath[len(path) :])
         response = HttpResponse(zip_io.getvalue())
         response["Content-Type"] = "application/x-zip-compressed"
-        response["Content-Disposition"] = "attachment; filename={}.zip".format(os.path.basename(path))
+        response["Content-Disposition"] = "attachment; filename={}.zip".format(
+            os.path.basename(path)
+        )
         response["Content-Length"] = zip_io.tell()
         return response
 
@@ -218,7 +272,10 @@ def editor_download_view(request, site_id):
 @login_required
 def editor_rename_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     new_name = os.path.basename(request.POST.get("newname", ""))
@@ -229,7 +286,9 @@ def editor_rename_view(request, site_id):
         return JsonResponse({"error": "You cannot rename the root directory!"})
 
     if not path.startswith(site.path) or not os.path.exists(path):
-        return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": path})
+        return JsonResponse(
+            {"error": "Invalid or nonexistent file or folder!", "path": path}
+        )
 
     if not new_name:
         return JsonResponse({"error": "You must enter a valid name!", "path": path})
@@ -247,7 +306,10 @@ def editor_rename_view(request, site_id):
 @login_required
 def editor_upload_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     name = request.POST.get("path", "")
@@ -276,7 +338,10 @@ def editor_upload_view(request, site_id):
 @login_required
 def editor_move_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     old_path = request.POST.get("old", "")
@@ -286,13 +351,20 @@ def editor_move_view(request, site_id):
     new_file = os.path.join(new_path, os.path.basename(old_path))
 
     if not old_path.startswith(site.path) or not os.path.exists(old_path):
-        return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": old_path})
+        return JsonResponse(
+            {"error": "Invalid or nonexistent file or folder!", "path": old_path}
+        )
 
     if not new_path.startswith(site.path):
         return JsonResponse({"error": "Invalid destination!", "path": new_path})
 
     if os.path.exists(new_file):
-        return JsonResponse({"error": "The destination you are trying to copy to already exists.", "path": new_file})
+        return JsonResponse(
+            {
+                "error": "The destination you are trying to copy to already exists.",
+                "path": new_file,
+            }
+        )
 
     if new_file.startswith(os.path.join(old_path, "")):
         return JsonResponse({"error": "You cannot place a folder inside itself!"})
@@ -307,7 +379,10 @@ def editor_move_view(request, site_id):
 def editor_process_view(request, site_id):
     """Set the server process script file for dynamic sites."""
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     path = request.POST.get("name", None)
@@ -341,7 +416,10 @@ def editor_process_view(request, site_id):
 def editor_exec_view(request, site_id):
     """Set/unset the executable bit for the requested files."""
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     paths = request.POST.getlist("name[]", [])
@@ -364,7 +442,13 @@ def editor_exec_view(request, site_id):
         if on:
             os.chmod(path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
         else:
-            os.chmod(path, stat.S_IMODE(st.st_mode) & ~stat.S_IXUSR & ~stat.S_IXGRP & ~stat.S_IXOTH)
+            os.chmod(
+                path,
+                stat.S_IMODE(st.st_mode)
+                & ~stat.S_IXUSR
+                & ~stat.S_IXGRP
+                & ~stat.S_IXOTH,
+            )
 
     return JsonResponse({"success": True})
 
@@ -372,7 +456,10 @@ def editor_exec_view(request, site_id):
 @login_required
 def edit_nginx_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     nginx_path = "/etc/nginx/director.d/{}.conf".format(site.name)
@@ -385,13 +472,20 @@ def edit_nginx_view(request, site_id):
 
     if request.method == "POST":
         if not request.user.is_superuser:
-            return JsonResponse({"error": "You are not allowed to make changes to this file!"})
+            return JsonResponse(
+                {"error": "You are not allowed to make changes to this file!"}
+            )
         if not site.custom_nginx:
             if request.POST.get("force", False):
                 site.custom_nginx = True
                 site.save()
             else:
-                return JsonResponse({"error": "You must enable custom nginx configuration before editing this file.", "force": True})
+                return JsonResponse(
+                    {
+                        "error": "You must enable custom nginx configuration before editing this file.",
+                        "force": True,
+                    }
+                )
         if request.POST.get("editor", None):
             with open(nginx_path, "w", encoding="utf-8") as f:
                 f.write(request.POST["editor"])
@@ -412,12 +506,13 @@ def edit_nginx_view(request, site_id):
 @add_access_token
 def web_terminal_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
-    context = {
-        "site": site
-    }
+    context = {"site": site}
 
     return render(request, "sites/web_terminal.html", context)
 
@@ -427,7 +522,10 @@ def web_terminal_view(request, site_id):
 def site_type_view(request, site_id):
     """Change the site category between static, PHP, and dynamic."""
     site = get_object_or_404(Site, id=site_id)
-    if not request.user.is_superuser and not site.group.users.filter(id=request.user.id).exists():
+    if (
+        not request.user.is_superuser
+        and not site.group.users.filter(id=request.user.id).exists()
+    ):
         raise PermissionDenied
 
     if request.POST.get("type") not in ["static", "php", "dynamic"]:

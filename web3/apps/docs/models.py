@@ -50,10 +50,9 @@ class Article(models.Model, ModelDiffMixin):
 
     @property
     def html(self):
-        return markdown.markdown(self.content, extensions=[
-            'pymdownx.github',
-            'pymdownx.mark'
-        ])
+        return markdown.markdown(
+            self.content, extensions=["pymdownx.github", "pymdownx.mark"]
+        )
 
     def save(self, history=False, *args, **kwargs):
         if not self.id:

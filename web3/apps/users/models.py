@@ -2,7 +2,11 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.core import validators
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager as DjangoUserManager
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    UserManager as DjangoUserManager,
+)
 from django.utils import timezone
 from django.db.models import Q
 
@@ -19,7 +23,9 @@ class UserManager(DjangoUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    id = models.PositiveIntegerField(primary_key=True, validators=[validators.MinValueValidator(1000)])
+    id = models.PositiveIntegerField(
+        primary_key=True, validators=[validators.MinValueValidator(1000)]
+    )
     service = models.BooleanField(default=False)
     username = models.CharField(unique=True, max_length=32)
     full_name = models.CharField(max_length=60)
@@ -29,14 +35,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     github_token = models.CharField(max_length=40, blank=True)
     access_token = models.CharField(max_length=64, blank=True, null=True)
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = "username"
 
     objects = UserManager()
 
     @property
     def has_webdocs(self):
         from ..sites.models import Site
-        return Site.objects.filter(name=self.username, purpose__in=["user", "legacy"]).count() > 0
+
+        return (
+            Site.objects.filter(
+                name=self.username, purpose__in=["user", "legacy"]
+            ).count()
+            > 0
+        )
 
     @property
     def is_staff(self):
@@ -64,14 +76,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.full_name
 
     def get_social_auth(self):
-        return self.social_auth.get(provider='ion')
+        return self.social_auth.get(provider="ion")
 
     @property
     def site_notifications(self):
         if self.is_superuser:
             from ..request.models import SiteRequest
 
-            return SiteRequest.objects.filter(Q(teacher_approval=True, admin_approval__isnull=True) | Q(teacher=self, teacher_approval__isnull=True))
+            return SiteRequest.objects.filter(
+                Q(teacher_approval=True, admin_approval__isnull=True)
+                | Q(teacher=self, teacher_approval__isnull=True)
+            )
         else:
             return self.site_requests.filter(teacher_approval__isnull=True)
 
@@ -88,16 +103,20 @@ class User(AbstractBaseUser, PermissionsMixin):
                     client.captureException()
                 return self.api_request(url, params, False)
             else:
-                client.captureMessage("Ion API Request Failure: {} {}".format(r.status_code, r.json()))
+                client.captureMessage(
+                    "Ion API Request Failure: {} {}".format(r.status_code, r.json())
+                )
         return r.json()
 
     def github_api_request(self, url, method="GET", data={}):
         try:
-            resp = requests.request(url="https://api.github.com{}".format(url),
-                                    headers={"Authorization": "token {}".format(self.github_token)},
-                                    method=method,
-                                    json=data,
-                                    timeout=10)
+            resp = requests.request(
+                url="https://api.github.com{}".format(url),
+                headers={"Authorization": "token {}".format(self.github_token)},
+                method=method,
+                json=data,
+                timeout=10,
+            )
         except requests.ConnectTimeout:
             client.captureException()
             return None
@@ -110,16 +129,22 @@ class User(AbstractBaseUser, PermissionsMixin):
                 self.github_token = ""
                 self.save()
             else:
-                client.captureMessage("GitHub API Request Failure: {} {}\n{} {}\n".format(resp.status_code, resp.text, method, data))
+                client.captureMessage(
+                    "GitHub API Request Failure: {} {}\n{} {}\n".format(
+                        resp.status_code, resp.text, method, data
+                    )
+                )
                 return None
         return json.loads(resp.text)
 
 
 class Group(models.Model):
-    id = models.PositiveIntegerField(primary_key=True, validators=[validators.MinValueValidator(1000)])
+    id = models.PositiveIntegerField(
+        primary_key=True, validators=[validators.MinValueValidator(1000)]
+    )
     service = models.BooleanField(default=False)
     name = models.CharField(max_length=32)
-    users = models.ManyToManyField(User, related_name='unix_groups')
+    users = models.ManyToManyField(User, related_name="unix_groups")
 
     def __str__(self):
         return self.name

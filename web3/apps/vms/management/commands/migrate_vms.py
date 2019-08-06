@@ -14,4 +14,8 @@ class Command(BaseCommand):
         for container in containers:
             if not VirtualMachine.objects.filter(uuid=container).exists():
                 print("[*] Importing {}...".format(container))
-                VirtualMachine.objects.create(name=container, uuid=uuid.UUID(container), description="Unknown Virtual Machine")
+                VirtualMachine.objects.create(
+                    name=container,
+                    uuid=uuid.UUID(container),
+                    description="Unknown Virtual Machine",
+                )
