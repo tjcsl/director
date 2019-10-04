@@ -43,9 +43,9 @@ module.exports = {
                         SITE_NAME: data.site.name,
                         SITE_PURPOSE: data.site.purpose,
                         SITE_URL: data.site.url,
-                        LANG: "en-US.UTF-8",
-                        LC_ALL: "en-US.UTF-8",
-                        LC_CTYPE: "en-US.UTF-8"
+                        LANG: "en_US.UTF-8",
+                        LC_ALL: "en_US.UTF-8",
+                        LC_CTYPE: "en_US.UTF-8"
                     }
                 });
             }
