@@ -226,3 +226,5 @@ EMAIL_FROM = "director-noreply@tjhsst.edu"
 
 EMAIL_FEEDBACK = "director@lists.tjhsst.edu"
 EMAIL_CONTACT = "sysadmins@tjhsst.edu"
+
+ALLOWED_METRIC_SCRAPE_IPS = []
