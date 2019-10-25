@@ -43,7 +43,8 @@ urlpatterns = [
     url(r'^feedback$', feedback_views.feedback_view, name='feedback'),
     url(r'^github_oauth/$', user_views.github_oauth_view),
     url(r'^set_cookie$', auth_views.set_access_cookie_view, name='set_cookie'),
-    url(r'^check_cookie$', auth_views.check_access_cookie_view, name='check_cookie')
+    url(r'^check_cookie$', auth_views.check_access_cookie_view, name='check_cookie'),
+    url(r'^prometheus-metrics$', auth_views.prometheus_metrics_view, name='prometheus_metrics'),
 ]
 
 if settings.DEBUG:

@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
@@ -187,6 +189,26 @@ def check_access_cookie_view(request):
     if not site_cookie == cookie_value(username, site_name):
         return HttpResponse("Invalid Cookie", status=401)
     return HttpResponse("Authorized", status=200)
+
+
+def prometheus_metrics_view(request):
+    remote_addr = request.META["HTTP_X_FORWARDED_FOR"] if "HTTP_X_FORWARDED_FOR" in request.META else request.META.get("REMOTE_ADDR")
+    is_superuser = request.user.is_authenticated and request.user.is_superuser
+
+    # If they're not from an IP on the white list and they're not a superuser, deny access
+    if remote_addr not in settings.ALLOWED_METRIC_SCRAPE_IPS and not is_superuser:
+        return render(request, "error/403.html", {"reason": "You are not authorized to view this page."}, status=403)
+
+    metrics = {}
+    # There is no real better way to do this.
+    for site in Site.objects.filter(category="dynamic"):
+        # Some dynamic sites might, for some weird reason, not have a supervisor config. Don't worry about those.
+        if not os.path.exists(os.path.join(site.path, "private")) and os.path.exists("/etc/supervisor/director.d/{}.conf".format(site.name)):
+            metrics['director_private_dirs_deleted{{site="{}"}}'.format(site.id)] = 1
+
+    context = {"metrics": metrics}
+
+    return render(request, "prometheus_metrics.txt", context, content_type="text/plain")
 
 
 def cookie_value(username, site_name):
