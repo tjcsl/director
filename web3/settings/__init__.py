@@ -53,6 +53,8 @@ PASSWORD_AUTH = False
 # Let's Encrypt Settings
 LE_WEBROOT = "/var/www/certbot/"
 
+ALLOWED_METRIC_SCRAPE_IPS = []
+
 try:
     from .secret import *  # noqa
 except ImportError:
@@ -226,5 +228,3 @@ EMAIL_FROM = "director-noreply@tjhsst.edu"
 
 EMAIL_FEEDBACK = "director@lists.tjhsst.edu"
 EMAIL_CONTACT = "sysadmins@tjhsst.edu"
-
-ALLOWED_METRIC_SCRAPE_IPS = []
