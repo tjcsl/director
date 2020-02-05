@@ -21,3 +21,12 @@ script:
     - ./node/node_modules/eslint/bin/eslint.js --env browser web3/static/js/
     - ./manage.py migrate
     - ./manage.py test
+notifications:
+  webhooks:
+    urls:
+      - https://mattermost.tjhsst.edu/custom-tjcsl/webhooks/travis
+    on_success: always
+    on_failure: always
+    on_start:   never
+    on_cancel:  always
+    on_error:   always
