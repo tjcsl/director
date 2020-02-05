@@ -33,12 +33,6 @@ def config_view(request, site_id):
     return redirect("info_site", site_id=site_id)
 
 
-def fix_permissions_threaded(site):
-    t = threading.Thread(target=fix_permissions, args=(site,))
-    t.setDaemon(True)
-    t.start()
-
-
 @login_required
 def permission_view(request, site_id):
     site = get_object_or_404(Site, id=site_id)
@@ -47,7 +41,7 @@ def permission_view(request, site_id):
 
     make_site_dirs(site)
 
-    fix_permissions_threaded(site)
+    fix_permissions(site)
 
     messages.success(request, "File permissions regenerated!")
     return redirect("info_site", site_id=site.id)

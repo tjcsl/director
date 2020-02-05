@@ -7,6 +7,7 @@ import shlex
 from subprocess import Popen, check_output, PIPE, CalledProcessError
 from threading import Timer
 
+from ...utils.security import switch_to_site_user
 from .models import Site
 from ..users.models import User, Group
 
@@ -54,11 +55,17 @@ def get_next_id():
 
 
 def make_site_dirs(site):
-    for i in ["", "public", "private"]:
+    for i in ["", "private"]:
         path = os.path.join(site.path, i)
         if not os.path.exists(path):
             os.makedirs(path)
-        os.chown(path, site.user.id, site.group.id)
+        os.chown(path, 0, site.group.id, follow_symlinks=False)
+        os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISGID | stat.S_ISVTX)
+    for i in ["public"]:
+        path = os.path.join(site.path, i)
+        if not os.path.exists(path):
+            os.makedirs(path)
+        os.chown(path, site.user.id, site.group.id, follow_symlinks=False)
         os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISGID)
     Popen(["/usr/bin/setfacl", "-m", "u:www-data:rx", site.path])
     Popen(["/usr/bin/setfacl", "-m", "u:www-data:rx", os.path.join(site.path, "public")])
@@ -240,26 +247,27 @@ def generate_ssh_key(site, overwrite=True):
     """Generate an ssh key for a site user."""
     sshpath = os.path.join(site.private_path, ".ssh")
     keypath = os.path.join(sshpath, "id_rsa")
-    if not os.path.exists(sshpath):
-        os.makedirs(sshpath)
-    os.chown(sshpath, site.user.id, site.group.id)
-    os.chmod(sshpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-    if os.path.isfile(keypath):
-        if not overwrite:
-            return False
-        os.remove(keypath)
-    if os.path.isfile(keypath + ".pub"):
-        os.remove(keypath + ".pub")
+    with switch_to_site_user(site):
+        if not os.path.exists(sshpath):
+            os.makedirs(sshpath)
+        os.chmod(sshpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+
+        if os.path.isfile(keypath):
+            if not overwrite:
+                return False
+            os.remove(keypath)
+        if os.path.isfile(keypath + ".pub"):
+            os.remove(keypath + ".pub")
 
     output = run_as_site(site, ["/usr/bin/ssh-keygen", "-t", "rsa", "-b", "4096", "-N", "", "-f", keypath])
 
     if not output[0] == 0:
         raise IOError("Could not generate RSA keys ({}) - {} - {}".format(output[0], output[1], output[2]))
 
-    os.chown(keypath, site.user.id, site.group.id)
-    os.chown(keypath + ".pub", site.user.id, site.group.id)
-    os.chmod(keypath, stat.S_IRUSR | stat.S_IWUSR)
-    os.chmod(keypath + ".pub", stat.S_IRUSR | stat.S_IWUSR)
+    with switch_to_site_user(site):
+        os.chmod(keypath, stat.S_IRUSR | stat.S_IWUSR)
+        os.chmod(keypath + ".pub", stat.S_IRUSR | stat.S_IWUSR)
+
     return True
 
 
@@ -289,21 +297,47 @@ def get_latest_commit(site):
 
 
 def fix_permissions(site):
-    """Makes sure that all files are owned by the site user and the site group has access."""
+    """Makes sure that all files are owned by the site user and the site group has access.
+    Except specific files which should be owned by root."""
+    root_owned_paths = set(
+        map(
+            os.path.normpath,
+            (
+                site.path,
+                site.private_path,
+            )
+        )
+    )
+
+    # Must be a tuple
+    root_owned_path_prefixes = (os.path.join(site.private_path, "log-{}.log".format(site.name)),)
+
+    os.lchown(site.path, 0, site.group.id)
+    st = os.lstat(site.path)
+    os.chmod(site.path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISVTX)
+
     for root, dirs, files in os.walk(site.path):
         dirs[:] = [d for d in dirs if not d == ".ssh"]
         for f in files + dirs:
-            path = os.path.join(root, f)
+            path = os.path.normpath(os.path.join(root, f))
             try:
                 st = os.lstat(path)
             except Exception:
                 client.captureException()
                 continue
-            os.lchown(path, site.user.id, site.group.id)
+
+            extra_dir_flags = 0
+            if path in root_owned_paths or path.startswith(root_owned_path_prefixes):
+                # For security reasons, certain directories are owned by root and sticky
+                os.lchown(path, 0, site.group.id)
+                extra_dir_flags = stat.S_ISVTX
+            else:
+                os.lchown(path, site.user.id, site.group.id)
+
             if stat.S_ISLNK(st.st_mode):
                 pass
             elif stat.S_ISDIR(st.st_mode):
-                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP)
+                os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | extra_dir_flags)
             else:
                 os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
 

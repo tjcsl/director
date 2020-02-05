@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.http import require_http_methods
 
+from ....utils.security import switch_to_site_user
 from ..models import Site, Process
 from ..helpers import (fix_permissions, create_process_config, reload_php_fpm,
                        render_to_string, check_nginx_config, reload_nginx_config,
@@ -54,7 +55,10 @@ def editor_path_view(request, site_id):
 
     for f in os.listdir(path):
         fpath = os.path.join(path, f)
-        fmode = os.lstat(fpath).st_mode
+
+        with switch_to_site_user(site):
+            fmode = os.lstat(fpath).st_mode
+
         if stat.S_ISDIR(fmode):
             obj = {"type": "d", "name": f}
         else:
@@ -80,8 +84,9 @@ def editor_load_view(request, site_id):
         return JsonResponse({"error": "Invalid or nonexistent file!", "path": path})
 
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            contents = f.read()
+        with switch_to_site_user(site):
+            with open(path, "r", encoding="utf-8") as f:
+                contents = f.read()
     except UnicodeDecodeError:
         return JsonResponse({"error": "Editing binary files is not supported!"})
     except IOError:
@@ -112,13 +117,14 @@ def editor_save_view(request, site_id):
         else:
             set_perms = True
 
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(request.POST.get("contents"))
+    with switch_to_site_user(site):
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(request.POST.get("contents"))
 
-    if set_perms:
-        st = os.lstat(path)
-        os.lchown(path, site.user.id, site.group.id)
-        os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
+        if set_perms:
+            st = os.lstat(path)
+            os.lchown(path, site.user.id, site.group.id)
+            os.chmod(path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP)
 
     return JsonResponse({"success": True})
 
@@ -136,15 +142,16 @@ def editor_delete_view(request, site_id):
     if not all(x.startswith(site.path) for x in path) or not all(os.path.exists(x) for x in path):
         return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": path})
 
-    for p in path:
-        try:
-            if os.path.isfile(p):
-                os.remove(p)
-            else:
-                shutil.rmtree(p)
-        except FileNotFoundError:
-            # File might have been deleted after the check
-            pass
+    with switch_to_site_user(site):
+        for p in path:
+            try:
+                if os.path.isfile(p):
+                    os.remove(p)
+                else:
+                    shutil.rmtree(p)
+            except FileNotFoundError:
+                # File might have been deleted after the check
+                pass
 
     return JsonResponse({"success": True})
 
@@ -170,12 +177,11 @@ def editor_create_view(request, site_id):
     if os.path.exists(new_path):
         return JsonResponse({"error": "The file or folder you are trying to create already exists!"})
 
-    if is_file:
-        open(new_path, "a", encoding="utf-8").close()
-    else:
-        os.mkdir(new_path)
-
-    os.lchown(new_path, site.user.id, site.group.id)
+    with switch_to_site_user(site):
+        if is_file:
+            open(new_path, "a", encoding="utf-8").close()
+        else:
+            os.mkdir(new_path)
 
     return JsonResponse({"success": True})
 
@@ -193,7 +199,9 @@ def editor_download_view(request, site_id):
         raise Http404
 
     if os.path.isfile(path):
-        response = HttpResponse(content=open(path, "rb"))
+        with switch_to_site_user(site):
+            response = HttpResponse(content=open(path, "rb"))
+
         if request.GET.get("embed", False) is not False:
             response["Content-Type"] = mimetypes.guess_type(path)[0]
         else:
@@ -201,12 +209,13 @@ def editor_download_view(request, site_id):
             response["Content-Disposition"] = "attachment; filename={}".format(os.path.basename(path))
         return response
     else:
-        zip_io = io.BytesIO()
-        with zipfile.ZipFile(zip_io, "w", zipfile.ZIP_DEFLATED) as zipf:
-            for root, dirs, files in os.walk(path):
-                for f in files:
-                    filepath = os.path.join(root, f)
-                    zipf.write(filepath, filepath[len(path):])
+        with switch_to_site_user(site):
+            zip_io = io.BytesIO()
+            with zipfile.ZipFile(zip_io, "w", zipfile.ZIP_DEFLATED) as zipf:
+                for root, dirs, files in os.walk(path):
+                    for f in files:
+                        filepath = os.path.join(root, f)
+                        zipf.write(filepath, filepath[len(path):])
         response = HttpResponse(zip_io.getvalue())
         response["Content-Type"] = "application/x-zip-compressed"
         response["Content-Disposition"] = "attachment; filename={}.zip".format(os.path.basename(path))
@@ -235,7 +244,8 @@ def editor_rename_view(request, site_id):
         return JsonResponse({"error": "You must enter a valid name!", "path": path})
 
     try:
-        os.rename(path, os.path.join(os.path.dirname(path), new_name))
+        with switch_to_site_user(site):
+            os.rename(path, os.path.join(os.path.dirname(path), new_name))
     except OSError as e:
         client.captureException()
         return JsonResponse({"error": str(e), "path": path})
@@ -261,11 +271,12 @@ def editor_upload_view(request, site_id):
     if len(fs) == 0:
         return JsonResponse({"error": "No file(s) uploaded!"})
 
-    for f in fs:
-        filename = os.path.basename(f.name)
-        with open(os.path.join(path, filename), "wb") as dest:
-            for chunk in f.chunks():
-                dest.write(chunk)
+    with switch_to_site_user(site):
+        for f in fs:
+            filename = os.path.basename(f.name)
+            with open(os.path.join(path, filename), "wb") as dest:
+                for chunk in f.chunks():
+                    dest.write(chunk)
 
     fix_permissions(site)
 
@@ -297,7 +308,8 @@ def editor_move_view(request, site_id):
     if new_file.startswith(os.path.join(old_path, "")):
         return JsonResponse({"error": "You cannot place a folder inside itself!"})
 
-    os.rename(old_path, new_file)
+    with switch_to_site_user(site):
+        os.rename(old_path, new_file)
 
     return JsonResponse({"success": True})
 
@@ -359,12 +371,13 @@ def editor_exec_view(request, site_id):
         if not path.startswith(site.path) or not os.path.isfile(path):
             return JsonResponse({"error": "Invalid or nonexistent file!"})
 
-    for path in paths:
-        st = os.stat(path)
-        if on:
-            os.chmod(path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
-        else:
-            os.chmod(path, stat.S_IMODE(st.st_mode) & ~stat.S_IXUSR & ~stat.S_IXGRP & ~stat.S_IXOTH)
+    with switch_to_site_user(site):
+        for path in paths:
+            st = os.stat(path)
+            if on:
+                os.chmod(path, st.st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+            else:
+                os.chmod(path, stat.S_IMODE(st.st_mode) & ~stat.S_IXUSR & ~stat.S_IXGRP & ~stat.S_IXOTH)
 
     return JsonResponse({"success": True})
 
