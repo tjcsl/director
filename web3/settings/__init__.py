@@ -226,5 +226,5 @@ EMAIL_USE_TLS = False  # FIXME: use tls
 EMAIL_SUBJECT_PREFIX = "[Director]"
 EMAIL_FROM = "director-noreply@tjhsst.edu"
 
-EMAIL_FEEDBACK = "director@lists.tjhsst.edu"
-EMAIL_CONTACT = "sysadmins@tjhsst.edu"
+EMAIL_FEEDBACK = "director@tjhsst.edu"
+EMAIL_CONTACT = "director@tjhsst.edu"
