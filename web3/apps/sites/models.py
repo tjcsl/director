@@ -111,6 +111,10 @@ class Site(models.Model):
         return os.path.join(self.path, "public")
 
     @property
+    def logs_path(self):
+        return os.path.join(self.path, "logs")
+
+    @property
     def git_path(self):
         if not self.repo_path:
             return self.public_path

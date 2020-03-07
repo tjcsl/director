@@ -61,6 +61,12 @@ def make_site_dirs(site):
             os.makedirs(path)
         os.chown(path, 0, site.group.id, follow_symlinks=False)
         os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISGID | stat.S_ISVTX)
+    for i in ["logs"]:
+        path = os.path.join(site.path, i)
+        mode = stat.S_IWUSR | stat.S_IRUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH
+        os.makedirs(path, mode=mode, exist_ok=True)
+        os.lchown(path, 0, 0)
+        os.chmod(path, mode)
     for i in ["public"]:
         path = os.path.join(site.path, i)
         if not os.path.exists(path):
@@ -316,6 +322,9 @@ def fix_permissions(site):
     st = os.lstat(site.path)
     os.chmod(site.path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISVTX)
 
+    if not os.path.exists(site.logs_path):
+        os.mkdir(site.logs_path, mode=0)
+
     for root, dirs, files in os.walk(site.path):
         dirs[:] = [d for d in dirs if not d == ".ssh"]
         for f in files + dirs:
@@ -324,6 +333,15 @@ def fix_permissions(site):
                 st = os.lstat(path)
             except Exception:
                 client.captureException()
+                continue
+
+            if path == site.logs_path:
+                os.lchown(path, 0, 0)
+                os.chmod(path, stat.S_IWUSR | stat.S_IRUSR | stat.S_IXUSR | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+                continue
+            if path.startswith(site.logs_path + "/"):
+                os.lchown(path, 0, 0)
+                os.chmod(path, stat.S_IWUSR | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
                 continue
 
             extra_dir_flags = 0
