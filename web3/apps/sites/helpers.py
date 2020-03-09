@@ -55,7 +55,7 @@ def get_next_id():
 
 
 def make_site_dirs(site):
-    for i in ["", "private"]:
+    for i in [""]:
         path = os.path.join(site.path, i)
         if not os.path.exists(path):
             os.makedirs(path)
@@ -67,7 +67,7 @@ def make_site_dirs(site):
         os.makedirs(path, mode=mode, exist_ok=True)
         os.lchown(path, 0, 0)
         os.chmod(path, mode)
-    for i in ["public"]:
+    for i in ["public", "private"]:
         path = os.path.join(site.path, i)
         if not os.path.exists(path):
             os.makedirs(path)
@@ -305,19 +305,6 @@ def get_latest_commit(site):
 def fix_permissions(site):
     """Makes sure that all files are owned by the site user and the site group has access.
     Except specific files which should be owned by root."""
-    root_owned_paths = set(
-        map(
-            os.path.normpath,
-            (
-                site.path,
-                site.private_path,
-            )
-        )
-    )
-
-    # Must be a tuple
-    root_owned_path_prefixes = (os.path.join(site.private_path, "log-{}.log".format(site.name)),)
-
     os.lchown(site.path, 0, site.group.id)
     st = os.lstat(site.path)
     os.chmod(site.path, st.st_mode | stat.S_IRGRP | stat.S_IWGRP | stat.S_IXGRP | stat.S_ISVTX)
@@ -345,8 +332,8 @@ def fix_permissions(site):
                 continue
 
             extra_dir_flags = 0
-            if path in root_owned_paths or path.startswith(root_owned_path_prefixes):
-                # For security reasons, certain directories are owned by root and sticky
+            if path == site.path:
+                # For security reasons, the site directory is owned by root and sticky
                 os.lchown(path, 0, site.group.id)
                 extra_dir_flags = stat.S_ISVTX
             else:
