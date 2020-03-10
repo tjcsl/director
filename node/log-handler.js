@@ -15,7 +15,7 @@ module.exports = {
             }
         }
         else {
-            filename = path.join(data.site.homedir, "private", "log-" + data.site.name + ".log");
+            filename = path.join(data.site.homedir, "logs", "log-" + data.site.name + ".log");
         }
         fs.stat(filename, function (err) {
             if (err && err.code == "ENOENT") {
