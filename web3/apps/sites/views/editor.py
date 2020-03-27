@@ -117,6 +117,9 @@ def editor_save_view(request, site_id):
         else:
             set_perms = True
 
+    if (path.rstrip("/") + "/").startswith(logs_path + "/"):
+        return JsonResponse({"error": "You cannot edit your site's log file.", "path": path})
+
     with switch_to_site_user(site):
         with open(path, "w", encoding="utf-8") as f:
             f.write(request.POST.get("contents"))
@@ -141,6 +144,9 @@ def editor_delete_view(request, site_id):
 
     if not all(x.startswith(site.path) for x in path) or not all(os.path.exists(x) for x in path):
         return JsonResponse({"error": "Invalid or nonexistent file or folder!", "path": path})
+
+    if (path.rstrip("/") + "/").startswith(logs_path + "/"):
+        return JsonResponse({"error": "You cannot delete your site's log file.", "path": path})
 
     with switch_to_site_user(site):
         for p in path:
