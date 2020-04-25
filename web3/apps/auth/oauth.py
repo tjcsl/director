@@ -42,11 +42,16 @@ class IonOauth2(BaseOAuth2):
         profile = self.get_json('https://ion.tjhsst.edu/api/profile',
                                 params={'access_token': response['access_token']})
 
+        try:
+            uid = get_uid(profile['ion_username'])
+        except IndexError:
+            uid = profile["id"]
+
         # fields used to populate/update User model
         return {
             'username': profile['ion_username'],
             'full_name': profile['full_name'],
-            'id': get_uid(profile['ion_username']),
+            'id': uid,
             'email': profile['tj_email'],
             'service': False,
             'is_superuser': False,
