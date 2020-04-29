@@ -78,12 +78,13 @@ def sql_database_view(request, site_id):
             return HttpResponse("Director has been improperly configured! (Missing MYSQL_DB_HOST)", content_type="text/plain")
 
         ret, out, err = run_as_site(site, ["mysql", "--user={}".format(site.database.username),
-                                           "--host={}".format(settings.MYSQL_DB_HOST), site.database.db_name, "-e", sql], env={"MYSQL_PWD": site.database.password})
+                                           "--host={}".format(settings.MYSQL_DB_HOST), site.database.db_name, "-e", sql], env={"MYSQL_PWD": site.database.password},
+                                           timeout=60)
     else:
         if not settings.POSTGRES_DB_HOST:
             return HttpResponse("Director has been improperly configured! (Missing POSTGRES_DB_HOST)", content_type="text/plain")
 
-        ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql], env={"SHELL": "/usr/sbin/nologin"})
+        ret, out, err = run_as_site(site, ["psql", str(site.database), "-c", sql], env={"SHELL": "/usr/sbin/nologin"}, timeout=60)
     return HttpResponse(out + err, content_type="text/plain")
 
 
